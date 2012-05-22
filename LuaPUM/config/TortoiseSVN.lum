@@ -1,0 +1,506 @@
+--[[ LuaPUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Tortoise SVN menu.
+  -- Меню Tortoise SVN.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local runUt = require "Rh_Scripts.Utils.runUtils"
+
+--local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+
+----------------------------------------
+local context = context
+
+local utils = require 'context.utils.useUtils'
+local tables = require 'context.utils.useTables'
+local datas = require 'context.utils.useDatas'
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+-- This menu is not for plugin panel items.
+if utils.isPluginPanel() then return end
+
+----------------------------------------
+local Svn = {}
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Status
+local isStatus = {
+  Text  = '^%s-SubWCRev%s-%:%s*(.*)',
+  NotExist = "does not exist",
+  IsNotaWC = "is not a working copy",
+
+  NoCommit = "Last committed at revision 0",
+  NoUpdate = "Updated to revision 0",
+  IsModifs = "Local modifications found",
+} ---
+
+-- Проверка на отсутствие рабочей копии.
+function Svn.isWorkingCopy (Status) --> (bool)
+  --assert(type(Status) == 'string')
+  return Status ~= "" and
+         (Status:find(isStatus.IsModifs, 1, true) or
+         not (Status:find(isStatus.NotExist, 1, true) or
+              Status:find(isStatus.IsNotaWC, 1, true)))
+end --
+
+-- Проверка на отсутствие версионирования.
+function Svn.isSubversioned (Status) --> (bool)
+  --assert(type(Status) == 'string')
+  return not (Status:find(isStatus.NoCommit, 1, true) and
+              Status:find(isStatus.NoUpdate, 1, true))
+end --
+
+---------------------------------------- Default
+local DefCfgData = {
+  -- Основные параметры:
+  Path    = "",
+  --Repo    = "SVN",
+
+  File    = "TortoiseProc.exe",
+  Status  = "SubWCRev.exe",
+  Command = "repobrowser",
+
+  --RunNone = true,
+  --ShowCmd = true,
+
+  --MenuView = "far.Menu",
+  MenuView = "RectMenu",
+  ShowPath  = true,
+  IconChars = true,
+  ItemWidth = 25,
+
+  -- Дополнительные параметры:
+  onClose = "/closeonend:0",
+
+  isWorkingCopy  = Svn.isWorkingCopy,
+  isSubversioned = Svn.isSubversioned,
+} --- DefCfgData
+
+---------------------------------------- Config
+local addNewData = tables.extend
+
+local DefCustom = {
+  label = "tSVN",
+  name = "TortoiseSVN",
+  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
+  locale = { kind = 'load' },
+} --- DefCustom
+
+-- Обработка конфигурации.
+local function Configure (ArgData)
+  -- 1. Заполнение ArgData.
+  local ArgData = addNewData(ArgData, DefCfgData)
+  local Custom = datas.customize(ArgData.Custom, DefCustom)
+  --logMsg(Custom, "Custom")
+  -- 2. Заполнение конфигурации.
+  if not utils.fexists(Custom.history.full) then return end
+  local History = datas.newHistory(Custom.history.full)
+  --logMsg(History, "History")
+  local CfgData = History:field(Custom.history.field)
+  --logMsg(CfgData, "CfgData")
+  -- 3. Дополнение конфигурации.
+  setmetatable(CfgData, { __index = ArgData })
+  local Config = {
+    Custom = Custom, History = History, --DlgTypes = DlgTypes,
+    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+  } ---
+  return Config
+end --function Configure
+
+local Config = Configure()
+if not Config then return end
+
+-- Локализация.
+local L, e1, e2 = locale.prepare(Config.Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+local CfgData = Config.CfgData
+--logMsg(CfgData, "CfgData")
+--logMsg(Config.ArgData, "ArgData")
+
+if CfgData.Path ~= "" and
+   not utils.fexists(CfgData.Path..CfgData.Status) then
+  utils.warning(L.eError, L.ePathNotFound)
+  return
+end
+
+---------------------------------------- Parse
+local Formats = { -- SVN
+  Run    = '"%s%s" /command:%s %s %s',
+  --Run    = '""%s%s /command:%s %s %s""',
+  Path   = '/path:"%s"',
+  Status = '""%s%s" "%s""',
+} --- Formats
+
+do
+  local exec = runUt.runProcess
+  --[[
+  -- Execute program and return its output.
+  -- Выполняет программу и возвращает его вывод.
+  local function exec (program) --> (string)
+    local h = ansi.io.popen(program)
+    --local h = ansi.io.popen(win.Utf8ToOem(program))
+    if not h then return end
+    --logMsg({ program, win.OemToUtf8(win.Utf8ToOem(program)) }, "ansi_exec")
+    local out = h:read("*a")
+    --logMsg(out, program)
+    h:close()
+    return out
+  end ---- exec
+  --]]
+
+-- Получение статуса рабочей копии.
+function Svn.getStatus (ItemPath) --> (bool)
+  local Status = Formats.Status:format(CfgData.Path, CfgData.Status, ItemPath)
+  --logMsg({ Path = ItemPath, Status = Status }, "Item + Status")
+  return exec(Status)
+  --return exec(Status.." "..context.utils.PluginPath..DefCustom.path.."SubWCRevData.txt")
+end ----
+
+end -- do
+
+do
+  local Path = farUt.FarGetAreaItemName.panels()
+  local Status = Path ~= "" and Svn.getStatus(Path) or ""
+
+  if Status == "" then
+    utils.warning(L.eError, L.eStatusFailed)
+    return
+  end
+
+  local Item  = panel.GetCurrentPanelItem(nil, 1)
+  local Name  = Item.FileName
+  local Attrs = Item.FileAttributes
+
+  if (Name == ".svn" or Name == "_svn") and
+     Attrs:find("d", 1, true) and Attrs:find("h", 1, true) then
+    return -- SVN Special directory
+  end
+
+  Svn.Item = {
+    --Item    = Item,
+    Path    = Path,
+    Name    = (Name == ".." and "" or Name),
+    isDir   = not not Attrs:find("d", 1, true),
+    Status  = Status,
+    isWorkingCopy  = not not Svn.isWorkingCopy(Status), -- true/false
+    isSubversioned = false,
+  } ---
+  if Svn.Item.isWorkingCopy then
+    Svn.Item.isSubversioned = not not Svn.isSubversioned(Status)
+  end
+
+  --logMsg("'"..Svn.Item.Status.."'", "SVN Status")
+  --logMsg(Svn.Item, "SVN")
+end -- do
+
+-- Формирование параметров.
+function Svn.MakeParams (Args, Command) --> (string | nil)
+  -- Анализ общих параметров.
+  local t = {}
+  t[#t+1] = CfgData.onClose or ""
+
+  -- Анализ параметров операции.
+  local u = Args
+  for k = 1, #u do t[#t+1] = u[k] end
+
+  -- Анализ параметров команды.
+  u = CfgData[Command]
+  if type(u) == 'table' then
+    for k, v in pairs(u) do t[#t+1] = v end
+  end
+
+  return table.concat(t, ' ')
+end ---- MakeParams
+
+-- Выполнение операции SVN.
+function Svn.Run (Args, Cfg) --> (bool)
+  -- Анализ основных параметров.
+  local Cmd = Args.command or CfgData.Command
+  local Path = ""
+  if not Args.nopath then
+    Path = Formats.Path:format(Svn.Item.Path)
+  end
+
+  -- Анализ дополнительных параметров.
+  local Adds = Svn.MakeParams(Args, Cmd) or ""
+
+  -- Выполнение операции.
+  local CmdLine = Formats.Run:format(CfgData.Path, CfgData.File, Cmd, Path, Adds)
+  --logMsg({ CmdLine = CmdLine, Args = Args, Adds = Adds, CfgData = CfgData }, "CmdLine")
+
+  if CfgData.ShowCmd or CfgData[Cmd] and CfgData[Cmd].ShowCmd then
+    utils.message("Command: "..Cmd, "Command line:\n"..CmdLine, "l")
+  end
+  if CfgData.RunNone or CfgData[Cmd] and CfgData[Cmd].RunNone then
+    return
+  end
+
+  return runUt.runCmdLine(CmdLine)
+end ---- Run
+
+-- Показ статуса SVN.
+function Svn.ShowStatus ()
+  local Status = Svn.Item.Status
+  utils.message(L.wSVN_status, Status:match(isStatus.Text) or Status, "l")
+end --
+
+---------------------------------------- Items
+-- Операции пунктов меню.
+local AllOperations = {
+  { command = "checkout",       checked = "↵" },
+  { command = "update",         checked = "↶" },
+  { command = "commit",         checked = "↗" },
+  { separator = true },
+  { command = "diff",           checked = "♒" },
+  { command = "log",            checked = "☞" },
+  { command = "repobrowser",    checked = "♀", name = "browse" },
+  { command = "repobrowser",    checked = "☿", name = "browseto", nopath = true },
+  { command = "repostatus",     checked = "≟", name = "change" },
+  { command = "revisiongraph",  checked = "♂", name = "revgraph" },
+  { separator = true },
+  { command = "conflicteditor", checked = "✓", name = "conflict" },
+  { command = "resolve",        checked = "✔" },
+  { command = "update",         checked = "↩", name = "uptorev"; "/rev" },
+  { command = "rename",         checked = "=" },
+  { command = "remove",         checked = "−" },
+  { command = "revert",         checked = "↻" },
+  { command = "cleanup",        checked = "☑" },
+  { command = "lock",           checked = "☒" },
+  { command = "unlock",         checked = "☐" },
+  { separator = true },
+  { command = "copy",           checked = "♈" },
+  { command = "switch",         checked = "♃" },
+  { command = "merge",          checked = "♉" },
+  { command = "export",         checked = "↴" },
+  { command = "relocate",       checked = "⇲" },
+  { separator = true },
+  { command = "repocreate",     checked = "♊", name = "create" },
+  { command = "blame",          checked = "♁" },
+  { command = "add",            checked = "+" },
+  { command = "import",         checked = "↱" },
+  { command = "ignore",         checked = "×" },
+  { separator = true },
+  { command = "createpatch",    checked = "✗", name = "patch" },
+  { name    = "applypatch",     checked = "✘", name = "patching" },
+  { command = "properties",     checked = "☝", name = "props" },
+  { separator = true },
+  { command = "settings",       checked = "⚗" },
+  { command = "help",           checked = "?" },
+  { command = "about",          checked = "☧" },
+} --- AllOperations
+
+-- Состав меню в зависимости от элемента.
+local Kinds = {
+  --browse    = true,
+  settings  = true,
+  help      = true,
+  about     = true,
+
+  [false] = { -- is not a working copy
+    [false] = { -- is a file
+      browseto  = true,
+    },
+    [true] = { -- is a directory
+      checkout  = true,
+      browseto  = true,
+      export    = true,
+      create    = true,
+      import    = true,
+    },
+  }, --
+  [true] = { -- is a working copy
+    [false] = { -- is a file
+      [false] = { -- is unversioned item
+        browse    = true,
+        add       = true,
+        ignore    = true,
+      },
+      [true] = { -- is subversioned item
+        update    = true,
+        commit    = true,
+        diff      = true,
+        log       = true,
+        browse    = true,
+        change    = true,
+        revgraph  = true,
+        uptorev   = true,
+        rename    = true,
+        remove    = true,
+        revert    = true,
+        lock      = true,
+        copy      = true,
+        switch    = true,
+        merge     = true,
+        blame     = true,
+        ignore    = true,
+        patch     = true,
+        props     = true,
+      },
+    },
+    [true] = { -- is a directory
+      [false] = { -- is unversioned item
+        checkout  = true,
+        browse    = true,
+        export    = true,
+        create    = true,
+        add       = true,
+        import    = true,
+        ignore    = true,
+      },
+      [true] = { -- is subversioned item
+        update    = true,
+        commit    = true,
+        log       = true,
+        browse    = true,
+        change    = true,
+        revgraph  = true,
+        conflict  = true,
+        resolve   = true,
+        uptorev   = true,
+        rename    = true,
+        remove    = true,
+        revert    = true,
+        cleanup   = true,
+        lock      = true,
+        unlock    = true,
+        copy      = true,
+        switch    = true,
+        merge     = true,
+        export    = true,
+        relocate  = true,
+        blame     = true,
+        ignore    = true,
+        patch     = true,
+        patching  = true,
+        props     = true,
+      },
+    },
+  },
+} --- Kinds
+
+-- Формирование списка пунктов из опций.
+function Svn.MakeItems (Operations, Kinds) --> (Items)
+  local t = {}
+
+  for k = 1, #Operations do
+    local v = Operations[k]
+
+    if v.separator then
+      if #t > 0 and not t[#t].separator then
+        t[#t+1] = v
+      end
+    elseif v.command then -- TEMP
+      local name = v.name or v.command
+      local q = Svn.Item
+
+      --logMsg({ q, Kinds }, "Check", 1)
+      if Kinds[name] or
+         (not q.isWorkingCopy and
+          Kinds[q.isWorkingCopy][q.isDir][name]) or
+         (q.isWorkingCopy and
+          Kinds[q.isWorkingCopy][q.isDir][q.isSubversioned][name]) then
+        t[#t+1] = {
+          text = L["tSVN_"..name] or name,
+          Hint = L["hSVN_"..name] or name,
+          checked   = CfgData.IconChars and v.checked,
+          Function  = Svn.Run,
+          Arguments = v,
+        } ---
+      end
+    end
+  end -- for
+
+  return t
+end ---- MakeItems
+
+-- Основные пункты меню.
+local mItems = Svn.MakeItems(AllOperations, Kinds)
+
+-- Дополнительные пункты меню.
+if CfgData.MenuView ~= "far.Menu" and CfgData.ItemWidth then
+  mItems[#mItems+1] = { -- Special line
+    text = ("─"):rep(CfgData.ItemWidth),
+    disable = true,
+  checked = "─",
+  } --
+end
+mItems[#mItems+1] = { -- SVN Status
+  text = L.tSVN_status,
+  Hint = L.hSVN_status,
+  Function = Svn.ShowStatus,
+  checked = "♌",
+} --
+
+---------------------------------------- Menu
+local ColRowsMax = 20
+local IsMoreCols = #mItems > ColRowsMax
+
+do
+  local MenuWidth = CfgData.ItemWidth + 3
+  if IsMoreCols then MenuWidth = MenuWidth * 2 end
+
+  local Path, Lost, View = Svn.Item.Path
+
+  if MenuWidth < Svn.Item.Path:len() then
+    if IsMoreCols then
+      Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+\\[^\\]+)$")
+    else
+      Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+)$")
+    end
+  end
+  Svn.Item.View = View and View ~= Path and ".."..View or Path
+  --logMsg({ Path, Lost, View }, "Parse Path")
+end -- do
+
+local mTortoiseSVN = { -- Tortoise SVN
+  text  = L.tSVN,
+  Title = L.TortoiseSVN,
+  Area = "panels",
+
+  MenuView = CfgData.MenuView,
+
+  Props = {
+    Bottom = CfgData.ShowPath and Svn.Item.View,
+    RectMenu = {
+      Cols = IsMoreCols and 2 or 1,
+      Order = "V",
+      Separators = IsMoreCols and "V" or "",
+      --BoxKind = "R",
+      MenuAlign = "CM",
+      NocheckChar = " ",
+    }, -- RectMenu
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      BottomHotKeys = false,
+      ReturnToUMenu = false,
+    },
+  },
+
+  Items = mItems,
+} --- mTortoiseSVN
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.tSVN,
+    Items = { mTortoiseSVN },
+  },
+
+  ["tSVN"] = mTortoiseSVN,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

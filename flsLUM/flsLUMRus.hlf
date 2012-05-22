@@ -1,0 +1,27 @@
+﻿.Language=Russian,Russian (Русский)
+.PluginContents=LUM для fl_scripts
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Пользовательское меню Lua для работы с fl_scripts# (~flsLUM~)
+  flsLUM — вариант утилиты LUM, предназначенный для работы
+с набором скриптов #farlua scripts# (fl_scripts) от maxfl.
+
+    ~Файлы утилиты~@LUM_Files@
+
+  Ссылки:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Пользовательское меню Lua (LUM)~@<..\LuaUM\>Contents@
+
+@Help
+ ~flsLUM~@Contents@
+
+@LUM_Files
+$ #Файлы утилиты#: flsLUM
+  Файлы:
+    \37flsLUM.lua\-     — ¦Меню flsLUM: Реализация.
+    \37flsLUMer.lua\-   — ¦Настройка flsLUM: Конфигуратор.
+
+ ~Содержание~@Contents@

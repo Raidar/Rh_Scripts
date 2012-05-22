@@ -1,0 +1,251 @@
+--[[ LuaUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Git commands menu.
+  -- Меню команд Git.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+local runUt = require "Rh_Scripts.Utils.runUtils"
+
+----------------------------------------
+local context = context
+
+local utils = require 'context.utils.useUtils'
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+-- This menu is not for plugin panel items.
+if utils.isPluginPanel() then return end
+
+----------------------------------------
+local far = far
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Default
+local DefCfgData = {
+  -- Основные параметры:
+  Path    = "",
+  --Repo    = "SVN",
+
+  --File    = "TortoiseProc.exe",
+  --Status  = "SubWCRev.exe",
+  --Command = "repobrowser",
+
+  --RunNone = true,
+  --ShowCmd = true,
+
+  --MenuView = "far.Menu",
+  MenuView = "RectMenu",
+  ShowPath  = true,
+  IconChars = true,
+  ItemWidth = 25,
+
+  -- Дополнительные параметры:
+  --onClose = "/closeonend:0",
+
+  --isWorkingCopy  = Svn.isWorkingCopy,
+  --isSubversioned = Svn.isSubversioned,
+} --- DefCfgData
+
+---------------------------------------- Config
+local DefCustom = {
+  label = "Git",
+  name = "lum",
+  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
+  locale = { kind = 'load' },
+  --path = "Rh_Scripts.LuaPUM.config.",
+  --locale = { kind = 'require' },
+} --- DefCustom
+
+local L, e1, e2 = locale.localize(DefCustom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Items
+local function FillCmdLine (Command)
+  return panel.SetCmdLine(-1, Command)
+end --
+
+local function FillCmdLineWithBack (Command)
+  if panel.SetCmdLine(-1, Command) then
+    return runUt.runSequence("Left")
+  end
+end --
+
+local mSep = {
+  separator = true,
+} --- mSep
+
+mItems = {
+  { text = "Git GUI",
+    CmdLine = "git gui citool" },
+  { text = "Fetch origin…",
+    Function = FillCmdLine,
+    Arguments = "git fetch origin" },
+  { text = "&Commit… w/add",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git commit -a -m ""' },
+  { text = "Commit… onl&y",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git commit -m ""' },
+  { text = "Push to origin…",
+    Function = FillCmdLine,
+    Arguments = "git push origin master" },
+  mSep,
+  { text = "&Diff w/previous",
+    CmdLine = "edit:<git diff HEAD" },
+  { text = "Diff w&/commited",
+    CmdLine = "edit:<git diff --cached" },
+  { text = "Diff w&\\current",
+    CmdLine = "edit:<git diff" },
+  { text = "Show &log",
+    CmdLine = "edit:<git log" },
+  { text = "Log for &2",
+    CmdLine = "edit:<git log -2" },
+  { text = "&Find changes",
+    CmdLine = "edit:<git show" },
+  { text = "Log &graph",
+    CmdLine = "gitk" },
+  mSep,
+  { text = "Fix last commit…",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git commit --amend -a -m ""' },
+  { text = "Reset to head…",
+    Function = FillCmdLine,
+    Arguments = "git reset HEAD " },
+  { text = "Discard changes…",
+    Function = FillCmdLine,
+    Arguments = "rem git checkout -- " },
+  { text = "Pull from origin…",
+    Function = FillCmdLine,
+    Arguments = "git pull origin master" },
+  mSep,
+  { text = "Delete…",
+    Function = FillCmdLine,
+    Arguments = "git rm " },
+  { text = "Del for ignore…",
+    Function = FillCmdLine,
+    Arguments = "git rm --cached " },
+  { text = "Move…        &n",
+    Function = FillCmdLine,
+    Arguments = "git mv " },
+  { text = "Revert…",
+    Function = FillCmdLine,
+    Arguments = "git revert " },
+  mSep,
+  { text = "&Tag…",
+    Function = FillCmdLine,
+    Arguments = "git tag -f " },
+  { text = "Tag list     &5",
+    CmdLine = "git tag -l" },
+  { text = "Branches     &6",
+    CmdLine = "git branch -a" },
+  { text = "New branch   &^",
+    Function = FillCmdLine,
+    Arguments = "git branch " },
+  { text = "S&witch…",
+    Function = FillCmdLine,
+    Arguments = "git checkout " },
+  { text = "Switch to master…",
+    Function = FillCmdLine,
+    Arguments = "git checkout master" },
+  { text = "&Merge…",
+    Function = FillCmdLine,
+    Arguments = "git merge " },
+  { text = "Merge fetched…",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git merge origin/master -m ""' },
+  mSep,
+  { text = "Rebase…",
+    Function = FillCmdLine,
+    Arguments = "git rebase -i " },
+  { text = "Stash…",
+    Function = FillCmdLine,
+    Arguments = "git stash " },
+  { text = "Stash apply…",
+    Function = FillCmdLine,
+    Arguments = "git stash apply" },
+  { text = "Merge commit to…",
+    Function = FillCmdLine,
+    Arguments = "git cherry-pick " },
+  mSep,
+  { text = "Init git here",
+    CmdLine = "git init" },
+  { text = "&Blame…",
+    Function = FillCmdLine,
+    Arguments = "git blame -w " },
+  { text = "&Add…",
+    Function = FillCmdLine,
+    Arguments = "git add " },
+  { text = "Clone git…",
+    Function = FillCmdLine,
+    Arguments = "git clone " },
+  { text = "Remote add…",
+    Function = FillCmdLine,
+    Arguments = "git remote add " },
+  mSep,
+  { text = "&Help",
+    Function = FillCmdLine,
+    Arguments = "git help " },
+  { text = "Global config",
+    CmdLine = "git config --global -l" },
+  { text = "Local config",
+    CmdLine = "git config -l" },
+  { text = "About        &?",
+    CmdLine = "git --version" },
+    --CmdLine = "git gui version" },
+  mSep,
+  { text = "Status       &1",
+    CmdLine = "git status" },
+} --- mItems
+
+---------------------------------------- Menu
+
+local mGitCommands = { -- Git commands
+  text = "&G - Git menu",
+
+  Area = "panels",
+
+  --MenuView = CfgData.MenuView,
+  MenuView = DefCfgData.MenuView,
+
+  Props = {
+    --Bottom = CfgData.ShowPath and Svn.Item.View,
+    RectMenu = {
+      Cols = 2,
+      --Cols = IsMoreCols and 2 or 1,
+      Order = "V",
+      --Separators = IsMoreCols and "V" or "",
+      --BoxKind = "R",
+      MenuAlign = "CM",
+      NocheckChar = " ",
+    }, -- RectMenu
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      BottomHotKeys = false,
+      ReturnToUMenu = false,
+    },
+  },
+
+  Items = mItems,
+} --- mGitCommands
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = "&G - Git menu",
+    Items = { mGitCommands },
+  },
+
+  ["GitMenu"] = mGitCommands,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

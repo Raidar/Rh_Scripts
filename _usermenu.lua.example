@@ -1,0 +1,65 @@
+--[[ Rh_Scripts ]]--
+-- This file is auto-generated. Don't edit.
+
+----------------------------------------
+--[[ description:
+  -- User menu.
+  -- Пользовательское меню.
+--]]
+---------------------------------------- Check
+local CErrorTitle = "Error: Rh_Scripts pack"
+local SInstallError = "Package is not properly installed:\n%s"
+local farError = function (Msg) return far.Message(Msg, CErrorTitle, nil, 'e') end
+
+if rawget(_G, 'context') == nil then
+  farError(SInstallError:format"LuaFAR context is required!")
+  return false
+end
+
+----------------------------------------
+local ext = ""
+if context.use.LFVer < 3 then ext = ".lua" end
+
+---------------------------------------- Items
+local ScriptsPath = "scripts\\Rh_Scripts\\"
+local EditorPath  = ScriptsPath.."Editor\\"
+local SamplesPath = ScriptsPath.."Samples\\"
+local EditorHandActions = EditorPath.."HandActions"..ext
+
+-- Rh_Scripts pack configurator.
+AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig"..ext)
+
+AddToMenu("evpc", ":sep:User Menus")
+-- Lua User Menu for Editor.
+AddToMenu("e", "LU&M for Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext)
+AddToMenu("c", "LUM for &Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Config")
+  -- Template insert assigned to key.
+AddToMenu("e", nil, "Ctrl+J", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Insert")
+  -- Characters kit assigned to key.
+AddToMenu("e", nil, "Ctrl+Shift+H", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Characters")
+-- Lua User Menu for Panels.
+AddToMenu("p", "LU&M for Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext)
+AddToMenu("c", "LUM for &Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext, "Config")
+-- farlua scripts User Menu.
+AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."flsLUM\\flsLUM"..ext)
+AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."flsLUM\\flsLUM"..ext, "Config")
+
+AddToMenu("evpc", ":sep:User Scripts")
+  -- Void Truncater.
+AddToMenu("e", nil, "Ctrl+T", EditorPath.."VoidTruncate"..ext, "FileText")
+  -- Word Completion.
+AddToMenu("e", nil, "Ctrl+Space", EditorHandActions, "WC:Execute")
+AddToMenu("c", "&Word Completion", nil, EditorHandActions, "WC:Config")
+AddToMenu("c", "&Auto Completion", nil, EditorHandActions, "WC:AutoCfg")
+  -- Text Templates.
+AddToMenu("e", nil, "Shift+Space", EditorHandActions, "TT:Execute")
+AddToMenu("c", "&Text Templates", nil, EditorHandActions, "TT:Config")
+AddToMenu("c", "A&uto Templates", nil, EditorHandActions, "TT:AutoCfg")
+AddToMenu("c", "Update Templates", nil, EditorHandActions, "TT:Update")
+
+  -- Keys information.
+AddToMenu("evp", "&Keys information", nil, SamplesPath.."KeysInfo"..ext)
+
+---------------------------------------- Residents
+
+--------------------------------------------------------------------------------

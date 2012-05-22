@@ -1,0 +1,45 @@
+--[[ LuaUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- "No menu" menu.
+  -- Меню "Нет меню".
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "None",
+  name = "lum",
+  path = "Rh_Scripts.LuaUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separator
+local mNoneSep = {
+  text = L.NoUserMenu,
+  separator = true,
+} ---
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.UserMenu,
+    Items = { mNoneSep },
+  },
+} ---
+
+return Data
+--------------------------------------------------------------------------------

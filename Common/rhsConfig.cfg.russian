@@ -1,0 +1,63 @@
+do local t = {}; Data = t
+  t["rAutoActions"] = {}
+  do local t = {}; Data["mLuaEUM"] = t
+    t["Title"] = "LU&M для Редактора"
+    do local t = {}; Data["mLuaEUM"]["config"] = t
+      t["Title"] = "LUM для &Редактора"
+    end
+  end
+  t["rVoidTruncate"] = {}
+  do local t = {}; Data["mTextTemplate"] = t
+    t["Title"] = "&Текстовые шаблоны"
+    do local t = {}; Data["mTextTemplate"]["config"] = t
+      t["Title"] = "&Текстовые шаблоны"
+    end
+  end
+  do local t = {}; Data["mLuaPUM"] = t
+    t["Title"] = "LU&M для Панелей"
+    do local t = {}; Data["mLuaPUM"]["config"] = t
+      t["Title"] = "LUM для  &Панелей"
+    end
+  end
+  do local t = {}; Data["sLUMs"] = t
+    t["Title"] = "Меню UM"
+  end
+  do local t = {}; Data["mflsLUM"] = t
+    t["Title"] = "LUM дл&я fl скриптов"
+    do local t = {}; Data["mflsLUM"]["config"] = t
+      t["Title"] = "LUM дл&я fl скриптов"
+    end
+  end
+  do local t = {}; Data["mAutoComplete"] = t
+    do local t = {}; Data["mAutoComplete"]["config"] = t
+      t["Title"] = "&АвтоЗавершение"
+    end
+  end
+  do local t = {}; Data["sSamples"] = t
+    t["Title"] = "Примеры"
+  end
+  t["mLuaEUM_Insert"] = {}
+  do local t = {}; Data["mWordComplete"] = t
+    t["Title"] = "&Завершение слов"
+    do local t = {}; Data["mWordComplete"]["config"] = t
+      t["Title"] = "&Завершение слов"
+    end
+  end
+  do local t = {}; Data["mKeysInfo"] = t
+    t["Title"] = "Информация о &клавишах"
+  end
+  do local t = {}; Data["sScripts"] = t
+    t["Title"] = "Скрипты"
+  end
+  do local t = {}; Data["mAutoTemplate"] = t
+    do local t = {}; Data["mAutoTemplate"]["config"] = t
+      t["Title"] = "А&втоШаблоны"
+    end
+  end
+  do local t = {}; Data["mTT_Update"] = t
+    do local t = {}; Data["mTT_Update"]["config"] = t
+      t["Title"] = "Обновить шаблоны"
+    end
+  end
+  t["um"] = {}
+end

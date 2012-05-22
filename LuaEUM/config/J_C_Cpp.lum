@@ -1,0 +1,291 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Template Insert: c/c++.
+  -- Вставка шаблона: c/c++.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- ----
+local mInsert = {
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+  Props = {
+    RectMenu = { Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1 },
+    }, -- RectMenu
+  }, -- Props
+  CfgData = { UMenu = { TextNamedKeys = false } },
+
+  Items = {
+    -- Header --
+    { text = " ", Label = true },
+    { text = "   <a>   ", Label = true },
+    { text = "Shift+<a>", Label = true },
+    { text = " Ctrl+<a>", Label = true },
+    { text = " Alt+<a> ", Label = true },
+    -- B -- block / do-while / break
+    { text = "B", Label = true },
+    { text = "block",
+      Macro = "{ @Here }@Back",
+      AccelStr = "b" },
+    { text = "full block",
+      Macro = "{@IndEnter  //@IndEnter@Left@2} // ",
+      AccelStr = "B" },
+    { text = "do-while",
+      Macro = "do@Here@IndEnterwhile ;@Back@IndEnter  @",
+      AccelStr = "C+B" },
+    { text = "break",
+      Plain = "break;",
+      AccelStr = "A+B" },
+    -- C -- switch-case / continue
+    { text = "C", Label = true },
+    { text = "switch",
+      Macro = "switch(@Here) {@IndEnter}@Back",
+      AccelStr = "c" },
+    { text = "full switch",
+      Macro = "switch(@Here) {@IndEnter  case : ;@IndEnter@Left@2} // switch@Back",
+      AccelStr = "C" },
+    { text = "goto",
+      Macro = "goto ;@Left",
+      AccelStr = "C+C" },
+    { text = "continue",
+      Plain = "continue;",
+      AccelStr = "A+C" },
+    -- D -- for-do
+    { text = "D", Label = true },
+    { text = "for-do",
+      Macro = "for(@Here; ;)@Back",
+      AccelStr = "d" },
+    { text = "full for",
+      Macro = "for(@Here; ;) {@IndEnter  //@IndEnter@Left@2} // for@Back",
+      AccelStr = "D" },
+    { text = "double for",
+      Macro = "for(@Here, ; , ; ,)@Back",
+      AccelStr = "C+D" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "A+D" },
+    -- F -- function
+    { text = "F", Label = true },
+    { text = "function",
+      Macro = "@Here ()@Back",
+      AccelStr = "f" },
+    { text = "full func",
+      Macro = "@Here () {@IndEnter  //@IndEnter@Left@2} //@Back",
+      AccelStr = "F" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "C+F" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "A+F" },
+    -- I -- if-then/else
+    { text = "I", Label = true },
+    { text = "if-then",
+      Macro = "if (@Here)@Back",
+      AccelStr = "i" },
+    { text = "if-else",
+      Macro = "if (@Here)@IndEnterelse ;@Back",
+      AccelStr = "I" },
+    { text = "full if",
+      Macro = "if (@Here) {@IndEnter}@IndEnterelse {@IndEnter} // if@Back",
+      AccelStr = "C+I" },
+    { text = "",
+      --Plain = "",
+      separator = true,
+      AccelStr = "A+I" },
+    -- J -- if-then-do
+    { text = "J", Label = true },
+    { text = "if-do",
+      Macro = "if (@Here) {@IndEnter} // if@Back",
+      AccelStr = "j" },
+    { text = "",
+      --Plain = "",
+      separator = true,
+      AccelStr = "J" },
+    { text = "Index",
+      Plain = "Index",
+      AccelStr = "C+J" },
+    { text = "",
+      --Plain = "",
+      separator = true,
+      AccelStr = "A+J" },
+    -- L -- local / boolean
+    { text = "L", Label = true },
+    { text = "null",
+      Plain = "NULL",
+      AccelStr = "l" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "L" },
+    { text = "boolean",
+      Plain = "bool",
+      AccelStr = "C+L" },
+    { text = "void",
+      Plain = "void",
+      AccelStr = "A+L" },
+    -- N -- int / uint / float
+    { text = "N", Label = true },
+    { text = "int",
+      Plain = "int",
+      AccelStr = "n" },
+    { text = "u. int",
+      Plain = "unsigned int",
+      AccelStr = "N" },
+    { text = "float",
+      Plain = "float",
+      AccelStr = "C+N" },
+    { text = "double",
+      Plain = "double",
+      AccelStr = "A+N" },
+    --[[
+    -- Q -- class
+    { text = "Q", Label = true },
+    { text = "class",
+      --Macro = "",
+      separator = true,
+      AccelStr = "q" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "Q" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "C+Q" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "A+Q" },
+    --]]
+    -- R -- return
+    { text = "R", Label = true },
+    { text = "Result",
+      Plain = "Result",
+      AccelStr = "r" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "R" },
+    { text = "return",
+      Macro = "return ;@Left",
+      AccelStr = "C+R" },
+    { text = "",
+      --Plain = "",
+      separator = true,
+      AccelStr = "A+R" },
+    -- S -- string
+    { text = "S", Label = true },
+    { text = "char",
+      Plain = "char",
+      AccelStr = "s" },
+    { text = "c. char",
+      Plain = "const char",
+      AccelStr = "S" },
+    { text = "wide char",
+      Plain = "wchar_t",
+      AccelStr = "C+S" },
+    { text = "c.w. char",
+      Plain = "const wchar_t",
+      AccelStr = "A+S" },
+    -- U -- header / include
+    { text = "U", Label = true },
+    { text = "header",
+      Macro = "#ifndef @Here@IndEnter#define@IndEnter#endif //@Back",
+      AccelStr = "u" },
+    { text = "include",
+      Plain = "#include ",
+      AccelStr = "U" },
+    { text = "c include",
+      Macro = 'extern "C" {@IndEnter #include@Here@IndEnter}@Back',
+      AccelStr = "C+U" },
+    { text = "main",
+      Macro = "int main (int argc, char *argv[])@IndEnter{@IndEnter@Here@IndEnter}@Back  @",
+      AccelStr = "A+U" },
+    -- V -- type
+    { text = "V", Label = true },
+    { text = "Value",
+      Plain = "Value",
+      AccelStr = "v" },
+    { text = "",
+      --Plain = "",
+      separator = true,
+      AccelStr = "V" },
+    { text = "",
+      --Macro = "",
+      separator = true,
+      AccelStr = "C+V" },
+    { text = "sizeof",
+      Macro = "sizeof()@Left",
+      AccelStr = "A+V" },
+    -- W -- while-do
+    { text = "W", Label = true },
+    { text = "while-do",
+      Macro = "while (@Here)@Back",
+      AccelStr = "w" },
+    { text = "full while",
+      Macro = "while (@Here) {@IndEnter  //@IndEnter@Left@2} // while@Back",
+      AccelStr = "W" },
+    { text = "", -- with-do
+      --Macro = "with (@Here)@Back",
+      separator = true,
+      AccelStr = "CS+W" },
+    { text = "", -- full with
+      --Macro = "with (@Here) {@IndEnter  //@IndEnter@Left@2} // with@Back",
+      separator = true,
+      AccelStr = "A+W" },
+    -- X -- types
+    { text = "X", Label = true },
+    { text = "enum",
+      Macro = "enum { @Here };@Back",
+      AccelStr = "x" },
+    { text = "union",
+      Macro = "union { @Here };@Back",
+      AccelStr = "X" },
+    { text = "struct",
+      Macro = "struct { @Here };@Back",
+      AccelStr = "C+X" },
+    { text = "array",
+      Macro = "[@Here];@Back",
+      AccelStr = "A+X" },
+  } -- Items
+} --- mInsert
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+  },
+  ["Insert"] = mInsert,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

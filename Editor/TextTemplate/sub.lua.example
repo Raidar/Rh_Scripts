@@ -1,0 +1,35 @@
+-- TextTemplate
+-- Шаблоны для 'sub' (Subtitles).
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Data
+local Data = {
+  --[[DO]]--
+
+  -- Controls:
+  CharEnum = "%S",
+  CharsMin = 3,
+  --UseInside = false,
+  UseInside = true,
+  -- Templates:
+  regex = "lua";
+
+  --[[Templates]]-- Шаблоны:
+
+  -- New line sequence:
+  { find = "[`ё]\\[nNтТ]", plain = '\\N' },
+  -- Alignment sequence:
+  { find = "[`ё]\\([1-9])",     plain = '\\an%1' },
+  { find = "[`ё][`ё]\\([1-9])", plain = '%{\\an%1%}' },
+  -- Style sequences:
+  { find = "[`ё][iш]([01])",  plain = '%{\\i%1%}' },
+  { find = "[`ё][bи]([01])",  plain = '%{\\b%1%}' },
+  -- Замены слова "действительно":
+  { find = "ё([Вв])сд", plain = '%1 самом деле' },
+  { find = "ё([Ии])п",  plain = '%1 правда' },
+  { find = "ё([Ии])вс", plain = '%1 в самом деле' },
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------

@@ -1,0 +1,220 @@
+-- LUM
+
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "fls",
+  name = "lum",
+  path = "Rh_Scripts.flsLUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separators
+local Sep = {
+  separator = true,
+} ---
+
+local SepEditor = {
+  --text = L.flsAddsSepEditor,
+  separator = true,
+  Area = "editor",
+} ---
+
+---------------------------------------- Submenus
+local mComments = {
+  text = L.flsComments,
+  Area = "editor",
+
+  Items = {
+    --[[
+    { text = L.flsComments,
+      Script = 'editor/comment.lua', },
+    --]]
+    { text = L.flsCommAutoDo,
+      Script = 'editor/comment.lua',
+      ChunkArgs = { 'autocomment()' }, },
+    { text = L.flsCommAutoUn,
+      Script = 'editor/comment.lua',
+      ChunkArgs = { 'autouncomment()' }, },
+  },
+} --- mComments
+
+local mNavigation = {
+  text = L.flsNavigation,
+  Area = "editor",
+
+  Items = {
+    --[[
+    { text = L.flsNavNavMenu,
+      Script = 'editor/nav.lua', },
+    --]]
+    { text = L.flsNavNavigate,
+      Script = 'editor/nav.lua',
+      ChunkArgs = { 'navigate()' }, },
+    { text = L.flsNavCurrent,
+      Script = 'editor/nav.lua',
+      ChunkArgs = { 'navigate_current()' }, },
+    { text = L.flsNavAssociate,
+      Script = 'editor/nav.lua',
+      ChunkArgs = { 'source()' }, },
+  },
+} --- mNavigation
+
+local mEditorBlock = {
+  text = L.flsEditorBlock,
+  Area = "editor",
+
+  Items = {
+    { text = L.flsBlockToBegin,
+      Script = 'editor/block.lua',
+      ChunkArgs = { 'jumptoblockbegin()' },
+      Area = ";selected", },
+    { text = L.flsBlockToEnd,
+      Script = 'editor/block.lua',
+      ChunkArgs = { 'jumptoblockend()' },
+      Area = ";selected", },
+    { text = L.flsBlockIndLeft,
+      Script = 'editor/blockindent.lua',
+      ChunkArgs = { 'indentleft()' },
+      Area = ";selected", },
+    { text = L.flsBlockIndRight,
+      Script = 'editor/blockindent.lua',
+      ChunkArgs = { 'indentright()' },
+      Area = ";selected", },
+    { text = L.flsBlockSelStream,
+      Script = 'editor/select.lua',
+      ChunkArgs = { 'exselect()' }, },
+    { text = L.flsBlockSelColumn,
+      Script = 'editor/select.lua',
+      ChunkArgs = { 'exselect(true)' }, },
+  },
+} --- mEditorBlock
+
+local mSmartEdit = {
+  text = L.flsSmartEdit,
+  Area = "editor",
+
+  Items = {
+    { text = L.flsSmartKeyHome,
+      Script = 'editor/smartkeys.lua',
+      ChunkArgs = { 'smarthome()' }, },
+    { text = L.flsSmartKeyTab,
+      Script = 'editor/smartkeys.lua',
+      ChunkArgs = { 'smarttab()' }, },
+    --[[
+    { text = L.flsSmartKeyBS,
+      Script = 'editor/smartkeys.lua',
+      ChunkArgs = { 'smartbs()' }, },
+    --]]
+    Sep,
+    { text = L.flsSmartSymUp,
+      Script = 'editor/copysymbol.lua',
+      ChunkArgs = { 'copysymbol()' }, },
+    { text = L.flsSmartSymDown,
+      Script = 'editor/copysymbol.lua',
+      ChunkArgs = { 'copysymbol(true)' }, },
+  },
+} --- mSmartEdit
+
+local mSelectJump = {
+  text = L.flsSelectJump,
+  Area = "panels;selected",
+
+  Items = {
+    { text = L.flsSelJumpNext,
+      Script = 'panels/selection_jump.lua',
+      ChunkArgs = { 'selection_jump("next")' }, },
+    { text = L.flsSelJumpPrev,
+      Script = 'panels/selection_jump.lua',
+      ChunkArgs = { 'selection_jump("prev")' }, },
+    { text = L.flsSelJumpFirst,
+      Script = 'panels/selection_jump.lua',
+      ChunkArgs = { 'selection_jump("first")' }, },
+    { text = L.flsSelJumpLast,
+      Script = 'panels/selection_jump.lua',
+      ChunkArgs = { 'selection_jump("last")' }, },
+  },
+} --- mSelectJump
+
+local mPanelFilter = {
+  text = L.flsPanelFilter,
+  Items = {
+    { text = L.flsPanelFilterRun,
+      Script = 'panels/panelfilter.lua',
+      ChunkArgs = { 'filter()' }, },
+    { text = L.flsPanelFilterDel,
+      Script = 'panels/panelfilter.lua',
+      ChunkArgs = { 'delete_filter()' }, },
+  },
+  Area = "panels",
+} --- mPanelFilter
+
+local mCommandLine = {
+  text = L.flsCommandLine,
+  Area = "panels",
+
+  Items = {
+    { text = L.flsCmdLineAliases,
+      Script = 'panels/alias.lua', },
+    { text = L.flsCmdLineWinePath,
+      Script = 'panels/winepath.lua', },
+  },
+} --- mCommandLine
+
+local mAdditions = {
+  text = L.flsAdditions,
+  Items = {
+    { text = L.flsAddsCalculator,
+      Script = 'common/calc.lua',
+      ChunkArgs = {}, },
+    { text = L.flsAddsScreens,
+      Script = 'common/screens.lua', },
+    SepEditor,
+    { text = L.flsAddsSections,
+      Area = "editor",
+      Script = 'editor/sections.lua', },
+    { text = L.flsAddsMultiClip,
+      Area = "editor",
+      Script = 'editor/multiclip.lua', },
+    Sep,
+    { text = L.flsAddsReloadMacros,
+      Script = 'common/reload_macro.lua', },
+  },
+} --- mAdditions
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = "&farlua scripts",
+    Title = "fl scripts",
+
+    About = { 
+      Author = "maxfl",
+      Composer = "Aidar",
+      Mail = "gmaxfl@gmail.com",
+      Version = "0.3.5",
+    },
+
+    Items = {
+      mComments, mNavigation,
+      mEditorBlock, mSmartEdit, mSelectJump,
+      mPanelFilter, mCommandLine, mAdditions,
+    },
+  },
+} ---
+
+return Data
+--------------------------------------------------------------------------------

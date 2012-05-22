@@ -1,0 +1,193 @@
+--[[ LuaUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Common scripts.
+  -- Общие скрипты.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "Others",
+  name = "lum",
+  path = "Rh_Scripts.LuaUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separator
+local mSep = {
+  separator = true,
+} ---
+
+---------------------------------------- Quick Information
+local mQuickInfo = {
+  text = L.OthQuickInfo,
+  Items = {
+    -- LuaFAR version --
+    { text = L.OthQInfoVers,
+      Script = "LumScripts.lua",
+      Function = "LuaFarVersion",
+      Relative = "default" },
+    -- Global variables --
+    { text = L.OthQInfoGlobal,
+      Script = "LumScripts.lua",
+      Function = "GlobalVarsData",
+      Relative = "default" },
+  } ---
+} --- mQuickInfo
+
+---------------------------------------- LuaFAR context
+local mLFcontext = {
+  text = L.OthLFcontext,
+  Items = {
+    -- detect type --
+    { text = L.OthLFcDetectType,
+      Script = "LumContext.lua",
+      Function = "detType",
+      Relative = "default" },
+    -- Open files list --
+    { text = L.OthLFcOpenFiles,
+      Script = "LumContext.lua",
+      Function = "OpenFilesList",
+      Relative = "default" },
+    -- Info --
+    { text = L.OthLFcSepInfo,
+      separator = true,
+    },
+    -- Brief Info --
+    { text = L.OthLFcBriefInfo,
+      Script = "LumContext.lua",
+      Function = "briefInfo",
+      Relative = "default" },
+    -- Information --
+    { text = L.OthLFcDetailedInfo,
+      Script = "LumContext.lua",
+      Function = "detailedInfo",
+      Relative = "default" },
+    -- types table --
+    { text = L.OthLFcTypesTable,
+      Script = "LumContext.lua",
+      Function = "typesTable",
+      Relative = "default" },
+    -- types info --
+    { text = L.OthLFcTypesInfo,
+      Script = "LumContext.lua",
+      Function = "typesInfo",
+      Relative = "default" },
+    mSep,
+    -- Testing detect type --
+    { text = L.OthLFcTestDetType,
+      Script = "LumContext.lua",
+      Function = "testType",
+      Relative = "default" },
+  } ---
+} --- mLFcontext
+
+-- [[
+---------------------------------------- Scripts checking
+local mFuncScripts = {
+  text = "Calls of &functions",
+  Items = {
+    -- Global environment --
+    { text = "&Global environment",
+      Script = "LumScripts.lua",
+      Function = "GlobalEnvironment",
+      Relative = "default" },
+    -- Function environment --
+    { text = "&Function environment",
+      Script = "LumScripts.lua",
+      Function = "FunctionEnvironment",
+      Relative = "default" },
+    mSep,
+    -- Default arguments of function --
+    { text = "&Default args of func",
+      Script = "LumScripts.lua",
+      Function = 'DefaultArguments(34, "abc", true)',
+      Relative = "default" },
+    -- Arguments of function --
+    { text = "&Arguments of function",
+      Script = "LumScripts.lua",
+      Function = 'FunctionArguments',
+      --Arguments = "34",
+      Arguments = '34, "abc", true',
+      Relative = "default" },
+    { text = "&In-func-name arguments",
+      Script = "LumScripts.lua",
+      Function = 'FunctionArguments(34, "abc", true)',
+      Relative = "default" },
+    { text = "&Table function call",
+      Script = "LumScripts.lua",
+      Function = 'Var.SubFunction',
+      Relative = "default" },
+    { text = "&Module function call",
+      Script = "LumScripts.lua",
+      Function = 'LumScripts.ModFunction',
+      Relative = "default" },
+  } ---
+} --- mFuncScripts
+--]]
+---------------------------------------- Hello, world!
+local mHelloWorld = {
+  text = L.OthHelloWorld,
+  --AccelKey = "W",
+  Items = {
+    -- "Hello" message --
+    { text = L.OthHelloWorldMsg,
+      Script = "LumScripts.lua",
+      Function = "HelloWorldMsg",
+      Relative = "default" },
+    -- "Hello" text insert --
+    { text = L.OthHelloWorldText,
+      Script = "LumScripts.lua",
+      Function = "HelloWorldText",
+      Relative = "default" },
+  } ---
+} --- mHelloWorld
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- ----
+local mScripts = { -- Other scripts
+  text = L.OtherScripts,
+  Items = {
+    mQuickInfo,     -- Quick Information
+    mLFcontext,     -- LuaFAR context
+    mFuncScripts,   -- Environment and functions call
+    mSep,
+    mHelloWorld,    -- Hello, world! sample
+    --[[
+    -- Own LUM display --
+    { text = "Show O&wn LUM menu",
+      Script = "Rh_Scripts\\OwnLUM\\OwnLUM.lua",
+      Area = "editor",
+      Relative = "scripts" },
+    --]]
+  } ---
+} --- mScripts
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.OtherScripts,
+    Items = { mScripts },
+    --Items = { mSep, mScripts },
+  },
+
+  --["Other Scripts"] = mScripts,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

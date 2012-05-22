@@ -1,0 +1,82 @@
+﻿[Used keys]: Используемые клавиши
+TortoiseSVN / Git
+
+A — Add         / =
+B — Blame       / =
+C — Commit      / =
+D — Diff        / =
+E — clEan up    / —
+F — Find [changes]      / difF
+G — Graph [of changes]  / =
+H — Help        / =
+I — Ignore      / —
+J —
+K — checKout    / fetch?
+L — Log         / =
+M — Merge       / =
+N — reName      / move
+O — resOlve     / —
+P — Patch
+Q —
+R — Repo        / —
+S — Settings    / —
+T — branch+Tag  / Tag
+U — Update      / (fetch)
+V — (revert)    / =
+W — sWitch      / =
+X —
+Y —
+Z —
+
+1 — status      / =
+2 — —           / log 2
+3 — unlock      / —
+4 —
+5 —
+6 —
+7 —
+8 — update to   / —
+9 —
+0 —
+
+! — properties  / —
+@ —
+# — lock        / —
+$ —
+% —
+^ — —           / new branch
+& —
+* —
+( —
+) —
+
+` —
+- —
+= —
+
+~ —
+_ —
++ —
+
+[ —
+] —
+{ —
+} —
+
+; —
+: —
+
+'' —
+"" —
+
+, —
+. —
+< —
+> —
+
+/ — —           / diff w/commited
+\ —             / diff w\current
+? — about       / =
+| —
+
+――――――――

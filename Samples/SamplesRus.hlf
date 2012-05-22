@@ -1,0 +1,24 @@
+﻿.Language=Russian,Russian (Русский)
+.PluginContents=Образцы скриптов
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Образцы скриптов#
+  Образцы скриптов — скрипты для демонстрации некоторых возможностей LuaFAR.
+
+    ~Файлы скриптов~@Smp_ScriptFiles@
+
+  Ссылки:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+
+@Help
+ ~Образцы скриптов~@Contents@
+
+@Smp_ScriptFiles
+$ #Файлы скриптов#: Образцы скриптов
+    \37GenGUIDs.lua\-   — ¦Генерация и вставка GUID в текущий редактор.
+    \37KeysInfo.lua\-   — ¦Преобразования представлений (кодов) клавиш.
+
+ ~Содержание~@Contents@

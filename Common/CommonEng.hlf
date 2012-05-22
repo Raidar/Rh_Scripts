@@ -1,0 +1,213 @@
+﻿.Language=English,English
+.PluginContents=Common scripts
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Common scripts#
+  Common scripts are a set of scripts for use in utilities.
+
+    ~Script files~@Cmn_ScriptFiles@
+
+  Links:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+
+@Help
+ ~Common scripts~@Contents@
+
+@Cmn_ScriptFiles
+$ #Script files#: Common scripts
+    \37CharsItems.lua\-     — ¦Menu of characters output items@CharsItems@.
+    \37CustomMenu.lua\-     — ¦~Custom menu~@CustomMenu@.
+    \37FilterMenu.lua\-     — ¦~Filtration menu~@FilterMenu@
+    \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
+    \37MenuTexter.lua\-     — ¦~Text-maker for menu~@MenuTexter@
+
+    \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
+
+ ~Contents~@Contents@
+
+@CustomMenu
+$ #Custom menu# (CustomMenu)
+  CustomMenu —  is a kind of menu based on Lua‑tables (with user menu).
+ It is used in ~LUM~@<..\LuaUM\>Contents@ for output loaded table
+and work with it.
+
+    #Basic links#
+      ~Menu control~@<..\LuaUM\>LUM_Control@
+      ~Menu‑table items~@<..\LuaUM\>LUM_MenuItems@
+
+ ~Contents~@Contents@
+
+@FilterMenu
+$ #Filtration menu# (FilterMenu)
+  FilterMenu is a kind of menu with feature of filtration for menu items.
+ A filtration is perform when user press character keys in menu.
+If a menu item matches the filter conditions, it is output to menu.
+
+  Parameters of menu output function is similar to far.Menu() parameters.
+FilterMenu properties are specified as fields of Filter table in Properties.
+
+    ~Menu properties~@FM_Props@
+
+ ~Contents~@Contents@
+
+@FM_Props
+$ #Menu properties#: FilterMenu
+  #Pattern# (string) — ¦Initial filter pattern.
+
+  #CharsText# (string) — ¦Output format for filter pattern-string.
+  — ¦By default: \37*[%s]\-
+  — ¦Pattern is shown in menu title.
+
+  #ItemsText# (string) — ¦Output format for number of output menu items
+from common number of all existing menu items.
+  — ¦By default: \37(%d / %d)\-
+  — ¦Numbers are shown in menu bottom title.
+
+  #CheckText# (string) — ¦Output format for used filter name.
+  — ¦By default: \37[%s]\-
+  — ¦Filter name is shown in menu bottom title.
+
+  #ShowCheck# (bool) — ¦Flag for output used filter name.
+
+  #CheckItem# — ¦~Information for checking menu item~@FM_Props_Check@
+in order to filter.
+
+ ~Contents~@Contents@       ~Filtration menu~@FilterMenu@
+
+@FM_Props_Check
+$ #Checking menu item#: FilterMenu
+  Information for checking menu item in order to filter
+may be represent variously:
+
+  1. #function# — ¦a check function of ~specified format~@FM_Props_CheckItem@.
+    ¦In this mode function must be make a full checking
+of passed parameters and generate correct result.
+
+  2. #string# — ¦a name of ~standard check function~@FM_Props_CheckStds@.
+    ¦Before function call it is made checking for pattern present,
+and text parameter is match to lower case.
+
+  3. #table# — ¦a table with ~filtration parameters~@FM_Props_CheckArgs@.
+    ¦In this case wrapper function is created, in which:
+  — ¦all the filtration parameters specified in the table are applied.
+  — ¦function, specified in #CheckItem# is called by method 1 or 2.
+
+    ~Filtration parameters~@FM_Props_CheckArgs@
+    ~Format of check function~@FM_Props_CheckItem@
+    ~Standard check functions~@FM_Props_CheckStds@
+
+ ~Contents~@Contents@       ~Menu properties~@FM_Props@
+
+@FM_Props_CheckArgs
+$ #Filtration parameters#: FilterMenu
+  #CheckItem# (string, function) — ¦~Check function~@FM_Props_Check@.
+
+  The rest is in order to use in function:
+
+  #Sub# (string) — ¦Substring pattern for item text.
+  — ¦It defines pattern of substring compared with filter pattern.
+  — ¦It allows to choose text part that is used in filtration.
+  — ¦It's used on variable position of choosed substring.
+  — ¦If it is no substring, parameters described below are used.
+
+  #Pos# & #End# (number) — ¦Positions of substring for item text.
+  — ¦They are define position of text substring compared with pattern.
+  — ¦They allow to choose text part that is used in filtration.
+  — ¦They are used on fixed position of choosed substring.
+
+  #Left# & #Right# (string) — ¦Filter pattern parts.
+  — ¦They are added into start and end of pattern.
+  — ¦They allow do not input changeless part of pattern.
+
+  #MatchCase# (bool) — ¦Indicator of comparing with match case.
+
+  #Name# (string) — ¦Filter name for show in menu.
+
+ ~Contents~@Contents@       ~Checking menu item~@FM_Props@
+
+@FM_Props_CheckItem
+$ #Format of check function#: FilterMenu
+  \37--[[\- Parameters:
+    Text - menu item text.
+    Pattern - filtration pattern.
+    Item - current menu item.
+  \37--]]\-
+  \37function\- <name> \37(Text, Pattern, Item) --> (pos, end | nil)\-
+    \37--\- Processing \37--\-
+    \37--\- Return nil, if item does not match the conditions, otherwise:
+    \37return fpos, fend --\- Positions for marking menu item text
+  \37end --\-
+
+ ~Contents~@Contents@       ~Checking menu item~@FM_Props@
+
+@FM_Props_CheckStds
+$ #Standard check functions#: FilterMenu
+  #plain# — Usual checking a text for plain pattern.
+    ¦The pattern is considered as a plain text. Function is used by default.
+
+  #pattern# — Simple checking a text for Lua-pattern.
+    ¦The pattern is considered as a Lua regular expression.
+
+  #dos# — Standard checking pathes, file and directory names for pattern.
+    ¦The pattern is considered as expression with wildcards:
+  \37?\- — one character, \37*\- — zero or more characters.
+
+ ~Contents~@Contents@       ~Checking menu item~@FM_Props@
+
+@MenuCaller
+$ #Caller of menu with chosen kind# (MenuCaller)
+  MenuCaller is a kind of menu to load script with chosen menu kind
+and to run this menu with specified parameters.
+
+  First 3 parameters of menu output function is similar to far.Menu() parameters.
+Additional 4th parameter allows to define function for menu call.
+
+  MenuCaller properties are specified as fields of Caller table in Properties.
+
+ ~Contents~@Contents@
+
+@MenuTexter
+$ #Text‑maker for menu# (MenuTexter)
+  MenuTexter is a kind of menu with defining needful text format for menu items.
+
+  First 3 parameters of menu output function is similar to far.Menu() parameters.
+Additional 4th parameter allows to define function for menu call
+(when it is equal \37nil\- far.Menu is used).
+If parameter is equal \37false\- menu items table is returned.
+(Otherwise it is also returned menu items table.)
+
+  MenuTexter properties are specified as fields of Texter table in Properties.
+These properties@TM_Props@ is similar to properties of user menu display
+(see "Text of menu items"@<..\LuaUM\>LUM_config@ section).
+
+ ~Contents~@Contents@
+
+@rhsConfig
+$ #Rh_Scripts pack configurator# (rhsConfig)
+  rhsConfig is a script for customizing Rh_Scripts package.
+ It allows to choose only needful menu items and resident modules.
+  A \37rhsConfig.cfgrus\- file is an example of configuration with russian
+names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
+
+    ~Menu items~@<..\Docs\>RhS_LFE_MenuItems@
+    ~Handlers~@<..\Docs\>RhS_LFE_Handlers@
+    ~Titles of items~@rhsConfig_Title@
+
+  \34Notice\-: ¦Resident modules are executed automatically
+when user performes specific actions.
+The execution may corrupt or destroy your information.
+Therefore read carefully a description of operations
+executed by resident modules before using them.
+
+ ~Contents~@Contents@
+
+@rhsConfig_Title
+$ #Titles of items#: rhsConfig
+  Titles using specifics:
+ — ¦To specify item title by default clear current title of this item.
+ — ¦To exclude item from LuaFAR for Editor menu use string with one space only.
+
+ ~Contents~@Contents@       ~Rh_Scripts configurator~@rhsConfig@

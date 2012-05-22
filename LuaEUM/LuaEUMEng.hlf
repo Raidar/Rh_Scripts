@@ -1,0 +1,89 @@
+﻿.Language=English,English
+.PluginContents=Lua User Menu for Editor
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Lua User Menu for Editor# (~LuaEUM~)
+  LuaEUM is a variant of LUM utility, used for work in FAR editor.
+
+    ~Menu items~@LUM_Items@
+    ~Files of utility~@LUM_Files@
+
+  Links:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~LuaEUM~@Contents@
+
+@LUM_Items
+$ #Menu items#: LuaEUM
+  Submenus:
+    ~Template insert~@LUM_TplIns@ — ¦insert standard templates of text.
+
+ ~Contents~@Contents@
+
+@LUM_Files
+$ #Files of utility#: LuaEUM
+  Files:
+    \37LuaEUM.lua\-     — LuaEUM menu: Implementation.
+    \37LuaEUMer.lua\-   — LuaEUM settings: Configurator.
+
+ ~Contents~@Contents@
+
+@LUM_TplIns
+$ #Template insert#: LuaEUM
+  A "Template insert" menu allows to insert standard templates of text.
+
+  A recommended scheme of binding tempates to keys is:
+
+ \37─\-─┬───────────────┬───────────────┬───────────────┬───────────────┬─
+ \37╲ │     <a>       │   Shift+<a>   │   Ctrl+<a>    │   Alt+<a>     │\-
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37A\- │ ?             │ ?             │ ?             │ ?             │
+ \37B\- │ block         │ full block    │ repeat-until  │ break         │
+ \37 \- │               │               │ do-while      │               │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37C\- │ case /        │ full case     │ ?             │ continue      │
+ \37 \- │ switch        │ full switch   │               │               │
+ \37D\- │ for-loop      │ full for      │ down for      │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37E\- │ exception     │ ?             │ ?             │ Error         │
+ \37F\- │ function      │ full func     │ spec func     │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37G\- │ gen-loop      │ full gen      │ spec gen      │ ?             │
+ \37H\- │ ?             │ ?             │ ?             │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37I\- │ if-then       │ if-else       │ full if       │ ?             │
+ \37J\- │ spec if       │ spec if       │ Index         │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37K\- │ ?             │ ?             │ ?             │ ?             │
+ \37L\- │ nil / null    │ ?             │ boolean       │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37M\- │ ?             │ ?             │ ?             │ ?             │
+ \37N\- │ integer /     │ longint?      │ extended      │ ?             │
+ \37 \- │ signed int    │ unsigned int  │ float(ing)    │               │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37O\- │ ?             │ ?             │ ?             │ ?             │
+ \37P\- │ procedure     │ full proc     │ ?             │ ?             │  
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37Q\- │ class         │ full class    │ ?             │ ?             │  
+ \37R\- │ Result        │ ?             │ return / exit │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37S\- │ string        │ ?             │ ?             │ ?             │   
+ \37T\- │ try-block?    │ ?             │ ?             │ ?             │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37U\- │ module /      │ require /     │ spec require  │ spec module   │
+ \37 \- │ unit          │ uses/include  │ full uses     │ program       │
+ \37V\- │ Value         │ ?             │ ?             │ ?             │ 
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37W\- │ while-loop    │ full while    │ with-block    │ full with     │
+ \37X\- │ some type     │ some type     │ some type     │ some type     │
+ \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37Y\- │ ?             │ ?             │ ?             │ ?             │
+ \37Z\- │ ?             │ ?             │ ?             │ ?             │   
+ \37─\-─┴───────────────┴───────────────┴───────────────┴───────────────┴─
+
+ ~Contents~@Contents@

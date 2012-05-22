@@ -1,0 +1,35 @@
+-- TextTemplate
+-- Примеры шаблонов.
+
+--------------------------------------------------------------------------------
+-- Make Result upper.
+local function upperRes (Cfg) --> (string)
+  return Cfg.Template.Result:upper()
+end --
+
+---------------------------------------- Data
+local Data = {
+  -- Controls:
+  CharEnum = "%S",
+  CharsMin = 3,
+  UseInside = false,
+  -- Templates:
+  --regex = "lua";
+
+  -- Special signs -- Спец. знаки:
+  { find = "(c)",  plain = '©', regex = false },
+  { find = "(r)",  plain = '®', regex = false },
+  { find = "(tm)", plain = '™', regex = false },
+
+  -- Test templates -- Тестовые шаблоны:
+  --{ find = "(text)",  replace = '%1%1', regex = true },
+  --{ find = "(текст)", replace = '%1%1', regex = true },
+
+  -- Make upper first letter in sentence.
+  -- Сделать заглавной первую букву в предложении.
+  -- (CharEnum = '.', UseInside = true!)
+  { find = "[%.%!%?] %l", apply = upperRes, regex = true },
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------

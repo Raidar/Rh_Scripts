@@ -1,0 +1,431 @@
+--[[ LuaUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Characters kit.
+  -- Набор символов.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+local ChItems = require "Rh_Scripts.Common.CharsItems"
+local ChKeys  = ChItems.Keys
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+-- [[
+--local datas = require 'context.utils.useDatas'
+--local logProps = { pairs = datas.cfgpairs }
+local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--]]
+
+--------------------------------------------------------------------------------
+local unit = {}
+
+---------------------------------------- Locale
+local Custom = {
+  label = "Chars",
+  name = "lum",
+  path = "Rh_Scripts.LuaUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Items
+local List = {}
+
+local Order, Data, Props
+local Keys = "AccelKey"
+
+local Groups = {
+  Chars = true,
+  Maths = true,
+  Punct = true,
+  Techs = true,
+  Draws = true,
+} ---
+
+local Texts = {
+  CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0 },
+  CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0 },
+  MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0 }, -- TODO
+  MathsScripts = { Group = "Maths", Hot = "X", text = 0, Title = 0 },
+  MathsIndexes = { Group = "Maths", Hot = "O", text = 0, Title = 0 },
+  PunctSymbols = { Group = "Punct", Hot = "`", text = 0, Title = 0 },
+  PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0 },
+  Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0 }, -- TODO
+  Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0 }, -- TODO
+} ---
+
+do
+  local pairs = pairs
+  local textFmt = "&%s - %s"  -- m/b utf-8 string
+  local titleFmt = "%s: %s"   -- m/b utf-8 string
+
+-- Localize value in Groups:
+for k, v in pairs(Groups) do
+  Groups[k] = L["Chs"..k]
+end --
+
+-- Localize text & Title in Texts:
+for k, v in pairs(Texts) do
+  local text = "Chs"..k
+  text = L[text] or text
+  v.text  = textFmt:format(v.Hot, text)
+  v.Title = titleFmt:format(Groups[v.Group], text)
+end --
+
+end -- do
+
+----------------------------------------
+local Chars = {}
+
+do
+  local U = unicode.utf8.char
+  Chars.BS = U(0x008)
+  Chars.LF = U(0x00A)
+  Chars.CR = U(0x00D)
+end -- do
+
+----------------------------------------
+do
+  local DefConfig = {
+    Name  = "",
+    text  = "",
+    Title = "",
+
+    Props = {
+      Bottom = L.EscToQuit,
+    }, --
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = true,
+      }, --
+    }, --
+  } ---
+  local setmetatable = setmetatable
+
+-- Таблица для конфигурации меню.
+function unit.MenuConfig (Name, Default) --> (table)
+  local Config, Default = {}, Default == nil and true or Default
+  if Default then Config.__index = DefConfig end
+
+  Config.Name  = Name
+  Config.text  = Texts[Name].text
+  Config.Title = Texts[Name].Title
+  if Default then return setmetatable(Config, Config) end
+
+  return Config
+end ----
+
+end -- do
+
+do
+  local MenuCfg = unit.MenuConfig
+  local ChsMenu = ChItems.CharsMenu
+
+-- Сформировать меню из набора символов.
+function unit.Menu (Cfg, Props, Data, Keys)
+  local IsCfg = type(Cfg) == 'table'
+  local Keys = Keys or "AccelKey"
+  local Name = IsCfg and Cfg.Name or Cfg
+
+  List[Name] = ChsMenu(IsCfg and Cfg or MenuCfg(Name), Props, Data, Keys)
+end ----
+
+end -- do
+
+-- Использовать пробелы как обычные символы.
+function unit.UseSpace (Name) --| List[Name].Items
+  ChItems.List.SetLabelItemsText(List[Name].Items, " ", "_")
+  ChItems.List.SetKeyItemsField(List[Name].Items, "Space$", false)
+end ----
+
+-- Использовать компактное меню для умещения на экране.
+function unit.CompactMenu (Name) --| List[Name].Props.RectMenu
+  local RectMenu = List[Name].Props.RectMenu
+  --RectMenu.BoxKind = ""
+  --RectMenu.NoShadow = true
+  --RectMenu.MenuEdgeH = 0
+  RectMenu.CompactText = true
+  RectMenu.Separators = "V"
+end ----
+
+---------------------------------------- CHARACTERS
+--[===[
+-- Sample characters:
+
+-- Customary chars:
+--Data = "_a_b_A_B"
+--Data = "_a_b_c_A_B_C"
+Data = "_a_b_c_d_A_B_C_D"
+--Data = "_a_b_c_d_e_A_B_C_D_E"
+--Data = "_a_b_c_d_e_f_g_A_B_C_D_E_F_G"
+Props = {
+  --Order = "",
+  Size = 4,
+  Count = 2,
+  Length = 2,
+  Serial = true,
+  Heading = "Both",
+} ---
+
+List.Chars_Custom = { -- Characters
+  text = "&_ - Customary Chars",
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      Cols = Props.Size + 1, MenuAlign = "CM",
+      --Cols = 2+1, Order = "V", MenuAlign = "CM",
+      Fixed = DefFixedBoth,
+    },
+  }, -- Props
+
+  CfgData = { UMenu = DefUMenu },
+
+  Items = ChItems.CharsItems(Props, Data, "AccelKey"),
+} ---
+
+-- Alternate chars:
+Data = "_a_A_b_B_c_C_d_D"
+
+Props = {
+  --Order = "",
+  Size = 4,
+  Count = 2,
+  Length = 2,
+  Serial = false,
+  Heading = "Both",
+} ---
+
+List.Chars_Alters = { -- Characters
+  text = "&+ - Alternate Chars",
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      --Cols = 2+1, MenuAlign = "CM",
+      Cols = Props.Size + 1, Order = "V", MenuAlign = "CM",
+      Fixed = DefFixedBoth,
+    },
+  }, -- Props
+
+  CfgData = { UMenu = DefUMenu },
+
+  Items = ChItems.CharsItems(Props, Data, "AccelKey"),
+} --- Chars_Alters
+--]===]
+
+----------------------------------------
+-- LETTERS etc.
+---------------------------------------- Greek and extended
+Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
+Data  = -- Char + Shift
+        [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
+        [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?|]]..Chars.BS..
+        -- Ctrl + Shift
+        [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./°]]..Chars.CR..
+        [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>? ]]..
+        -- Alt + Shift
+        [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\ ]]..
+        [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?| ]]
+Props = {
+  Order = Order,
+  Serial = true,
+  --Heading = "Order",
+  Heading = "Both",
+} ---
+
+unit.Menu('CharsGreekEx', Props, Data, "AccelKey")
+unit.UseSpace('CharsGreekEx')
+unit.CompactMenu('CharsGreekEx')
+
+--logMsg(List.CharsGreekEx, "unit.Menu", 3, "", logProps)
+
+---------------------------------------- Cyrillic slavic
+Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
+Data  = -- Char + Shift
+        [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
+        [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,|()_+]]..Chars.BS..
+        -- Ctrl + Shift                                      
+        [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ°[]-=]]..Chars.CR..
+        [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ{}_+ ]]..
+        -- Alt + Shift
+        [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\  -= ]]..
+        [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|  _+ ]]..
+        -- Ctrl+Alt + Shift
+        [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ’ѭѩ…―  -= ]]..
+        [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$”ѬѨ&‾  _+ ]]
+Props = {
+  Order = Order,
+  Serial = true,
+  --Heading = "Order",
+  Heading = "Both",
+} ---
+
+unit.Menu('CharsCyrSlav', Props, Data, "AccelKey")
+--logMsg(List.CharsCyrSlav, "unit.Menu", 2, "", logProps)
+unit.UseSpace('CharsCyrSlav')
+unit.CompactMenu('CharsCyrSlav')
+
+----------------------------------------
+-- MATHEMATICS.
+---------------------------------------- Sub-/superscripts
+Order = [[1234567890=-`[]ijk/\ ]]
+Data  = -- Char + Shift
+        [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
+        [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ⁱʲᵏ, ]]..Chars.BS..
+        -- Ctrl + Shift                
+        [[1234567890+−=()ijk °]]..Chars.CR..
+        [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄     ‒ ]]..
+        -- Alt + Shift
+        [[ ⅔¾⅘⅚ ⅞        ᴵᴶᴷ/\ ]]..
+        [[ ⅖⅗ ⅝             ?| ]]
+Props = {
+  Order = Order,
+  Serial = true,
+  Heading = "Both",
+} ---
+
+Keys = {
+  Kind = "AccelKey";
+  ChKeys.SVKeyValue,    ChKeys.SVKeyFuncs.S,
+  ChKeys.SVKeyFuncs.C,  ChKeys.SVKeyFuncs.CS,
+  ChKeys.SVKeyFuncs.A,  ChKeys.SVKeyFuncs.AS,
+  ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
+} ---
+
+unit.Menu('MathsScripts', Props, Data, Keys)
+unit.UseSpace('MathsScripts')
+
+--logMsg(List.MathsScripts, "MathsScripts", 3)
+
+---------------------------------------- Other indexes
+Order = "aijklmnprtuvxy"
+Data  = -- Char + Shift
+        "ₐᵢⱼₖₗₘₙₚᵣₜᵤᵥₓ "..
+        "ᵃⁱʲᵏˡᵐⁿᵖʳᵗᵘᵛˣʸ"..
+        -- Ctrl + Shift
+        "              "..
+        "ᴬᴵᴶᴷᴸᴹᴺᴾᴿᵀᵁⱽ  "--..
+        -- Alt + Shift
+        --"           "
+Props = {
+  Order = Order,
+  Serial = true,
+  Heading = "Both",
+} ---
+
+unit.Menu('MathsIndexes', Props, Data, "AccelKey")
+
+----------------------------------------
+-- TECHNOLOGY.
+---------------------------------------- Arrows
+
+----------------------------------------
+-- PUNCTUATION.
+---------------------------------------- Symbols
+--[[
+/   - dot/point
+op  - prime + modifier apostroph
+qw  - quote
+b   - bullet
+--]]
+Order = [[/opqwb`1234567890-\ ]]
+Data  = -- Char + Shift
+        [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
+        [[․‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
+        -- Ctrl + Shift
+        [[‥‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
+        [[⁝ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
+        -- Alt + Shift
+        [[ ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
+        [[ ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
+--[[
+  \x0300—\x036F - Combining Diacritical Marks.
+  Greeks:
+  ʹ - Greek Numeral Sign (Dexia keraia)
+  ͵ - Greek Lower Numeral Sign (Aristeri keraia)
+  ͺ - Greek Ypogegrammeni
+  ΄ - Greek Tonos
+  ΅ - Greek Dialytika Tonos
+  \x0483-\x0487 Combining Cyrillic
+  etc
+--]]
+Props = {
+  Order = Order,
+  Serial = true,
+  Heading = "Both",
+} ---
+
+unit.Menu('PunctSymbols', Props, Data, "AccelKey")
+unit.UseSpace('PunctSymbols')
+
+---------------------------------------- Space & Hyphen
+Order = {
+  { '   " "', ' ', 'MULTIPLY' }, { ' "-"/Num-', '-', 'SUBTRACT' },
+  { '   "`"', '`', 'DIVIDE'   }, { ' "="/Num+', '=', 'ADD'      },
+} ---
+Data = {
+  { ' ', 'Thin sp.' }, { '­', 'Soft hyph.' }, { ' ', 'Fig. space ' }, { '‒', 'Fig. dash' },
+  { ' ', 'En space' }, { '–', ' En dash  ' }, { ' ', 'Punct. sp. ' }, { '−', '  Minus  ' },
+  { ' ', 'Em space' }, { '—', ' Em dash  ' }, { ' ', 'Hair space ' }, { '‐', ' Hyphen  ' },
+  { ' ', 'N-b. sp.' }, { '‑', 'N-b. hyph.' }, { ' ', 'Narrow nbsp' }, { '‧', 'Hyph. pt.' },
+  --{ '',  '        ' }, { '_', '          ' }, { '',  '           ' }, { '',  '         ' },
+} ---
+Props = {
+  Order = Order,
+  Serial = true,
+  Heading = "Both",
+  --___ = true, -- DEBUG
+} ---
+
+unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Data, "DupleKey")
+
+--logMsg(List.PunctSpaHyps.CfgData, "unit.Menu", 3, "", logProps)
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- ----
+local mCharacters = {
+  text  = L.ChsKitItem,
+  Title = L.CharacterKits,
+
+  --Inherit = false,
+
+  --Items = { List.Chars_Custom, List.Chars_Alters, List.CharsGreekEx },
+  Items = {
+    --{ text = Groups.Chars, separator = true, },
+    List.CharsGreekEx, List.CharsCyrSlav,
+    { text = Groups.Maths, separator = true, },
+    List.MathsScripts, List.MathsIndexes,
+    --{ text = Groups.Techs, separator = true, },
+    --List.Techs_Arrows,
+    { text = Groups.Punct, separator = true, },
+    List.PunctSymbols, List.PunctSpaHyps,
+  },
+} --- mCharacters
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.CharacterKits,
+
+    Items = { mCharacters },
+  },
+
+  ["Characters"] = mCharacters,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

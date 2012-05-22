@@ -1,0 +1,26 @@
+﻿.Language=Russian,Russian (Русский)
+.PluginContents=Lua User Menu для Панелей
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Пользовательское меню Lua для Панелей# (~LuaPUM~)
+  LuaPUM — вариант утилиты LUM, предназначенный для работы на панелях FAR.
+
+    ~Файлы утилиты~@LUM_Files@
+
+  Ссылки:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Пользовательское меню Lua~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~LuaPUM~@Contents@
+
+@LUM_Files
+$ #Файлы утилиты#: LuaPUM
+  Файлы:
+    \37LuaPUM.lua\-     — Меню LuaPUM: Реализация.
+    \37LuaPUMer.lua\-   — Настройка LuaPUM: Конфигуратор.
+
+ ~Содержание~@Contents@

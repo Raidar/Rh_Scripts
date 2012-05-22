@@ -1,0 +1,113 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Scripts for Editor.
+  -- Скрипты для редактора.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+local RedrawAll = farUt.RedrawAll
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "EScripts",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separator
+local Sep = {
+  separator = true,
+} ---
+
+---------------------------------------- Truncate
+local Truncate = (require "Rh_Scripts.Editor.VoidTruncate").Truncate
+
+local DoTrunc = {}
+for k, f in pairs(Truncate) do
+  DoTrunc[k] = function ()
+    f()
+    return RedrawAll()
+  end
+end --
+
+local mTruncate = {
+  text = L.LuaTruncateVoid,
+  Items = {
+    { text = L.LuaTruncCurLine,
+      Function = DoTrunc.Line },
+    { text = L.LuaTruncAllLines,
+      Function = DoTrunc.Text },
+    { text = L.LuaTruncEndLines,
+      Function = DoTrunc.File },
+    { text = L.LuaTruncFileText,
+      Function = Truncate.FileText },
+  } ---
+} --- mTruncate
+
+---------------------------------------- Unpair
+local mPairUnpair = {
+  text = L.LuaPairUnpair,
+  Area = "editor;selected",
+
+  Items = {
+    { text = L.LuaPairUnSingle, -- TEMP: Replace with Macro!
+      ['"Sequence"'] = [["
+$Sel.ProcB %l=len(%s);
+ $If(%l>2) %ss=substr(%s,1,%l-2); %l=clip(1,%ss); $End
+$Sel.ProcE"
+]], },
+    { text = L.LuaPairUnDouble, -- TEMP: Replace with Macro!
+      ['"Sequence"'] = [["
+$Sel.ProcB %l=len(%s);
+ $If(%l>4) %ss=substr(%s,2,%l-4); %l=clip(1,%ss); $End
+$Sel.ProcE"
+]], },
+  } ---
+} --- mPairUnpair
+
+---------------------------------------- Pair
+local mPairItems = { -- Paired Items
+  text = L.LuaPairItems,
+  Items = {
+    mPairUnpair -- Снятие пары
+  } ---
+} --- mPairItems
+
+---------------------------------------- ----
+local Scripts = {
+  text = L.LuaScripts,
+  Items = {
+    mTruncate,  -- Усечение
+    mPairItems, -- Парные элементы
+  } -- Items
+} --- Scripts
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.LuaScripts,
+    Items = { Scripts },
+    --Items = { Sep, Scripts },
+  },
+  --["Editor Scripts"] = Scripts,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

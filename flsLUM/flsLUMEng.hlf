@@ -1,0 +1,27 @@
+﻿.Language=English,English
+.PluginContents=LUM for fl_scripts
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Lua User Menu for work with fl_scripts# (~flsLUM~)
+  flsLUM is a variant of LUM utility, used for work
+with set of scripts #farlua scripts# (fl_scripts) of maxfl.
+
+    ~Files of utility~@LUM_Files@
+
+  Links:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~flsLUM~@Contents@
+
+@LUM_Files
+$ #Files of utility#: flsLUM
+  Files:
+    \37flsLUM.lua\-     — ¦flsLUM menu: Implementation.
+    \37flsLUMer.lua\-   — ¦flsLUM settings: Configurator.
+
+ ~Contents~@Contents@

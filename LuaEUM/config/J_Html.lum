@@ -1,0 +1,338 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Template Insert: html.
+  -- Вставка шаблона: html.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- ----
+local mInsert = {
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+  Props = {
+    RectMenu = { Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1 },
+    }, -- RectMenu
+  },
+  CfgData = { UMenu = { TextNamedKeys = false } },
+
+  Items = {
+    -- Header --
+    { text = " ", Label = true },
+    { text = "   <a>   ", Label = true },
+    { text = "Shift+<a>", Label = true },
+    { text = " Ctrl+<a>", Label = true },
+    { text = " Alt+<a> ", Label = true },
+    -- A -- anchor
+    { text = "A", Label = true },
+    { text = "Anchor href",
+      Sequence = '$Tpl.PairTagX(\"<a href=\\\"\", \"\\\"></a>\",4)',
+      AccelStr = "a" },
+    { text = "Anchor name",
+      Sequence = '$Tpl.PairTagX(\"<a name=\\\"\", \"\\\"></a>\",4)',
+      AccelStr = "A" },
+    { text = "A-r target",
+      Sequence = '$Tpl.PairTagX(\"<a name=\\\"\", \"\\\" target=\\\"\\\"></a>\",4)',
+      AccelStr = "C+A" },
+    { text = "Abbreviate",
+      Sequence = '$Tpl.PairTag(abbr,7)',
+      AccelStr = "A+A" },
+    -- B -- physical format
+    { text = "B", Label = true },
+    { text = "Bold",
+      Sequence = '$Tpl.PairTag(b,4)',
+      AccelStr = "b" },
+    { text = "Italic",
+      Sequence = '$Tpl.PairTag(i,4)',
+      AccelStr = "B" },
+    { text = "Bidi Orient",
+      Sequence = '$Tpl.PairTag(bdo,6)',
+      AccelStr = "C+B" },
+    { text = "Html Body",
+      Sequence = '$Tpl.PairTagM(body)', -- $Tpl.PairTag(body,7)
+      AccelStr = "A+B" },
+    -- C -- cite / quote
+    { text = "C", Label = true },
+    { text = "Cite",
+      Sequence = '$Tpl.PairTag(cite,7)',
+      AccelStr = "c" },
+    { text = "Cite Quote",
+      Sequence = '$Tpl.PairTag(q,4)',
+      AccelStr = "C" },
+    { text = "BlockQuote",
+      Sequence = '$Tpl.PairTagM(blockquote)', -- $Tpl.PairTag(blockquote,13)
+      AccelStr = "C+C" },
+    { text = "Acronym",
+      Sequence = '$Tpl.PairTag(acronym,10)',
+      AccelStr = "A+C" },
+    -- D -- definition
+    { text = "D", Label = true },
+    { text = "Def-Data",
+      Sequence = '$Tpl.PairTag(dd,5)',
+      AccelStr = "d" },
+    { text = "Def-Term",
+      Sequence = '$Tpl.PairTag(dt,5)',
+      AccelStr = "D" },
+    { text = "Def-List",
+      Sequence = '$Tpl.PairTagM(dl)', -- $Tpl.PairTag(dl,5)
+      AccelStr = "C+D" },
+    { text = "DeFiNition",
+      Sequence = '$Tpl.PairTag(dfn,6)',
+      AccelStr = "A+D" },
+    -- E -- logical format
+    { text = "E", Label = true },
+    { text = "EmPhasis",
+      Sequence = '$Tpl.PairTag(em,5)',
+      AccelStr = "e" },
+    { text = "Strong",
+      Sequence = '$Tpl.PairTag(strong,9)',
+      AccelStr = "E" },
+    { text = "PreFormat",
+      Sequence = '$Tpl.PairTagM(pre)', -- $Tpl.PairTag(pre,6)
+      AccelStr = "C+E" },
+    { text = "TeleType",
+      Sequence = '$Tpl.PairTag(tt,5)',
+      AccelStr = "A+E" },
+    -- F -- frame
+    { text = "F", Label = true },
+    { text = "Frame",
+      Sequence = '$Tpl.PairTagX(\"<frame name=\\\"\", \"\\\" src=\\\"\\\" />\",4)',
+      AccelStr = "f" },
+    { text = "Frame Set",
+      Sequence = '$Tpl.PairTagM(frameset)',
+      AccelStr = "F" },
+    { text = "Inner Frame",
+      Sequence = '$Tpl.PairTagX(\"<iframe name=\\\"\", \"\\\" src=\\\"\\\" />\",4)',
+      AccelStr = "C+F" },
+    { text = "No Frames",
+      Sequence = '$Tpl.PairTagM(noframes)',
+      AccelStr = "A+F" },
+    -- H -- heading
+    { text = "H", Label = true },
+    { text = "Heading 1",
+      Sequence = '$Tpl.PairTag(h1,5)',
+      AccelStr = "h" },
+    { text = "Heading 2",
+      Sequence = '$Tpl.PairTag(h2,5)',
+      AccelStr = "H" },
+    { text = "Heading 3",
+      Sequence = '$Tpl.PairTag(h3,5)',
+      AccelStr = "C+H" },
+    { text = "Html Head",
+      Sequence = '$Tpl.PairTagM(head)', -- $Tpl.PairTag(head,7)
+      AccelStr = "A+H" },
+    -- I -- object / change
+    { text = "I", Label = true },
+    { text = "Image",
+      Sequence = '$Tpl.PairTagX(\"<img alt=\\\"\", \"\\\" src=\\\"\\\" />\",3)',
+      AccelStr = "i" },
+    { text = "Insert",
+      Sequence = '$Tpl.PairTag(ins,6)',
+      AccelStr = "I" },
+    { text = "Delete",
+      Sequence = '$Tpl.PairTag(del,6)',
+      AccelStr = "C+I" },
+    { text = "Object",
+      Sequence = '$Tpl.PairTagX(\"<object classid=\\\"\", \"\\\"></object>\",9)',
+      AccelStr = "A+I" },
+    -- K -- link
+    { text = "K", Label = true },
+    { text = "Link rel",
+      Sequence = '$Tpl.PairM(\"<link rel=\\\"\",\"\\\" href=\\\"\\\" />\")',
+      AccelStr = "k" },
+    { text = "Link style",
+      Sequence = '$Tpl.PairM(\"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\",\".css\\\" />\")',
+      AccelStr = "K" },
+    { text = "Link favicon",
+      Sequence = '$Tpl.PairM(\"<link rel=\\\"SHORTCUT ICON\\\" href=\\\"\",\"favicon.ico\\\" />\")',
+      AccelStr = "C+K" },
+    { text = "Base link",
+      Sequence = '$Tpl.PairM(\"<base href=\\\"\",\"\\\" />\")',
+      AccelStr = "A+K" },
+    -- L -- list
+    { text = "L", Label = true },
+    { text = "List Item",
+      Sequence = '$Tpl.PairTag(li,5)',
+      AccelStr = "l" },
+    { text = "Ordered List",
+      Sequence = '$Tpl.PairTagM(ol)', -- $Tpl.PairTag(ol,5)
+      AccelStr = "L" },
+    { text = "Unord. List",
+      Sequence = '$Tpl.PairTagM(ul)', -- $Tpl.PairTag(ul,5)
+      AccelStr = "C+L" },
+    { text = "Html Title",
+      Sequence = '$Tpl.PairTag(title,8)',
+      AccelStr = "A+L" },
+    -- M -- meta
+    { text = "M", Label = true },
+    { text = "Meta name",
+      Sequence = '$Tpl.PairM(\"<meta name=\\\"\",\"\\\" content=\\\"\\\" />\")',
+      AccelStr = "m" },
+    { text = "Meta h-eqv",
+      Sequence = '$Tpl.PairM(\"<meta http-equiv=\\\"\",\"\\\" content=\\\"\\\" />\")',
+      AccelStr = "M" },
+    { text = "Meta charset",
+      Plain = '<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />',
+      --Plain = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
+      --Macro = '<meta http-equiv="Content-Type" content="text/html; charset=@Here" />@Back',
+      AccelStr = "C+M" },
+    { text = "Html Html",
+      Sequence = '$Tpl.PairTagM(html)', -- $Tpl.PairTag(html,7)
+      AccelStr = "A+M" },
+    -- O -- mono-format
+    { text = "O", Label = true },
+    { text = "Code",
+      Sequence = '$Tpl.PairTag(code,7)',
+      AccelStr = "o" },
+    { text = "Kbd input",
+      Sequence = '$Tpl.PairTag(kbd,6)',
+      AccelStr = "O" },
+    { text = "Sample out",
+      Sequence = '$Tpl.PairTag(samp,7)',
+      AccelStr = "C+O" },
+    { text = "Variable",
+      Sequence = '$Tpl.PairTag(var,6)',
+      AccelStr = "A+O" },
+    -- P -- para-format
+    { text = "P", Label = true },
+    { text = "Paragraph",
+      Sequence = '$Tpl.PairTag(p,4)',
+      AccelStr = "p" },
+    { text = "Text Span",
+      Sequence = '$Tpl.PairTag(span,7)',
+      AccelStr = "P" },
+    { text = "Division",
+      Sequence = '$Tpl.PairTag(div,6)',
+      AccelStr = "C+P" },
+    { text = "",
+      --Sequence = '',
+      separator = true,
+      AccelStr = "A+P" },
+    -- Q -- quote chars
+    { text = "Q", Label = true },
+    { text = "simple Quote",
+      Sequence = '$Tpl.PairX(\"&quot;&quot;\",6)',
+      AccelStr = "q" },
+    { text = "single Quote",
+      Sequence = '$Tpl.PairX(\"&lsaquo;&rsaquo;\",8)',
+      AccelStr = "Q" },
+    { text = "double Quote",
+      Sequence = '$Tpl.PairX(\"&laquo;&raquo;\",7)',
+      AccelStr = "C+Q" },
+    { text = "Caption",
+      Sequence = '$Tpl.PairTag(caption,10)',
+      AccelStr = "A+Q" },
+    -- R -- break
+    { text = "R", Label = true },
+    { text = "BReak",
+      Plain = '<br />',
+      AccelStr = "r" },
+    { text = "No-Break",
+      Sequence = '$Tpl.PairTag(nobr,7)',
+      AccelStr = "R" },
+    { text = "Horiz. Rule",
+      Plain = '<hr />',
+      AccelStr = "C+R" },
+    { text = "Address",
+      Sequence = '$Tpl.PairTagM(address)',
+      AccelStr = "A+R" },
+    -- T -- table
+    { text = "T", Label = true },
+    { text = "Table Data",
+      Sequence = '$Tpl.PairTag(td,5)',
+      AccelStr = "t" },
+    { text = "Table Row",
+      Sequence = '$Tpl.PairTag(tr,5)',
+      AccelStr = "T" },
+    { text = "Table Head",
+      Sequence = '$Tpl.PairTag(th,5)',
+      AccelStr = "C+T" },
+    { text = "Table",
+      Sequence = '$Tpl.PairTagM(table)',
+      AccelStr = "A+T" },
+    -- U -- scripts
+    { text = "U", Label = true },
+    { text = "SubScript",
+      Sequence = '$Tpl.PairTag(sub,6)',
+      AccelStr = "u" },
+    { text = "SuperScript",
+      Sequence = '$Tpl.PairTag(sup,6)',
+      AccelStr = "U" },
+    { text = "Script",
+      Sequence = '$Tpl.PairTagM(script)',
+      AccelStr = "C+U" },
+    { text = "No Script",
+      Sequence = '$Tpl.PairTagM(noscript)',
+      AccelStr = "A+U" },
+    -- W -- special chars
+    { text = "W", Label = true },
+    { text = "nb w-Space",
+      Plain = '&nbsp;',
+      AccelStr = "w" },
+    { text = "em dash",
+      Plain = '&mdash;',
+      AccelStr = "W" },
+    { text = "soft hyphen",
+      Plain = '&shy;',
+      AccelStr = "CS+W" },
+    { text = "ampersand",
+      Plain = '&amp;',
+      AccelStr = "A+W" },
+    -- Y -- table ext.
+    { text = "Y", Label = true },
+    { text = "Table Body",
+      Sequence = '$Tpl.PairTagM(tbody)',
+      AccelStr = "y" },
+    { text = "Table Header",
+      Sequence = '$Tpl.PairTagM(thead)',
+      AccelStr = "Y" },
+    { text = "Table Footer",
+      Sequence = '$Tpl.PairTagM(tfoot)',
+      AccelStr = "C+Y" },
+    { text = "Style",
+      Sequence = '$Tpl.PairTagM(style)',
+      AccelStr = "A+Y" },
+    --[[
+    -- Z -- ??? - TEST
+    { text = "Z", Label = true },
+    { text = "Z testing",
+      Sequence = '$Tpl.PairTagM(test)',
+      AccelStr = "z" },
+    --]]
+  } -- Items
+} --- mInsert
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+  },
+  ["Insert"] = mInsert,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

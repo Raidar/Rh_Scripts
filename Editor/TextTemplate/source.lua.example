@@ -1,0 +1,113 @@
+-- TextTemplate
+-- Шаблоны для 'source' (Source code).
+--------------------------------------------------------------------------------
+
+---------------------------------------- Keywords base
+local Keywords1 = {
+  -- Some keywords:
+  a = 'array',
+  b = 'begin',
+  c = 'case',
+  d = 'default',
+  e = 'end',
+  f = 'function',
+  g = 'integer',
+  h = 'thread',
+  i = 'interface',
+  j = 'break',
+  k = 'local',
+  l = 'boolean',
+  --m = '',
+  n = 'number',
+  --o = '',
+  p = 'procedure',
+  q = 'continue',
+  r = 'return',
+  s = 'string',
+  t = 'table',
+  u = 'unit',
+  --v = '',
+  w = 'while',
+  x = 'class',
+  y = 'property',
+  --z = '',
+
+  -- Some variables:
+  C = 'Count',
+  D = 'Default',
+  E = 'Error',
+  J = 'Index',
+  R = 'Result',
+  V = 'Value',
+} --- Keywords1
+
+local function Keyword1 (Cfg)
+  local s = Cfg.Template.Result
+  local sn = s:match("`(%w-)$")
+  s = Keywords1[sn]
+  if s then return s end
+  return false
+end --function Keyword1
+
+---------------------------------------- Keywords adds
+local Keywords2 = {
+  -- Some keywords:
+  a = 'abstract',
+  --b = '',
+  c = 'switch',
+  d = 'dynamic',
+  e = 'error',
+  f = 'false',
+  g = 'float',
+  h = 'inherited',
+  i = 'implementation',
+  j = 'include',
+  --k = '',
+  l = 'overload',
+  m = 'message',
+  n = 'extended',
+  o = 'override',
+  p = 'pointer',
+  --q = '',
+  r = 'repeat',
+  s = 'strict',
+  t = 'true',
+  u = 'until',
+  v = 'virtual',
+  w = 'with',
+  --x = '',
+  --y = '',
+  --z = '',
+
+  -- Other words:
+  --F = 'for @Here do@Back',
+  X = 'except',
+  Y = 'finally',
+  Z = 'then',
+} --- Keywords2
+
+local function Keyword2 (Cfg)
+  local s = Cfg.Template.Result
+  local sn = s:match("``(%w-)$")
+  s = Keywords2[sn]
+  if s then return s end
+  return false
+end --function Keyword2
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Data
+local Data = {
+  --[[DO]]--
+
+  regex  = "lua";
+
+  --[[Templates]]-- Шаблоны:
+
+  -- Keywords:
+  { find = "`%w",  apply = Keyword1, as = "plain" },
+  { find = "``%w", apply = Keyword2, as = "plain" },
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------

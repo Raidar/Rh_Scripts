@@ -1,0 +1,84 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Template Insert: none.
+  -- Вставка шаблона: none.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Lines
+local def_line = ('-'):rep(8)
+local noteline = ('―'):rep(8)
+
+local line_len = 40
+local line_hymin = ('-'):rep(line_len)
+local line_equal = ('='):rep(line_len)
+
+---------------------------------------- ----
+local mInsert = {
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+  Props = {
+    RectMenu = { Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1 },
+    }, -- RectMenu
+  },
+  CfgData = { UMenu = { TextNamedKeys = false } },
+
+  Items = {
+    -- Header --
+    { text = " ", Label = true },
+    { text = "   <a>   ", Label = true },
+    { text = "Shift+<a>", Label = true },
+    { text = " Ctrl+<a>", Label = true },
+    { text = " Alt+<a> ", Label = true },
+    -- - --
+    { text = "-", Label = true },
+    { text = "― (end)",
+      Plain = noteline,
+      AccelStr = "-" },
+    { text = "- (40)",
+      Plain = line_hymin,
+      AccelStr = "S+-" },
+    { text = "- (80)",
+      Plain = line_hymin..line_hymin,
+      AccelStr = "C+-" },
+    { text = "- (8)",
+      Plain = def_line,
+      AccelStr = "A+-" },
+  } -- Items
+} --- mInsert
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+  },
+  ["Insert"] = mInsert,
+} ---
+
+return Data
+--------------------------------------------------------------------------------

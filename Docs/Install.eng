@@ -1,0 +1,24 @@
+Install order:
+==============
+
+Notice:
+Don't forget to save your settings and scripts,
+and restore them after package installation.
+
+Install:
+1. Delete whole ~Rh_Scripts~ directory in ~scripts~ directory of plugin.
+2. Copy ~Rh_Scripts~ directory from downloaded archive
+   to ~scripts~ directory of 'LuaFAR for Editor' plugin.
+3. Create "_usermenu.lua" file in plugin directory, if it does not exist.
+   Add following string to the file:
+AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
+4. Rename "_usermenu.lua.example" to "_usermenu.lua".
+5. Clear plugins cache and reload FAR Manager.
+6. Open configuration menu of 'LuaFAR for Editor'.
+   Choose "Rh_Scripts package" item and customize package.
+
+―――――――
+P.S. It's also recommended view a history of changes
+     for giving an information about new and fixed functions of package.
+     But file with history of changes is only in Russian.
+―――――――

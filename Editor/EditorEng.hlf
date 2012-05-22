@@ -1,0 +1,314 @@
+﻿.Language=English,English
+.PluginContents=Scripts for editor
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Scripts for editor#
+  Scripts for editor are a set of scripts for use in editor.
+
+    ~Script files~@Edt_ScriptFiles@
+
+  Links:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+
+@Help
+ ~Scripts for editor~@Contents@
+
+@Edt_ScriptFiles
+$ #Script files#: Scripts for editor
+    \37AutoActions.lua\-    — ~Auto actions~@AutoActions@
+    \37HandActions.lua\-    — ~Hand actions~@HandActions@
+
+    \37TextTemplate.lua\-   — ~Text Templates~@TextTemplate@
+    \37WordComplete.lua\-   — ~Word Completion~@WordComplete@
+    \37VoidTruncate.lua\-   — ~Void Truncater~@VoidTruncate@
+
+ ~Contents~@Contents@
+
+@AutoActions
+$ #Auto actions# (AutoActions.lua)
+  AutoActions is a small script to specify automatical actions:
+
+  — AutoTemplates based on ~Text Templates~@TextTemplate@ script.
+  — AutoCompletion based on ~Word Completion~@WordComplete@ script.
+
+ ~Contents~@Contents@
+
+@HandActions
+$ #Hand actions# (HandActions.lua)
+  HandActions is a small script to specify manual actions
+in \37_usermenu.lua\- file for #LuaFAR for Editor# plugin:
+
+  — ~Text Templates~@TextTemplate@.
+  — ~Word Completion~@WordComplete@.
+
+ ~Contents~@Contents@
+
+@TextTemplate
+$ #Text Templates# (TextTemplate.lua)
+  TextTemplate is a script for text templates insert.
+ This script allows to replace typed text with other text by template.
+Templates store separately for each file type as Lua table in files.
+
+    ~Script parameters~@TT_Props@
+    ~Binding of types~@TT_TypeBind@
+
+ ~Contents~@Contents@
+
+@TT_Props
+$ #Script parameters#: TextTemplate
+  The script has properties that allow customize parameters of its work.
+They are similar to typed word properties from ~Word Completion~@WordComplete@ script.
+
+      ~Typed word properties~@WC_Props_Word@
+
+ ~Contents~@Contents@       ~Text Templates~@TextTemplate@
+
+@TT_TypeBind
+$ #Binding of types#: TextTemplate
+  Binding of types to templates files is specified in \37TextTmplBind.lua\- file.
+
+    \1FExamples of fields\- for \37Data\- table in \37TextTmplBind.lua\-:
+  \37lua     = \3Atrue\3F,  \37--\- A lua.lua file with templates for lua type
+  \37ini     = \3Atrue\3F,  \37--\- An ini.lua file with templates for ini type
+  \37reg     = 'ini'\3F, \37--\- Using ini.lua file with templates for reg type
+
+  A sample of \37TextTmplBind.lua\- file is included to pack.
+In this file base file types is already specified as comments.
+
+ ~Contents~@Contents@       ~Text Templates~@TextTemplate@
+
+@WordComplete
+$ #Word Completion# (WordComplete.lua)
+  WordComplete is a script for completion of words that is typed in editor.
+ This script allows to choose a word from list from words existing in file,
+that is started from already typed characters on cursor position.
+
+    ~Completion control~@WC_Control@
+      ~Keys assignment~@WC_KeyAssign@
+
+    ~Script parameters~@WC_Props@
+      ~Typed word properties~@WC_Props_Word@
+      ~Words find properties~@WC_Props_Find@
+      ~Words sort properties~@WC_Props_Sort@
+      ~Words list properties~@WC_Props_List@
+      ~Word completion properties~@WC_Props_Cmpl@
+
+ ~Contents~@Contents@
+
+@WC_Control
+$ #Completion control#: WordComplete
+  Word completion may be use by two ways:
+  — replace: ¦characters cursor leftward are deleted,
+and then selected word addition is performed;
+  — insert: ¦selected word addition is performed to cursor position,
+characters cursor leftward are kept.
+  Selected word addition depends on ~TailOnly~@WC_Props_Cmpl@ parameter.
+
+  Word completion keys dependently of the way are:
+  — replace: ¦\37Enter\- / \37NumEnter\-, \37Tab\-;
+  — insert: ¦\37Shift+Enter\- / \37Shift+NumEnter\-, \37Shift+Tab\-.
+
+  Furthermore, it is a special addition mode of common part from words list.
+After common part addition words list doesn't close, but only updates.
+Common part addition mode depends on completion ways and #TailOnly#.
+
+  Common part addition is assigned by default on following keys:
+  — replace: ¦\37Ctrl-Enter\- / \37Ctrl-NumEnter\-;
+  — insert: ¦\37Ctrl-Shift-Enter\- / \37Ctrl-Shift-NumEnter\-.
+
+  ~Keys assignment~@WC_KeyAssign@
+
+ ~Contents~@Contents@       ~Word Completion~@WordComplete@
+
+@WC_KeyAssign
+$ #Keys assignment: WordComplete
+  Keys may be defined now only in script configuration file.
+For creating it open script settings windows and press Enter.
+A \37WordComplete.cfg\- file will be created in script directory.
+It will include ~six~@WC_Control@ keys assigned by default.
+
+    \1FExample\- of adding new keys:
+
+ — Word completion keys:
+ \3Fdo local\37 t = {}; Data["WordComplete"]["Menu"]["CKeys"] = t\-
+   \3Fdo local\37 t = {}; Data["WordComplete"]["Menu"]["CKeys"][\3A5\37] = t\-
+     \37t["BreakKey"] = "\3AS+Space\37"  --\- Key is Shift-Space
+     \37t["Action"] = "\3AReplace\37"    --\- Adding selected word by replace
+   \3Fend\-
+ \3Fend\-
+
+ — Local actions keys:
+ \3Fdo local\37 t = {}; Data["WordComplete"]["Menu"]["LKeys"] = t\-
+   \3Fdo local\37 t = {}; Data["WordComplete"]["Menu"]["LKeys"][\3A3\37] = t\-
+     \37t["BreakKey"] = "\3ACS+Space\37"    --\- Key is Ctrl-Shift-Space
+     \37t["Action"] = "\3AReplace\37" --\- Adding by replace
+     \37t["Effect"] = "\3AShared\37"  --\- common part only
+   \3Fend\-
+
+   \3Fdo local\37 t = {}; Data["WordComplete"]["Menu"]["LKeys"][\3A4\37] = t\-
+     \37t["BreakKey"] = "\3aInsert\37"      --\- Keys is Insert
+     \37t["Action"] = "\3AInsert\37"  --\- Adding by insert
+     \37t["Effect"] = "\3AShared\37"  --\- common part only
+   \3Fend\-
+ \3Fend\-
+
+  ~Completion control~@WC_Control@
+
+ ~Contents~@Contents@       ~Word Completion~@WordComplete@
+
+@WC_Props
+$ #Script parameters#: WordComplete
+  The script has a lot of properties that allow
+customize parameters of its work at various execution stages.
+Script settings window allows to specify not all parameters.
+
+      ~Typed word properties~@WC_Props_Word@
+      ~Words find properties~@WC_Props_Find@
+      ~Words sort properties~@WC_Props_Sort@
+      ~Words list properties~@WC_Props_List@
+      ~Word completion properties~@WC_Props_Cmpl@
+
+ ~Contents~@Contents@       ~Word Completion~@WordComplete@
+
+@WC_Props_Word
+$ #Typed word properties#: WordComplete
+  #CharEnum# (string) — Valid word characters.
+  — ¦Characters are specified as Lua-style regular expressions.
+  — ¦Default value is "\37%w_\-" (letters, digits and underscore character).
+
+  #CharsMin# (number) — Minimal characters count.
+    ¦Minimal count of typed word characters for completion.
+
+  #UseMagic# (bool) — Using magic modifiers.
+  — ¦Magic Lua characters-modifiers are "\37?*+-\-".
+  — ¦They are used together with #CharEnum# on current word analysis.
+  — ¦They are used in search pattern on matching words find.
+  — ¦They are excluded from completion characters in ~Trailers~@WC_Props_Cmpl@.
+
+  #UsePoint# (bool) — Using '\37.\-' as magic character.
+  — ¦It is used only together with #UseMagic#.
+  — ¦When parameter is true
+    · ¦'\37.\-' character is regarded as magic character.
+    · ¦it is excluded from completion characters in #Trailers#.
+  — ¦When parameter is false:
+    · ¦'\37.\-' character is regarded as normal character.
+    · ¦when #UseMagic# \37== true\- '\37.\-' is automatically
+insert before modifiers in words search pattern.
+
+  #UseInside# (bool) — Using inside words.
+    ¦It allows to output words list on location within typed word.
+
+  #UseOutside# (bool) — Using outside words.
+    ¦It allows to output nearest words list on typed word absence.
+
+ ~Contents~@Contents@     ~Script parameters~@WC_Props@
+
+@WC_Props_Find
+$ #Words find properties#: WordComplete
+  #FindKind# (string) — Words find kind.
+    ¦It defines words search order:
+  — \37"customary"\- — ¦normal: search goes up over file, then down.
+  — \37"unlimited"\- — ¦unlimited: it is not use a #FindsMax# constraint.
+  — \37"alternate"\- — ¦alternate: simultaneous search going up and down.
+  — \37"trimmable"\- — ¦balanced: search goes up over file before finding
+#FindsMax#\37/2\- words, then it also goes down.
+    ¦Both #FindKind# & ~SortKind~@WC_Props_Sort@ specifies contents of words list.
+
+  #FindsMax# (number) — Maximum words for search.
+    ¦Maximal word count, when it is reached a search ends.
+
+  #MinLength# (number) — Minimal word length.
+    ¦Minimal character count of word included to words list.
+
+  #MatchCase# (bool) — Case sensitive find.
+    ¦It allows to search words with case match to typed word characters.
+
+  #LinesUp# & #LinesDown# (number) — analyzed lines count.
+    ¦They specify maximal count of lines for analyse:
+  — ¦#LinesUp# — on words search in lines above current line.
+  — ¦#LinesDown# — on words search in lines below current line.
+
+ ~Contents~@Contents@     ~Script parameters~@WC_Props@
+
+@WC_Props_Sort
+$ #Words sort properties#: WordComplete
+  #SortKind# (string) — Words sort kind.
+    ¦It defines words order in list:
+  — \37"searching"\- — ¦by finding, i.e. by search order.
+  — \37"character"\- — ¦alphanumeric, i.e. by character.
+  — \37"closeness"\- — ¦by closeness (to current line).
+  — \37"frequency"\- — ¦by frequency, i.e. by occurence.
+    ¦Both ~FindKind~@WC_Props_Find@ & #SortKind# specifies contents of words list.
+
+  #SortsMin# (number) — Minimal words count for sort.
+    ¦Minimal words list size required for words sort using.
+
+ ~Contents~@Contents@     ~Script parameters~@WC_Props@
+
+@WC_Props_List
+$ #Words list properties#: WordComplete
+  #ListsMax# (number) — Maximal words count in list.
+    ¦Maximal words count output in list.
+
+  #SlabMark# (bool) — Marking typed word.
+    ¦It allows to mark typed word characters in list words.
+
+  #HotChars# (bool) — Word selection with \37Alt+\-<hot char>.
+  — ¦It specifies hot characters \371-9, 0, a-z\- for list words.
+  — ¦It allows to select word by pressing \37Alt+\-<assigned char>.
+
+  #ActionAlt# (bool) — Using \37Alt+\-<key> for actions.
+    ¦It allows to performed some action when Alt pressed:
+  — ¦moving over text: left/right, up/down.
+  — ¦character delete under cursor and cursor leftward.
+
+  #EmptyList# & #EmptyStart# (bool) — Empty list feature.
+  — ¦They allow to output list without words.
+  — ¦They simplifies correction of mistaken characters typing.
+  — ¦#EmptyStart# refers only to first show of list.
+
+ ~Contents~@Contents@     ~Script parameters~@WC_Props@
+
+@WC_Props_Cmpl
+$ #Word completion properties#: WordComplete
+  #Trailers# (string) — completion characters.
+  — ¦It defines characters on typing that selected word adds.
+  — ¦Typed character is insert after selected word adding.
+
+  #UndueOut# (bool) — Completion cancel on press undue keys.
+    ¦It allows to close words list in press unhandled keys.
+
+  #LoneAuto# (bool) — Autocompletion on one word.
+    ¦It allows to add automatically a word that is only one in list.
+
+  #TailOnly# (bool) — Adding untyped word part.
+  — ¦It allows to add only untyped word characters.
+  — ¦A case of already typed word characters is preserved.
+
+ ~Contents~@Contents@     ~Script parameters~@WC_Props@
+
+@VoidTruncate
+$ #Void Truncater# (VoidTruncate.lua)
+  VoidTruncate is a small script for eliminate trail spaces in lines.
+ It inlcudes a \37Truncate\- table with following functions:
+    \37Spaces\-     — ¦Truncate trailing spaces in specified line.
+    \37UpdateEnd\-  — ¦Update cursor position for line end.
+    \37Line\-       — ¦Truncate trailing spaces in current line.
+    \37Text\-       — ¦Truncate trailing spaces in all text lines.
+    \37File\-       — ¦Truncate empty lines in end of file.
+    \37FileText\-   — ¦Execute \37File\-, \37Line\- & \37UpdateEnd\-.
+
+  A \37ProcessEditorInput\- script function performs following actions:
+  — ¦truncate trailing spaces by pressing \37(Alt-)(Shift-)End\-.
+  — ¦truncate empty lines in end of file (except one) &
+trailing spaces in last line by pressing \37(Alt-)Ctrl-(Shift-)End\-.
+  This function is intended for use in \37MakeResident\-.
+
+  \34Notice\-: ¦Don't use the function if trailing spaces
+and empty lines in end of file are important part of stored data.
+Truncating them may corrupt or destroy your information.
+
+ ~Contents~@Contents@

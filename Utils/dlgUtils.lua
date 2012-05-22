@@ -1,0 +1,382 @@
+--[[ Dialogs ]]--
+
+----------------------------------------
+--[[ description:
+  -- Handling dialogs.
+  -- Управление диалогами.
+--]]
+----------------------------------------
+--[[ uses:
+  LuaFAR, far2.dialog,
+  Rh Utils.
+  -- group: Utils.
+--]]
+--------------------------------------------------------------------------------
+local _G = _G
+
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+
+local type = type
+local pairs, ipairs = pairs, ipairs
+local tonumber, tostring = tonumber, tostring
+
+----------------------------------------
+local bit = bit64
+local band, bor = bit.band, bit.bor
+local bshl, bshr = bit.lshift, bit.rshift
+
+----------------------------------------
+local win, far = win, far
+local F = far.Flags
+
+----------------------------------------
+local context = context
+
+local utils = require 'context.utils.useUtils'
+local tables = require 'context.utils.useTables'
+local numbers = require 'context.utils.useNumbers'
+
+local newFlags = utils.newFlags
+
+local Null = tables.Null
+local tfind = tables.find
+
+----------------------------------------
+local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+
+--------------------------------------------------------------------------------
+local unit = {}
+
+----------------------------------------
+local SendDlgMessage = far.SendDlgMessage
+local GetDlgItem = far.GetDlgItem
+
+local LFVer = context.use.LFVer -- FAR23
+
+---------------------------------------- Dialog
+-- Названия полей элементов диалога и их номера. -- from far2.dialog
+if LFVer >= 3 then -- FAR23
+unit.DlgItem = {
+  Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5,
+  Selected = 6, ListItems = 6,
+  VBuf = 6,
+  History = 7, Mask = 8,
+  Flags = 9,
+  Data = 10, --Ptr = 10,
+  MaxLen = 11,
+  UserData = 12,
+} --
+else
+unit.DlgItem = {
+  Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5, --Focus = 6,
+  Selected = 7, ListItems = 7, --ListPos = 7,
+  History = 7, Mask = 7,
+  VBuf = 7,
+  Flags = 8, --DefaultButton = 9,
+  Data = 10, --Ptr = 10,
+} --
+end
+local DlgItem = unit.DlgItem
+
+local diSelected  = DlgItem.Selected
+local diListItems = DlgItem.ListItems
+local diData      = DlgItem.Data
+
+-- Типы элементов диалога:
+unit.DlgItemType = {
+  DBox      = "DI_DOUBLEBOX",   -- двойная рамка
+  SBox      = "DI_SINGLEBOX",   -- одиночная рамка
+
+  Text      = "DI_TEXT",        -- надпись
+  VText     = "DI_VTEXT",       -- вертикальная надпись
+
+  Edit      = "DI_EDIT",        -- поле ввода
+  Fixed     = "DI_FIXEDIT",     -- поле ввода фикс. размера
+  Pass      = "DI_PSWEDIT",     -- поле ввода пароля
+
+  List      = "DI_LIST",        -- список выбора
+  Combo     = "DI_COMBOBOX",    -- поле со списком
+
+  Check     = "DI_CHECKBOX",    -- переключатель
+  Radio     = "DI_RADIOBUTTON", -- кнопка выбора
+
+  Button    = "DI_BUTTON",      -- кнопка
+
+  User      = "DI_USERCONTROL", -- пользовательский элемент
+} --
+
+-- Флаги элементов диалога:
+unit.DlgItemFlag = {
+  -- Common:
+  Focus         = F.DIF_FOCUS,              -- Элемент с фокусом (по умолчанию) -- FAR3 - вместо поля Focus
+  Disable       = F.DIF_DISABLE,            -- Недоступный элемент
+  Hidden        = F.DIF_HIDDEN,             -- Скрытый элемент
+  ReadOnly      = F.DIF_READONLY,           -- Только для чтения
+  NoFocus       = F.DIF_NOFOCUS,            -- Нет фокуса с клавиатуры
+
+  BoxColor      = F.DIF_BOXCOLOR,           -- Цвет рамок
+  CenterGroup   = F.DIF_CENTERGROUP,        -- Группа по центру
+  Ampersand     = F.DIF_SHOWAMPERSAND,      -- Показ символа '&'
+
+  -- Special:
+  NoAutoComplete= F.DIF_NOAUTOCOMPLETE,     -- Без автодополнения
+  SelectOnEntry = F.DIF_SELECTONENTRY,      -- Выделение при получении фокуса
+
+  -- DBox / SBox:
+  BoxTextLeft   = F.DIF_LEFTTEXT,           -- Заголовок по левому краю
+
+  -- Text / VText:
+  SingleSep     = F.DIF_SEPARATOR,          -- Одиночная линия
+  DoubleSep     = F.DIF_SEPARATOR2,         -- Двойная линия
+  CenterText    = F.DIF_CENTERTEXT,         -- Центрирование текста
+
+  -- Edit / Fixed:
+  Editor        = F.DIF_EDITOR,             -- Ряд элементов как редактор
+  EditPath      = F.DIF_EDITPATH,           -- Ввод имён файловых объектов
+  ExpandVars    = F.DIF_EDITEXPAND,         -- Разворачивание переменных среды
+  MaskEdit      = F.DIF_MASKEDIT,           -- Использование маски
+
+  History       = F.DIF_HISTORY,            -- Ведение истории
+  HistoryAdd    = F.DIF_MANUALADDHISTORY,   -- Ручное добавление в историю
+  HistoryLast   = F.DIF_USELASTHISTORY,     -- Начальное значение из истории
+
+  -- List / Combo:
+  AutoHighlight = F.DIF_LISTAUTOHIGHLIGHT,  -- Автоназначение горячих букв
+  ShowHighlight = F.DIF_LISTNOAMPERSAND,    -- Показ горячих букв
+  ListNoBox     = F.DIF_LISTNOBOX,          -- Список без рамки
+  ListNoClose   = F.DIF_LISTNOCLOSE,        -- Без закрытия диалога
+  ListWrapMode  = F.DIF_LISTWRAPMODE,       -- Циклический проход по списку
+  DropDownList  = F.DIF_DROPDOWNLIST,       -- Только выбор из списка
+  --TrackMouse        = F.DIF_LISTTRACKMOUSE,           -- FAR3 - ?
+  --TrackFocusMouse   = F.DIF_LISTTRACKMOUSEINFOCUS,    -- FAR3 - ?
+
+  -- Check:
+  MultiState    = F.DIF_3STATE,             -- Три состояния
+
+  -- Radio:
+  RadioGroup    = F.DIF_GROUP,              -- Группа из последовательных элементов
+  MoveSelect    = F.DIF_MOVESELECT,         -- Выделение с помощью фокуса
+
+  -- Button:
+  BtnDefault    = F.DIF_DEFAULTBUTTON,      -- Кнопка по умолчанию -- FAR3 - вместо поля DefaultButton
+  BtnNoClose    = F.DIF_BTNNOCLOSE,         -- Без закрытия диалога
+  NoBrackets    = F.DIF_NOBRACKETS,         -- Текст без скобок
+  Privileged    = F.DIF_SETSHIELD,          -- Необходимость прав администратора
+
+  -- Комбинации:
+  SeparLine     = newFlags(F.DIF_BOXCOLOR, F.DIF_SEPARATOR),
+  ComboList     = newFlags(F.DIF_DROPDOWNLIST, F.DIF_LISTWRAPMODE),
+  DlgButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS),
+  DefButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS, F.DIF_DEFAULTBUTTON),
+} --
+
+---------------------------------------- Datas
+
+-- Формирование списка элементов из списка значений.
+function unit.ListItems (Config, Kind, L) --> (table)
+  local List = Config.DlgTypes[Kind]
+  local Prefix, L = List.Prefix, L or Config.Custom.Locale
+  local t = {}
+  for k = 1, #List do
+    t[#t+1] = { Text = L:config(Prefix..List[k]) }
+  end
+  --logMsg(t, "ListItems")
+  return t
+end ---- ListItems
+
+-- Загрузка данных в элемент диалога.
+local function LoadDlgItem (Info, Data, Dlg) --| Item
+  local Type = Info.Type or "edt"
+  local k, List = Info.Field --, nil
+
+  if type(Type) == 'table' then
+    List, Type = Type, Type.Type
+  end
+
+  local Name = Type..(Info.Name or k)
+  local u = Dlg[Name] -- Dialog item
+  --logMsg(Dlg, "LoadDlgItem Dlg", 2, "#q")
+  --logMsg({ k, Type, Name, u }, "LoadDlgItem", 2, "#q")
+  if not u then return end
+
+  if not List then
+    if Type == "edt" then
+      u[diData] = Data[k]
+    elseif Type == "chk" then
+      u[diSelected] = Data[k] and 1 or 0
+    end
+  else
+    if Type == "edt" then
+      if List.Format == "number" then u[diData] = tostring(Data[k]) end
+    else -- "lbx" or "cbx"
+      u[diListItems].SelectIndex = tfind(List, Data[k], ipairs)
+    end
+  end
+end ---- LoadDlgItem
+unit.LoadDlgItem = LoadDlgItem
+
+local torange = numbers.torange -- Приведение к диапазону
+
+-- Сохранение данных из элемента диалога.
+local function SaveDlgItem (Info, Data, Dlg) --| Item
+  local Type = Info.Type or "edt"
+  local k, List = Info.Field --, nil
+
+  if type(Type) == 'table' then
+    List, Type = Type, Type.Type
+  end
+
+  local Name = Type..(Info.Name or k)
+  local u = Dlg[Name] -- Dialog item
+  --logMsg(Dlg, "SaveDlgItem Dlg", 2, "#q")
+  --logMsg({ k, Type, Name, List, u }, "SaveDlgItem", 2, "#q")
+  if not u then return end
+
+  local d -- Данные
+  if not List then
+    if Type == "edt" then
+      d = u[diData]
+    elseif Type == "chk" then
+      d = u[diSelected] ~= 0
+    end
+  else
+    if Type == "edt" then
+      u = u[diData]
+      if List.Format == "number" then
+        d = tonumber(u) or List.Default or Data[k]
+        u = List.Range
+        if u then d = torange(d, u.min, u.max) end
+      end
+    else -- "lbx" | "cbx"
+      u = u[diListItems]
+      --logMsg(Value, "diListItems")
+      d = u and List[u.SelectIndex] or ""
+    end
+  end
+  --logMsg({ k, Type, Name, d, v }, "SaveDlgItem", 2, "#q")
+  --logMsg({ k, Info.Default, d, Data }, "SaveDlgItem", 2, "#q")
+  --if Info.SpaceAsNil then logMsg({ Info, Name, d, v }, "SaveDlgItem", 2, "#q") end
+  --[[
+  if d == ' ' and Info.SpaceAsNil then Data[k] = nil
+  elseif d ~= "" and
+         d ~= Info.Default then Data[k] = d else Data[k] = nil end
+  --]]
+
+  if d ~= "" and d ~= Info.Default then
+    Data[k] = d
+  else
+    Data[k] = nil
+  end
+  --logMsg({ k, Info.Default, d, Data }, "SaveDlgItem", 2, "#q")
+end ----
+unit.SaveDlgItem = SaveDlgItem
+
+-- Загрузка данных в элементы диалога.
+function unit.LoadDlgData (Data, ArgData, Dlg, Types) --| Data
+  local t = { Field = 0, Type = 0 }
+  for k, _ in pairs(ArgData) do
+    t.Field, t.Type = k, Types[k]
+    LoadDlgItem(t, Data, Dlg)
+  end
+end ---- LoadDlgData
+
+-- Сохранение данных из элементов диалога.
+function unit.SaveDlgData (Data, ArgData, Dlg, Types) --| Data
+  local t = { Field = 0, Default = 0, Type = 0 }
+  for k, v in pairs(ArgData) do
+    t.Field, t.Default, t.Type = k, v, Types[k]
+    SaveDlgItem(t, Data, Dlg)
+  end
+end ---- SaveDlgData
+
+---------------------------------------- Functions
+-- Make item+box draw color.
+-- Формирование цвета отрисовки элемента+рамки.
+--[[
+  Lo_Lo (number) - цвет текста.
+  Lo_Hi (number) - цвет выделенного текста.
+  Hi_Lo (number) - цвет рамки.
+  Hi_Hi (number) - зарезервирован.
+--]]
+function unit.ItemColor (Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
+  if LFVer >= 3 or type(Hi_Hi) == 'table' then -- FAR23
+  --logMsg({ Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }, "ItemColor", 3, "#h2")
+  return { Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }
+  else
+  return bor(bshl(Hi_Hi or 0, 0x18),
+             bshl(Hi_Lo or 0, 0x10),
+             bshl(Lo_Hi or 0, 0x08),
+                  Lo_Lo or 0 ) -- FAR2
+  end
+end ---- ItemColor
+
+-- Change item+box draw color.
+-- Изменение цвета отрисовки элемента+рамки.
+function unit.ChangeColor (Color, Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
+  if LFVer >= 3 or type(Color) == 'table' then -- FAR23
+  return { Lo_Lo or Color[1], Lo_Hi or Color[2],
+           Hi_Lo or Color[3], Hi_Hi or Color[4], }
+  else
+  return bor(bshl(Hi_Hi or band(bshr(Color, 0x18), 0xFF), 0x18),
+             bshl(Hi_Lo or band(bshr(Color, 0x10), 0xFF), 0x10),
+             bshl(Lo_Hi or band(bshr(Color, 0x08), 0xFF), 0x08),
+                  Lo_Lo or band(     Color,        0xFF) ) -- FAR2
+  end
+end ---- ChangeColor
+
+-- Get draw color for item text.
+-- Получение цвета отрисовки для текста элемента.
+function unit.GetTextColor (Color) --> (table)
+  if LFVer >= 3 or type(Color) == 'table' then -- FAR23
+  return Color[1]
+  else
+  return band(Color, 0xFF) -- FAR2
+  end
+end ----
+
+-- Получение "прямоугольника" окна.
+function unit.DialogRect (hDlg) --> (table)
+  local DlgRect = SendDlgMessage(hDlg, F.DM_GETDLGRECT, 0)
+  return {
+    x = DlgRect.Left,
+    y = DlgRect.Top,
+    w = DlgRect.Right - DlgRect.Left + 1,
+    h = DlgRect.Bottom - DlgRect.Top + 1,
+    xw = DlgRect.Right,
+    yh = DlgRect.Bottom,
+  } ----
+end ---- DialogRect
+
+---------------------------------------- from service.c
+-- Обновление элементов диалога.
+function unit.UpdateItems (hDlg, Items) --| (Items)
+  for k, u in ipairs(Items) do
+    local w = far.GetDlgItem(hDlg, k - 1)
+    if type(u[diListItems]) == 'table' then
+      local Pos = far.SendDlgMessage(hDlg, F.DM_LISTGETCURPOS, k - 1, 0)
+      u[diListItems].SelectIndex = (Pos or Null).SelectPos
+    else
+      u[diListItems] = w[diListItems]
+    end
+    u[diData] = w[diData]
+  end
+end ---- UpdateItems
+
+-- Стандартный диалог с возможным обновлением элементов после выполнения.
+function unit.Dialog (Guid, X1, Y1, X2, Y2, HelpTopic, Items, Flags, DlgProc, view)
+  local Guid = Guid or win.Uuid()
+  local hDlg = far.DialogInit(Guid, X1, Y1, X2, Y2,
+                              HelpTopic, Items, Flags, DlgProc)
+  if hDlg == nil then return nil end
+
+  local iDlg = far.DialogRun(hDlg)
+  if not view then unit.UpdateItems(hDlg, Items) end
+  far.DialogFree(hDlg)
+
+  return iDlg
+end ---- Dialog
+
+--------------------------------------------------------------------------------
+return unit
+--------------------------------------------------------------------------------

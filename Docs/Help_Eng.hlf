@@ -1,0 +1,134 @@
+﻿.Language=English,English
+.PluginContents=Rh_Scripts pack
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Rh_Scripts#: Package
+  Rh_Scripts is a package of scripts and utilities for "LuaFAR for Editor".
+
+    ~Menu items~@RhS_LFE_MenuItems@
+    ~Handlers~@RhS_LFE_Handlers@
+
+  #Scripts:#
+    ~Common scripts~@<..\Common\>Contents@
+    ~Editor scripts~@<..\Editor\>Contents@
+    ~Service scripts~@<..\Utils\>Contents@
+    ~Scripts samples~@<..\Samples\>Contents@
+
+  #Utilities:#
+    ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
+    ~Rectangular Menu~@<..\RMenu\>Contents@ (RectMenu)
+
+  #Some files:#
+    ~Documentation files~@RhS_Docs@
+    ~Additional used files~@RhS_Used@
+    ~Settings files and directories~@RhS_Cfgs@
+
+  Links:
+    Base plugin: ~LuaFAR for Editor~@<..\..\..\>Contents@ (LF4Ed)
+    Set of scripts: ~farlua scripts~@<..\..\fl_scripts\doc\>Contents@ (fl_scripts)
+
+  ~Authors of project~@Authors@
+  ~Acknowledgements~@Acknowledgements@
+
+@Help
+ ~Rh_Scripts pack~@Contents@
+ ~Authors of project~@Authors@
+
+@Authors
+$ #Authors of project#: Rh_Scripts pack
+  © 2009+, ~Aidar~@mailto:raidar@@yandex.ru@.
+
+ ~Contents~@Contents@
+
+@Acknowledgements
+$ #Acknowledgements#: Rh_Scripts pack
+  — ¦Shmuel Zeigerman: LuaFAR library,
+'LuaFAR for Editor' plugin with set of utilites, source files for them,
+remarks and explanations of aspects (for working with Lua, library and plugin),
+testing Rh_Scripts pack, supplementary libraries (console, …);
+
+  — ¦maxdrfl: a set of scripts named fl_scripts for 'LuaFAR for Editor',
+testing scripts, co‑creation of LuaFAR context package of scripts.
+
+  As well as thanks ANYBODY for discussion, suggestions and bug detections.
+
+ ~Contents~@Contents@
+
+@RhS_LFE_MenuItems
+$ #Menu items# in LuaFAR for Editor: Rh_Scripts pack
+  Name              Default key             FAR area           Note
+ ───────────────────────────────────────────────────────────────────────────────────
+  ―― User Menus ――                          All areas          ――Separator――
+  LUM for \3AE\-ditor        \37Alt+Shift+F2\-   Editor, Configuration   LuaEUM menu
+  LUM for \3AP\-anels        \37Alt+Shift+F2\-   Panels, Configuration   LuaPUM menu
+  \3Af\-l scripts LUM                            All areas          flsLUM menu
+  (Template insert)           \37Ctrl+J\-   Editor                  LuaEUM submenu
+ ───────────────────────────────────────────────────────────────────────────────────
+  ――― Scripts ―――                           All areas          ――Separator――
+  (Void Truncater)            \37Ctrl+T\-   Editor                
+  (\3AW\-ord Completion)       \37Ctrl+Space\-   Editor, Configuration  
+  \3AA\-uto Completion                         Configuration only
+  (\3AT\-ext Templates)       \37Shift+Space\-   Editor, Configuration  
+  A\3Au\-to Templates                          Configuration only
+  ――― Samples ―――                           All areas          ――Separator――
+  \3AK\-eys information                     Any but Configuration   ¦Information on keys
+ ───────────────────────────────────────────────────────────────────────────────────
+
+  Notes:
+ 1. ¦Keys are not assigned for "Modules configuration" area.
+ 2. ¦Name in parentheses indicates that only key is assigned to item.
+The name is used also in "Modules configuration" area.
+
+ ~Contents~@Contents@       ~Handlers~@RhS_LFE_Handlers@
+
+@RhS_LFE_Handlers
+$ #Handlers# in LuaFAR for Editor: Rh_Scripts pack
+  Name                  Action            Note
+ ───────────────────────────────────────────────────────────────────────────────
+  Auto Actions    Character key           ¦Completion, Templates.
+  Void Truncater  \37(Alt-)(Shift-)End\-       ¦Truncate trailing spaces
+                  \37(Alt-)Ctrl-(Shift-)End\-  ¦Truncate empty lines in the end & trailing spaces in last line
+ ───────────────────────────────────────────────────────────────────────────────
+
+  Handlers is attached to plugin as resident modules.
+
+ ~Contents~@Contents@       ~Menu items~@RhS_LFE_MenuItems@
+
+@RhS_Docs
+$ #Documentation files#: Rh_Scripts pack
+  Files:
+    \37Install.eng\- — ¦Install order.
+    \37File_ID.rme\- — ¦Brief information.
+    \37History.txt\- — ¦History of changes (in Russian only).
+
+  Documentation on English is in following directory:
+ \37<LuaFAR for Editor directory>\scripts\Rh_Scripts\#Docs#\- .
+
+ ~Contents~@Contents@
+
+@RhS_Used
+$ #Additional used files#: Rh_Scripts pack
+  Fix up this files according to assigned keys before using them.
+ Switch off also "Use searchable menu" option for macros are worked.
+
+  \37LF4Ed LuaUserMenu.reg  \- — ¦An assignments of LUMs to keys:
+    — ¦an assignment of LUM for Editor to \37Alt-Shift-F2\- key,
+    — ¦an assignment of LUM for Panels to \37Alt-Shift-F2\- key.
+
+  \37LUM Template Insert.reg\- — ¦An example for assignment of keys
+to the same LUM menu items (for various file groups).
+
+ ~Contents~@Contents@
+
+@RhS_Cfgs
+$ #Settings files and directories#: Rh_Scripts pack
+  Common settings in package directories:
+    \37*.cfg   \- — ¦configuration files for scripts and utilities.
+  Settings of user menus in LuaUM directories:
+    \37config\\ \- — configuration directories by default.
+    \37scripts\\\- — scripts‑files directories by default.
+
+ ~Contents~@Contents@
