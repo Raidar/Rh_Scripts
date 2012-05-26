@@ -21,12 +21,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local macUt = require "Rh_Scripts.Utils.macUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
-
 local require = require
 local setmetatable = setmetatable
 
@@ -68,6 +62,17 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local macUt = require "Rh_Scripts.Utils.macUtils"
+local menUt = require "Rh_Scripts.Utils.menUtils"
+
+----------------------------------------
+local fkeys = require "far2.keynames"
+
+local InputRecordToName = fkeys.InputRecordToName
+
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
 local isVKeyChar = keyUt.isVKeyChar
@@ -884,7 +889,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
 --[[ 2.1. Обработка нажатия клавиши ]]
   -- Обработчик нажатия клавиши.
   local function KeyPress (VirKey, SelIndex)
-    local SKey = VirKey.Name --or far.InputRecordToName(VirKey)
+    local SKey = VirKey.Name --or InputRecordToName(VirKey)
     if SKey == "Esc" then return nil, CancelFlag end
 
     -- Предварительный анализ клавиши.

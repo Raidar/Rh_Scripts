@@ -41,17 +41,17 @@ local mInsert = {
     -- A -- 
     { text = "a",
       Plain = "a",
-      AccelStr = "a" },
+      AccelStr = "A" },
     { text = "A",
       Plain = "A",
-      AccelStr = "A" },
+      AccelStr = "S+A" },
     -- B -- 
     { text = "b",
       Plain = "b",
-      AccelStr = "b" },
+      AccelStr = "B" },
     { text = "B",
       Plain = "B",
-      AccelStr = "B" },
+      AccelStr = "S+B" },
   } -- Items
 } --- mInsert
 

@@ -15,6 +15,13 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
+--local assert = assert
+local type, unpack = type, unpack
+local ipairs = ipairs
+local require = require
+local getmetatable, setmetatable = getmetatable, setmetatable
+
+----------------------------------------
 local useprofiler = false
 --local useprofiler = true
 
@@ -22,17 +29,6 @@ if useprofiler then
   require "profiler" -- Lua Profiler
   profiler.start("RectMenu.log")
 end
-
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
-
---local assert = assert
-local type, unpack = type, unpack
-local ipairs = ipairs
-local require = require
-local getmetatable, setmetatable = getmetatable, setmetatable
 
 ----------------------------------------
 local bit = bit64
@@ -43,6 +39,8 @@ local bshl, bshr = bit.lshift, bit.rshift
 ----------------------------------------
 local win, far = win, far
 local F = far.Flags
+
+local farUt = require "Rh_Scripts.Utils.farUtils"
 
 local HText, VText = far.Text, farUt.VText
 
@@ -66,15 +64,24 @@ local torange = numbers.torange
 local inrange, outrange = numbers.inrange, numbers.outrange
 
 ----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+
+----------------------------------------
+local fkeys = require "far2.keynames"
+
+local InputRecordToName = fkeys.InputRecordToName
+
+local keyUt = require "Rh_Scripts.Utils.keyUtils"
+
+----------------------------------------
 local menUt = require "Rh_Scripts.Utils.menUtils"
 
 local MenuBasicColors = menUt.MenuColors()
 local FixedBG = colors.BaseColors.gray
 local MenuFixedColors = menUt.ChangeColors(nil, nil, nil, nil, FixedBG)
 local ItemTextColor = menUt.ItemTextColor
-
-----------------------------------------
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
 ----------------------------------------
 local uChars = require "Rh_Scripts.Utils.uniChars"
@@ -1998,7 +2005,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     end
     --logMsg(_Menu, "_Menu", 1, "#qbns")
 
-    local StrKey = far.InputRecordToName(VirKey) or ""
+    local StrKey = InputRecordToName(VirKey) or ""
     VirKey.Name = StrKey
     VirKey.StateName, VirKey.KeyName = ParseKeyName(StrKey)
 

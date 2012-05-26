@@ -24,18 +24,10 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
-
 local type = type
 local ipairs, pairs = ipairs, pairs
 local require, pcall = require, pcall
 local setmetatable = setmetatable
-
-local isVKeyChar = keyUt.isVKeyChar
-local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 
 ----------------------------------------
 local win, far = win, far
@@ -44,6 +36,21 @@ local win, far = win, far
 local context = context
 
 local tables = require 'context.utils.useTables'
+
+----------------------------------------
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local farUt = require "Rh_Scripts.Utils.farUtils"
+local menUt = require "Rh_Scripts.Utils.menUtils"
+
+----------------------------------------
+local fkeys = require "far2.keynames"
+
+local InputRecordToName = fkeys.InputRecordToName
+
+local keyUt = require "Rh_Scripts.Utils.keyUtils"
+
+local isVKeyChar = keyUt.isVKeyChar
+local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 
 ----------------------------------------
 --[[
@@ -267,7 +274,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   local MapKeys = Options.MapKeys
   --logMsg({ BreakKeys, MapKeys }, "Keys", 2)
   local function MapKeyPress (VirKey, SelIndex)
-    local SKey = VirKey.Name or far.InputRecordToName(VirKey)
+    local SKey = VirKey.Name or InputRecordToName(VirKey)
 
     for k, f in pairs(MapKeys) do
       if SKey == k and type(f) == 'function' then
@@ -333,7 +340,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
     local VMod, VKey = VirKey.ControlKeyState, VirKey.VirtualKeyCode
     if VMod ~= 0 and not IsModShift(VMod) and not IsModAlt(VMod) then return end
 
-    local SKey = VirKey.Name or far.InputRecordToName(VirKey)
+    local SKey = VirKey.Name or InputRecordToName(VirKey)
     local SpecKeyChar = SpecKeyChars[SKey]
     if SKey ~= "BS" and not SpecKeyChar and not isVKeyChar(VKey) then return end
 

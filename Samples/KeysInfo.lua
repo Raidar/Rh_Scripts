@@ -17,9 +17,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
-local fkeys = require "far2.keynames"
-
 ----------------------------------------
 local bit = bit64
 local band, bor = bit.band, bit.bor
@@ -41,6 +38,11 @@ local newFlags = utils.newFlags
 local tconcat, tfind = table.concat, tables.find
 
 local hex = numbers.hex8
+
+----------------------------------------
+local fkeys = require "far2.keynames"
+
+local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
 ----------------------------------------
 -- [[
@@ -176,7 +178,7 @@ local function KeyPress_Run ()
       SendText(hDlg, D.KCode.id, hex(mCode))
       SendText(hDlg, D.KName.id, StrKey)
       SendText(hDlg, D.VKey.id, VK_KeyToName(mCode) or "")
-      SendText(hDlg, D.fName.id, fkeys.InputToKeyName(VirKey))
+      SendText(hDlg, D.fName.id, fkeys.InputRecordToName(VirKey))
 
       local mState = VirKey.ControlKeyState
       SendText(hDlg, D.CCode.id, hex(mState))

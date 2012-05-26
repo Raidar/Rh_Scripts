@@ -60,27 +60,14 @@ local unit = { Keys = sKeys, Item = sItem, List = sList }
 
 ---------------------------------------- Symbol keys
 local SKEY_SymNames = keyUt.SKEY_SymNames
-local SKey_SymUpper = keyUt.SKEY_SymInvers
 
 -- Клавиша-символ для VK_.
 local function SVKeyValue (s) --> (string)
   if not s or s == "" then return s end
   --return s:upper()
-  return SKEY_SymNames[s] or s--:upper()
+  return SKEY_SymNames[s] or s:upper()
 end --
 sKeys.SVKeyValue = SVKeyValue
-
-local function SVKeyBasic (s) --> (string)
-  if not s or s == "" then return s end
-  --logShow(Char_Upper(s), "SFModValue")
-  return s:upper()
-end --
-
-local function SVKeyUpper (s) --> (string)
-  if not s or s == "" then return s end
-  --logShow(Char_Upper(s), "SFModValue")
-  return s:len() == 1 and SKey_SymUpper[s:sub(1, 1)] or s:upper()
-end --
 
 ---------------------------------------- Combo-keys
 -- Комбинации модификаторов:
@@ -101,17 +88,9 @@ sKeys.SVKeyFuncs = SVKeyFuncs
 
 for k, m in ipairs(SKeyModifs) do
   SVKeyFuncs[m] = function (s)
-    return SModifKey(s, UsedModifs[k], SVKeyBasic)
+    return SModifKey(s, UsedModifs[k], SVKeyValue)
   end
 end
-
-function SVKeyFuncs.S (s)
-  --logShow(s:upper(), "SFModValue")
-  if s and s:len() < 2 then
-    return SVKeyUpper(s)
-  end
-  return SModKeyPat:format('S', SVKeyUpper(s))
-end --
 
 ---------------------------------------- Action keys
 -- Вид клавиш обработки:

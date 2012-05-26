@@ -463,7 +463,7 @@ unit.SKEY_SymNames = {
   ['`'] = "`",
   ['['] = "Bracket",
   --]]
- ['\\'] = "BackSlash",
+ --['\\'] = "BackSlash",
   --[[
   [']'] = "BackBracket",
   ["'"] = "Quote",
