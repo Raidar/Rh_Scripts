@@ -18,6 +18,7 @@
 local _G = _G
 
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local fkeys = require "far2.keynames"
 
 ----------------------------------------
 local bit = bit64
@@ -58,7 +59,7 @@ local DIF_HelpText =  F.DIF_SHOWAMPERSAND + F.DIF_CENTERGROUP
 
 -- Форма окна диалога нажатия клавиши.
 local function KeyPress_Dlg()
-  local W, H = 48 - 4, 9 - 2 -- Width, Height
+  local W, H = 48 - 4, 10 - 2 -- Width, Height
   local I, M = 3, bshr(W, 1) -- Indent, Width/2
   local Q = bshr(M, 1) -- Width/4
   local A, B, C, K = I + 1, M + 1, M + Q + 1, I + 6
@@ -81,6 +82,10 @@ local function KeyPress_Dlg()
   D.SCode  = {DI_Text,  K+1, 4, M-1, 0, 0, 0, 0, 0, "Scan Code"}
   D.SName  = {DI_Text,    M, 4,   C, 0, 0, 0, 0, 0, "Scan Name"}
   D.AlNum  = {DI_Text,  C+1, 4,   W, 0, 0, 0, 0, 0, "AlNum"}
+
+  D.fKey   = {DI_Text,    A, 5,   M, 0, 0, 0, 0, 0, "far2:"}
+  D.fCode  = {DI_Text,  K+1, 5, M-1, 0, 0, 0, 0, 0, "ToKeyName"}
+  D.fName  = {DI_Text,    M, 5,   C, 0, 0, 0, 0, 0, "farKey Name"}
 
   -- Additional fields
   D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
@@ -160,7 +165,8 @@ local function KeyPress_Run ()
       --logShow{ "VirKey", StrKey, VirKey }
 
       -- Выход по ENTER / ESC:
-      if StrKey == "Enter" or StrKey == "Esc" then
+      if StrKey == "Esc" then
+      --if StrKey == "Enter" or StrKey == "Esc" then
         DlgClose(hDlg); return true
       end
       --logShow{ "FarKey", hex(FarKey) }
@@ -170,6 +176,7 @@ local function KeyPress_Run ()
       SendText(hDlg, D.KCode.id, hex(mCode))
       SendText(hDlg, D.KName.id, StrKey)
       SendText(hDlg, D.VKey.id, VK_KeyToName(mCode) or "")
+      SendText(hDlg, D.fName.id, fkeys.InputToKeyName(VirKey))
 
       local mState = VirKey.ControlKeyState
       SendText(hDlg, D.CCode.id, hex(mState))
