@@ -572,7 +572,11 @@ function unit.isVKeyExt (key) --> (bool)
          inseg(key, 0x5B, 0x87) or
          inseg(key, 0xA0, 0xA5) or
          inseg(key, 0xA6, 0xB7)
-end
+end ----
+
+function unit.GetModBase (VMod) --> (bool)
+  return band(VMod, VM_.CtrlAltShift)
+end ----
 
 ---------------------------------------- VirKey <--> Char
 unit.VirKeyToChar = string.char

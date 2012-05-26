@@ -72,12 +72,13 @@ local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
 local isVKeyChar = keyUt.isVKeyChar
 local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
+local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
 -- [[
 local hex = numbers.hex8
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg = rhlog.Message
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -888,7 +889,8 @@ local function MakeComplete (Cfg) --> (bool | nil)
 
     -- Предварительный анализ клавиши.
     PressKey = Cfg.UndueOut and VirKey or false
-    local VMod, VKey = VirKey.ControlKeyState, VirKey.VirtualKeyCode
+    local VKey = VirKey.VirtualKeyCode
+    local VMod = GetModBase(VirKey.ControlKeyState)
     --logMsg({ VKey, VMod, SKey }, "VirKey", 1, "hv2")
 
     local function MakeUpdate () -- Обновление!
@@ -927,6 +929,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
 
     -- Учёт нажатия клавиш действий.
     local Name = KeyActionNames[VirKey.KeyName]
+    --logShow({ Name }, VirKey.KeyName)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
       --logMsg(KeyAction, VirKey.KeyName)

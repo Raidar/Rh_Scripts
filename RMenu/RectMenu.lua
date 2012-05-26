@@ -90,7 +90,8 @@ local DrawSeparItemText = RDraw.DrawSeparItemText
 -- [[
 local hex = numbers.hex8
 local tostring = tostring
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -1489,7 +1490,8 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
     local AKey = VirKey.KeyName
     AKey = keyUt.SKEY_NumpadNavs[AKey] or
            keyUt.SKEY_MSWheelNavs[AKey] or AKey
-    local VMod = VirKey.ControlKeyState
+    local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
+    --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
 
     if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
        (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
