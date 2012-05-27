@@ -20,9 +20,12 @@ local _G = _G
 local editors = ctxdata.editors
 
 ----------------------------------------
--- [[
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg = rhlog.Message
+--[[
+local numbers = require 'context.utils.useNumbers'
+local hex = numbers.hex8
+
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -52,23 +55,23 @@ local KEY_EVENT = F.KEY_EVENT
 local k = 0x00
 
 --far.Message(tostring(KEY_EVENT), "AutoActions")
---local log = rhlog.open("AC_test.log", "a", "")
+--local flog = dbg.open("AC_test.log", "a", "")
 
 function ProcessEditorInput (rec) --> (bool)
   if rec.EventType == KEY_EVENT then
     far.RepairInput(rec)
-    --log:Message(rec, "rec", nil, "#hv4")
+    --flog:logtab(rec, "rec", "xv4")
     if rec.KeyDown then
       --k = rec.VirtualKeyCode
       k = (rec.UnicodeChar or " "):byte() or 0x00
-      --log:Message('"'..c..'"', "c1", nil, "#hv4")
+      --flog:logln(hex(k), "c1", "xv4")
     elseif k > 0x20 and k ~= 0x7F then
-      --log:Message('"'..c..'"', "c2", nil, "#hv4")
+      --flog:logln(hex(k), "c2", "xv4")
       k = 0x00
-      --logMsg(rec, "rec", nil, "#hv4")
-      --log:Message(rec, "rec", nil, "#hv4")
+      --logShow(rec, "rec", "xv4")
+      --flog:logtab(rec, "rec", "xv4")
       TT_CfgData.FileType = editors.current.type
-      --logMsg(TT_CfgData, "TT_CfgData", 1, "#")
+      --logShow(TT_CfgData, "TT_CfgData", 1)
       --TextTemplate(TT_CfgData)
       if not TT_Execute(TT_CfgData) then
         WC_Execute(WC_CfgData)

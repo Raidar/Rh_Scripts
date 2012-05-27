@@ -20,11 +20,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
---local keyUt = require "Rh_Scripts.Utils.keyUtils"
-
 --local type = type
 --local pairs = pairs
 local getmetatable, setmetatable = getmetatable, setmetatable
@@ -34,21 +29,16 @@ local getmetatable, setmetatable = getmetatable, setmetatable
 --local bor = bit.bor
 --local bshl, bshr = bit.lshift, bit.rshift
 
---local U = unicode.utf8.char
-
-----------------------------------------
---local far = far
---local F = far.Flags
-
---local farColors = far.Colors
-
 ----------------------------------------
 local context = context
 
 --local utils = require 'context.utils.useUtils'
 
 ----------------------------------------
-local linMsg = (require "Rh_Scripts.Utils.Logging").lineMessage
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -135,6 +125,7 @@ end ---- new
 function class:convert (t)
   t._base_ = self
   setmetatable(t, getmetatable(self))
+
   return t
 end ---- convert
 

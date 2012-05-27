@@ -14,9 +14,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-
 local type = type
 local pairs, ipairs = pairs, ipairs
 local loadfile = loadfile
@@ -33,10 +30,16 @@ local context = context
 local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+
+----------------------------------------
 --[[
 local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -88,8 +91,8 @@ local function MergeField (Field, Merged, Props) --> (Field | nil, error)
   else -- MergeKind == "record"
     for n, v in pairs(Merged) do -- Слияние полей:
       Field[n] = MergeField(Field[n], v, Props) end
-  end -- if
-  --logMsg(Field, "AddIniData")
+  end
+  --logShow(Field, "AddIniData")
 
   return Field
 end ---- MergeField
@@ -114,7 +117,7 @@ local function MergeTable (Table, Merged, Props) --> (Table | nil, error)
       end -- for
     else Table[s] = d end
   end
-  --logMsg(Table, "AddIniData")
+  --logShow(Table, "AddIniData")
 
   return Table
 end ---- MergeTable
@@ -163,7 +166,7 @@ local function ParseString (Str, Info, Props) --> (true | nil, error)
 
   local Line = Props._CP_ == "OEM" and OemToUtf8(Str) or Str
   --if Line:find("[Insert.S", 1, true) then far.Message(Line) end
-  --if Line:find("[Main]", 1, true) then logMsg(Line) end
+  --if Line:find("[Main]", 1, true) then logShow(Line) end
   Line = Line:match(SpaceTrim) -- Очистка строки
   -- Пропуск пустых/пробельных строк.
   if #Line < 1 then Info.ContFlag = false; return true end -- :len() ?
@@ -172,7 +175,7 @@ local function ParseString (Str, Info, Props) --> (true | nil, error)
   -- Проверка на раздел -- Разбор [Sec]
   --PosB, PosE = Line:cfind("^%[.+%]")
   PosB, PosE = Line:cfind("^%[[^=%]]+%]")
-  --if Line:cfind("[Main]", 1, true) then logMsg({PosB, PosE, Line}, "[Sec]") end
+  --if Line:cfind("[Main]", 1, true) then logShow({PosB, PosE, Line}, "[Sec]") end
   --[[
   if PosB and Info.ContFlag then -- Продолжение последнего ключа
     return nil, Msgs.ContinuationError..Name..
@@ -234,7 +237,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
     Props._CP_ = extUt.CheckFileCP(Name) -- Примерная кодировка файла
     if Props._CP_ == nil then return nil, Msgs.FileCannotOpen..Name end
   end
-  --logMsg(Props._CP_, Name)
+  --logShow(Props._CP_, Name)
 
   f = io_open(Name, 'r')
   local Info = {
@@ -248,7 +251,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
   for s in f:lines() do
     Info.LineCtr = Info.LineCtr + 1
     isOk, SError = ParseString(s, Info, Props)
-    --logMsg(Info.Table, s)
+    --logShow(Info.Table, s)
     if not isOk then break end
   end
 
@@ -261,7 +264,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
                 Msgs.ContErrorFileLine..tostring(Info.LineCtr)
   end
   --]]
-  --logMsg(Info.Table, "Info.Table")
+  --logShow(Info.Table, "Info.Table")
 
   return Info.Table
 end ---- GetStrIniData
@@ -279,7 +282,7 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
   --[[
   local SecCtr = numbers.b2n(Str:find("^%s*[^\n]-%[")) + -- Раздел в 1-й строке
                  strings.gsubcount(Str, "\n%s*[^\n]-%[") -- + остальные разделы
-  logMsg(Str, SecCtr)
+  logShow(Str, SecCtr)
   --]]
 
   local Info = {
@@ -293,7 +296,7 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
   for s in Str:gmatch("([^\n]+)") do
     Info.LineCtr = Info.LineCtr + 1
     isOk, SError = ParseString(s, Info, Props)
-    --logMsg(Info.Table, s)
+    --logShow(Info.Table, s)
     if not isOk then break end
   end
 
@@ -305,7 +308,7 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
                 Msgs.ContErrorFileLine..tostring(Info.LineCtr)
   end
   --]]
-  --logMsg(Info.Table, "Info.Table")
+  --logShow(Info.Table, "Info.Table")
 
   return Info.Table
 end ---- ParseBuffer
@@ -332,8 +335,8 @@ function unit.GetBufIniData (Name, Table, Props) --> (Table | nil, error)
   if not Props._CP_ then
     Props._CP_ = extUt.CheckLineCP(Str) -- Примерная кодировка файла
   end
-  --logMsg(Props._CP_, Name)
-  --logMsg(Str, Name)
+  --logShow(Props._CP_, Name)
+  --logShow(Str, Name)
 
   return ParseBuffer(Str, Table, Props)
 end ---- GetBufIniData
@@ -371,7 +374,7 @@ unit.GetIniData = unit.GetBufIniData
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 function unit.GetLuaData (Name, Table, Props) --> (Table | nil, error)
-  --logMsg({ Name, Table, Props }, "GetLuaData", 2)
+  --logShow({ Name, Table, Props }, "GetLuaData", 2)
   if not Name then return nil, Msgs.FileNameNotFound end
 
   -- Загрузка файла:

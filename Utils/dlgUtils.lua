@@ -14,9 +14,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-
 local type = type
 local pairs, ipairs = pairs, ipairs
 local tonumber, tostring = tonumber, tostring
@@ -43,7 +40,14 @@ local Null = tables.Null
 local tfind = tables.find
 
 ----------------------------------------
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -66,7 +70,7 @@ unit.DlgItem = {
   Data = 10, --Ptr = 10,
   MaxLen = 11,
   UserData = 12,
-} --
+} -- DlgItem
 else
 unit.DlgItem = {
   Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5, --Focus = 6,
@@ -75,7 +79,7 @@ unit.DlgItem = {
   VBuf = 7,
   Flags = 8, --DefaultButton = 9,
   Data = 10, --Ptr = 10,
-} --
+} -- DlgItem
 end
 local DlgItem = unit.DlgItem
 
@@ -104,7 +108,7 @@ unit.DlgItemType = {
   Button    = "DI_BUTTON",      -- кнопка
 
   User      = "DI_USERCONTROL", -- пользовательский элемент
-} --
+} -- DlgItemType
 
 -- Флаги элементов диалога:
 unit.DlgItemFlag = {
@@ -169,7 +173,7 @@ unit.DlgItemFlag = {
   ComboList     = newFlags(F.DIF_DROPDOWNLIST, F.DIF_LISTWRAPMODE),
   DlgButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS),
   DefButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS, F.DIF_DEFAULTBUTTON),
-} --
+} -- DlgItemFlag
 
 ---------------------------------------- Datas
 
@@ -181,7 +185,8 @@ function unit.ListItems (Config, Kind, L) --> (table)
   for k = 1, #List do
     t[#t+1] = { Text = L:config(Prefix..List[k]) }
   end
-  --logMsg(t, "ListItems")
+  --logShow(t, "ListItems")
+
   return t
 end ---- ListItems
 
@@ -196,8 +201,8 @@ local function LoadDlgItem (Info, Data, Dlg) --| Item
 
   local Name = Type..(Info.Name or k)
   local u = Dlg[Name] -- Dialog item
-  --logMsg(Dlg, "LoadDlgItem Dlg", 2, "#q")
-  --logMsg({ k, Type, Name, u }, "LoadDlgItem", 2, "#q")
+  --logShow(Dlg, "LoadDlgItem Dlg", 2)
+  --logShow({ k, Type, Name, u }, "LoadDlgItem", 2)
   if not u then return end
 
   if not List then
@@ -229,8 +234,8 @@ local function SaveDlgItem (Info, Data, Dlg) --| Item
 
   local Name = Type..(Info.Name or k)
   local u = Dlg[Name] -- Dialog item
-  --logMsg(Dlg, "SaveDlgItem Dlg", 2, "#q")
-  --logMsg({ k, Type, Name, List, u }, "SaveDlgItem", 2, "#q")
+  --logShow(Dlg, "SaveDlgItem Dlg", 2)
+  --logShow({ k, Type, Name, List, u }, "SaveDlgItem", 2)
   if not u then return end
 
   local d -- Данные
@@ -250,13 +255,13 @@ local function SaveDlgItem (Info, Data, Dlg) --| Item
       end
     else -- "lbx" | "cbx"
       u = u[diListItems]
-      --logMsg(Value, "diListItems")
+      --logShow(Value, "diListItems")
       d = u and List[u.SelectIndex] or ""
     end
   end
-  --logMsg({ k, Type, Name, d, v }, "SaveDlgItem", 2, "#q")
-  --logMsg({ k, Info.Default, d, Data }, "SaveDlgItem", 2, "#q")
-  --if Info.SpaceAsNil then logMsg({ Info, Name, d, v }, "SaveDlgItem", 2, "#q") end
+  --logShow({ k, Type, Name, d, v }, "SaveDlgItem", 2)
+  --logShow({ k, Info.Default, d, Data }, "SaveDlgItem", 2)
+  --if Info.SpaceAsNil then logShow({ Info, Name, d, v }, "SaveDlgItem", 2) end
   --[[
   if d == ' ' and Info.SpaceAsNil then Data[k] = nil
   elseif d ~= "" and
@@ -268,7 +273,7 @@ local function SaveDlgItem (Info, Data, Dlg) --| Item
   else
     Data[k] = nil
   end
-  --logMsg({ k, Info.Default, d, Data }, "SaveDlgItem", 2, "#q")
+  --logShow({ k, Info.Default, d, Data }, "SaveDlgItem", 2)
 end ----
 unit.SaveDlgItem = SaveDlgItem
 
@@ -301,7 +306,7 @@ end ---- SaveDlgData
 --]]
 function unit.ItemColor (Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
   if LFVer >= 3 or type(Hi_Hi) == 'table' then -- FAR23
-  --logMsg({ Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }, "ItemColor", 3, "#h2")
+  --logShow({ Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }, "ItemColor", "d3 x2")
   return { Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }
   else
   return bor(bshl(Hi_Hi or 0, 0x18),

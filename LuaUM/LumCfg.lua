@@ -14,8 +14,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 local type, assert = type, assert
 local pairs, ipairs = pairs, ipairs
 local require = require
@@ -42,9 +40,14 @@ local colors = require 'context.utils.useColors'
 local newFlags = utils.newFlags
 
 ----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
 --[[
 local numbers = require 'context.utils.useNumbers'
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -145,16 +148,16 @@ local DefCustom = {
 --]]
 function unit.Configure (ArgData, isDefData) --> (table)
   assert(type(ArgData) == 'table')
-  --logMsg(ArgData, "ArgData", 2)
-  --logMsg(getmetatable(ArgData), "ArgData meta", 2)
+  --logShow(ArgData, "ArgData", 2)
+  --logShow(getmetatable(ArgData), "ArgData meta", 2)
 
   -- 1. Заполнение ArgData.
   local DefB = ArgData.Basic
   local DefConfig = not isDefData and unit.DefConfig or nil
   local DefData = DefConfig and DefConfig.ArgData
-  --logMsg(DefData, "DefData", 1)
+  --logShow(DefData, "DefData", 1)
   ArgData.Custom = { name = DefB.LuaUMName, path = DefB.LuaUMPath }
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
 
   -- 2. Заполнение конфигурации.
@@ -163,7 +166,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
   for k, _ in pairs(HistoryFields) do
     local v = ArgData[k]
     CfgData[k] = History:field(k) -- Чтение текущих значений
-    --logMsg({ v, CfgData[k], (DefData or {})[k] }, k)
+    --logShow({ v, CfgData[k], (DefData or {})[k] }, k)
     -- Наследование полей:
     if DefData then -- Глобальная => По умолчанию:
       --setmetatable(v, { __index = DefData[k] }) -- Don't work
@@ -173,7 +176,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
     setmetatable(CfgData[k], { __index = v })
     --addNewData(CfgData[k], ArgData[k])
   end
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
 
   -- 3. Дополнение конфигурации.
   local Config = { -- Конфигурация:
@@ -182,7 +185,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
     CfgData = CfgData, ArgData = ArgData, --DefData = DefData,
   } ---
   locale.customize(Config.Custom) -- Инфо локализации
-  --logMsg(Config, "Config", 2)
+  --logShow(Config, "Config", 2)
   --return Config
   return DefConfig and setmetatable(Config, Config) or Config
 end ---- Configure
@@ -359,7 +362,7 @@ local function ConfigDlg (Config, Kind, Derived)
   local cData = Config.CfgData[Kind]
   local aData = Config.ArgData[Kind]
   local Types = Config.DlgTypes[Kind]
-  --logMsg(Config, "ConfigDlg", 3, "_")
+  --logShow(Config, "ConfigDlg", "d3 _")
 
   if not Derived then
     -- Локализация:

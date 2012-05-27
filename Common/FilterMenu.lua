@@ -56,7 +56,9 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 --[[
 local numbers = require 'context.utils.useNumbers'
 local hex = numbers.hex8
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -272,13 +274,13 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 
   -- Обработка отображаемых клавиш.
   local MapKeys = Options.MapKeys
-  --logMsg({ BreakKeys, MapKeys }, "Keys", 2)
+  --logShow({ BreakKeys, MapKeys }, "Keys", 2)
   local function MapKeyPress (VirKey, SelIndex)
     local SKey = VirKey.Name or InputRecordToName(VirKey)
 
     for k, f in pairs(MapKeys) do
       if SKey == k and type(f) == 'function' then
-        --logMsg(SKey, hex(FarKey))
+        --logShow(SKey, hex(FarKey))
         local isOk, s = pcall(f, Pattern)
         if isOk then Pattern = s end
         return isOk
@@ -362,7 +364,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
     end
 
     ApplyFilter() -- Применение фильтра.
-    --logMsg(SelIndex, hex(FKey))
+    --logShow(SelIndex, hex(FKey))
     return Table, Flags
   end --function KeyPress
 

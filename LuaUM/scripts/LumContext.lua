@@ -14,36 +14,39 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 ----------------------------------------
 local context, ctxdata = context, ctxdata
 
 local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg = rhlog.Message
-local linMsg = rhlog.lineMessage
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
+-- [[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 
 ---------------------------------------- Common
+local format = string.format
 
 -- Информация по таблице context.
 function showInfo (Depth)
-  linMsg(context, "context", Depth, "_")
-  linMsg(ctxdata, "context data", Depth, "_")
+  logShow(context, "context", format("d%d %s", Depth, "_w"))
+  logShow(ctxdata, "context data", format("d%d %s", Depth, "_w"))
 end ----
 
 -- Краткая информация по context.
 function briefInfo ()
-  showInfo(0)
+  showInfo(1)
 end ----
 
 -- Детальная информация context.
 function detailedInfo ()
-  showInfo(1)
+  showInfo(2)
 end ----
 
 -- [[
@@ -58,7 +61,7 @@ function OpenFilesList ()
      end
      showFileList = context.manage.showFileList
   end
-  --logMsg(context, "context", 2, "_")
+  --logShow(context, "context", "d2 _")
   showFileList()
 end ----
 --]]
@@ -70,44 +73,50 @@ local abstypes = ctxdata.abstypes
 local cfgpairs = datas.cfgpairs
 
 function typesTable ()
-  logMsg(types, "context types", 0, "_", { pairs = cfgpairs })
+  logShow(types, "context types", "d1 _w", { pairs = cfgpairs })
   if abstypes then
-    logMsg(abstypes, "abstract types", 0, "_")
+    logShow(abstypes, "abstract types", "d1 _w")
   end
 end ----
 
 local typeLineFmt = '%#10s - %s' -- m/b utf-8 string
-local typeLineSep = ('-'):rep(10+3+30)
+local typeLineSep = ('─'):rep(10+3+30)
 local typeLineCap = typeLineFmt:format('type', 'description')
-local typeMrgMode = '_mode_ is: basis = "%s", merge = "%s".'
 
 -- Форматированный список типов.
 local function typesList (types)
   if not types then return end
+
   local t, lvl = { typeLineCap }, -1
+
   for k, v, l in cfgpairs(types) do
     if l ~= lvl then
-      lvl = l
+      lvl = l -- next:
       t[#t+1] = typeLineSep
     end
-    if k ~= '_mode_' then
-      t[#t+1] = typeLineFmt:format(k, v.desc or "")
+    if k ~= '_meta_' then -- value:
+      t[#t+1] = format(typeLineFmt, k, v.desc or "")
     end
-  end -- for
-  local mode = types._mode_
-  if mode then
-    t[#t+1] = typeLineSep
-    t[#t+1] = typeMrgMode:format(mode.basis or 'none', mode.merge or 'none')
   end
+
+  local meta = types._meta_
+  if meta then -- meta:
+    t[#t+1] = typeLineSep
+    t[#t+1] = "_meta_ is:"
+    t[#t+1] = format("basis = '%s',", meta.basis or 'none')
+    t[#t+1] = format("merge = '%s'.", meta.merge or 'none')
+  end
+  t[#t+1] = typeLineSep
+
   return t
-end --function typesList
+end -- typesList
 
 -- Информация о типах.
 function typesInfo ()
   local t = typesList(types)
-  if t then linMsg(t, "context types", 0, "#q") end
+  if t then logShow(t, "context types", "d1 w a1") end
   t = typesList(abstypes)
-  if t then linMsg(t, "abstract types", 0, "#q") end
+  if t then logShow(t, "abstract types", "d1 w a1") end
 end ----
 
 local detArea = context.detect.area
@@ -120,9 +129,9 @@ function detType ()
   local info = { curFileType(f) }
 
   if #info > 0 then
-    linMsg(info, "detType", 2, "_#q")
+    logShow(info, "detType", "d2 _")
   else
-    logMsg("No types for detect\n\n'LuaFAR context' pack is required\n", "detType")
+    logShow("No types for detect\n\n'LuaFAR context' pack is required\n", "detType")
   end
 end ---- detType
 

@@ -48,9 +48,9 @@ local EditorSelect  = editor.Select
 --local context = context
 
 ----------------------------------------
--- [[
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg = rhlog.Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ function Truncate.File (keep) --> (number)
     end
     q = q + 1
   end
-  --logMsg({ l, keep, -q })
+  --logShow({ l, keep, -q }, "TruncateFile")
 
   -- Отсечение пустых строк:
   q = 0
@@ -144,7 +144,7 @@ function Truncate.File (keep) --> (number)
       q = q + 1
     else break end
   end
-  --logMsg({ l, keep, q })
+  --logShow({ l, keep, q }, "TruncateFile")
 
   EditorSetPos(nil, Info)
   return q
@@ -169,29 +169,29 @@ local VK_END = keyUt.VKEY_Keys.END
 local CMods = keyUt.VKEY_Mods
 --local Cmask = CMods.BaseMask
 local ALT, CTRL, SHIFT = CMods.Alt, CMods.Ctrl, CMods.Shift
---logMsg({ ALT, CTRL, SHIFT }, "Cmod", nil, "#hv4")
+--logShow({ ALT, CTRL, SHIFT }, "Cmod", "#xv4")
 
 --local EType, CState, Info
 local BT_Stream, BT_Column = F.BTYPE_STREAM, F.BTYPE_COLUMN
 
 function ProcessEditorInput (rec) --> (bool)
-  --if rec.wVirtualKeyCode == 'END' then logMsg(rec, "rec", nil, "#hv4") end
+  --if rec.wVirtualKeyCode == 'END' then logShow(rec, "rec", "xv4") end
   far.RepairInput(rec)
-  --if rec.VirtualKeyCode == VK_END then logMsg(rec, "rec", nil, "#hv4") end
+  --if rec.VirtualKeyCode == VK_END then logShow(rec, "rec", "xv4") end
 
   local EType = rec.EventType
   if (EType == STANDARD_KEY_EVENT or EType == FARMACRO_KEY_EVENT) and
      rec.VirtualKeyCode == VK_END and rec.KeyDown then
     local CState = rec.ControlKeyState
     --CState = band(rec.ControlKeyState, Cmask)
-    --logMsg(CState, CTRL, nil, "#hv4")
-    --logMsg(rec, "rec", nil, "#hv4")
+    --logShow(CState, CTRL, "xv4")
+    --logShow(rec, "rec", "xv4")
 
     if band(CState, CTRL) ~= 0 then -- End of file
       -- TODO: Make block operation!
       TruncateFile(1)
       local Info = EditorGetInfo()
-      --logMsg({ CState, Cmod, Info }, "State", 2, "#hv4")
+      --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
       EditorSetPos(nil, { CurLine = Info.TotalLines - 1 })
       TruncateLine()
       if band(CState, SHIFT) ~= 0 then -- Select
@@ -213,7 +213,7 @@ local args = (...)
 if type(args) ~= 'table' then return unit end
 
 local Param1, Param2 = args[1], args[2]
---logMsg({ Param1, Param2, f }, "VT Params")
+--logShow({ Param1, Param2, f }, "VT Params")
 
 if type(Param1) == 'string' then
   local f = Truncate[Param1]

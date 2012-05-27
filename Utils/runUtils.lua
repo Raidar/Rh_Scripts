@@ -1,5 +1,5 @@
 --[[ Action run functions ]]--
---[[ Функции выполнения действий ]]--
+--[[ ╨д╤Г╨╜╨║╤Ж╨╕╨╕ ╨▓╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╤П ╨┤╨╡╨╣╤Б╤В╨▓╨╕╨╣ ]]--
 
 --[[ uses:
   LuaFAR.
@@ -15,7 +15,10 @@ local F = far.Flags
 local farAdvControl = far.AdvControl
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -25,12 +28,13 @@ do
   local popen = io.popen
 
 -- Execute program and return its output.
--- Выполнение программы и возвращение его вывода.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡ ╨┐╤А╨╛╨│╤А╨░╨╝╨╝╤Л ╨╕ ╨▓╨╛╨╖╨▓╤А╨░╤Й╨╡╨╜╨╕╨╡ ╨╡╨│╨╛ ╨▓╤Л╨▓╨╛╨┤╨░.
 function unit.runProcess (program) --> (string)
   local h = popen(program)
   if not h then return end
   local out = h:read("*a")
   h:close()
+
   return out -- console output
 end ----
 
@@ -40,7 +44,7 @@ do
   local MacroPost = far.MacroPost
 
 -- Run FAR macrosequence.
--- Запуск макропоследовательности FAR.
+-- ╨Ч╨░╨┐╤Г╤Б╨║ ╨╝╨░╨║╤А╨╛╨┐╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨╛╤Б╤В╨╕ FAR.
 function unit.runSequence (Sequence, Flags, AKey) --> (bool)
   return MacroPost(Sequence, Flags, AKey)
 end ----
@@ -51,7 +55,7 @@ do
   local execute = os.execute
 
 -- Run command from OS shell.
--- Запуск команды из оболочки ОС.
+-- ╨Ч╨░╨┐╤Г╤Б╨║ ╨║╨╛╨╝╨░╨╜╨┤╤Л ╨╕╨╖ ╨╛╨▒╨╛╨╗╨╛╤З╨║╨╕ ╨Ю╨б.
 function unit.runCommand (Command) --> (ErrorLevel)
   return execute(Command)
 end ----
@@ -63,7 +67,7 @@ do
   --far.Message(CmdFlags, "CmdFlags")
 
 -- Run command from FAR command line.
--- Запуск команды из командной строки FAR.
+-- ╨Ч╨░╨┐╤Г╤Б╨║ ╨║╨╛╨╝╨░╨╜╨┤╤Л ╨╕╨╖ ╨║╨╛╨╝╨░╨╜╨┤╨╜╨╛╨╣ ╤Б╤В╤А╨╛╨║╨╕ FAR.
 function unit.runCmdLine (Command) --> (integer)
   if panel.SetCmdLine(-1, Command) then
     return unit.runSequence("Enter", CmdFlags)
@@ -74,12 +78,12 @@ end -- do
 
 ---------------------------------------- lua
 -- Split to name and arguments.
--- Разбиение на имя и аргументы.
+-- ╨а╨░╨╖╨▒╨╕╨╡╨╜╨╕╨╡ ╨╜╨░ ╨╕╨╝╤П ╨╕ ╨░╤А╨│╤Г╨╝╨╡╨╜╤В╤Л.
 --[[
   -- @params:
-  Name    (string) - имя и (возможно) аргументы в скобках.
-  DefArgs (string) - аргументы, используемые по умолчанию.
-  -- @notes: Пример значения Name:
+  Name    (string) - ╨╕╨╝╤П ╨╕ (╨▓╨╛╨╖╨╝╨╛╨╢╨╜╨╛) ╨░╤А╨│╤Г╨╝╨╡╨╜╤В╤Л ╨▓ ╤Б╨║╨╛╨▒╨║╨░╤Е.
+  DefArgs (string) - ╨░╤А╨│╤Г╨╝╨╡╨╜╤В╤Л, ╨╕╤Б╨┐╨╛╨╗╤М╨╖╤Г╨╡╨╝╤Л╨╡ ╨┐╨╛ ╤Г╨╝╨╛╨╗╤З╨░╨╜╨╕╤О.
+  -- @notes: ╨Я╤А╨╕╨╝╨╡╤А ╨╖╨╜╨░╤З╨╡╨╜╨╕╤П Name:
   "TableName.FunctionName(Arg1, 'Arg2', { Arg3_1, Arg3_2 })"
 --]]
 function unit.splitNameArgs (Name, DefArgs) --> (string, string, boolean)
@@ -88,8 +92,9 @@ function unit.splitNameArgs (Name, DefArgs) --> (string, string, boolean)
     return Name:match("^([^%(]+)%((.+)%)$")
     --return Name:match("([^%(]+)"), Name:match("^[^%(]+%((.+)%)$"), false
   end
+
   return Name, DefArgs, true
-end ----
+end ---- splitNameArgs
 
 do
   local loadstring = loadstring
@@ -97,33 +102,33 @@ do
   local ArgsFmt = "return { %s }" -- ascii string only
 
 -- Getting arguments.
--- Получение аргументов.
+-- ╨Я╨╛╨╗╤Г╤З╨╡╨╜╨╕╨╡ ╨░╤А╨│╤Г╨╝╨╡╨╜╤В╨╛╨▓.
 function unit.getArguments (Args) --> (table | Args)
   if type(Args) ~= 'string' then return Args end
 
-  -- Загрузка строки как порции.
+  -- ╨Ч╨░╨│╤А╤Г╨╖╨║╨░ ╤Б╤В╤А╨╛╨║╨╕ ╨║╨░╨║ ╨┐╨╛╤А╤Ж╨╕╨╕.
   local Args, SError = loadstring(format(ArgsFmt, Args))
   if not Args then return nil, SError end
 
-  Args = Args() -- Получение таблицы
-  --logMsg(Args, "User Args")
+  Args = Args() -- ╨Я╨╛╨╗╤Г╤З╨╡╨╜╨╕╨╡ ╤В╨░╨▒╨╗╨╕╤Ж╤Л
+  --logShow(Args, "User Args")
   if not Args then return nil, SError end
 
   return Args
-end ----
+end ---- getArguments
 
 end -- do
 
 ---------------------------------------- actions:
 ---------------------------------------- -- Text/Macro
 -- Execute: label action.
--- Выполнение: действие-метка.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨┤╨╡╨╣╤Б╤В╨▓╨╕╨╡-╨╝╨╡╤В╨║╨░.
 function unit.Label () --> (true)
   return true -- Nothing to do
 end ----
 
 -- Execute: Far macrosequence.
--- Выполнение: макропоследовательность FAR.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨╝╨░╨║╤А╨╛╨┐╨╛╤Б╨╗╨╡╨┤╨╛╨▓╨░╤В╨╡╨╗╤М╨╜╨╛╤Б╤В╤М FAR.
 function unit.FarSeq (Value, Flags) --> (true | nil, error)
   -- WARN: Use Result for future run changes.
   local Result = unit.runSequence(Value, Flags)
@@ -132,7 +137,7 @@ function unit.FarSeq (Value, Flags) --> (true | nil, error)
 end ----
 
 -- Execute: insert plain text.
--- Выполнение: вставка обычного текста.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨▓╤Б╤В╨░╨▓╨║╨░ ╨╛╨▒╤Л╤З╨╜╨╛╨│╨╛ ╤В╨╡╨║╤Б╤В╨░.
 function unit.Plain (Value, Insert, ...) --> (true | nil, error)
   local Result = Insert(Value, ...)
   if Result == nil then return nil, "" end
@@ -143,10 +148,11 @@ do
   local macUt = require "Rh_Scripts.Utils.macUtils"
 
 -- Execute: macro-template.
--- Выполнение: макро-шаблон.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨╝╨░╨║╤А╨╛-╤И╨░╨▒╨╗╨╛╨╜.
 function unit.Macro (Value) --> (true | nil, error)
   local Result, SError = macUt.RunMacro(Value)
   if Result == nil then return nil, SError end
+
   return true
 end ----
 
@@ -154,26 +160,29 @@ end -- do
 
 ---------------------------------------- -- Command
 -- Execute: program as process.
--- Выполнение: программа как процесс.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨┐╤А╨╛╨│╤А╨░╨╝╨╝╨░ ╨║╨░╨║ ╨┐╤А╨╛╤Ж╨╡╤Б╤Б.
 function unit.Program (Value) --> (string | nil, error)
   local Result = unit.runProcess(Value)
   if Result == nil then return nil, "" end
+
   return Result
 end ----
 
 -- Execute: command from OS shell.
--- Выполнение: команда из оболочки ОС.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨║╨╛╨╝╨░╨╜╨┤╨░ ╨╕╨╖ ╨╛╨▒╨╛╨╗╨╛╤З╨║╨╕ ╨Ю╨б.
 function unit.Command (Value, Format) --> (true | nil, error)
   local Result = unit.runCommand(Value)
   if Result ~= 0 then return nil, Format:format(Result) end
+
   return true
 end ----
 
 -- Execute: command from command line.
--- Выполнение: команда из командной строки.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: ╨║╨╛╨╝╨░╨╜╨┤╨░ ╨╕╨╖ ╨║╨╛╨╝╨░╨╜╨┤╨╜╨╛╨╣ ╤Б╤В╤А╨╛╨║╨╕.
 function unit.CmdLine (Value, Error) --> (integer | nil, error)
   local Result = unit.runCmdLine(Value)
   if Result == nil then return nil, Error end
+
   return Result
 end ----
 
@@ -182,45 +191,46 @@ do
   local luaUt = require "Rh_Scripts.Utils.luaUtils"
 
 -- Execute: lua function.
--- Выполнение: lua-функция.
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: lua-╤Д╤Г╨╜╨║╤Ж╨╕╤П.
 function unit.Function (Value, Args, ...) --> (res [, error])
   if type(Value) ~= 'function' then return end
+
   return luaUt.fcall(Value, Args, ...) -- MAYBE: pfcall
-end ----
+end ---- Function
 
 -- Execute: lua script (chunk/function).
--- Выполнение: lua-скрипт (порция/функция).
+-- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡: lua-╤Б╨║╤А╨╕╨┐╤В (╨┐╨╛╤А╤Ж╨╕╤П/╤Д╤Г╨╜╨║╤Ж╨╕╤П).
 function unit.Script (Chunk, Function, ChunkArgs, Args, ...) --> (res [, error])
-  --logMsg({ Function, ChunkArgs, FuncArgs, ... }, Chunk)
+  --logShow({ Function, ChunkArgs, FuncArgs, ... }, Chunk)
 
-  if Chunk == nil then -- Выполнение функции.
+  if Chunk == nil then -- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡ ╤Д╤Г╨╜╨║╤Ж╨╕╨╕.
     return unit.Function(Function, Args, ...)
   end
 
-  -- Загрузка порции скрипта.
+  -- ╨Ч╨░╨│╤А╤Г╨╖╨║╨░ ╨┐╨╛╤А╤Ж╨╕╨╕ ╤Б╨║╤А╨╕╨┐╤В╨░.
   local f, SError = loadfile(Chunk)
   if not f then return nil, SError end
 
   local Env, Result = { __index = _G }; setmetatable(Env, Env)
-  --logMsg(Chunk, Function)
+  --logShow(Chunk, Function)
   ChunkArgs = ChunkArgs or Function
-  --logMsg(ChunkArgs, Chunk)
+  --logShow(ChunkArgs, Chunk)
 
-  -- Выполнение порции скрипта.
+  -- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡ ╨┐╨╛╤А╤Ж╨╕╨╕ ╤Б╨║╤А╨╕╨┐╤В╨░.
   Result, SError = setfenv(f, Env)(ChunkArgs, ...)
-  --logMsg(ChunkArgs, f)
+  --logShow(ChunkArgs, f)
   if not Function or (Result or SError) then
     return Result, Result == nil and SError
   end
 
-  -- Получение функции скрипта.
+  -- ╨Я╨╛╨╗╤Г╤З╨╡╨╜╨╕╨╡ ╤Д╤Г╨╜╨║╤Ж╨╕╨╕ ╤Б╨║╤А╨╕╨┐╤В╨░.
   f, SError = luaUt.ffind(Env, Function)
-  --logMsg(Function, f)
+  --logShow(Function, f)
   if not f then return nil, SError end
 
-  -- Выполнение функции скрипта.
+  -- ╨Т╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╨╡ ╤Д╤Г╨╜╨║╤Ж╨╕╨╕ ╤Б╨║╤А╨╕╨┐╤В╨░.
   return unit.Function(f, Args, ...)
-end ----
+end ---- Script
 
 end -- do
 

@@ -13,15 +13,10 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-
 local tonumber = tonumber
 local setmetatable = setmetatable
 
 local io_open = io.open
-
-local CapitCase = extUt.CapitCase
 
 ----------------------------------------
 local context = context
@@ -29,7 +24,16 @@ local context = context
 local utils = require 'context.utils.useUtils'
 
 ----------------------------------------
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+
+local CapitCase = extUt.CapitCase
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -59,34 +63,34 @@ local DataName = "NamesList.txt"
 do
   local FileName = ("%s%s%s"):format(PluginPath, DataPath, DataName)
   local f, SError = io_open(FileName, 'r')
-  --if SError then logMsg(SError, "NamesList.txt") end
+  --if SError then logShow(SError, "NamesList.txt") end
   if f == nil then return unit end
 
   -- Цикл по строкам файла:
-  
+
   local last, data = 0, 0
 
   local s = "@"
   --local sn = 0
   repeat
-    --logMsg(s, "File line")
+    --logShow(s, "File line")
     -- Пропуск комментариев, доп. информации и старых названий:
     while s and (s:find("^%@") or
           s:find("^\t[^%=]") or
           s:find("^\t%= .+%(1%.0%)$")) do
-      --logMsg(s, "File unused line")
+      --logShow(s, "File unused line")
       s = f:read('*l')
       --sn = sn + 1
     end
     if s == nil then break end -- Конец файла
     --if sn > 40 then break end -- DEBUG only
-    --logMsg(s, "File used line")
+    --logShow(s, "File used line")
 
     -- TODO: Check codepoint ranges!!
     -- Основное название:
     local code, name = s:match("^(%x%x%x%x)\t(.+)$")
     if code then
-      --logMsg(code, name)
+      --logShow(code, name)
       local cp = tonumber(code, 16)
       --if cp > 0x300 then break end -- DEBUG only
       --if cp > 0xFFFF then break end -- DEBUG only
@@ -112,7 +116,7 @@ do
   f:close()
 end -- do
 
---logMsg(Names, "Char Names", 2, "#")
+--logShow(Names, "Char Names", 2)
 
 --------------------------------------------------------------------------------
 return unit

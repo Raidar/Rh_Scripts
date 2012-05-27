@@ -22,16 +22,18 @@ local _G = _G
 
 local ipairs, pairs = ipairs, pairs
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-
 ----------------------------------------
 --local context = context
 
 local strings = require 'context.utils.useStrings'
 
 ----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+
+----------------------------------------
 --[[
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -134,7 +136,7 @@ local function DataStrDelimPos (s, Delim, Pos) --> (number | nil)
   end -- Цикл по строке
 
   if Result <= SLen then return Result end
-end --function DataStrDelimPos
+end -- DataStrDelimPos
 
 ---------------------------------------- Specify
 do
@@ -153,7 +155,7 @@ end ----
 
 -- Конкретизация параметризованного псевдонима.
 function unit.SpecifyParamedAlias (s, Name, Value, Index) --> (string)
-  --logMsg({ s = s, pat = Name, repl = Value }, Index)
+  --logShow({ s = s, pat = Name, repl = Value }, Index)
   -- Поиск первого вхождения псевдонима.
   local Alias = {} -- Информация для работы с псевдонимом
   Alias.Name = Name:sub(1, Index) -- Имя псевдонима (без параметров)
@@ -192,9 +194,9 @@ function unit.SpecifyParamedAlias (s, Name, Value, Index) --> (string)
       -- Замена формального параметра на фактический.
       --[[
       if s == '$Tpl.PairTagX(\"<a href=\\\"\", \"\\\"></a>\",4)' then
-        logMsg({ s, Name, Value, Alias, Formal, Actual,
-                 strings.makeplain(Formal.Par),
-                 strings.makeplain(Actual.Par) }, "Paramed")
+        logShow({ s, Name, Value, Alias, Formal, Actual,
+                  strings.makeplain(Formal.Par),
+                  strings.makeplain(Actual.Par) }, "Paramed")
       end
       --]]
       Alias.Data = replace(Alias.Data, Formal.Par, Actual.Par)
@@ -227,7 +229,7 @@ function unit.SpecifyDefinedAlias (s, Name, Value) --> (string)
   else
     return unit.SpecifySimpledAlias(s, Name, Value)
   end
-end ----
+end ---- SpecifyDefinedAlias
 
 end -- do
 
@@ -239,11 +241,12 @@ do
 function unit.SpecifyAliases (s, Aliases) --> (string)
   local r = s
   for k, v in pairs(Aliases) do
-    --logMsg({ r, k, v }, "SpecifyAliases")
+    --logShow({ r, k, v }, "SpecifyAliases")
     r = SpecifyDefinedAlias(r, k, v)
   end
+
   return r
-end ----
+end ---- SpecifyAliases
 
 -- Конкретизация псевдонимов Aliases в самих псевдонимах.
 function unit.SpecifyAliasesItself (Aliases)
@@ -253,7 +256,7 @@ function unit.SpecifyAliasesItself (Aliases)
       if j ~= i then Aliases[j] = SpecifyDefinedAlias(w, i, v) end
     end
   end
-end ---
+end --- SpecifyAliasesItself
 
 end -- do
 

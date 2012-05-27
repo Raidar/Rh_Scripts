@@ -148,7 +148,7 @@ local function KeyPress_Run ()
 
   local diData = 10
 
-  --logMsg(D, "Dlg", 2, "n")
+  --logShow(D, "Dlg", "d2 n")
 
   -- Закрытие диалога.
   local function DlgClose (hDlg)

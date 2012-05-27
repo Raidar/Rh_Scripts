@@ -16,10 +16,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
-
 local assert = assert
 local setmetatable = setmetatable
 
@@ -34,9 +30,14 @@ local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
--- [[
-local logProps = { pairs = datas.cfgpairs }
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local menUt = require "Rh_Scripts.Utils.menUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -144,13 +145,13 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
   if not DefMenu then return end
 
   --[[
-  logMsg({ { "Menu",
-             Name = Menu.Name, Title = Menu.Title,
-             Caption = Menu.Caption, text = Menu.text },
-           { "DefMenu",
-             Name = DefMenu.Name, Title = DefMenu.Title,
-             Caption = DefMenu.Caption, text = DefMenu.text },
-         }, "Menu vs DefMenu")
+  logShow({ { "Menu",
+              Name = Menu.Name, Title = Menu.Title,
+              Caption = Menu.Caption, text = Menu.text },
+            { "DefMenu",
+              Name = DefMenu.Name, Title = DefMenu.Title,
+              Caption = DefMenu.Caption, text = DefMenu.text },
+          }, "Menu vs DefMenu")
   --]]
   local CheckMenu
   if Menu.Name == "Menu" then
@@ -170,7 +171,7 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
     Menu.text  = CheckMenu.text or DefMenu.text
     Menu.Title = nil
   end
-  --logMsg(Menu.text, Menu.Title)
+  --logShow(Menu.text, Menu.Title)
 end ----
 
 -- Подготовка объекта класса меню (после создания).
@@ -184,7 +185,7 @@ function TMenu:Prepare () --> (bool | nil, error)
   if not self.BaseMenu then
     return nil, self.BaseName -- Нет главного меню
   end
-  --logMsg(self.BaseMenu, "BaseName: "..self.BaseName, 1)
+  --logShow(self.BaseMenu, "BaseName: "..self.BaseName, 1)
 
   -- Настройка базового меню:
   self.BaseMenu.Name = self.BaseName -- Имя
@@ -240,9 +241,9 @@ local ChangeMenuProps = {
 -- Изменение свойств для меню/пункта.
 function TMenu:ChangeProperties (Props, Table) --|> Props
   self:FillProperties(Props, Table)
-  --logMsg({ Props, Table }, Props.MenuView, 2)
+  --logShow({ Props, Table }, Props.MenuView, 2)
   local MakeChangeProps = ChangeMenuProps[Props.MenuView]
-  --if MakeChangeProps then logMsg(Table, Props.MenuView, 1) end
+  --if MakeChangeProps then logShow(Table, Props.MenuView, 1) end
   if MakeChangeProps then MakeChangeProps(Props, Table) end
   return Props
 end ----
@@ -310,7 +311,7 @@ function TMenu:DefineSequence (Item) --| Item
   if not Item.Aliased then
     Item.Sequence = rhals.SpecifyAliases(Item.Sequence, self.Aliases)
     Item.Aliased = true
-    --logMsg(Item, "Menu Item")
+    --logShow(Item, "Menu Item")
   end
 end ----
 
@@ -320,14 +321,14 @@ end -- do
 function TMenu:DefineMenuItem (Item) --| Item
   --local CurMenu = self.CurMenu
   --local CurData = self.CurData
-  --logMsg(CurData, "CurData", 1)
+  --logShow(CurData, "CurData", 1)
 
   self:DefineItemKind(Item) -- Определение вида пункта
   self:MakeItemKeys(Item) -- Задание клавиш для пункта
 
   -- Настройка пункта-разделителя.
   if Item.Kind == ItemKinds.separator then Item.separator = true end
-  --logMsg("'"..Item.Caption.."'"..'\n'.."'"..Item.text.."'", "Item")
+  --logShow({ "'"..Item.Caption.."'", "'"..Item.text.."'" }, "Item")
 
   -- Настройка пункта-макроса FAR.
   self:DefineSequence(Item)
@@ -394,7 +395,7 @@ end --
 -- Получение имени пункта меню (краткое и полное).
 function TMenu:GetItemName (Name) --> (string, string, table | nil)
   local CurMenu = self.CurMenu
-  --logMsg(self, Name, 1)
+  --logShow(self, Name, 1)
   local Base = CurMenu[Name] or -- Краткое имя-результат...
                _GetBackMenu(CurMenu, Name) -- или же таблица:
   if type(Base) == 'table' then return Name, Name, Base end
@@ -407,11 +408,11 @@ function TMenu:GetItemName (Name) --> (string, string, table | nil)
   Base = Base or Name -- Краткое имя (результат/оригинал)
   if type(Base) ~= 'string' then return Name, nil, false end
 
-  --logMsg(self, Base, 1)
+  --logShow(self, Base, 1)
   local FullName -- Полное имя (имя с учётом имени меню):
   FullName, Menu = self:GetMenuName(self.CurName, Base)
   Menu = Menu or _GetBackMenu(CurMenu, FullName) -- Поиск таблицы!
-  --logMsg(Menu, FullName, 1)
+  --logShow(Menu, FullName, 1)
   return Base, FullName, Menu
   --]]
   --return Base, self:GetMenuName(self.CurName, Base)
@@ -444,7 +445,7 @@ function TMenu:GetMenuTitle () --> (string)
     Title = BindNameFmt:format(Title, BindName)
   end
 
-  --logMsg({ CurMenu.Title, CurMenu.Caption, CurMenu.text }, Title)
+  --logShow({ CurMenu.Title, CurMenu.Caption, CurMenu.text }, Title)
   if UMenu.CompoundTitle and not isBMenu then -- Имя надменю
     Title = CompTitleFmt:format(
             self:GetItemTitle(CurMenu.Back.Menu), MenuMSign, Title)
@@ -479,7 +480,7 @@ function TMenu:CheckAreaItem (Item) --> (bool)
      CurArea:find(ScopeArea, 1, true) then
     return Checked
   end
-  --logMsg({ CurArea, Checked }, Item.Area)
+  --logShow({ CurArea, Checked }, Item.Area)
   return false
 end ---- CheckAreaItem
 
@@ -508,10 +509,10 @@ end -- do
 ---------------------------------------- FAR Menu
 -- Формирование конфигурации текущего меню-таблицы.
 function TMenu:MakeMenuConfig () --> (table)
-  --logMsg(self.CurMenu.CfgData, "self.CurMenu.CfgData", 2)
+  --logShow(self.CurMenu.CfgData, "self.CurMenu.CfgData", 2)
   local CurData = makeFields(self.CurMenu.CfgData, self.Config.CfgData)
   self.CurData = CurData
-  --logMsg(self.CurData, "self.CurData", 2)
+  --logShow(self.CurData, "self.CurData", 2)
 
   -- Конфиг для меню настройки:
   if self.CurName == "Config" then
@@ -536,17 +537,17 @@ function TMenu:MakeMenuProps () --> (table)
                 CurMenu.Inherit and BackMenu and
                 copyFields(BackMenu.Props) or {}
   self.CurProps = Props
-  --logMsg(BackMenu and BackMenu.Props, "BackMenu.Props", 2)
-  --logMsg(Props, "self.Props", 2)
+  --logShow(BackMenu and BackMenu.Props, "BackMenu.Props", 2)
+  --logShow(Props, "self.Props", 2)
   --[[
   if BackMenu and BackMenu == self.Menus.Characters then
-    logMsg(Props, "self.Props", 3, "", logProps)
+    logShow(Props, "self.Props", 3, "", logProps)
   end
   --]]
 
   Props.Flags = Props.Flags or F.FMENU_WRAPMODE
   Props.SelectIndex = self.SelPos -- Выбранный пункт
-  --logMsg(self.Scope.HlpLink, Props.HelpTopic or "HlpLink")
+  --logShow(self.Scope.HlpLink, Props.HelpTopic or "HlpLink")
   if self.Scope.HlpLink and not Props.HelpTopic then
     Props.HelpTopic = self.Scope.HlpLink -- Справка
   end
@@ -588,7 +589,7 @@ function TMenu:MakeRunItem () --> (table)
   --self:ChangeProperties({ MenuView = Props.MenuView }, RunItem)
   self:DefineMenuItem(RunItem)
   self.RunMenu[self.RunCount] = RunItem
-  --logMsg(RunItem, "RunItem #"..tostring(self.RunCount), 2)
+  --logShow(RunItem, "RunItem #"..tostring(self.RunCount), 2)
 end ---- MakeRunItem
 
 -- Преобразование пункта-таблицы меню.
@@ -606,7 +607,7 @@ function TMenu:ConvertItem (Item, Index) --> (true | nil, error)
 
     -- Создание из списка имён пунктов.
     for s in Item:gmatch("([^;]+)") do
-      --logMsg({ self.Menus, CurName, s }, "RunItem # "..tostring(k), 1)
+      --logShow({ self.Menus, CurName, s }, "RunItem # "..tostring(k), 1)
       -- Получение реального пункта меню с его именем:
       local ItemName
       BaseName, ItemName, self.RunItem = self:GetItemName(s)
@@ -638,7 +639,7 @@ function TMenu:MakeRunMenu () --> (table)
     self:ConvertItem(CurMenu.Items[k], k)
     if self.Error then return end
   end
-  --logMsg(self.RunMenu, "self.RunMenu")
+  --logShow(self.RunMenu, "self.RunMenu")
 end ---- MakeRunMenu
 
 do
@@ -648,8 +649,8 @@ do
 function TMenu:MakeBreakKeys (Menu, DefKeys) --> (table)
   local t = {}
   for k = 1, #DefKeys do t[k] = DefKeys[k] end -- Копия
-  --logMsg(Default, "Default")
-  --logMsg(t, "Current")
+  --logShow(Default, "Default")
+  --logShow(t, "Current")
 
   -- Объединение всех BreakKey
   for k = 1, #Menu do
@@ -709,7 +710,7 @@ function TMenu:RunScript (Item)
   -- Обработка имени скрипта.
   Item.Script, Item.ChunkArgs, ChunkArgs =
       runUt.splitNameArgs(Item.Script, Item.ChunkArgs)
-  --logMsg(Item, tostring(Item.Script))
+  --logShow(Item, tostring(Item.Script))
   -- Определение полного имени скрипта.
   local ChunkName
   if type(Item.Script) == 'string' then
@@ -726,7 +727,7 @@ function TMenu:RunScript (Item)
   -- Обработка имени функции скрипта.
   Item.Function, Item.Arguments, Args =
       runUt.splitNameArgs(Item.Function, Item.Arguments)
-  --logMsg(Item, tostring(Item.Function))
+  --logShow(Item, tostring(Item.Function))
   -- Формирование аргументов функции скрипта.
   if Args then
     Args, SError = Item.Function and Item.Arguments, false
@@ -737,7 +738,7 @@ function TMenu:RunScript (Item)
 
   local DefCfg = { Config = Config, Item = Item }
   local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
-  --logMsg(Item, ChunkName)
+  --logShow(Item, ChunkName)
   -- Запуск скрипта / функции скрипта с передачей ему аргументов.
   return runUt.Script(ChunkName, Item.Function, ChunkArgs, Args, Cfg)
 end ---- RunScript
@@ -754,7 +755,7 @@ end ---- RunScript
 function TMenu:MakeAction ()
   local Scope = self.Scope
   local ActItem = self.ActItem
-  --logMsg(Scope, "Scope", 1)
+  --logShow(Scope, "Scope", 1)
   --
   local Actions = { -- Функции выполнения действий:
 
@@ -762,7 +763,7 @@ function TMenu:MakeAction ()
 
     FarSeq = function () -- Выполнение макроса FAR'а
       local LF4Ed_Cfg = rawget(_G, 'lf4ed') and _G.lf4ed.config()
-      --logMsg(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
+      --logShow(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
       local Sequence = ActItem.Sequence
       -- Учёт возврата LF4Ed в меню
       if LF4Ed_Cfg and LF4Ed_Cfg.ReturnToMainMenu then
@@ -787,7 +788,7 @@ function TMenu:MakeAction ()
 
     Script = function () -- Запуск скрипта Lua
       local isOk, SError = self:RunScript(ActItem)
-      --logMsg({ isOk, SError }, ActItem.Name)
+      --logShow({ isOk, SError }, ActItem.Name)
       if isOk ~= nil then return isOk end
       if SError then return nil, SError end
     end, --
@@ -814,7 +815,7 @@ function TMenu:MakeAction ()
   if not Action then
     return nil, Errors.UnknownAction
   end
-  --logMsg(Item, Item.Kind)
+  --logShow(Item, Item.Kind)
 
   local isOk, SError = Action()
   ActItem.PressedKey = false -- Сброс
@@ -841,7 +842,7 @@ function TMenu:ShowMenu (Properties, Items) --> (bool | nil, error)
   if not (Items and Items[1]) then return nil, nil end
   -- Объединение всех BreakKey.
   local BreakKeys = self:MakeBreakKeys(Items, DefBreakKeys)
-  --logMsg(BreakKeys, "BreakKeys")
+  --logShow(BreakKeys, "BreakKeys")
   -- Отображение меню на экране.
   return Call(Properties, Items, BreakKeys)
 end ----
@@ -852,7 +853,7 @@ end -- do
 function TMenu:HandleBreakKeys ()
   -- Здесь self.ActItem -- BreakCode -- элемент таблицы BreakKeys.
   local Action = self.ActItem.Action -- Действие по BreakKey
-  --logMsg(Action, "Action of Break Key")
+  --logShow(Action, "Action of Break Key")
 
   -- Специальные действия:
   if Action and type(Action) == 'string' then
@@ -865,17 +866,17 @@ function TMenu:HandleBreakKeys ()
     end
 
     -- Показ информации:
-    --logMsg(Action, "Action of Info")
+    --logShow(Action, "Action of Info")
     if Action == "Item Info" then -- о пункте меню
       local Item = self.RunMenu[self.ItemPos]
-      --logMsg(Item, Action)
+      --logShow(Item, Action)
       -- TODO: Сделать нормальный вывод только нужной информации.
-      logMsg(Item, self.L.MenuItem..": "..self:GetItemTitle(Item), 0)
+      logShow(Item, self.L.MenuItem..": "..self:GetItemTitle(Item), 0)
     elseif Action == "Menu Info" then -- о меню в целом
       local Item = self.Menus[tables.Nameless] or self.BaseMenu
       -- TODO: Сделать нормальный вывод только нужной информации.
-      --logMsg(Item, Action)
-      logMsg(Item, self.L.MenuMenu..": "..self:GetItemTitle(self.BaseMenu), 0)
+      --logShow(Item, Action)
+      logShow(Item, self.L.MenuMenu..": "..self:GetItemTitle(self.BaseMenu), 0)
     end --
 
     self.ActItem = { Menu = self.CurMenu, isBack = false }
@@ -899,7 +900,7 @@ function TMenu:ShowLoop ()
 
   repeat
     local ActItem = self.ActItem
-    --logMsg(self.ActItem, "self.ActItem", 0)
+    --logShow(self.ActItem, "self.ActItem", 0)
     if ActItem.isBack and not ActItem.Menu then
       self.ActItem, self.ItemPos = nil, nil
       return -- Выход из главного меню
@@ -916,7 +917,7 @@ function TMenu:ShowLoop ()
       self.Error = self.L:et1("MnuSecNotFound", ActItem.Name or "(none)")
       return
     end
-    --logMsg(self.CurMenu, self.CurName, 2)
+    --logShow(self.CurMenu, self.CurName, 2)
 
     self:MakeMenuConfig() -- Конфигурация меню
     local Props = self:MakeMenuProps()  -- Свойства меню
@@ -927,7 +928,7 @@ function TMenu:ShowLoop ()
     -- TODO: Add new params! Therefore copy is used.
     Props.Texter = copyFields(self.CurData.UMenu)
     MenuTexter(Props, self.RunMenu, nil, false)
-    --logMsg(self.RunMenu, "self.RunMenu", 2)
+    --logShow(self.RunMenu, "self.RunMenu", 2)
 
     self.ActItem, self.ItemPos = self:ShowMenu(Props, self.RunMenu)
 
@@ -959,10 +960,10 @@ function TMenu:Run ()
       if not self.ItemPos then return false, "" end -- Отмена меню
       return nil, "ItemPos", self.ItemPos -- Ошибка при работе с меню
     end
-    --logMsg(self.ActItem, self.ActItem.Kind)
+    --logShow(self.ActItem, self.ActItem.Kind)
 
     local isOk, SError = self:MakeAction()
-    --logMsg({ isOk = isOk, error = SError }, self.ActItem.Kind)
+    --logShow({ isOk = isOk, error = SError }, self.ActItem.Kind)
     if isOk == nil then return nil, SError, self.ActItem end
 
     if NoRetKinds[self.ActItem.Kind] or
@@ -996,7 +997,7 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
 --[[ 2. Управление меню ]]
 
   if ShowMenu == 'self' then return _Menu end
-  --logMsg(Properties.Flags, "Flags")
+  --logShow(Properties.Flags, "Flags")
 
   return _Menu:Run()
 end --function Menu

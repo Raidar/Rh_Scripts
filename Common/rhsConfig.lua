@@ -16,10 +16,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 local pcall = pcall
 local ipairs = ipairs
 local setmetatable = setmetatable
@@ -46,7 +42,15 @@ local newFlags = utils.newFlags
 local isFlag, delFlag = utils.isFlag, utils.delFlag
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -313,7 +317,7 @@ local DefCfgData = {
 local function MakeDlgTypes (cData, aData)
   local DlgTypes = {}
   local t, n, v, w, wc, Area
-  --logMsg(aData, "aData")
+  --logShow(aData, "aData")
   DlgTypes.umFileName = { Field = "FileName", Type = "edt",
                           Name = "umFileName", Default = aData.um.FileName }
 
@@ -335,7 +339,7 @@ local function MakeDlgTypes (cData, aData)
                     --Name = "i"..n, Default = w.Title, SpaceAsNil = true }
     end
     wc = w.config
-    --logMsg({ n, Area, v, w }, "DlgTypes", 2, "#q")
+    --logShow({ n, Area, v, w }, "DlgTypes", 2)
     if Area:find("c") and wc then
       t = t.config
       t.enabled = { Field = "enabled", Type = "chk",
@@ -376,7 +380,7 @@ local DefCustom = {
 local function Configure (ArgData)
   -- 1. Заполнение DefData.
   local ArgData = addNewData(ArgData or {}, DefCfgData)
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
   -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
@@ -389,17 +393,17 @@ local function Configure (ArgData)
     if v.config then
       CfgData[k].config = CfgData[k].config or {}
       setmetatable(CfgData[k].config, { __index = v.config })
-      --logMsg({ CfgData[k].config, v.config }, "config")
+      --logShow({ CfgData[k].config, v.config }, "config")
     end
     setmetatable(CfgData[k], { __index = v })
   end -- for
-  --logMsg(CfgData, "CfgData", 2, "#q")
+  --logShow(CfgData, "CfgData", 2)
   local Config = { -- Конфигурация:
     Custom = Custom, History = History, --DlgTypes = DlgTypes,
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
   locale.customize(Config.Custom) -- Инфо локализации
-  --logMsg(Config.Custom, "Custom")
+  --logShow(Config.Custom, "Custom")
 
   return Config
 end --function Configure
@@ -514,8 +518,8 @@ end --function ConfigDlg
 
 -- Загрузка данных в элементы диалога.
 local function LoadDlgData (cData, aData, D, DlgTypes)
-  --logMsg(aData, "dData")
-  --logMsg(cData, "cData", 2)
+  --logShow(aData, "dData")
+  --logShow(cData, "cData", 2)
   LoadDlgItem(DlgTypes.umFileName, cData.um, D)
 
   for k = 1, CfgDataSepPos - 1 do
@@ -549,7 +553,7 @@ end --function LoadDlgData
 
 -- Сохранение данных из элементов диалога.
 local function SaveDlgData (cData, aData, D, DlgTypes)
-  --logMsg(aData, "aData")
+  --logShow(aData, "aData")
   SaveDlgItem(DlgTypes.umFileName, cData.um, D)
 
   for k = 1, CfgDataSepPos - 1 do
@@ -611,23 +615,23 @@ function unit.ConfigDlg (Data)
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
-  --logMsg(DBox, "DBox", 1, "#q")
+  --logShow(DBox, "DBox", 1)
   -- Настройка:
   local D = Dlg(Config)
   local cData, aData, Types = Config.CfgData, Config.ArgData, Config.DlgTypes
   local DlgTypes = MakeDlgTypes(cData, aData)
-  --logMsg(DlgTypes, "DlgTypes", 2, "#q")
+  --logShow(DlgTypes, "DlgTypes", 2)
   LoadDlgData(cData, aData, D, DlgTypes)
   local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
 
   if D.btnOk and iDlg == D.btnOk.id then
     SaveDlgData(cData, aData, D, DlgTypes)
-    --logMsg(Config.CfgData, "CfgData", 2, "#q")
-    --logMsg(Config.History.Data.rhsConfig, "History", 3, "#q")
+    --logShow(Config.CfgData, "CfgData", 2)
+    --logShow(Config.History.Data.rhsConfig, "History")
     Config.History:save()
     local isOk, Result = unit.CreateFile(cData) -- Создание _usermenu.lua
-    --logMsg({ isOk, Result }, "isOk", 1, "#q")
+    --logShow({ isOk, Result }, "isOk", 1)
     local MsgTitle = L:t"FileCreate"
     if isOk then
       farMsg(Result.."\n"..L:t"RequireReloadFAR", MsgTitle)
@@ -721,7 +725,7 @@ end -- FixLine
 local function GenerateFile (f, Data)
   f:write(_UM.Start)
   local n, v, w, Area, s
-  --logMsg(Data, "Data")
+  --logShow(Data, "Data")
 
   f:write(_UM.MenuItems) -- Menu items:
   f:write(_UM.rhsConfig)
@@ -749,8 +753,8 @@ local function GenerateFile (f, Data)
         f:write(FixLine(s), '\n')
       end
 
-      --logMsg({ Area, w, w and w.enabled }, n, 2, "#q")
-      --logMsg({ Area, w, w and getmetatable(w) }, n, 2, "#q")
+      --logShow({ Area, w, w and w.enabled }, n, 2)
+      --logShow({ Area, w, w and getmetatable(w) }, n, 2)
       if Area:find("c") and w and w.enabled then
         s = _UM.AddMenuItem:format("c",
                                    q(w.Title or v.Title), q(w.HotKey),

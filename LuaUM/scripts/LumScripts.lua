@@ -14,8 +14,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 ----------------------------------------
 local F = far.Flags
 
@@ -23,8 +21,13 @@ local F = far.Flags
 local context = context
 
 ----------------------------------------
-local logUt = require "Rh_Scripts.Utils.Logging"
-local logMsg, linMsg = logUt.Message, logUt.lineMessage
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
+-- [[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 
@@ -49,7 +52,8 @@ end ---- LuaFarVersion
 
 -- Глобальное окружение --
 function GlobalVarsData ()
-  linMsg(_G, "Non-standard global variables", 1, "_")
+  --logShow(_G, "Non-standard globals", "d0 w _")
+  logShow(_G, "Non-standard globals", "d1 w _")
 end ---- GlobalVarsData
 
 ---------------------------------------- Hello, World!
@@ -74,20 +78,20 @@ end ---- HelloWorldText
 
 -- Глобальное окружение --
 function GlobalEnvironment ()
-  logMsg(_G, "Global Environment", 0, "_/")
-  logMsg(_G._Plugin, "_Plugin data", 0, "_f")
-  --logMsg(_G, "Global Environment", 1, "fts")
+  logShow(_G, "Global Environment", "d0 w _/")
+  logShow(_G._Plugin, "_Plugin data", "d0 w _f")
+  --logShow(_G, "Global Environment", "d1 fts")
 end ---- GlobalEnvironment
 
 -- Окружение функции --
 function FunctionEnvironment ()
-  logMsg(getfenv(), "Function Environment", 1, "_/")
+  logShow(getfenv(), "Function Environment", "d2 w _/")
 end ---- FunctionEnvironment
 
 -- Локальная функция --
 local function LocalFunction ()
   return "Some Local Function"
-end ---- LocalFunction
+end -- LocalFunction
 
 local
   CArgs   = "Arguments: %s"
@@ -97,26 +101,26 @@ local
 function DefaultArguments (Args, Cfg)
   -- [[
   -- 1. Конфигурация среды
-  logMsg(Cfg.Item,   CArgs:format"Item",   2)
-  --logMsg(Cfg.Config, CArgs:format("Config"), 2)
+  logShow(Cfg.Item, CArgs:format"Item", 3)
+  --logShow(Cfg.Config, CArgs:format("Config"), 3)
   for k, v in pairs(Cfg.Config) do
-    logMsg(v, CArgs:format("Config: "..k), 1)
+    logShow(v, CArgs:format("Config: "..k), 2)
   end
   --]]
   -- 2. Проверка __index
   --local DefCfg = getmetatable(Cfg).__index
-  --logMsg(DefArg, "Default Config", 2)
+  --logShow(DefArg, "Default Config", 3)
   --[[
   -- -- Отдельные значения
   for k, v in pairs(DefCfg) do
     if type(v) ~= 'table' then
-      logMsg(v, CDefCfg:format(tostring(k)), 1)
+      logShow(v, CDefCfg:format(tostring(k)), 2)
     end
   end
   --]]
   -- -- Отдельные подзначения:
-  --logMsg(DefCfg.Config.CfgData, CDefCfg:format"CfgData", 2)
-  --logMsg(DefCfg.Config.ArgData, CDefCfg:format"ArgData", 2)
+  --logShow(DefCfg.Config.CfgData, CDefCfg:format"CfgData", 3)
+  --logShow(DefCfg.Config.ArgData, CDefCfg:format"ArgData", 3)
 end ---- DefaultArguments
 
 -- Аргументы функции --
@@ -125,11 +129,11 @@ function FunctionArguments (Args, Cfg)
   -- Число аргументов
   local ArgCount = tp == 'table'  and #Args or
                    tp == 'string' and Args:len() or 0
-  logMsg(Args, CArgs:format("count = "..tostring(ArgCount)), 1)
+  logShow(Args, CArgs:format("count = "..tostring(ArgCount)), 2)
   --[[
   -- 1. Список аргументов.
   for k = 1, ArgCount do -- Аргументы функции:
-    logMsg(Args[k], CArgs:format(tostring(k)), 1)
+    logShow(Args[k], CArgs:format(tostring(k)), 2)
   end
   --]]
   if tp ~= 'table' or ArgCount > 1 then return end
@@ -138,7 +142,7 @@ function FunctionArguments (Args, Cfg)
   local Arg = Args[1]
   if Arg then
     --Arg = Arg()
-    logMsg(Arg, "Function argument")
+    logShow(Arg, "Function argument")
   end
   --]]
 end ---- FunctionArguments
@@ -150,7 +154,7 @@ function Var.SubFunction (Args, Cfg)
   far.Message("Table Function", "Message: "..Scope.Area)
 end
 
---logMsg({ ... }, "LumScripts", 2)
+--logShow({ ... }, "LumScripts", 3)
 
 -- Функция модуля --
 module ("LumScripts", package.seeall)

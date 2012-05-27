@@ -8,14 +8,15 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
-local RedrawAll = farUt.RedrawAll
-
 ----------------------------------------
 --local context = context
 
 local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+local RedrawAll = farUt.RedrawAll
 
 --------------------------------------------------------------------------------
 

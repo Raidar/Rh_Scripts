@@ -297,7 +297,7 @@ local function Configure (ArgData)
   local ArgData = ArgData == "AutoCfgData" and AutoCfgData or ArgData
   ArgData = addNewData(ArgData, DefCfgData)
   ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
   -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
@@ -307,13 +307,13 @@ local function Configure (ArgData)
   WMenu.LKeys = WMenu.LKeys or LocalUseKeys
   -- 3. Дополнение конфигурации.
   setmetatable(CfgData, { __index = ArgData })
-  --logMsg(CfgData, "CfgData")
+  --logShow(CfgData, "CfgData")
   local Config = { -- Конфигурация:
     Custom = Custom, History = History, DlgTypes = DlgTypes,
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
   locale.customize(Config.Custom) -- Инфо локализации
-  --logMsg(Config.Custom, "Custom")
+  --logShow(Config.Custom, "Custom")
 
   return Config
 end --function Configure
@@ -467,10 +467,10 @@ function unit.ConfigDlg (Data)
   dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
   local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
-  --logMsg(D, "D", 3, "#q")
+  --logShow(D, "D", 3)
   if D.btnOk and iDlg == D.btnOk.id then
     dlgUt.SaveDlgData(cData, aData, D, Types) -- Сохранение конфигурации
-    --logMsg(Config, "Config", 3, "#q")
+    --logShow(Config, "Config", 3)
     Config.History:save()
 
     return true
@@ -499,14 +499,14 @@ local function SearchWords (Cfg, Ctrl) --> (table)
   local Stat = t.Stat -- Статистика встречаемости
   local Link = t.Link -- "Ссылочная" информация
 
-  --logMsg({ CfgCur.Slab, Slab }, "Slab")
+  --logShow({ CfgCur.Slab, Slab }, "Slab")
   local SlabPat = Ctrl:asPattern(Slab) -- Подготовка Slab для поиска
   local BasePat = ("(%s%s+)"):format(SlabPat, Ctrl.CharsSet)
   local StartPat = '^'..BasePat
   local MatchPat = Ctrl.SeparSet..BasePat
   Cfg.Patterns = { Slab = SlabPat, Base = BasePat,
                    Start = StartPat, Match = MatchPat }
-  --logMsg(Cfg.Patterns, "SearchWords Patterns")
+  --logShow(Cfg.Patterns, "SearchWords Patterns")
 
   -- Поиск слов в строке.
   local function MatchLineWords (s, Line) --> (number)
@@ -519,7 +519,7 @@ local function SearchWords (Cfg, Ctrl) --> (table)
       if v then
         v.Count = v.Count + 1
       elseif w ~= Word then
-        --logMsg({ k, w, v }, "New Word")
+        --logShow({ k, w, v }, "New Word")
         k = k + 1
         t[#t+1] = w
         -- Информация для frequency-сортировки:
@@ -543,7 +543,7 @@ local function SearchWords (Cfg, Ctrl) --> (table)
   Link.Line = CfgCur.CurLine
   wCtr = wCtr + MatchLineWords(GetLine(), 0)
   if Limited and wCtr >= wMax then return t end
-  --logMsg(t, "SearchWords")
+  --logShow(t, "SearchWords")
 
   if FindKind == "alternate" then
     local LineU, LineD = Link.Line, Link.Line
@@ -572,7 +572,7 @@ local function SearchWords (Cfg, Ctrl) --> (table)
       if Limited and wCtr >= wMax then return t end
       if Trimmed and wCtr >= wMid then break end
     end
-    --logMsg(t, "SearchWords")
+    --logShow(t, "SearchWords")
 
     Limited = Limited or Trimmed
     -- Поиск слов в строках ниже.
@@ -584,33 +584,34 @@ local function SearchWords (Cfg, Ctrl) --> (table)
       wCtr = wCtr + MatchLineWords(GetLine(Line),  k)
       if Limited and wCtr >= wMax then return t end
     end
-    --logMsg(t, "SearchWords")
+    --logShow(t, "SearchWords")
   end -- if FindKind
 
   return t
-end --function SearchWords
+end -- SearchWords
 
 ---------------------------------------- Sort
 -- Сортировка таблицы строк: по частотности.
 local function SortByFreq (t) --> (table)
   local f = t.Stat
-  --logMsg(t, "SortByFreq", 2, "#")
-  --local ft = rhlog.open("tab_sort.txt")
-  --ft:Message(t, nil, 3, "#")
-  --ft:close()
-  local f1, f2
+  --logShow(t, "SortByFreq", 2)
+  --local flog = dbg.open("tab_sort.txt")
+  --flog:logtab(t, "t", 3)
+  --flog:close()
+
   -- Сравнение слов по статистике:
   local function StatCmp (w1, w2) --> (bool)
-    f1, f2 = f[w1], f[w2]
-    --logMsg({ tostring(w1), f1, tostring(w2), f2 }, "StatCmp", 1, "#")
+    local f1, f2 = f[w1], f[w2]
+    --logShow({ tostring(w1), f1, tostring(w2), f2 }, "StatCmp", 1)
     return f1.Count > f2.Count or
            f1.Count == f2.Count and
              (abs(f1.Line) < abs(f2.Line) or
               f1.Line == f2.Line and f1.Slot < f2.Slot)
   end --
   t_sort(t, StatCmp)
+
   return t
-end --function SortByFreq
+end -- SortByFreq
 
 -- Сортировка таблицы строк: по близости.
 local function SortByNear (t) --> (table)
@@ -639,19 +640,21 @@ local function SortByNear (t) --> (table)
   else -- dLen < uLen
     for k = tDown + Count, tLen do u[#u+1] = t[k] end
   end
+
   return u
-end --function SortByNear
+end -- SortByNear
 
 -- Сортировка таблицы строк: посимвольная.
 local function SortByChar (t) --> (table)
   -- Сравнение слов посимвольно без учёта регистра:
   local function CharCmp (w1, w2) --> (bool)
-    --logMsg({ w1, w2 }, "CharCmp")
+    --logShow({ w1, w2 }, "CharCmp")
     return CompareString(w1, w2, nil, "S") < 0
-  end --function CharCmp
+  end --
   t_sort(t, CharCmp)
+
   return t
-end --function SortByChar
+end -- SortByChar
 
 -- Сортировка таблицы строк.
 local function SortWords (t, Cfg) --> (table)
@@ -664,8 +667,8 @@ local function SortWords (t, Cfg) --> (table)
      FindKind ~= "alternate" then return SortByNear(t) end
   -- По встречаемости (частотности):
   if SortKind == "frequency" then return SortByFreq(t) end
-  --logMsg(t, #t)
-  --logMsg(t, "Words on Sort")
+  --logShow(t, #t)
+  --logShow(t, "Words on Sort")
   -- Предварительная сортировка:
   if FindKind == "unlimited" then SortByFreq(t) end
 
@@ -733,7 +736,7 @@ local function PrepareMenu (Words, Cfg, Props) --> (table)
 
   -- Определение области маркировки.
   local function MakeSlabMark ()
-    --logMsg(Cfg.Patterns, "Cfg.Patterns")
+    --logShow(Cfg.Patterns, "Cfg.Patterns")
     local SlabPat = Cfg.Patterns.Slab
     local SlabLen = Cfg.Current.Slab:len()
     if Cfg.HotChars then    -- text ~= Word:
@@ -747,31 +750,33 @@ local function PrepareMenu (Words, Cfg, Props) --> (table)
   -- Задание параметров меню RectMenu.
   local RM_Props = Props.RectMenu
   RM_Props.Guid = RM_Props.Guid or Guid
-  --logMsg(RM_Props, "RectMenu Props")
+  --logShow(RM_Props, "RectMenu Props")
   if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
   -- Расчёт позиции и размера окна:
   local Info, WM_Cfg = EditorGetInfo(), Cfg.WordsList
   Width, Height = Width + WM_Cfg.CorLenH, Height + WM_Cfg.CorLenV
-  --local Rect, CursorPos = GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
-  --logMsg({ Info, Rect, CursorPos }, "Window info")
+  --[[
+  local Rect, CursorPos = GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
+  logShow({ Info, Rect, CursorPos }, "Window info")
+  --]]
   local Pos = {
     x = Info.CurPos  - Info.LeftPos       + WM_Cfg.CorPosX,
     y = Info.CurLine - Info.TopScreenLine + WM_Cfg.CorPosY,
   } ---
-  --logMsg({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
+  --logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
   Pos.y = Pos.y <= Height and Pos.y + 1 or Pos.y - Height
   Pos.x = Pos.x + Width + 1 < Info.WindowSizeX and Pos.x or Pos.x - Width - 1
   -- Warning: "<" & "+1" instead of "<=" because editor may have scroll bar.
   RM_Props.Position = Pos
   --[[
   local Rect, Pos = farUt.GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
-  logMsg({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
+  logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
   if Pos.X + Width  >= Rect.Width  then Pos.X = Pos.X - Width - 1 end
   if Pos.Y + Height >= Rect.Height then Pos.Y = Pos.Y - Height else Pos.Y = Pos.Y + 1 end
   RM_Props.Position = { x = Pos.X, y = Pos.Y }
   --]]
-  --logMsg(RM_Props.Position, "RectMenu Position")
-  --logMsg(Items, "Items")
+  --logShow(RM_Props.Position, "RectMenu Position")
+  --logShow(Items, "Items")
   return Items, Props
 end --function PrepareMenu
 
@@ -779,19 +784,19 @@ end --function PrepareMenu
 local function MakeWordsList (Cfg, Props) --> (table)
   -- Базовая информация о редакторе:
   local Info = EditorGetInfo() -- Сохранение базовой позиции
-  --logMsg(Info, "Editor Info")
+  --logShow(Info, "Editor Info")
   local Ctrl = CharControl(Cfg) -- Функции управления словом
 
 -- 1. Анализ текущего набранного слова.
 
   -- Получение текущего слова под курсором (CurPos is 0-based):
   local Word, Slab = Ctrl:atPosWord(EditorGetStr(nil, -1, 2), Info.CurPos + 1)
-  --logMsg({ Word, Slab })
+  --logShow({ Word, Slab })
   if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
   local CfgCur = Cfg.Current
   CfgCur.Word, CfgCur.Slab = Word, Slab
-  --if Word then logMsg(Cfg.Current) end
+  --if Word then logShow(Cfg.Current) end
 
 -- 2. Отбор подходящих слов для завершения.
 
@@ -816,18 +821,18 @@ local function MakeWordsList (Cfg, Props) --> (table)
   local wLink = Words.Link -- Информация для closeness-сортировки
   wLink.Up, wLink.Down = wLink.Up or Words.n, wLink.Down or Words.n
 
-  --logMsg(Words, "Words", 2)
+  --logShow(Words, "Words", 2)
 
 -- 3. Сортировка собранных слов.
 
   Words = SortWords(Words, Cfg) -- Сортировка собранных слов
   --CfgCur.Words = Words
-  --logMsg(Words, "Words", 1)
+  --logShow(Words, "Words", 1)
 
 -- 4. Подготовка списка-меню слов.
 
   CfgCur.Shared = SharedPart(Words, Cfg, Ctrl) -- Общая часть слов
-  --if Word then logMsg(CfgCur) end
+  --if Word then logShow(CfgCur) end
 
   return PrepareMenu(Words, Cfg, Props)
 end --function MakeWordsList
@@ -846,7 +851,7 @@ end --
 local function ApplyWordAction (Cfg, Complete, Action) --> (bool | nil)
   local Word, Slab = Cfg.Current.Word, Cfg.Current.Slab
   local SLen = Slab:len()
-  --logMsg({ Complete, Word, Word:len(), Slab, SLen }, Action, 1, "#")
+  --logShow({ Complete, Word, Word:len(), Slab, SLen }, Action, 1)
 
   if Action == A_Replace then -- Удаление конца
     if not DelChars(nil, Word:len() - SLen) then return end
@@ -871,7 +876,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
 
   local Action, Effect -- Действие
   local PressKey -- Нажатая клавиша
-  --logMsg(Cfg, "Cfg", 1)
+  --logShow(Cfg, "Cfg", 1)
   local WMenu = Cfg.Menu
   local Props, Items = WMenu.Props -- Информация о меню
   -- Клавиши-завершители:
@@ -896,7 +901,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
     PressKey = Cfg.UndueOut and VirKey or false
     local VKey = VirKey.VirtualKeyCode
     local VMod = GetModBase(VirKey.ControlKeyState)
-    --logMsg({ VKey, VMod, SKey }, "VirKey", 1, "hv2")
+    --logShow({ VKey, VMod, SKey }, "VirKey", 1, "xv2")
 
     local function MakeUpdate () -- Обновление!
       PressKey = false
@@ -904,7 +909,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
       -- Формирование нового списка-меню слов.
       Items, Props = MakeWordsList(Cfg, Props)
       if not Items then return nil, CloseFlag end
-      --logMsg(SelIndex, hex(FKey))
+      --logShow(SelIndex, hex(FKey))
       return { Props, Items, WC_Keys }, WC_Flags
     end --
 
@@ -913,7 +918,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
     if Index then
       Action = LU_Keys[Index].Action or A_Replace
       Effect = LU_Keys[Index].Effect or E_Shared
-      --logMsg({ Index, SelIndex }, Action)
+      --logShow({ Index, SelIndex }, Action)
       if Effect and SelIndex then
         -- Effect == E_Shared --
         Complete = Items[SelIndex].Word:sub(1, Cfg.Current.Shared:len())
@@ -924,40 +929,40 @@ local function MakeComplete (Cfg) --> (bool | nil)
       end
     end -- if Index
 
-    --logMsg(VirKey, "Info on Key Press: before")
+    --logShow(VirKey, "Info on Key Press: before")
     if not (VMod == 0 or IsModShift(VMod)) and
        not (Cfg.ActionAlt and IsModAlt(VMod)) then
-      --logMsg(VirKey, "Info on Key Press: inner")
+      --logShow(VirKey, "Info on Key Press: inner")
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
-    --logMsg(VirKey, "Info on Key Press: after")
+    --logShow(VirKey, "Info on Key Press: after")
 
     -- Учёт нажатия клавиш действий.
     local Name = KeyActionNames[VirKey.KeyName]
     --logShow({ Name }, VirKey.KeyName)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
-      --logMsg(KeyAction, VirKey.KeyName)
+      --logShow(KeyAction, VirKey.KeyName)
       return MakeUpdate()
     end
     if IsModAlt(VMod) then
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
 
-    --logMsg(VirKey, "Info on Key Press: Spec")
+    --logShow(VirKey, "Info on Key Press: Spec")
     -- Учёт нажатия клавиш-символов.
     local SpecKeyChar = SpecKeyChars[SKey]
     if not SpecKeyChar and not isVKeyChar(VKey) then
-      --logMsg({ VirKey, Cfg.UndueOut, CancelFlag }, "Key is not Char")
+      --logShow({ VirKey, Cfg.UndueOut, CancelFlag }, "Key is not Char")
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
-    --logMsg(VirKey, "Info on Key Press: Char")
+    --logShow(VirKey, "Info on Key Press: Char")
     local Char = SpecKeyChar or VirKey.UnicodeChar
-    --logMsg(Char, hex(VKey))
+    --logShow(Char, hex(VKey))
 
     if Cfg.Trailers:find(Char, 1, true) and not (Cfg.UseMagic and
        (LuaCards:find(Char, 1, true) or Cfg.UsePoint and Char == '.')) then
-      --logMsg(Char, Cfg.Trailers)
+      --logShow(Char, Cfg.Trailers)
       if SelIndex then
         ApplyWordAction(Cfg, Items[SelIndex].Word, A_Replace)
       end
@@ -983,13 +988,13 @@ local function MakeComplete (Cfg) --> (bool | nil)
     Cfg.Current = { StartMenu = true }
     Items, Props = MakeWordsList(Cfg, Props)
     Cfg.Current.StartMenu = nil
-    --logMsg({ Props, Items }, "Word Completion")
+    --logShow({ Props, Items }, "Word Completion")
 
 --[[ 2. Управление списком WordComplete ]]
 
     if Items and #Items == 1 and Cfg.LoneAuto then
       Item, Pos = Items[1], 1
-      --logMsg({ Pos, Item }, "Lone AutoCompletion")
+      --logShow({ Pos, Item }, "Lone AutoCompletion")
     else
       --Item, Pos = RunMenu(Props, Items, WC_Keys)
       Item, Pos = usercall(nil, RunMenu, Props, Items, WC_Keys)
@@ -1002,7 +1007,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
     Action = Item.Action or A_Replace -- По умолчанию -- Выбор по Enter
 
 --[[ 2.2. Выполнение выбранного действия ]]
-    --logMsg({ Action, Pos, Items }, "Completion Action")
+    --logShow({ Action, Pos, Items }, "Completion Action")
     -- Реакция на отмену: Закрытие без всякого выбора.
     if Action == A_Cancel then return false end
     -- Реакция на неизвестное действие: Выход с ошибкой.
@@ -1015,7 +1020,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
         --farUt.RedrawAll() -- Обновление!
       end
     elseif Action == "Replace" or Action == "Insert" then
-      --logMsg({ Action, Pos, Items }, "Making Action")
+      --logShow({ Action, Pos, Items }, "Making Action")
       ApplyWordAction(Cfg, Items[Pos].Word, Action)
     else
       return
@@ -1040,9 +1045,9 @@ function unit.Execute (Data) --> (bool | nil)
   -- Конфигурация:
   local Config = Configure(Data)
   local CfgData = Config.CfgData
-  --logMsg(Data, "Data", 2, "#q")
-  --logMsg(Config, "Config", 2, "_")
-  --logMsg(CfgData, "CfgData", 2, "#q")
+  --logShow(Data, "Data", 2)
+  --logShow(Config, "Config", "_d2")
+  --logShow(CfgData, "CfgData", 2)
   if not CfgData.Enabled then return end
 
   -- Свойства меню:

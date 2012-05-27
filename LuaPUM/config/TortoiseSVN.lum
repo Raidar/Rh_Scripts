@@ -8,12 +8,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local runUt = require "Rh_Scripts.Utils.runUtils"
-
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
-
 ----------------------------------------
 local context = context
 
@@ -21,6 +15,17 @@ local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local runUt = require "Rh_Scripts.Utils.runUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 ----------------------------------------
 -- This menu is not for plugin panel items.
@@ -99,13 +104,13 @@ local function Configure (ArgData)
   -- 1. Заполнение ArgData.
   local ArgData = addNewData(ArgData, DefCfgData)
   local Custom = datas.customize(ArgData.Custom, DefCustom)
-  --logMsg(Custom, "Custom")
+  --logShow(Custom, "Custom")
   -- 2. Заполнение конфигурации.
   if not utils.fexists(Custom.history.full) then return end
   local History = datas.newHistory(Custom.history.full)
-  --logMsg(History, "History")
+  --logShow(History, "History")
   local CfgData = History:field(Custom.history.field)
-  --logMsg(CfgData, "CfgData")
+  --logShow(CfgData, "CfgData")
   -- 3. Дополнение конфигурации.
   setmetatable(CfgData, { __index = ArgData })
   local Config = {
@@ -125,8 +130,8 @@ if L == nil then
 end
 
 local CfgData = Config.CfgData
---logMsg(CfgData, "CfgData")
---logMsg(Config.ArgData, "ArgData")
+--logShow(CfgData, "CfgData")
+--logShow(Config.ArgData, "ArgData")
 
 if CfgData.Path ~= "" and
    not utils.fexists(CfgData.Path..CfgData.Status) then
@@ -151,9 +156,9 @@ do
     local h = ansi.io.popen(program)
     --local h = ansi.io.popen(win.Utf8ToOem(program))
     if not h then return end
-    --logMsg({ program, win.OemToUtf8(win.Utf8ToOem(program)) }, "ansi_exec")
+    --logShow({ program, win.OemToUtf8(win.Utf8ToOem(program)) }, "ansi_exec")
     local out = h:read("*a")
-    --logMsg(out, program)
+    --logShow(out, program)
     h:close()
     return out
   end ---- exec
@@ -162,7 +167,7 @@ do
 -- Получение статуса рабочей копии.
 function Svn.getStatus (ItemPath) --> (bool)
   local Status = Formats.Status:format(CfgData.Path, CfgData.Status, ItemPath)
-  --logMsg({ Path = ItemPath, Status = Status }, "Item + Status")
+  --logShow({ Path = ItemPath, Status = Status }, "Item + Status")
   return exec(Status)
   --return exec(Status.." "..context.utils.PluginPath..DefCustom.path.."SubWCRevData.txt")
 end ----
@@ -200,8 +205,8 @@ do
     Svn.Item.isSubversioned = not not Svn.isSubversioned(Status)
   end
 
-  --logMsg("'"..Svn.Item.Status.."'", "SVN Status")
-  --logMsg(Svn.Item, "SVN")
+  --logShow("'"..Svn.Item.Status.."'", "SVN Status")
+  --logShow(Svn.Item, "SVN")
 end -- do
 
 -- Формирование параметров.
@@ -237,7 +242,7 @@ function Svn.Run (Args, Cfg) --> (bool)
 
   -- Выполнение операции.
   local CmdLine = Formats.Run:format(CfgData.Path, CfgData.File, Cmd, Path, Adds)
-  --logMsg({ CmdLine = CmdLine, Args = Args, Adds = Adds, CfgData = CfgData }, "CmdLine")
+  --logShow({ CmdLine = CmdLine, Args = Args, Adds = Adds, CfgData = CfgData }, "CmdLine")
 
   if CfgData.ShowCmd or CfgData[Cmd] and CfgData[Cmd].ShowCmd then
     utils.message("Command: "..Cmd, "Command line:\n"..CmdLine, "l")
@@ -404,7 +409,7 @@ function Svn.MakeItems (Operations, Kinds) --> (Items)
       local name = v.name or v.command
       local q = Svn.Item
 
-      --logMsg({ q, Kinds }, "Check", 1)
+      --logShow({ q, Kinds }, "Check", 1)
       if Kinds[name] or
          (not q.isWorkingCopy and
           Kinds[q.isWorkingCopy][q.isDir][name]) or
@@ -460,7 +465,7 @@ do
     end
   end
   Svn.Item.View = View and View ~= Path and ".."..View or Path
-  --logMsg({ Path, Lost, View }, "Parse Path")
+  --logShow({ Path, Lost, View }, "Parse Path")
 end -- do
 
 local mTortoiseSVN = { -- Tortoise SVN

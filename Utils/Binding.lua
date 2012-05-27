@@ -15,15 +15,16 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-
 local require, pcall = require, pcall
 
 ----------------------------------------
 local detect = context.detect
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -47,6 +48,7 @@ function unit.BindFileType (Scope) --> (string | string, error)
   end
 
   if not Result then return 'none', SError end
+
   return Result
 end ---- BindFileType
 
@@ -59,7 +61,8 @@ do
 local function RequireLayout (LayoutName) --> (string, string | nil)
   local isOk, Data = pcall(require, LayoutPath..LayoutName)
   if not isOk then return end
-  --logMsg(Data, Language)
+  --logShow(Data, Language)
+
   return Data.Name, Data.Layout
 end ----
 

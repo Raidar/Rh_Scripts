@@ -13,8 +13,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-
 ----------------------------------------
 local far = far
 local F = far.Flags
@@ -35,7 +33,13 @@ local isFlag = utils.isFlag
 local b2n, max2 = numbers.b2n, numbers.max2
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -241,7 +245,7 @@ unit.FarGetAreaItemName = {
     if utils.isPluginPanel() then return "" end
 
     local Dir = panel.GetPanelDirectory(nil, 1).Name
-    --logMsg({ Name, Dir, Item }, "AreaItem Name")
+    --logShow({ Name, Dir, Item }, "AreaItem Name")
     if Name == ".." then
       return Dir
     else
@@ -276,8 +280,9 @@ function unit.PanelsSelCount (handle, kind)
   if Result then
     return b2n(isFlag(Result.Flags, F.PPIF_SELECTED))
   end
+
   return 0
-end ----
+end ---- PanelsSelCount
 
 do
   -- Type of selected block.
@@ -292,7 +297,7 @@ do
 -- Тип выделенного блока в редакторе.
 function unit.EditorSelType (Id) --> (string)
   return BlockTypes[EditorGetInfo(Id).BlockType]
-end
+end ----
 
 end -- do
 
@@ -347,8 +352,9 @@ function unit.pairsEditorSelect (line) --> (iterator, count, line)
   if Info.BlockType ~= F.BTYPE_NONE then
     return nextEditorSelect, Info.TotalLines, Info.BlockStartLine - 1
   end
+
   return nextEditorSelect, nil, nil
-end ----
+end ---- pairsEditorSelect
 
 end -- do
 

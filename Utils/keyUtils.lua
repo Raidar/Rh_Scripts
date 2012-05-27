@@ -35,9 +35,8 @@ local far23 = context.use.far23
 local numbers = require 'context.utils.useNumbers'
 local hex = numbers.hex8
 
-local logUt = require "Rh_Scripts.Utils.Logging"
-local logMsg, linMsg = logUt.Message, logUt.lineMessage
---linMsg(bit, "bit")
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -614,7 +613,7 @@ function unit.SKeyToName (StrKey, KeySep) --> (string)
   local t = {}
 
   local mod, c, a, s, key = ParseStrKey(StrKey, KeySep or '+')
-  --logMsg({ mod, c, a, s, key }, StrKey)
+  --logShow({ mod, c, a, s, key }, StrKey)
   if not mod or mod == "" then return key or StrKey end
 
   if c and c ~= "" then t[#t+1] = c == "RC" and "RCtrl" or "Ctrl" end

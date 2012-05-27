@@ -14,10 +14,14 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
+----------------------------------------
 local typUtils = require "Rh_Scripts.Utils.typUtils"
 
 ----------------------------------------
-local linMsg = (require "Rh_Scripts.Utils.Logging").lineMessage
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local class = typUtils.class
@@ -35,7 +39,7 @@ function myClass:setvalue (v)
   self.value = v
 end
 
---linMsg(myClass, "myClass", 0)
+--logShow(myClass, "myClass", 0)
 
 assert(myClass[1] == 12)
 assert(myClass[2] == 45)
@@ -45,13 +49,13 @@ assert(myClass.value == 64)
 
 local myObj = myClass:new(10)
 
---linMsg(myObj, "myObj", 1)
+--logShow(myObj, "myObj", 1)
 
 assert(myObj.initvar == 10)
 
 myObj:setvalue(128)
 
---linMsg(myObj, "myObj", 1)
+--logShow(myObj, "myObj", 1)
 
 assert(myObj.value == 128)
 

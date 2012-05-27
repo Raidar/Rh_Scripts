@@ -16,15 +16,9 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
-
 local type, assert = type, assert
 local pairs, ipairs = pairs, ipairs
 local setmetatable = setmetatable
-
-local length = luaUt.length
 
 ----------------------------------------
 local win, far = win, far
@@ -32,12 +26,17 @@ local win, far = win, far
 ----------------------------------------
 local context = context
 
-local strings = require 'context.utils.useStrings'
 --local utils = require 'context.utils.useUtils'
+local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 --local datas = require 'context.utils.useDatas'
 
 local u_char, u_byte = strings.u8char, strings.u8byte
+
+----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+
+local length = luaUt.length
 
 ----------------------------------------
 local keyUt = require "Rh_Scripts.Utils.keyUtils"

@@ -15,7 +15,13 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
+
+--------------------------------------------------------------------------------
 
 ---------------------------------------- Config
 local Actions = {
@@ -40,7 +46,7 @@ local args = (...)
 if type(args) ~= 'table' then args = {} end
 
 local Param1, Param2 = args[1], args[2]
---logMsg({ Param1, Param2 }, "HA Params")
+--logShow({ Param1, Param2 }, "HA Params")
 if not Param1 then return end
 
 -- Package --
@@ -49,10 +55,10 @@ local Pack = Packs[SPack or ""]
 if not Pack then return end
 
 -- Action --
---logMsg({ SPack, SAction }, Param1)
+--logShow({ SPack, SAction }, Param1)
 local Action = SAction and (Actions[SAction] or SAction) or Actions[SPack]
 if SAction == "AutoCfg" then Param2 = Param2 or "AutoCfgData" end
---logMsg({ SPack, SAction, Action }, Param1)
+--logShow({ SPack, SAction, Action }, Param1)
 
 return Pack[Action](Param2)
 --------------------------------------------------------------------------------

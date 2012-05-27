@@ -17,12 +17,16 @@ local _G = _G
 local pairs = pairs
 local require = require
 
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
-
 ----------------------------------------
 local context = context
 
 local utils = require 'context.utils.useUtils'
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -108,7 +112,7 @@ function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
     end -- if
   end -- for
   if not isItem then return nil, Msgs.EnumNotFound:format(Args.CurEnum) end
-  --logMsg(t, "Table", 3)
+  --logShow(t, "Table", 3)
   return t
 end ---- GetFileOuterJoin
 
@@ -160,20 +164,20 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
 
   if Args.Enum and Args.Enum ~= "" then
     Args.CurEnum = Args.Enum
-    --logMsg({ Args, Props }, "Args and Props", 2)
+    --logShow({ Args, Props }, "Args and Props", 2)
     t, MError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
-    --logMsg(Args.CurEnum, SError)
+    --logShow(Args.CurEnum, SError)
   else
     MError = "File enum not specified."
   end
 
   if Args.DefEnum and Args.DefEnum ~= "" then
     Args.CurEnum = Args.DefEnum
-    --logMsg({ Args, Props }, "Args and Props", 2)
+    --logShow({ Args, Props }, "Args and Props", 2)
     t, SError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
-    --logMsg(Args.CurEnum, SError)
+    --logShow(Args.CurEnum, SError)
   else
     SError = "Default enum not specified."
   end

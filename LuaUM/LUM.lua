@@ -14,21 +14,10 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local bndUt = require "Rh_Scripts.Utils.Binding"
-local rhals = require "Rh_Scripts.Utils.FarMacEx"
-
-local LW = require "Rh_Scripts.LuaUM.LumWork"
-
 --local pairs, ipairs = pairs, ipairs
 --local tostring = tostring
 local require = require
 local setmetatable = setmetatable
-
---local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
 
 ----------------------------------------
 local context = context
@@ -41,6 +30,19 @@ local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
 local PluginPath = utils.PluginPath
+
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local bndUt = require "Rh_Scripts.Utils.Binding"
+local rhals = require "Rh_Scripts.Utils.FarMacEx"
+
+local LW = require "Rh_Scripts.LuaUM.LumWork"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -129,12 +131,12 @@ function TMenu:Localize ()
     --local LocData = Scope.LocData
     local DefData = LocData.__index
     local GenData = (DefData or tables.Null).__index
-    logMsg({ LocData = Scope.LocData,
-             DefData = DefData,
-             GenData = GenData,
-             GdfData = (GenData or tables.Null).__index,
-           }, "All LocData", 1, '#qtfn')
-  end -- do
+    logShow({ LocData = Scope.LocData,
+              DefData = DefData,
+              GenData = GenData,
+              GdfData = (GenData or tables.Null).__index,
+            }, "All LocData", "d1 tfn")
+  end
   --]]
 
   -- Часто используемые тексты:
@@ -158,7 +160,7 @@ function TMenu:Run ()
 
   -- Определение основных файлов и папок.
   local Cfg_Data = Config.CfgData
-  --logMsg(Cfg_Data, "Cfg_Data", 2)
+  --logShow(Cfg_Data, "Cfg_Data", 2)
   local Cfg_Files = Cfg_Data.Files
   local Cfg_Basic = Cfg_Data.Basic
 
@@ -179,7 +181,7 @@ function TMenu:Run ()
   if not BindsData then
     return L:et2("FileDataError", "BindsFile", SError)
   end
-  --logMsg(BindsData, "BindsData")
+  --logShow(BindsData, "BindsData")
 
   -- Файл, для которого формируется меню LUM.
   Scope.BindsType = Scope.FileType and Scope.FileType ~= "none" and
@@ -195,7 +197,7 @@ function TMenu:Run ()
   --if not LUM_Binds.Menu then
   --  return L:et1("IniKeyNotFound", "Menu", Scope.BindsType, Cfg_Files.MenusFile)
   --end
-  --logMsg(LUM_Binds, "LUM Binds Menu")
+  --logShow(LUM_Binds, "LUM Binds Menu")
 
 --[[ 1.3. Формирование меню ]]
 
@@ -222,7 +224,7 @@ function TMenu:Run ()
   if not self.Menus then
     return L:et2("FileDataError", "UMenuFile", SError)
   end
-  --logMsg(self.Menus, "self.Menus", 0)
+  --logShow(self.Menus, "self.Menus", 0)
 
   -- Перечисление файлов псевдонимов:
   local AliasEnum = LUM_Binds.Alias or ""
@@ -240,7 +242,7 @@ function TMenu:Run ()
   if not AliasData then
     return L:et2("FileDataError", "AliasFile", SError)
   end
-  --logMsg(AliasData, "AliasData")
+  --logShow(AliasData, "AliasData")
 
   local AliasPart -- Раздел с псевдонимами
   if AliasData.Aliases then AliasPart = "Aliases"
@@ -256,14 +258,14 @@ function TMenu:Run ()
   rhals.UnQuoteRegTable(self.Aliases) -- Раскавычивание псевдонимов
   --extUt.t_gsub(self.Aliases, nil, '\n', ' ') -- Сборка в одну строку
   rhals.SpecifyAliasesItself(self.Aliases) -- Конкретизация псевдонимов
-  --logMsg(self.Aliases, "LUM Alias Menu")
+  --logShow(self.Aliases, "LUM Alias Menu")
 
   -- Разбор общих свойств меню.
   -- TEMP: TODO see above!!!
   self.Props = LUM_Binds.Properties or Scope.DefMenu.Properties or {}
   if not self.Props.MenuView then self.Props.MenuView = Scope.MenuView end
   self.Props.FarMacroAliases = self.Aliases
-  --logMsg(self.Props, "Properties", 2)
+  --logShow(self.Props, "Properties", 2)
 
   BindsData, LUM_Binds = nil, nil -- (?)
 
@@ -273,7 +275,7 @@ function TMenu:Run ()
 
   local isOk, SError, ActItem = UMenu(self.Props, self.Menus, self.Config)
 
-  --logMsg({ isOk, SError }, ActItem.Kind)
+  --logShow({ isOk, SError }, ActItem.Kind)
   if isOk == nil and Cfg_Data.UMenu.ShowErrorMsgs then
     if ActItem then
       return L:et1(KindErrors[ActItem.Kind] or KindErrors.Unknown,

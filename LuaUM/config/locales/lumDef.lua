@@ -30,7 +30,7 @@ local Data = {
   -- FAR macros
   FarMacros         = "&` - FAR macros",
     FarMacros_Load      = "&Load from DB",
-    FarMacros_Save      = "&Save  to  DB",
+    FarMacros_Save      = "&Save Â toÂ  DB",
 
   ----------------------------------------
   -- Character kits
@@ -56,9 +56,9 @@ local Data = {
   CommandSamples    = "&M - Commands samples",
 
   CmdShowFarDesc    = "Show FAR description",
-    CmdFarDescExec      = "— by OS exec",
-    CmdFarDescProg      = "— as subprocess",
-    CmdFarDescLine      = "— from command line",
+    CmdFarDescExec      = "â€” by OS exec",
+    CmdFarDescProg      = "â€” as subprocess",
+    CmdFarDescLine      = "â€” from command line",
 
   ----------------------------------------
   -- Other scripts

@@ -28,9 +28,6 @@ $ #Script files#: Utility scripts
     \37dlgUtils.lua\-   — ¦Handling dialogs.
     \37FarMacEx.lua\-   — ¦Working with FAR macro aliases.
     \37IniFile.lua\-    — ¦Working with ini/lua-files.
-    \37Language.lua\-   — ¦Information about languages.
-    \37Localing.lua\-   — ¦Functions for localization.
-    \37Logging.lua\-    — ¦Debugging and logging of scripts.
     \37macUtils.lua\-   — ¦Working with ~macro-templates~@Macros@.
     \37menUtils.lua\-   — ¦Working with menus and menu items.
     \37unichars.lua\-   — ¦Some Unicode characters.

@@ -22,7 +22,10 @@ local setmetatable = setmetatable
 local far_Menu = far.Menu
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -33,7 +36,7 @@ local MenuScripts = { -- Скрипты с меню:
   RectMenu   = "Rh_Scripts.RMenu.RectMenu",     -- Прямоугольное меню
   FilterMenu = "Rh_Scripts.Common.FilterMenu",  -- Фильтрационное меню
   MenuTexter = "Rh_Scripts.Common.MenuTexter",  -- Формирователь текста для меню
-  --VirKeyMenu = "Rh_Scripts.Common.VirKeyMenu",  -- Меню "Виртуальная клавиатура"
+  --VKeyboard  = "Rh_Scripts.Common.VKeyboard",   -- "Виртуальная клавиатура"
 } --- MenuScripts
 
 ---------------------------------------- Menu class
@@ -74,7 +77,7 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   local _Menu = CreateMenu(Properties)--, Items)
 
   _Menu:DefineKind()
-  --logMsg(_Menu, "MenuCaller", 1)
+  --logShow(_Menu, "MenuCaller", 1)
 
 --[[ 2. Управление меню ]]
 

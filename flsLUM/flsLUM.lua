@@ -15,13 +15,17 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 ----------------------------------------
 local getFileType = context.detect.area.current
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local function flsUserMenu (args)
@@ -36,7 +40,7 @@ local function flsUserMenu (args)
     Scope.FileType = getFileType()
   --end
 
-  --logMsg(Scope, "Scope")
+  --logShow(Scope, "Scope")
 
   -- 2. Задание пути поиска скриптов.
   --local extUt = require "Rh_Scripts.Utils.extUtils"
@@ -46,8 +50,9 @@ local function flsUserMenu (args)
   local LUM = require "Rh_Scripts.LuaUM.LUM"
   local Config = require "Rh_Scripts.flsLUM.flsLUMer"
   Config.Scope = Scope
+
   return LUM(Config)
-end ---- flsUserMenu
+end -- flsUserMenu
 
 --return flsUserMenu(...)
 return farUt.usercall(nil, flsUserMenu, ...)

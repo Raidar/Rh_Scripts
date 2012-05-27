@@ -8,19 +8,20 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local ChItems = require "Rh_Scripts.Common.CharsItems"
-local ChKeys  = ChItems.Keys
-
 ----------------------------------------
 --local context = context
 
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
--- [[
---local datas = require 'context.utils.useDatas'
---local logProps = { pairs = datas.cfgpairs }
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local ChItems = require "Rh_Scripts.Common.CharsItems"
+
+local ChKeys  = ChItems.Keys
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -250,7 +251,7 @@ unit.Menu('CharsGreekEx', Props, Data, "AccelKey")
 unit.UseSpace('CharsGreekEx')
 unit.CompactMenu('CharsGreekEx')
 
---logMsg(List.CharsGreekEx, "unit.Menu", 3, "", logProps)
+--logShow(List.CharsGreekEx, "unit.Menu", 3)
 
 ---------------------------------------- Cyrillic slavic
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
@@ -274,7 +275,7 @@ Props = {
 } ---
 
 unit.Menu('CharsCyrSlav', Props, Data, "AccelKey")
---logMsg(List.CharsCyrSlav, "unit.Menu", 2, "", logProps)
+--logShow(List.CharsCyrSlav, "unit.Menu", 2)
 unit.UseSpace('CharsCyrSlav')
 unit.CompactMenu('CharsCyrSlav')
 
@@ -308,7 +309,7 @@ Keys = {
 unit.Menu('MathsScripts', Props, Data, Keys)
 unit.UseSpace('MathsScripts')
 
---logMsg(List.MathsScripts, "MathsScripts", 3)
+--logShow(List.MathsScripts, "MathsScripts", 3)
 
 ---------------------------------------- Other indexes
 Order = "aijklmnprtuvxy"
@@ -392,7 +393,7 @@ Props = {
 
 unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Data, "DupleKey")
 
---logMsg(List.PunctSpaHyps.CfgData, "unit.Menu", 3, "", logProps)
+--logShow(List.PunctSpaHyps.CfgData, "unit.Menu", 3)
 
 --------------------------------------------------------------------------------
 

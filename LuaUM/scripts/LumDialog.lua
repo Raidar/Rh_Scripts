@@ -14,11 +14,14 @@
 local LumDlg = (require "Rh_Scripts.LuaUM.LumCfg").ConfigDlg
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 ---------------------------------------- main
 function LUM_Dlger (Args, Cfg)
-  --logMsg(Args, "Args")
+  --logShow(Args, "Args")
   local Kind = Args[1]
   LumDlg(Cfg.Config, Kind)
 end

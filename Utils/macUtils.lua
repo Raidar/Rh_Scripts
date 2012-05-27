@@ -22,12 +22,12 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-
 --local type, assert = type, assert
 local pairs, ipairs = pairs, ipairs
 local tonumber = tonumber
 local setmetatable = setmetatable
+
+local format = string.format
 
 ----------------------------------------
 local far, editor = far, editor
@@ -44,7 +44,13 @@ local Null = tables.Null
 local min2, max2 = numbers.min2, numbers.max2
 
 ----------------------------------------
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -306,7 +312,7 @@ local function EditorMacroActions (Data) --> (table)
   } --- self
 
   return setmetatable(self, MEditorMacroActions)
-end --function EditorMacroActions
+end -- EditorMacroActions
 MacroActions.editor.macro = EditorMacroActions
 
 ---------------------------------------- Run
@@ -318,7 +324,7 @@ local function CheckMacroPos (Text, Pos) --> (string | nil)
   for _, v in ipairs(MacroKeys) do
     if (s:find(v, 1, true) or 0) == 1 then return v end
   end
-end --function CheckMacroPos
+end -- CheckMacroPos
 
 -- Проверка на повторение макро-ключа в заданной позиции.
 local function CheckMacroRep (Text, Pos) --> (string | nil)
@@ -330,7 +336,7 @@ local function CheckMacroRep (Text, Pos) --> (string | nil)
     k = k + 1
   end
   if k > 1 then return s:sub(1, k - 1) end
-end --function CheckMacroRep
+end -- CheckMacroRep
 
 -- Разбор макроса-шаблона.
 local function MakeTemplate (Text, MacroKeyChar) --> (table)
@@ -345,7 +351,7 @@ local function MakeTemplate (Text, MacroKeyChar) --> (table)
     local p = Text:cfind(MacroKeyChar, k, true)
     s = Text:sub(k, (p or 0) - 1) -- Plain text
     if not p or p == Len then break end
-    --logMsg(Text..'\n'..s, ("%d from %d"):format(k, Len))
+    --logShow(Text..'\n'..s, format("%d from %d", k, Len))
 
     k = p + 1
     if Text:sub(k, k) == MacroKeyChar then
@@ -380,10 +386,10 @@ local function MakeTemplate (Text, MacroKeyChar) --> (table)
   if s ~= "" then -- Unsaved rest of text:
     t[#t+1] = { Action = "text", Text = s }
   end
-  --logMsg(t, Text)
+  --logShow(t, Text)
 
   return t
-end --function MakeTemplate
+end -- MakeTemplate
 
 -- Выполнение действий макроса-шаблона.
 local function Exec (Macro) --> (bool | nil, Action)
@@ -394,21 +400,21 @@ local function Exec (Macro) --> (bool | nil, Action)
   for k, v in ipairs(Macro) do
     local Info, isOk = farEdit.GetInfo()
     local Action, Value = v.Action, v.Value or 1
-    --farEdit.Redraw(); logMsg(v, k..": # = "..Value)
+    --farEdit.Redraw(); logShow(v, k..": # = "..Value)
 
     -- Выполнение действия макроса:
     if Action == "text" then
       isOk = InsText(Actions, Info, Value, v.Text)
     elseif Actions[Action] then
-      --farEdit.Redraw(); logMsg(Info, Action..": # = "..Value)
+      --farEdit.Redraw(); logShow(Info, Action..": # = "..Value)
       isOk = Actions[Action](Actions, Info, Value)
-      --logMsg(Info, Action)
+      --logShow(Info, Action)
     end
     if not isOk then return nil, Action end
   end
 
   return true
-end --function Exec
+end -- Exec
 
 -- Выполнение разобранного макроса-шаблона.
 local function ExecTemplate (Macro) --> (bool | nil, Action)
@@ -433,12 +439,12 @@ local function ExecTemplate (Macro) --> (bool | nil, Action)
   farEdit.Redraw()
 
   return true
-end --function ExecTemplate
+end -- ExecTemplate
 
 -- Выполнение макроса (с разбором)
 function unit.RunMacro (Macro) --> (bool)
   local t = MakeTemplate(Macro)
-  --logMsg(t, Item.Macro)
+  --logShow(t, Item.Macro)
 
   return ExecTemplate(t)
 end ----

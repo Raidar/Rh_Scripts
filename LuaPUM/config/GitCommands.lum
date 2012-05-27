@@ -8,13 +8,14 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local runUt = require "Rh_Scripts.Utils.runUtils"
-
 ----------------------------------------
 local context = context
 
 local utils = require 'context.utils.useUtils'
 local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+local runUt = require "Rh_Scripts.Utils.runUtils"
 
 ----------------------------------------
 -- This menu is not for plugin panel items.

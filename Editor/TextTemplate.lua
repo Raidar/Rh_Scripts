@@ -23,11 +23,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local macUt = require "Rh_Scripts.Utils.macUtils"
-
 local type, unpack = type, unpack
 local pairs, ipairs = pairs, ipairs
 local tostring = tostring
@@ -53,8 +48,8 @@ local EditorRedraw  = editor.Redraw
 local context = context
 local detect = context.detect
 
-local strings = require 'context.utils.useStrings'
 local utils = require 'context.utils.useUtils'
+local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
@@ -65,12 +60,18 @@ local isFlag, delFlag = utils.isFlag, utils.delFlag
 local addNewData = tables.extend
 
 ----------------------------------------
--- [[
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg, linMsg = rhlog.Message, rhlog.lineMessage
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local extUt = require "Rh_Scripts.Utils.extUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local macUt = require "Rh_Scripts.Utils.macUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
---logMsg(context, "context", 3)
+--logShow(context, "context", 3)
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -152,23 +153,23 @@ local function Configure (ArgData)
   local ArgData = ArgData == "AutoCfgData" and AutoCfgData or ArgData
   ArgData = addNewData(ArgData, DefCfgData)
   ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
   --Custom.options.KitName = Custom.options.KitName or Custom.name
   addNewData(Custom.options, DefOptions)
-  --logMsg(ArgData, "ArgData")
+  --logShow(ArgData, "ArgData")
   -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
   local CfgData = History:field(Custom.history.field)
   -- 3. Дополнение конфигурации.
   setmetatable(CfgData, { __index = ArgData })
-  --logMsg(CfgData, "CfgData")
+  --logShow(CfgData, "CfgData")
   local Config = { -- Конфигурация:
     Custom = Custom, History = History, DlgTypes = DlgTypes,
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
   locale.customize(Config.Custom) -- Инфо локализации
-  --logMsg(Config.Custom, "Custom")
+  --logShow(Config.Custom, "Custom")
 
   return Config
 end --function Configure
@@ -315,7 +316,7 @@ local function FillTemplatesData (Config)
   --far.Message("Load text templates", "Update")
   local Cfg = Config.Custom.options
   local Kit = TplKits[Cfg.KitName]
-  --logMsg(Kit, "Kit", 2, "#q")
+  --logShow(Kit, "Kit", 2)
   if Kit then return end -- TODO: Убрать в случае избират. загрузки.
   --local dorequire = newprequire -- For separate use!
   local dorequire = Kit == false and newprequire or prequire
@@ -335,11 +336,11 @@ local function FillTemplatesData (Config)
       addNewData(w, DefCfgData)
       --if not w.CharEnum and Cfg then w.CharEnum = Cfg.CharEnum end
       --if Cfg then addNewData(w, Cfg) end -- For separate use!
-      --if k == 'source' then logMsg({ Cfg, w }, "Fill: "..k, 1, "#q") end
+      --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
       w.CharControl = CharControl(w)
     end
   end
-  --logMsg(Kit, "Kit", 2, "#q")
+  --logShow(Kit, "Kit", 2)
 
   return Kit
 end --function FillTemplatesData
@@ -355,9 +356,9 @@ local cfgNextType  = detect.use.configNextType
 local function FindTemplate (Config) --> (table)
   local Kit = TplKits[Config.Custom.options.KitName]
   if not Kit then return end
-  --logMsg(Kit, Config.Custom.options.KitName, 1, "#")
+  --logShow(Kit, Config.Custom.options.KitName, 1)
   local Cfg = Config.CfgData
-  --linMsg(Cfg, "FindTemplate", 2, "#tq")
+  --logShow(Cfg, "FindTemplate", "d2 t")
   local CfgCur = Cfg.Current
   local CurSlab = CfgCur.Slab -- CfgCur.Frag
 
@@ -365,10 +366,10 @@ local function FindTemplate (Config) --> (table)
   -- Цикл поиска по всем подходящим типам:
   local tp = cfgFirstType(CfgCur.FileType, Kit)
   while tp do
-    --logMsg(t, tp)
+    --logShow(t, tp)
     local Tpls, noSkip = Kit[tp], true
-    --logMsg(Tpls, tp, 1, "#q")
-    --logMsg({ Tpls, Cfg, Cfg.CharEnum }, tp, 1, "#q")
+    --logShow(Tpls, tp, 1)
+    --logShow({ Tpls, Cfg, Cfg.CharEnum }, tp, 1)
 
     local Word, Slab
     local Ctrl = Cfg.CharEnum ~= Tpls.CharEnum and Tpls.CharControl
@@ -376,11 +377,11 @@ local function FindTemplate (Config) --> (table)
       Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
       noSkip = Ctrl:isWordUse(Word, Slab) -- Проверка на пропуск
       --[[
-      logMsg({ { Word, Slab, noSkip },
-               { Cfg.CharEnum, Cfg.UseInside,
-                 Cfg.UseOutside, Cfg.CharsMin },
-               { Ctrl.cfg.CharEnum, Ctrl.cfg.UseInside,
-                 Ctrl.cfg.UseOutside, Ctrl.cfg.CharsMin } }, tp, 2, "#")
+      logShow({ { Word, Slab, noSkip },
+                { Cfg.CharEnum, Cfg.UseInside,
+                  Cfg.UseOutside, Cfg.CharsMin },
+                { Ctrl.cfg.CharEnum, Ctrl.cfg.UseInside,
+                  Ctrl.cfg.UseOutside, Ctrl.cfg.CharsMin } }, tp, 2)
       --]]
     end
 
@@ -396,10 +397,10 @@ local function FindTemplate (Config) --> (table)
         if regex == "none" then f = makeplain(f) end -- plain!
         f = f.."$"
         local p = sfind(CurSlab, f, v.flags, regex)
-        --logMsg({ p, f, v, t[#t] }, tp, nil, "#q")
+        --logShow({ p, f, v, t[#t] }, tp)
         if p then
           if Ctrl then q = sfind(Slab, f, v.flags, regex) end
-          --logMsg({ k, f, t[#t] }, tp, nil, "#q")
+          --logShow({ k, f, t[#t] }, tp)
 
           -- Отбор с макс. длиной совпадения (мин. нач. позицией):
           local is_p =       (not tLast or p == 1 or tLast.Pos  > p)
@@ -410,7 +411,7 @@ local function FindTemplate (Config) --> (table)
               Tpl = v, Find = f, Pos = p, qPos = q, regex = regex,
               Type = tp, Index = k, --Tpls = Tpls, -- DEBUG
             } --
-            --logMsg({ k, f, t[#t], tLast }, tp, nil, "#q")
+            --logShow({ k, f, t[#t], tLast }, tp)
             if #t == 0 then
               t[1] = tLast
             elseif (Ctrl and q and q == 1 and t[#t].qPos == 1) or
@@ -426,10 +427,10 @@ local function FindTemplate (Config) --> (table)
     tp = cfgNextType(tp, Kit)
   end -- while
 
-  --if #t > 0 then logMsg(t, "FindTemplate") end
-  --if #t > 0 then logMsg(t[#t], t[#t] and tostring(t[#t].Type)) end
-  --if #t > 0 then logMsg(t[#t], Config.Custom.options.KitName) end
-  --logMsg(Kit[Type], Type)
+  --if #t > 0 then logShow(t, "FindTemplate") end
+  --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
+  --if #t > 0 then logShow(t[#t], Config.Custom.options.KitName) end
+  --logShow(Kit[Type], Type)
   return tLast and t or nil
 end --function FindTemplate
 
@@ -449,8 +450,8 @@ end --
 -- Apply found template.
 -- Применение найденного шаблона.
 local function ApplyTemplate (Cfg)
-  --linMsg(Cfg, "Cfg", 2, "#t")
-  --linMsg(Cfg.Template, "Template", 1, "#t")
+  --logShow(Cfg, "Cfg", "d2 t")
+  --logShow(Cfg.Template, "Template", "d1 t")
   local CfgCur, CfgTpl = Cfg.Current, Cfg.Template
   local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.Pos
   
@@ -460,25 +461,25 @@ local function ApplyTemplate (Cfg)
 
 -- 1. Учёт способа вставки шаблона: замена или добавление.
   local res, isOk = Tpl.replace or Tpl.macro or Tpl.plain
-  --linMsg(Tpl, res, 2, "#")
+  --logShow(Tpl, res, 2)
 
 -- 2. Учёт использования регулярных выражений.
   res = sgsub(Line, Find, res, Tpl.flags, CfgTpl.regex)
   CfgTpl.Result = res or Line
-  --linMsg({ CfgCur }, "CfgCur", 2, "#")
+  --logShow({ CfgCur }, "CfgCur", 2)
 
 -- 3. Вставка шаблона в текст с учётом его вида.
   local kind = Tpl.kind --or (Tpl.replace and "macro")
-  --linMsg({ kind, Tpl, res }, "Apply", 1, "#t")
+  --logShow({ kind, Tpl, res }, "Apply", "d1 t")
 
   if Tpl.apply then  -- Apply-function
-    --logMsg(Tpl, "apply", 2, "#q")
+    --logShow(Tpl, "apply", 2)
     if Tpl.params then
       isOk, res = pcall(Tpl.apply, Cfg, unpack(Tpl.params))
     else
       isOk, res = pcall(Tpl.apply, Cfg, Tpl.param)
     end
-    --logMsg({ isOk, res }, "apply", 2, "#q")
+    --logShow({ isOk, res }, "apply", 2)
     if not isOk then
       far.Message(res, "Error using "..DefCustom.Name, nil, "wl")
       return
@@ -486,7 +487,7 @@ local function ApplyTemplate (Cfg)
     if type(res) ~= 'string' then return false end
     kind = Tpl.as or "macro"
   end -- if
-  --linMsg({ kind, Tpl, res }, "Apply", 1, "#t")
+  --logShow({ kind, Tpl, res }, "Apply", "d1 t")
 
   local RunTpl
   if     Tpl.macro or kind == "macro" then -- Macro-template
@@ -498,10 +499,10 @@ local function ApplyTemplate (Cfg)
   if RunTpl then
     if not Tpl.add then -- Замена
       EditorSetPos(nil, { CurPos = CfgCur.Frag:len() - DelLen })
-      --linMsg({ res, CfgCur.Frag:len(), DelLen }, "RunTpl")
+      --logShow({ res, CfgCur.Frag:len(), DelLen }, "RunTpl")
       if not DelChars(nil, DelLen) then return end
 
-      --linMsg(res, "RunTpl")
+      --logShow(res, "RunTpl")
       return RunTpl(res)
     end
   end
@@ -517,12 +518,12 @@ local function MakeTemplate (Config) --> (bool | nil)
 
 --[[ 1.1. Анализ текущей строки ]]
 
-  --logMsg(Cfg, "CfgData")
+  --logShow(Cfg, "CfgData")
   local Ctrl = CharControl(Cfg) -- Функции управления словом
-  --logMsg(Ctrl, "CharControl")
+  --logShow(Ctrl, "CharControl")
 
   local Info = EditorGetInfo() -- Базовая информация о редакторе
-  --logMsg(Info, "Editor Info")
+  --logShow(Info, "Editor Info")
 
   -- Получение текущего слова под курсором (CurPos is 0-based):
   local CfgCur = Cfg.Current
@@ -530,11 +531,11 @@ local function MakeTemplate (Config) --> (bool | nil)
   CfgCur.Pos  = Info.CurPos + 1 -- 0-based!
   local Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
   -- Проверки: внутри слова, вне слова, мин. число символов:
-  --logMsg({ Word, Word:len(), Slab, Slab:len(), Cfg }, "Make", 2, "#q")
+  --logShow({ Word, Word:len(), Slab, Slab:len(), Cfg }, "Make", 2)
   if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
   CfgCur.Word, CfgCur.Slab = Word, Slab
-  --if Word then logMsg(Cfg.Current) end
+  --if Word then logShow(Cfg.Current) end
   CfgCur.Frag = CfgCur.Line:sub(1, CfgCur.Pos - 1)
 
 --[[ 2. Управление шаблоном TextTemplate ]]
@@ -543,7 +544,7 @@ local function MakeTemplate (Config) --> (bool | nil)
   -- Получение подходящего шаблона:
   local CfgTpl = FindTemplate(Config)
   if not CfgTpl then return false end
-  --linMsg(CfgTpl, "Templates", 1, "#t")
+  --logShow(CfgTpl, "Templates", "d1 t")
   --Cfg.Templates = CfgTpl
 
 --[[ 2.2. Обработка найденных шаблонов ]]
@@ -565,10 +566,10 @@ function unit.Execute (Data) --> (bool | nil)
   -- Конфигурация:
   local Config = Configure(Data)
   local CfgData = Config.CfgData
-  --logMsg(Data, "Data", 2, "#q")
-  --logMsg(Config, "Config", 2, "_")
-  --logMsg(CfgData, "CfgData", 2, "#q")
-  --logMsg(Config.ArgData, "ArgData", 2, "#q")
+  --logShow(Data, "Data", 2)
+  --logShow(Config, "Config", "_d2")
+  --logShow(CfgData, "CfgData", 2)
+  --logShow(Config.ArgData, "ArgData", 2)
   if not CfgData.Enabled then return end
   if not CfgData.CharEnum then CfgData.CharEnum = "%S" end
                     --| Тип текущего файла, открытого в редакторе:

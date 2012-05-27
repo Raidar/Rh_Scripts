@@ -30,6 +30,12 @@ local bshl, bshr = bit.lshift, bit.rshift
 
 local strings = require 'context.utils.useStrings'
 
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
+
 --------------------------------------------------------------------------------
 local unit = {}
 
@@ -194,10 +200,10 @@ function unit.ffind (env, name) --> (function | nil, error)
 
   -- Проверка первой компоненты имени.
   f = name:match("^[^.]+")
-  --logMsg(env, f, 1)
-  --logMsg(_G, f, 2, "_ns")
-  --logMsg(rawget(_G, name), f, 1, "_ns")
-  --logMsg(package.loaded[f], f, 1, "_ns")
+  --logShow(env, f, 1)
+  --logShow(_G, f, "d3 _ns")
+  --logShow(rawget(_G, name), f, "d2 _ns")
+  --logShow(package.loaded[f], f, "d2 _ns")
   if getvalue(env, f) then
     f = env
   elseif getvalue(_G, f) then
@@ -208,14 +214,14 @@ function unit.ffind (env, name) --> (function | nil, error)
 
   -- Разбор всех компонент имени.
   for s in name:gmatch("([^.]+)") do
-    --logMsg(s, Name)
+    --logShow(s, Name)
     if not getvalue(f, s) then
       return nil, sFieldNotFoundError:format(s, name) -- Ошибка
     end
     f = f[s]
-    --logMsg(f, s)
+    --logShow(f, s)
   end
-  --logMsg(f, name)
+  --logShow(f, name)
 
   return f
 end ---- ffind

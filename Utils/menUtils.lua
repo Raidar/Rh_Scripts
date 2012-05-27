@@ -14,11 +14,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
-
 local type = type
 local pairs = pairs
 
@@ -26,8 +21,6 @@ local pairs = pairs
 local bit = bit64
 local bor = bit.bor
 local bshl, bshr = bit.lshift, bit.rshift
-
-local U = unicode.utf8.char
 
 ----------------------------------------
 local far = far
@@ -49,7 +42,16 @@ local isFlag, addFlag, delFlag = utils.isFlag, utils.addFlag, utils.delFlag
 local t_create, t_concat = tables.create, table.concat
 
 ----------------------------------------
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local extUt = require "Rh_Scripts.Utils.extUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local keyUt = require "Rh_Scripts.Utils.keyUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -89,7 +91,7 @@ end ----
 local isItemSpeced = isItem.Speced
 
 local defnocheck = " " -- space
-local defchecked = U(0x221A) -- 
+local defchecked = "√" -- 0x221A
 
 -- Item check character.
 -- Символ метки пункта.
@@ -135,14 +137,14 @@ function unit.MakeItemKey (Item, StrKey, AbbrKey, isFullName)
     if isFullName then Item[AbbrKey] = Item[StrKey] end
   end  -- if StrKey
 
-  --logMsg(Item[AbbrKey], Item[StrKey], "hv8")
+  --logShow(Item[AbbrKey], Item[StrKey], "xv8")
 end ---- MakeItemKey
 
 -- Формирование AccelKey для пункта.
 function unit.MakeAccelKey (Item, isFullName) --| AccelKey & AccelStr
   if Item.AccelStr == "" then return end
   unit.MakeItemKey(Item, "AccelKey", "AccelStr", isFullName)
-  --logMsg(Item.AccelKey, Item.AccelStr, "hv8")
+  --logShow(Item.AccelKey, Item.AccelStr, "xv8")
 end ---- MakeAccelKey
 
 -- Parse menu items keys.
@@ -238,11 +240,11 @@ function unit.GetMenuHotChars (Items, Count) --> (string | "")
     local Item, c, _ = Items[k] -- Текущий пункт
     if not isItemSpeced(Item) then
       _, c = ParseHotText(Item.text) -- Горячая буква
-      --logMsg({ k, c, c and c:upper(), Item }, "Hot char")
+      --logShow({ k, c, c and c:upper(), Item }, "Hot char")
     end
     t[k] = c and c:upper() or ' ' -- Space
   end
-  --logMsg(t, "Hot chars")
+  --logShow(t, "Hot chars")
 
   return t_concat(t)
 end ---- GetMenuHotChars
@@ -258,18 +260,18 @@ function unit.SetMenuHotChars (Items, Count, Flags) --| HotChar in text
   -- Информация о горячих буквах-клавишах пунктов.
   local HotChars = isFlag(Flags, ShowAmper) and "" or
                    unit.GetMenuHotChars(Items, Count)
-  --logMsg(HotChars, _G.tostring(isFlag(Flags, ShowAmper)))
+  --logShow(HotChars, _G.tostring(isFlag(Flags, ShowAmper)))
 
   -- Назначение горячих букв-клавиш на пункты меню.
   if isFlag(Flags, DirAutoHL) then
     for k = 1, Count do
       HotChars = SetAutoHotChar(Items[k], k, HotChars)
-      --logMsg(HotChars, Item.text)
+      --logShow(HotChars, Item.text)
     end
   elseif isFlag(Flags, RevAutoHL) then
     for k = Count, 1, -1 do
       HotChars = SetAutoHotChar(Items[k], k, HotChars)
-      --logMsg(HotChars, Item.text)
+      --logShow(HotChars, Item.text)
     end
   end
 
@@ -280,9 +282,7 @@ end -- do
 
 ---------------------------------------- Items table
 -- TODO: Исключить DefItemSeler, DefItemField, FieldMax
--- после разделения RectMenu и RectGrid (Items-2D).
-
---local ClearHotText = farUt.ClearHotText
+--       после разделения RectMenu и RectGrid (Items-2D).
 
 do
 

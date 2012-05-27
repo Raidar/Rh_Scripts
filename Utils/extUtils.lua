@@ -15,8 +15,6 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-
 local type, assert = type, assert
 local next, pairs, ipairs = next, pairs, ipairs
 local tonumber, tostring = tonumber, tostring
@@ -41,9 +39,12 @@ local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 
 ----------------------------------------
--- [[
-local rhlog = require "Rh_Scripts.Utils.Logging"
-local logMsg, linMsg = rhlog.Message, rhlog.lineMessage
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
@@ -91,7 +92,7 @@ const.LuaCardsSet = const.CharSetPat:format(
 
 const.DefCharEnum = "%w_"
 
---logMsg(const.LuaCardsSet, const.LuaCards)
+--logShow(const.LuaCardsSet, const.LuaCards)
 
 ---------------------------------------- CharControl
 local TCharControl = {} -- Char control class
@@ -139,27 +140,27 @@ function TCharControl:isSetChar (Char) --> (bool)
   return Char and Char:find(self.CharsSet) or
          self.cfg.UseMagic and Char:find(const.LuaCardsSet) or
          self.cfg.UsePoint and Char == '.' -- dot
-end ----
+end ---- isSetChar
 
 -- Get word at specified position (and word part leftward of it).
 -- Получение слова в указанной позиции (и части слова слева от него).
 function TCharControl:atPosWord (s, pos) --> (string), (string)
   if pos > s:len() + 1 then return "", "" end
 
-  --logMsg({ s, L, pos, P }, "atPosWord", "#")
+  --logShow({ s, L, pos, P }, "atPosWord", "#")
   self.Slab = pos > 1 and s:sub(1, pos - 1):match(self.CharsSet..'+$') or ""
   self.Tail = s:sub(pos):match('^'..self.CharsSet..'+') or ""
 
   return self.Slab..self.Tail, self.Slab
-end ----
+end ---- atPosWord
 
 -- Check word by parameters.
 -- Проверка слова на параметры.
 function TCharControl:isWordUse (Word, Slab) --> (bool | nil)
   local cfg = self.cfg
   --Word, Slab = Word or self.Word, Slab or self.Slab
-  --logMsg({ Word, Slab, Word:len(), Slab:len(),
-  --  cfg.UseInside, cfg.UseOutside, cfg.CharsMin }, cfg.CharEnum, 0, "#")
+  --logShow({ Word, Slab, Word:len(), Slab:len(),
+  --          cfg.UseInside, cfg.UseOutside, cfg.CharsMin }, cfg.CharEnum, 0)
   -- Проверки: внутри слова, вне слова, мин. число символов:
   if not cfg.UseInside and Word:len() > Slab:len() then return end
   if not cfg.UseOutside and Slab == "" and Word == "" then return end
@@ -167,8 +168,9 @@ function TCharControl:isWordUse (Word, Slab) --> (bool | nil)
   if cfg.CharsMin and cfg.CharsMin > 0 and Slab:len() < cfg.CharsMin then
     return
   end
+
   return true
-end ----
+end ---- isWordUse
 
 -- Get pattern from string.
 -- Получение шаблона из строки.
@@ -341,8 +343,9 @@ function unit.t_gsub (t, name, pattern, replace) --> (table)
       t[k] = v:gsub(pattern, replace)
     end
   end
+
   return t
-end ----
+end ---- t_gsub
 
 -- Maximum of field values for table array-part.
 -- Максимум значений полей для части-массива таблицы.

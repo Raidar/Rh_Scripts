@@ -14,11 +14,16 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 local getFileType = context.detect.area.editor
 
 ----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local function LuaUserMenu (args)

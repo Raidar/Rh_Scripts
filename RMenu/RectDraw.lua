@@ -3,7 +3,7 @@
 ----------------------------------------
 --[[ description:
   -- RectMenu: Drawing a menu.
-  -- RectMenu: ê®·Æ¢†≠®• ¨•≠Ó.
+  -- RectMenu: –†–∏—Å–æ–≤–∞–Ω–∏–µ –º–µ–Ω—é.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -14,21 +14,13 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-
 local type = type
 local require = require
 local setmetatable = setmetatable
 
-local U = unicode.utf8.char
-
 ----------------------------------------
 local bit = bit64
 local bshr = bit.rshift
-
-----------------------------------------
-local far_Text, farVText = far.Text, farUt.VText
 
 ----------------------------------------
 local context = context
@@ -42,70 +34,80 @@ local max2, min2 = numbers.max2, numbers.min2
 --local divf = numbers.divf
 
 ----------------------------------------
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+
+local far_Text, farVText = far.Text, farUt.VText
+
+----------------------------------------
 local menUt = require "Rh_Scripts.Utils.menUtils"
 
 local checkedChar = menUt.checkedChar
 
 ----------------------------------------
---local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}
 
 ---------------------------------------- Draw
 
--- ÇÎ¢Æ§ ‚•™·‚† · Æ£‡†≠®Á•≠®•¨ ØÆ §´®≠•.
+-- –í—ã–≤–æ–¥ —Ç–µ–∫—Å—Ç–∞ —Å –æ–≥—Ä–∞–Ω–∏—á–µ–Ω–∏–µ–º –ø–æ –¥–ª–∏–Ω–µ.
 local function LineText (Rect, Color, Text) --> (number)
   local Len = min2(Text:len(), Rect.w)
   far_Text(Rect.x, Rect.y, Color, Text:sub(1, Len) or "")
-  return Len -- Ñ´®≠† ¢Î¢•§•≠≠Æ£Æ ‚•™·‚†
+  return Len -- –î–ª–∏–Ω–∞ –≤—ã–≤–µ–¥–µ–Ω–Ω–æ–≥–æ —Ç–µ–∫—Å—Ç–∞
 end ---- LineText
 unit.LineText = LineText
 
--- ÇÎ¢Æ§ ‚•™·‚† · ß†ØÆ´≠•≠®•¨ ØÆ §´®≠•.
+-- –í—ã–≤–æ–¥ —Ç–µ–∫—Å—Ç–∞ —Å –∑–∞–ø–æ–ª–Ω–µ–Ω–∏–µ–º –ø–æ –¥–ª–∏–Ω–µ.
 function unit.LineFill (Rect, Color, Text, Options) --> (bool)
   local Len = LineText(Rect, Color, Text)
   if Len >= Rect.w then return false end
   far_Text(Rect.x + Len, Rect.y, Color,
            Options.Filler:sub(1, Rect.w - Len + 1) or "")
-  return true -- Ñ´®≠† ¢Î¢•§•≠≠Æ£Æ ‚•™·‚†
+  return true -- –î–ª–∏–Ω–∞ –≤—ã–≤–µ–¥–µ–Ω–Ω–æ–≥–æ —Ç–µ–∫—Å—Ç–∞
 end ---- LineFill
 
 -- [[
--- ê®·Æ¢†≠®• ‚•™·‚† ≠• Ø„≠™‚† ¨•≠Ó.
+-- –†–∏—Å–æ–≤–∞–Ω–∏–µ —Ç–µ–∫—Å—Ç–∞ –Ω–µ –ø—É–Ω–∫—Ç–∞ –º–µ–Ω—é.
 function unit.DrawClearItemText (Rect, Color, Clear)
   -- TODO: MultiLine. -- TODO No one Line but Rect!!!
-  return LineText(Rect, Color, Clear) -- è„·‚Æ• ¨•·‚Æ
+  return LineText(Rect, Color, Clear) -- –ü—É—Å—Ç–æ–µ –º–µ—Å—Ç–æ
 end ---- DrawClearItemText
 --]]
 
-local Separ = U(0x2500):rep(255) -- í•™·‚-‡†ß§•´®‚•´Ï
---logMsg(Separ, U(0x2500)..": # = "..tostring( Separ:len() ))
+local Separ = ("‚îÄ"):rep(255) -- –¢–µ–∫—Å—Ç-—Ä–∞–∑–¥–µ–ª–∏—Ç–µ–ª—å
+--logShow(Separ, "'‚îÄ': # = "..tostring( Separ:len() ))
 
--- ê®·Æ¢†≠®• ‚•™·‚† Ø„≠™‚†-‡†ß§•´®‚•´Ô.
+-- –†–∏—Å–æ–≤–∞–Ω–∏–µ —Ç–µ–∫—Å—Ç–∞ –ø—É–Ω–∫—Ç–∞-—Ä–∞–∑–¥–µ–ª–∏—Ç–µ–ª—è.
 function unit.DrawSeparItemText (Rect, Color, Text)
   local Width = Rect.w
-  local Separ = Separ:sub(1, Width) -- ë‚‡Æ™†-‡†ß§•´®‚•´Ï
+  local Separ = Separ:sub(1, Width) -- –°—Ç—Ä–æ–∫–∞-—Ä–∞–∑–¥–µ–ª–∏—Ç–µ–ª—å
 
   -- TODO: MultiLine with text & line alignment.
   if Text and Text ~= "" then
-    local Len = Text:len() -- ê†ß§•´®‚•´Ï · ‚•™·‚Æ¨:
+    local Len = Text:len() -- –†–∞–∑–¥–µ–ª–∏—Ç–µ–ª—å —Å —Ç–µ–∫—Å—Ç–æ–º:
     local SepLen = bshr(Width - Len, 1)
     --local SepLen = divf(Width - Len, 2)
     LineText(Rect, Color, Separ:sub(1, SepLen)..Text..
                           Separ:sub(1, Width - SepLen - Len))
   else
-    LineText(Rect, Color, Separ) -- ê†ß§•´®‚•´Ï Æ°ÎÁ≠Î©
+    LineText(Rect, Color, Separ) -- –†–∞–∑–¥–µ–ª–∏—Ç–µ–ª—å –æ–±—ã—á–Ω—ã–π
   end
 end ---- DrawSeparItemText
 
 ---------------------------------------- Parse
 
--- ê†ß°Æ‡ ‚•™·‚† ≠† Ê¢•‚Æ¢Î• ‰‡†£¨•≠‚Î · „ÁÒ‚Æ¨ ¨†‡™®‡Æ¢™®.
+-- –†–∞–∑–±–æ—Ä —Ç–µ–∫—Å—Ç–∞ –Ω–∞ —Ü–≤–µ—Ç–æ–≤—ã–µ —Ñ—Ä–∞–≥–º–µ–Ω—Ç—ã —Å —É—á—ë—Ç–æ–º –º–∞—Ä–∫–∏—Ä–æ–≤–∫–∏.
 local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   local Mark = Item.RectMenu.TextMark or Null -- No change!
-  --if #Mark > 0 then logMsg(Mark, "Mark info") end
+  --if #Mark > 0 then logShow(Mark, "Mark info") end
   local MarkB, MarkE
+
   if type(Mark[1]) == 'string' then
     if Mark[1] ~= "" then
       MarkB, MarkE = (TextB..TextH..TextE):cfind(Mark[1], Mark[2], Mark[3])
@@ -113,14 +115,16 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   else
     MarkB, MarkE = Mark[1], Mark[2]
   end
-  --if MarkB then logMsg(Mark, "Mark info") end
+  --if MarkB then logShow(Mark, "Mark info") end
+
   MarkB, MarkE = MarkB or 0, MarkE or 0
   if MarkB <= 0 or MarkB > MarkE then
     return { 0,
              { text = TextB, color = Color.normal },
              { text = TextH, color = Color.hlight },
              { text = TextE, color = Color.normal }, }
-  end -- if
+  end
+
   local t = { 0,
     { text = "", color = Color.normal },
     { text = "", color = Color.marked },
@@ -131,7 +135,8 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
     { text = "", color = Color.normal },
   } --- t
   local LenB, LenH, LenE = TextB:len(), TextH:len(), TextE:len()
-  -- ê†ß°Æ‡ ØÆ§·‚‡Æ™® Ø•‡•§ &:
+
+  -- –†–∞–∑–±–æ—Ä –ø–æ–¥—Å—Ç—Ä–æ–∫–∏ –ø–µ—Ä–µ–¥ &:
   if TextB ~= "" and MarkB <= LenB then
     if MarkB > 1 then
     t[2].text = TextB:sub(1, MarkB-1) end
@@ -141,9 +146,11 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
     t[4].text = TextB:sub(Mark+1, -1) end
   else
     t[2].text = TextB
-  end -- if
+  end
+
   Mark = LenB + LenH
-  -- ê†ß°Æ‡ ØÆ§·‚‡Æ™® ØÆ·´• &:
+
+  -- –†–∞–∑–±–æ—Ä –ø–æ–¥—Å—Ç—Ä–æ–∫–∏ –ø–æ—Å–ª–µ &:
   if TextE ~= "" and MarkE > Mark then
     MarkB = max2(MarkB - Mark, 1)
     if MarkB > 1 then
@@ -154,27 +161,31 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
     t[8].text = TextE:sub(Mark+1, -1) end
   else
     t[8].text = TextE
-  end -- if
-  --logMsg(t, 'Parse Item Text')
-  return t
-end-- function MakeParseText
+  end
 
--- ê†ß°Æ‡ ‚•™·‚† ≠† Æ‚§•´Ï≠Î• ´®≠®® ØÆ ·®¨¢Æ´„ ≠Æ¢Æ© ·‚‡Æ™®.
+  --logShow(t, 'Parse Item Text')
+
+  return t
+end -- MakeParseText
+
+-- –†–∞–∑–±–æ—Ä —Ç–µ–∫—Å—Ç–∞ –Ω–∞ –æ—Ç–¥–µ–ª—å–Ω—ã–µ –ª–∏–Ω–∏–∏ –ø–æ —Å–∏–º–≤–æ–ª—É –Ω–æ–≤–æ–π —Å—Ç—Ä–æ–∫–∏.
 local function LineParseText (Rect, Color, Parse, Item, Options)
   local t = {}
+
   local k, n = 1, 1
   while k <= #Parse do
     t[n] = Parse[k]
     n = n + 1
-  end -- while
-  return t
-end --function LineParseText
+  end
 
--- ê®·Æ¢†≠®• ‡†ßÆ°‡†≠≠Æ£Æ ‚•™·‚† ™†™ ≠†°Æ‡† Ê¢•‚Æ¢ÎÂ ‰‡†£¨•≠‚Æ¢.
+  return t
+end -- LineParseText
+
+-- –†–∏—Å–æ–≤–∞–Ω–∏–µ —Ä–∞–∑–æ–±—Ä–∞–Ω–Ω–æ–≥–æ —Ç–µ–∫—Å—Ç–∞ –∫–∞–∫ –Ω–∞–±–æ—Ä–∞ —Ü–≤–µ—Ç–æ–≤—ã—Ö —Ñ—Ä–∞–≥–º–µ–Ω—Ç–æ–≤.
 local function DrawParseText (Rect, Item, Parse) --> (table)
   local text, len
   local ARect = { __index = Rect }; setmetatable(ARect, ARect)
-  --logMsg({ Rect, Parse }, 'Parse Item Text')
+  --logShow({ Rect, Parse }, 'Parse Item Text')
   -- TODO: MultiLine with text & line alignment -- make LineParseText!!!
 
   local v
@@ -182,47 +193,51 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
     v = Parse[k]
     text = v.text
 
-    if v.newline then -- çÆ¢†Ô ´®≠®Ô:
+    if v.newline then -- –ù–æ–≤–∞—è –ª–∏–Ω–∏—è:
       ARect.x, ARect.w = nil, nil
       ARect.y = ARect.y + 1
       ARect.h = ARect.h - 1
       if ARect.h < 0 then break end
     end
 
-    if text and text ~= "" then -- ÇÎ¢Æ§:
+    if text and text ~= "" then -- –í—ã–≤–æ–¥:
       len = LineText(ARect, v.color, text)
       ARect.x = ARect.x + len
       ARect.w = ARect.w - len
       if ARect.w <= 0 then break end
     end
-  end -- for
+  end
 
   return ARect
-end --function DrawParseText
+end -- DrawParseText
 
 ---------------------------------------- Draw
 local ParseHotText = farUt.ParseHotText
 
--- ê®·Æ¢†≠®• ‚•™·‚† Æ°ÎÁ≠Æ£Æ Ø„≠™‚†.
+-- –†–∏—Å–æ–≤–∞–Ω–∏–µ —Ç–µ–∫—Å—Ç–∞ –æ–±—ã—á–Ω–æ–≥–æ –ø—É–Ω–∫—Ç–∞.
 function unit.DrawItemText (Rect, Color, Item, Options)
-  --if not Color.marked then logMsg({ Item, Rect, Options }, "No color item") end
+  --if not Color.marked then logShow({ Item, Rect, Options }, "No color item") end
   local RM = Options.Props
   --local RM, RI_Props = Options.Props, Item.RectMenu
-  -- ê†ß°Æ‡ ‚•™·‚† ≠† Á†·‚® ØÆ £Æ‡ÔÁ•© °„™¢•:
+
+  -- –†–∞–∑–±–æ—Ä —Ç–µ–∫—Å—Ç–∞ –Ω–∞ —á–∞—Å—Ç–∏ –ø–æ –≥–æ—Ä—è—á–µ–π –±—É–∫–≤–µ:
   local TextB, TextH, TextE = nil, nil, Item.text
   if Options.isHot then
     TextB, TextH, TextE = ParseHotText(Item.text, '&')
   end
   TextB, TextH = TextB or "", TextH or ""
-  local Len = TextB:len() + TextH:len() + TextE:len() -- ê•†´Ï≠†Ô §´®≠†
-  --logMsg(TextB..TextH..TextE, Len)
-  -- ê†ß°Æ‡ ‚•™·‚† · „ÁÒ‚Æ¨ ¨†‡™®‡Æ¢™®:
+  local Len = TextB:len() + TextH:len() + TextE:len() -- –†–µ–∞–ª—å–Ω–∞—è –¥–ª–∏–Ω–∞
+  --logShow({ TextB, TextH, TextE }, Len)
+
+  -- –†–∞–∑–±–æ—Ä —Ç–µ–∫—Å—Ç–∞ —Å —É—á—ë—Ç–æ–º –º–∞—Ä–∫–∏—Ä–æ–≤–∫–∏:
   local Parse = MakeParseText(Item, Color, TextB, TextH, TextE)
   local Most = RM.CompactText and "" or " "
-  -- ÇÎ‡†¢≠®¢†≠®• Ø„‚Ò¨ ÆÁ®·‚™® ™Æ≠Ê†:
+
+  -- –í—ã—Ä–∞–≤–Ω–∏–≤–∞–Ω–∏–µ –ø—É—Ç—ë–º –æ—á–∏—Å—Ç–∫–∏ –∫–æ–Ω—Ü–∞:
   local Clear = Rect.w - Len - Most:len() * 2
   Clear = Options.Filler:sub(1, max2(0, Clear)) or ""
-  -- ìÁÒ‚ ≠†Á†´Ï≠ÎÂ ® ™Æ≠•Á≠ÎÂ ·®¨¢Æ´Æ¢:
+
+  -- –£—á—ë—Ç –Ω–∞—á–∞–ª—å–Ω—ã—Ö –∏ –∫–æ–Ω–µ—á–Ω—ã—Ö —Å–∏–º–≤–æ–ª–æ–≤:
   Parse.m, Parse.n = 1, #Parse + 1
   TextB = Most
   if Options.checked then
@@ -231,7 +246,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   Parse[1] = { text = TextB, color = Color.normal, }
   Parse[Parse.n] = { text = Clear..Most, color = Color.normal, }
 
-  DrawParseText(Rect, Item, Parse) -- ê®·Æ¢†≠®• ‡†ßÆ°‡†≠≠Æ£Æ ‚•™·‚†
+  DrawParseText(Rect, Item, Parse) -- –†–∏—Å–æ–≤–∞–Ω–∏–µ —Ä–∞–∑–æ–±—Ä–∞–Ω–Ω–æ–≥–æ —Ç–µ–∫—Å—Ç–∞
 end ---- DrawItemText
 
 --------------------------------------------------------------------------------

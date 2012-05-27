@@ -15,17 +15,8 @@
 --------------------------------------------------------------------------------
 local _G = _G
 
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
---local keyUt = require "Rh_Scripts.Utils.keyUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
-
 local type = type
---local ipairs, pairs = ipairs, pairs
---local require, pcall = require, pcall
 local setmetatable = setmetatable
-
-local unicode = unicode
 
 ----------------------------------------
 local far = far
@@ -36,31 +27,34 @@ local context = context
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
+
+local spaces = strings.spaces -- for text align
 
 ----------------------------------------
--- [[
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
+--local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local menUt = require "Rh_Scripts.Utils.menUtils"
+
+----------------------------------------
+--[[
 local hex = numbers.hex8
-local logMsg = (require "Rh_Scripts.Utils.Logging").Message
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
 local unit = {}
 
 ---------------------------------------- Internal
-local U = unicode.utf8.char
-
 -- Признаки меню в тексте пункта
 -- (символы появления подменю)
 unit.MenuLSign = ""
---MenuLSign = U(0x25C4).." "
-unit.MenuRSign = " "..U(0x25BA)
+--MenuLSign = "◄ "
+unit.MenuRSign = " ►"
 unit.SKeySepar = " "
---unit.SKeySepar = U(0x007C)
-
-local Spaces = (" "):rep(255) -- Строка пробелов
-local function Sp_sub (len) -- Подстрока
-  return Spaces:sub(1, len) or ""
-end ----
+--unit.SKeySepar = "|"
 
 ---------------------------------------- Menu class
 local TMenu = {} -- Класс меню
@@ -71,7 +65,7 @@ local function CreateMenu (Properties, Items) --> (object)
   local Properties = Properties or {}
   local Options = Properties.Texter or {}
   local Flags = Properties.Flags
-  --logMsg(Properties.Flags, "Flags")
+  --logShow(Properties.Flags, "Flags")
 
   local self = {
     Props = Properties,
@@ -123,8 +117,8 @@ function TMenu:DefineItemCaption (Item) --| (Item)
     Item.Caption = Item.text:gsub("^&.%s%-%s(.+)", "%1") -- "&<A> - "
     Item.Caption = ClearHotText(Item.Caption, '&')       -- ненужных '&'
     --[[
-    logMsg({ Item.Title, Item.Caption, Item.text,
-             Item.text:gsub("^&.%s%-%s(.+)", "%1") }, i)
+    logShow({ Item.Title, Item.Caption, Item.text,
+              Item.text:gsub("^&.%s%-%s(.+)", "%1") }, i)
     --]]
   else
     Item.Caption = Item.Name or ""
@@ -156,8 +150,8 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
   local MenuLSign, MenuRSign, SKeySepar =
         unit.MenuLSign, unit.MenuRSign, unit.SKeySepar
 
-  --logMsg(Menu, "Menu", 1)
-  --logMsg(Options, "Menu Options")
+  --logShow(Menu, "Menu", 1)
+  --logShow(Options, "Menu Options")
   local textMax = 0 -- Макс. длина текста пунктов меню
   local skeyMax = 0 -- Макс. длина названий клавиш пунктов меню
   local captMax = 0 -- Макс. длина надписей в меню
@@ -169,20 +163,20 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
     return textStr:len()
   end-- function textLen
   textMax = FieldMax(Menu, self.Count, nil, textLen)
-  --logMsg(textMax, "textMax")
+  --logShow(textMax, "textMax")
 
   -- 2. Учёт комбинаций клавиш в тексте пункта.
   if Options.TextNamedKeys then -- Макс. длина комбинаций клавиш
     skeyMax = FieldMax(Menu, self.Count, nil, "AccelStr")
     textMax = textMax + skeyMax
-    --logMsg(tostring(textMax)..'\n'..tostring(skeyMax), "Max")
+    --logShow({ textMax, skeyMax }, "Max")
   end
 
   -- 3. Выравнивание текста пунктов меню.
      -- Поправка на подменю.
   local hasSubMenu = self:hasSubMenu()
   -- Текст для выравнивания обычных пунктов:
-  local LSpace = hasSubMenu and Sp_sub(MenuLSign:len()) or ""
+  local LSpace = hasSubMenu and spaces[MenuLSign:len()] or ""
 
      -- Поправка на надписи в меню.
   if not self:isFullRectMenu() then -- TODO: Change for Grid/Rect support!
@@ -201,7 +195,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
     end
     if captDif > 0 then -- Учёт поправки:
       local captSep = divf(captDif, 2)
-      LAlign = Sp_sub(captSep) -- Центрирование
+      LAlign = spaces[captSep] -- Центрирование
       textMax = textMax + captDif - captSep -- Поправка на надписи
     end
   else
@@ -219,8 +213,8 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
     if Options.TextNamedKeys then -- Выравнивание названия комбо-клавиши
       KeyName = Item.AccelStr ~= "" and Item.AccelStr or ""
       if KeyName ~= "" then KeyAlign = SKeySepar
-      elseif ItemIsMenu then KeyAlign = Sp_sub(SKeySepar:len()) end
-      RAlign = Sp_sub(max2(0, skeyMax - KeyName:len()))
+      elseif ItemIsMenu then KeyAlign = spaces[SKeySepar:len()] end
+      RAlign = spaces[skeyMax - KeyName:len()]
 
       if Options.KeysAlignText then
         KeyAlign = KeyAlign..RAlign..KeyName
@@ -234,8 +228,8 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
 
     -- Выравнивание частей текста пункта.
     -- TODO: Учесть RectMenu !!! (только как, чтобы было независимо от него?!)
-    KeyAlign = Sp_sub(textMax - textLen - skeyMax)..KeyAlign
-    --logMsg("'"..Item.Captext.."'"..'\n'.."'"..(Item.text or "").."'", "Item")
+    KeyAlign = spaces[textMax - textLen - skeyMax]..KeyAlign
+    --logShow({ "'"..Item.Captext.."'", "'"..(Item.text or "").."'" }, "Item")
     if ItemIsMenu then -- Подменю
       Item.text = MenuLSign..LAlign..Item.Captext..KeyAlign..MenuRSign
     elseif Item.Kind ~= "Separator" then -- Не подменю и не разделитель
@@ -247,7 +241,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
       if hasSubMenu then Item.text = LSpace..(Item.text or "") end
     end
   end
-  --logMsg(tostring(textMax - skeyMax)..'\n'..tostring(skeyMax), "2 + ")
+  --logShow({ textMax - skeyMax, skeyMax }, "2 + ")
 end ---- DefineMenuText
 
 end -- do
