@@ -59,18 +59,6 @@ local unit = {}
 ---------------------------------------- Numbers
 
 ---------------------------------------- Strings
-do
-  local capit = strings.capit
-  --local upper = ("").upper
-
--- Convert words to lowercase word with first uppercase letter.
--- Преобразование слов в строчное слово с первой заглавной буквой.
-function unit.CapitCase (s) --> (string)
-  return s:gsub("%w+", capit)
-  --return s:gsub("(%w)%w*", upper) -- MAYBE
-end ----
-
-end -- do
 
 ---------------------------------------- const
 local const = {}

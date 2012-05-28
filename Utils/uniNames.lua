@@ -22,12 +22,13 @@ local io_open = io.open
 local context = context
 
 local utils = require 'context.utils.useUtils'
+local strings = require 'context.utils.useStrings'
+
+local capital = strings.capital
 
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local extUt = require "Rh_Scripts.Utils.extUtils"
-
-local CapitCase = extUt.CapitCase
 
 ----------------------------------------
 --[[
@@ -96,7 +97,7 @@ do
       --if cp > 0xFFFF then break end -- DEBUG only
       last, data = cp, Names[cp]
       data.code = code
-      data.name = name:sub(1, 1) == '<' and name or CapitCase(name)
+      data.name = name:sub(1, 1) == '<' and name or capital(name)
     end
 
     --[[
