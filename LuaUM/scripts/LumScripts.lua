@@ -12,16 +12,15 @@
   -- group: LUM.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 local F = far.Flags
 
 ----------------------------------------
-local context = context
+--local context = context
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+--local farUt = require "Rh_Scripts.Utils.farUtils"
 
 ----------------------------------------
 -- [[
@@ -88,14 +87,15 @@ function FunctionEnvironment ()
   logShow(getfenv(), "Function Environment", "d2 w _/")
 end ---- FunctionEnvironment
 
+--[[
 -- Локальная функция --
 local function LocalFunction ()
   return "Some Local Function"
 end -- LocalFunction
+--]]
 
-local
-  CArgs   = "Arguments: %s"
-  CDefCfg = "Default Config: %s"
+local CArgs   = "Arguments: %s"
+--local CDefCfg = "Default Config: %s"
 
 -- Аргументы функции --
 function DefaultArguments (Args, Cfg)

@@ -12,12 +12,11 @@
   -- group: LUM.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type, assert = type, assert
 local pairs, ipairs = pairs, ipairs
 local require = require
-local unpack = unpack -- TEST
+--local unpack = unpack -- TEST
 local setmetatable = setmetatable
 
 ----------------------------------------
@@ -29,15 +28,13 @@ local win, far = win, far
 local F = far.Flags
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 local colors = require 'context.utils.useColors'
-
-local newFlags = utils.newFlags
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.farUtils"
@@ -407,7 +404,7 @@ local function ConfigDlg (Config, Kind, Derived)
 
   repeat -- Изменение конфигурации LUM.
     dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
-    local iDlg = dlgUt.Dialog(Guid[kind],
+    local iDlg = dlgUt.Dialog(Guid[Kind],
                               -1, -1, D._[4]+4, D._[5]+2,
                               HelpTopic, D, nil, DlgProc)
 

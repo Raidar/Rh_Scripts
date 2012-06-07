@@ -20,21 +20,18 @@
   Home: http://raven.elk.ru/
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 --local type, assert = type, assert
-local pairs, ipairs = pairs, ipairs
+local ipairs = ipairs
 local tonumber = tonumber
 local setmetatable = setmetatable
-
-local format = string.format
 
 ----------------------------------------
 local far, editor = far, editor
 local F = far.Flags
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
@@ -44,7 +41,7 @@ local Null = tables.Null
 local min2, max2 = numbers.min2, numbers.max2
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 
 ----------------------------------------
 --[[
@@ -58,7 +55,7 @@ local unit = {}
 ---------------------------------------- Macro-keys
 local DefMacroKeyChar = '@' -- Masyamba
 
-local MacroKeyLen = 12
+--local MacroKeyLen = 12
 local MacroKeys = { -- Макро-ключи:
   "left", "right", "up", "down",
   "home", "end",
@@ -159,14 +156,14 @@ local function InsText (Info, Count, text) -- Вставка текста
 end --
 
 local function NewLine (Info, Count, indent) -- Новая строка
-  for k = 1, Count do
+  for _ = 1, Count do
     if not farEdit.InsStr(nil, indent) then return end
   end
   return true
 end --
 
 local function DelText (Info, Count) -- Удаление текста
-  for k = 1, Count do
+  for _ = 1, Count do
     if not farEdit.DelChar() then return end
   end
   return true
@@ -181,13 +178,14 @@ end --
 
 local function BackLine (Info, Count) -- Удаление текста слева
   local Info = Info or farEdit.GetInfo() -- с учётом перехода строку выше
-  for k = 1, Count do
+  for _ = 1, Count do
     if Info.CurPos > 0 then
       if not farEdit.SetPos(nil, { CurPos = Info.CurPos - 1 }) then return end
     else
       if not farEdit.SetPos(nil, { CurLine = Info.CurLine - 1 }) then return end
       if not farEdit.SetPos(nil, { CurPos = farEdit.GetCurStrLen() }) then return end
-    end -- if
+    end
+
     Info = farEdit.GetInfo()
   end -- for
   return DelText(Info, Count)
@@ -351,7 +349,7 @@ local function MakeTemplate (Text, MacroKeyChar) --> (table)
     local p = Text:cfind(MacroKeyChar, k, true)
     s = Text:sub(k, (p or 0) - 1) -- Plain text
     if not p or p == Len then break end
-    --logShow(Text..'\n'..s, format("%d from %d", k, Len))
+    --logShow(Text..'\n'..s, ("%d from %d"):format(k, Len))
 
     k = p + 1
     if Text:sub(k, k) == MacroKeyChar then
@@ -397,10 +395,10 @@ local function Exec (Macro) --> (bool | nil, Action)
   local InsText = Actions.text -- Вставка текста
 
   -- Цикл по действиям
-  for k, v in ipairs(Macro) do
+  for _, v in ipairs(Macro) do
     local Info, isOk = farEdit.GetInfo()
     local Action, Value = v.Action, v.Value or 1
-    --farEdit.Redraw(); logShow(v, k..": # = "..Value)
+    --farEdit.Redraw(); logShow(v, _..": # = "..Value)
 
     -- Выполнение действия макроса:
     if Action == "text" then
@@ -465,9 +463,9 @@ MacroActions.run = {
   CheckMacroRep = CheckMacroRep,
 
   Make      = MakeTemplate,
-  Exec      = Perform,
+  Exec      = Exec,
   Execute   = ExecTemplate,
-  Macro     = RunMacro,
+  Macro     = unit.RunMacro,
 } ---
 
 --------------------------------------------------------------------------------

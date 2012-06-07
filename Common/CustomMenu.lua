@@ -14,7 +14,6 @@
   -- areas: any.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local assert = assert
 local setmetatable = setmetatable
@@ -23,11 +22,11 @@ local setmetatable = setmetatable
 local F = far.Flags
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
-local datas = require 'context.utils.useDatas'
+--local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
 local luaUt = require "Rh_Scripts.Utils.luaUtils"
@@ -896,7 +895,7 @@ do
 
 -- Цикл вывода меню до выбора.
 function TMenu:ShowLoop ()
-  local CfgData = self.Config.CfgData
+  --local CfgData = self.Config.CfgData
 
   repeat
     local ActItem = self.ActItem

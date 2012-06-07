@@ -13,7 +13,6 @@
   -- group: Menus, RectMenu.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 --local assert = assert
 local type, unpack = type, unpack

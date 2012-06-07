@@ -13,33 +13,28 @@
   something from stdlib project.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
-local type, assert = type, assert
-local next, pairs, ipairs = next, pairs, ipairs
-local tonumber, tostring = tonumber, tostring
-local setmetatable, getmetatable = setmetatable, getmetatable
-
-local table, string = table, string
-local io, package = io, package
+local type = type
+local pairs = pairs
+local setmetatable = setmetatable
 
 ----------------------------------------
-local bit = bit64
-local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bit = bit64
+--local band, bor = bit.band, bit.bor
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
-local far = far
+--local far = far
 
 ----------------------------------------
-local context = context
+--local context = context
 
-local strings = require 'context.utils.useStrings'
-local utils = require 'context.utils.useUtils'
-local tables = require 'context.utils.useTables'
+--local strings = require 'context.utils.useStrings'
+--local utils = require 'context.utils.useUtils'
+--local tables = require 'context.utils.useTables'
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 
 ----------------------------------------
 --[[
@@ -160,6 +155,8 @@ function TCharControl:isWordUse (Word, Slab) --> (bool | nil)
   return true
 end ---- isWordUse
 
+  local tconcat = table.concat
+
 -- Get pattern from string.
 -- Получение шаблона из строки.
 function TCharControl:asPattern (s) --> (string)
@@ -182,7 +179,7 @@ function TCharControl:asPattern (s) --> (string)
     end -- if
   end
 
-  return table.concat(t)
+  return tconcat(t)
 end ---- asPattern
 
 ---------------------------------------- CharCounter
@@ -316,7 +313,7 @@ local function _isEqual (t, u) --> (bool)
     if not equal then return false end
   end
 
-  for k, v in pairs(u) do
+  for k, _ in pairs(u) do
     if t[k] == nil then return nil end
   end
 
@@ -436,22 +433,24 @@ end ---- ParseFullName
 -- Добавление пути к модулям в EnvPath.
 function unit.AddEnvPath (BasePath, ModulePath, ModuleName, EnvPath) --> (string)
   for CurPath in ModulePath:gmatch("([^;]+)") do
-    local Path = ChangeSlash(BasePath..CurPath)..ModuleName -- Полный путь.
+    local Path = unit.ChangeSlash(BasePath..CurPath)..ModuleName -- Полный путь.
     -- Настройка путей для поиска модулей.
     if not EnvPath:find(Path, 1, true) then EnvPath = Path..';'..EnvPath end
   end -- for
   return EnvPath
 end ---- AddEnvPath
 
+local package = package
+
 -- Adding a path of used lua-modules.
 -- Добавление пути к используемым lua-модулям.
 function unit.AddLuaPath (BasePath, ModulePath) --> (bool)
-  package.path = AddEnvPath(BasePath, ModulePath, "?.lua", package.path)
+  package.path = unit.AddEnvPath(BasePath, ModulePath, "?.lua", package.path)
 end
 -- Adding a path of used dll-modules.
 -- Добавление пути к используемым dll-модулям.
 function unit.AddLibPath (BasePath, ModulePath) --> (bool)
-  package.cpath = AddEnvPath(BasePath, ModulePath, "?.dll", package.cpath)
+  package.cpath = unit.AddEnvPath(BasePath, ModulePath, "?.dll", package.cpath)
 end
 
 ---------------------------------------- Files
@@ -464,6 +463,7 @@ function unit.CheckLineCP (s) --> (string)
   local s = ssub(s, 1, 3)
   if s == '\239\187\191' then return "UTF-8" end -- EF BB BF
   s = ssub(s, 1, 2)
+
   return s == '\255\254' and "UTF-16 BE" or -- FF FE
          s == '\254\255' and "UTF-16 LE" or -- FE FF
          "OEM" -- by default
@@ -480,7 +480,8 @@ function unit.CheckFileCP (filename) --> (string)
   if not f then return nil end
   local s = f:read('*l')
   f:close()
-  return CheckLineCP(s)
+
+  return unit.CheckLineCP(s)
 end ---- CheckFileCP
 
 end -- do

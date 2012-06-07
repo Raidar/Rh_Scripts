@@ -12,7 +12,6 @@
   -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local pairs, ipairs = pairs, ipairs
@@ -40,8 +39,8 @@ local Null = tables.Null
 local tfind = tables.find
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local extUt = require "Rh_Scripts.Utils.extUtils"
 
 ----------------------------------------
 --[[
@@ -357,7 +356,7 @@ end ---- DialogRect
 -- Обновление элементов диалога.
 function unit.UpdateItems (hDlg, Items) --| (Items)
   for k, u in ipairs(Items) do
-    local w = far.GetDlgItem(hDlg, k - 1)
+    local w = GetDlgItem(hDlg, k - 1)
     if type(u[diListItems]) == 'table' then
       local Pos = far.SendDlgMessage(hDlg, F.DM_LISTGETCURPOS, k - 1, 0)
       u[diListItems].SelectIndex = (Pos or Null).SelectPos

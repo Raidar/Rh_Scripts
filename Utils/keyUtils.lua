@@ -12,23 +12,23 @@
   -- group: Keys.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
+
+local tconcat = table.concat
 
 ----------------------------------------
 local bit = bit64
-local band, bor = bit.band, bit.bor
-local bnot, bxor = bit.bnot, bit.bxor
-local bshl, bshr = bit.lshift, bit.rshift
+local band = bit.band
+--local band, bor = bit.band, bit.bor
+--local bnot, bxor = bit.bnot, bit.bxor
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
-local context = context
+--local context = context
 
-local utils = require 'context.utils.useUtils'
-local tables = require 'context.utils.useTables'
+--local utils = require 'context.utils.useUtils'
+--local tables = require 'context.utils.useTables'
 
-local tconcat, tfind = table.concat, tables.find
-
-local far23 = context.use.far23
+--local far23 = context.use.far23
 
 ----------------------------------------
 --[[

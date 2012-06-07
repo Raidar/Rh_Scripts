@@ -12,7 +12,6 @@
   -- group: Menus, LUM.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 --local pairs, ipairs = pairs, ipairs
 --local tostring = tostring
@@ -232,13 +231,14 @@ function TMenu:Run ()
     AliasEnum = ("%s;%s"):format(AliasEnum, Scope.DefMenu.Alias)
   end
   -- Считывание и разбор файлов псевдонимов.
+  local AliasData
   Args = { Base = PluginPath,
            DefExt = ".lui",
            Enum = AliasEnum,
            Path = Cfg_Files.FilesPath,
            DefEnum = Cfg_Basic.AliasFile,
            DefPath = Cfg_Basic.CfgUMPath }
-  local AliasData, SError = LW.GetFileEnumData(Args)
+  AliasData, SError = LW.GetFileEnumData(Args)
   if not AliasData then
     return L:et2("FileDataError", "AliasFile", SError)
   end

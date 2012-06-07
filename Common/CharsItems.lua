@@ -14,24 +14,24 @@
   -- areas: any (TODO).
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type, assert = type, assert
 local pairs, ipairs = pairs, ipairs
 local setmetatable = setmetatable
 
 ----------------------------------------
-local win, far = win, far
+--local win, far = win, far
 
 ----------------------------------------
-local context = context
+--local context = context
 
 --local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 --local datas = require 'context.utils.useDatas'
 
-local u_char, u_byte = strings.u8char, strings.u8byte
+local u_byte = strings.u8byte
+--local u_char, u_byte = strings.u8char, strings.u8byte
 
 ----------------------------------------
 local luaUt = require "Rh_Scripts.Utils.luaUtils"
@@ -213,7 +213,7 @@ function sList.CharsItems (Properties, Data, Keys) --> (table)
   local tp = type(Data)
   assert(tp == 'string' or tp == 'table')
 
-  local Order = Properties.Order or DefItemOrder
+  local Order = Properties.Order or sItem.DefItemOrder
   local iLen = Properties.Length or 1
   if tp == 'table' then iLen = 1 end
 

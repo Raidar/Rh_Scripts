@@ -11,7 +11,6 @@
   -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 local far = far
@@ -23,7 +22,7 @@ local ViewerGetInfo = viewer.GetInfo
 local PanelsGetInfo = panel.GetPanelInfo
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
@@ -123,7 +122,7 @@ function unit.SwitchToPanels (CmdLine) --> (bool | nil, error)
 
   local Info = farAdvControl(F.ACTL_GETWINDOWINFO, -1)
   if Info.Type ~= F.WTYPE_PANELS then
-    if not SetCurrentWindow() then
+    if not unit.SetCurrentWindow() then
       return nil, "No switch to panels window"
     end
   end
@@ -343,6 +342,8 @@ function unit.nextEditorSelect (count, line) --> (number, table)
   end
 end ---- nextEditorSelect
 
+  local nextEditorSelect = unit.nextEditorSelect
+
 function unit.pairsEditorSelect (line) --> (iterator, count, line)
   local Info = EditorGetInfo()
 
@@ -445,9 +446,9 @@ end ----
 -- Insert text.
 -- Вставка текста.
 unit.FarInsertText = {
-  panels = function (s, args) return panel.InsertCmdLine(nil, s)    end,
-  editor = function (s, args) return editor.InsertText(nil, s)      end,
-  dialog = function (s, args) return DialogInsertText(args.hDlg, s) end,
+  panels = function (s, args) return panel.InsertCmdLine(nil, s) end,
+  editor = function (s, args) return editor.InsertText(nil, s) end,
+  dialog = function (s, args) return unit.DialogInsertText(args.hDlg, s) end,
 } --- FarInsertText
 
 -- Insert text in specified FAR area.

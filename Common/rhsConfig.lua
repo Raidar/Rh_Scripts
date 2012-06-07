@@ -14,16 +14,16 @@
   -- areas: config.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local pcall = pcall
 local ipairs = ipairs
 local setmetatable = setmetatable
 
 ----------------------------------------
-local bit = bit64
+--local bit = bit64
+--local bshr = bit.rshift
 --local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local win, far = win, far
@@ -31,20 +31,19 @@ local F = far.Flags
 local farMsg = far.Message
 
 ----------------------------------------
-local context, ctxdata = context, ctxdata
+local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
-local newFlags = utils.newFlags
-local isFlag, delFlag = utils.isFlag, utils.delFlag
+local isFlag = utils.isFlag
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local extUt = require "Rh_Scripts.Utils.extUtils"
+--local farUt = require "Rh_Scripts.Utils.farUtils"
 
 ----------------------------------------
 --[[
@@ -365,7 +364,7 @@ end --function MakeDlgTypes
 local ScriptName = "rhsConfig"
 local PluginPath = context.utils.PluginPath
 local ScriptPath = "scripts\\Rh_Scripts\\Common\\"
-local umFilePath = "scripts\\Rh_Scripts\\"
+--local umFilePath = "scripts\\Rh_Scripts\\"
 
 local addNewData = tables.extend
 
@@ -427,12 +426,13 @@ local function Dlg (Config) --> (dialog)
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
   local H = DBox.Height - (isSmall and 1 or 2)
   local W = DBox.Width  - (isSmall and 0 or 2)
-  local M = bshr(W, 1) -- Medium -- Width/2
-  local Q = bshr(M, 1) -- Quarta -- Width/4
+  --local M = bshr(W, 1) -- Medium -- Width/2
+  --local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
-  local A, B = I + 1, M + 2
+  local A = I + 1
+  --local A, B = I + 1, M + 2
   -- Some controls' sizes:
-  local SE = 5  -- Small field
+  --local SE = 5  -- Small field
   local DE = 20 -- Desc field
   local HK = 16 -- HotKey field
   local TX = 17 -- Text field
@@ -441,7 +441,7 @@ local function Dlg (Config) --> (dialog)
   --local I0 =  A + SE; local IH = I0 + HK
   local I1 = IH + DE; local IL = I1 + CK
   local I2 = IL + TX; local IC = I2 + CK
-  local I3 = IC + TX; local IA = I3 + CK
+  local I3 = IC + TX; --local IA = I3 + CK
 
   local Data = Config.CfgData
   local n, v, Area
@@ -618,7 +618,7 @@ function unit.ConfigDlg (Data)
   --logShow(DBox, "DBox", 1)
   -- Настройка:
   local D = Dlg(Config)
-  local cData, aData, Types = Config.CfgData, Config.ArgData, Config.DlgTypes
+  local cData, aData = Config.CfgData, Config.ArgData
   local DlgTypes = MakeDlgTypes(cData, aData)
   --logShow(DlgTypes, "DlgTypes", 2)
   LoadDlgData(cData, aData, D, DlgTypes)
@@ -794,7 +794,7 @@ function unit.CreateFile (Data)
     end
   end
 
-  local f = io.open(umFullName, 'w+')
+  f = io.open(umFullName, 'w+')
   if not f then return false, L:t"FileNotOpenCreated" end
 
   --local isOk = true, GenerateFile(f, Data)

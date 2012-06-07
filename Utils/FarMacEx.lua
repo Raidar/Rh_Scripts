@@ -18,7 +18,6 @@
   -- group: Macros, Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local ipairs, pairs = ipairs, pairs
 
@@ -28,7 +27,7 @@ local ipairs, pairs = ipairs, pairs
 local strings = require 'context.utils.useStrings'
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 
 ----------------------------------------
 --[[
@@ -90,7 +89,7 @@ function unit.UnQuoteRegTable (t) --> (table)
   for k, _ in pairs(t) do f[#f+1] = k end
 
   -- Раскавычивание полей таблицы.
-  for k, v in ipairs(f) do UnQuoteRegField(t, v) end
+  for _, v in ipairs(f) do UnQuoteRegField(t, v) end
 end ----
 
 end -- do
@@ -217,10 +216,6 @@ end ---- SpecifyParamedAlias
 
 end -- do
 
-do
-  local SpecifyParamedAlias = unit.SpecifyParamedAlias
-  local SpecifySimpledAlias = unit.SpecifySimpledAlias
-
 -- Конкретизация заданного псевдонима.
 function unit.SpecifyDefinedAlias (s, Name, Value) --> (string)
   local Index = Name:cfind("(", 1, true)
@@ -230,8 +225,6 @@ function unit.SpecifyDefinedAlias (s, Name, Value) --> (string)
     return unit.SpecifySimpledAlias(s, Name, Value)
   end
 end ---- SpecifyDefinedAlias
-
-end -- do
 
 ----------------------------------------
 do

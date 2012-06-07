@@ -21,7 +21,6 @@
   Home: http://raven.elk.ru/
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type, unpack = type, unpack
 local pairs, ipairs = pairs, ipairs

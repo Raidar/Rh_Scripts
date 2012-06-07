@@ -6,7 +6,6 @@
   -- Вставка шаблона: none.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 --local context = context
@@ -33,7 +32,7 @@ local noteline = ('―'):rep(8)
 
 local line_len = 40
 local line_hymin = ('-'):rep(line_len)
-local line_equal = ('='):rep(line_len)
+--local line_equal = ('='):rep(line_len)
 
 ---------------------------------------- ----
 local mInsert = {

@@ -11,7 +11,6 @@
   -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local tonumber = tonumber
 local setmetatable = setmetatable
@@ -19,16 +18,12 @@ local setmetatable = setmetatable
 local io_open = io.open
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
 
 local capital = strings.capital
-
-----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
 
 ----------------------------------------
 --[[
@@ -62,10 +57,14 @@ local DataName = "NamesList.txt"
 
 ---------------------------------------- main
 do
-  local FileName = ("%s%s%s"):format(PluginPath, DataPath, DataName)
-  local f, SError = io_open(FileName, 'r')
-  --if SError then logShow(SError, "NamesList.txt") end
+  local FileName = string.format("%s%s%s", PluginPath, DataPath, DataName)
+
+  local f = io_open(FileName, 'r')
   if f == nil then return unit end
+  --[[
+  local f, SError = io_open(FileName, 'r')
+  if SError then logShow(SError, "NamesList.txt") end
+  --]]
 
   -- Цикл по строкам файла:
 

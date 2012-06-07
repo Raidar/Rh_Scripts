@@ -12,7 +12,6 @@
   -- areas: editor.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local getFileType = context.detect.area.editor
 

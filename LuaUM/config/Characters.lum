@@ -6,7 +6,6 @@
   -- Набор символов.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 --local context = context
@@ -42,7 +41,7 @@ end
 ---------------------------------------- Items
 local List = {}
 
-local Order, Data, Props
+local Order, Datas, Props
 local Keys = "AccelKey"
 
 local Groups = {
@@ -71,7 +70,7 @@ do
   local titleFmt = "%s: %s"   -- m/b utf-8 string
 
 -- Localize value in Groups:
-for k, v in pairs(Groups) do
+for k, _ in pairs(Groups) do
   Groups[k] = L["Chs"..k]
 end --
 
@@ -135,12 +134,12 @@ do
   local ChsMenu = ChItems.CharsMenu
 
 -- Сформировать меню из набора символов.
-function unit.Menu (Cfg, Props, Data, Keys)
+function unit.Menu (Cfg, Props, Datas, Keys)
   local IsCfg = type(Cfg) == 'table'
   local Keys = Keys or "AccelKey"
   local Name = IsCfg and Cfg.Name or Cfg
 
-  List[Name] = ChsMenu(IsCfg and Cfg or MenuCfg(Name), Props, Data, Keys)
+  List[Name] = ChsMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
 end ----
 
 end -- do
@@ -166,11 +165,11 @@ end ----
 -- Sample characters:
 
 -- Customary chars:
---Data = "_a_b_A_B"
---Data = "_a_b_c_A_B_C"
-Data = "_a_b_c_d_A_B_C_D"
---Data = "_a_b_c_d_e_A_B_C_D_E"
---Data = "_a_b_c_d_e_f_g_A_B_C_D_E_F_G"
+--Datas = "_a_b_A_B"
+--Datas = "_a_b_c_A_B_C"
+Datas = "_a_b_c_d_A_B_C_D"
+--Datas = "_a_b_c_d_e_A_B_C_D_E"
+--Datas = "_a_b_c_d_e_f_g_A_B_C_D_E_F_G"
 Props = {
   --Order = "",
   Size = 4,
@@ -194,11 +193,11 @@ List.Chars_Custom = { -- Characters
 
   CfgData = { UMenu = DefUMenu },
 
-  Items = ChItems.CharsItems(Props, Data, "AccelKey"),
+  Items = ChItems.CharsItems(Props, Datas, "AccelKey"),
 } ---
 
 -- Alternate chars:
-Data = "_a_A_b_B_c_C_d_D"
+Datas = "_a_A_b_B_c_C_d_D"
 
 Props = {
   --Order = "",
@@ -223,7 +222,7 @@ List.Chars_Alters = { -- Characters
 
   CfgData = { UMenu = DefUMenu },
 
-  Items = ChItems.CharsItems(Props, Data, "AccelKey"),
+  Items = ChItems.CharsItems(Props, Datas, "AccelKey"),
 } --- Chars_Alters
 --]===]
 
@@ -231,7 +230,7 @@ List.Chars_Alters = { -- Characters
 -- LETTERS etc.
 ---------------------------------------- Greek and extended
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
-Data  = -- Char + Shift
+Datas = -- Char + Shift
         [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
         [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?|]]..Chars.BS..
         -- Ctrl + Shift
@@ -247,7 +246,7 @@ Props = {
   Heading = "Both",
 } ---
 
-unit.Menu('CharsGreekEx', Props, Data, "AccelKey")
+unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
 unit.UseSpace('CharsGreekEx')
 unit.CompactMenu('CharsGreekEx')
 
@@ -255,7 +254,7 @@ unit.CompactMenu('CharsGreekEx')
 
 ---------------------------------------- Cyrillic slavic
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
-Data  = -- Char + Shift
+Datas = -- Char + Shift
         [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
         [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,|()_+]]..Chars.BS..
         -- Ctrl + Shift                                      
@@ -274,7 +273,7 @@ Props = {
   Heading = "Both",
 } ---
 
-unit.Menu('CharsCyrSlav', Props, Data, "AccelKey")
+unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
 --logShow(List.CharsCyrSlav, "unit.Menu", 2)
 unit.UseSpace('CharsCyrSlav')
 unit.CompactMenu('CharsCyrSlav')
@@ -283,7 +282,7 @@ unit.CompactMenu('CharsCyrSlav')
 -- MATHEMATICS.
 ---------------------------------------- Sub-/superscripts
 Order = [[1234567890=-`[]ijk/\ ]]
-Data  = -- Char + Shift
+Datas = -- Char + Shift
         [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
         [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ⁱʲᵏ, ]]..Chars.BS..
         -- Ctrl + Shift                
@@ -306,14 +305,14 @@ Keys = {
   ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
 } ---
 
-unit.Menu('MathsScripts', Props, Data, Keys)
+unit.Menu('MathsScripts', Props, Datas, Keys)
 unit.UseSpace('MathsScripts')
 
 --logShow(List.MathsScripts, "MathsScripts", 3)
 
 ---------------------------------------- Other indexes
 Order = "aijklmnprtuvxy"
-Data  = -- Char + Shift
+Datas = -- Char + Shift
         "ₐᵢⱼₖₗₘₙₚᵣₜᵤᵥₓ "..
         "ᵃⁱʲᵏˡᵐⁿᵖʳᵗᵘᵛˣʸ"..
         -- Ctrl + Shift
@@ -327,7 +326,7 @@ Props = {
   Heading = "Both",
 } ---
 
-unit.Menu('MathsIndexes', Props, Data, "AccelKey")
+unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
 
 ----------------------------------------
 -- TECHNOLOGY.
@@ -343,7 +342,7 @@ qw  - quote
 b   - bullet
 --]]
 Order = [[/opqwb`1234567890-\ ]]
-Data  = -- Char + Shift
+Datas = -- Char + Shift
         [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
         [[․‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
         -- Ctrl + Shift
@@ -369,7 +368,7 @@ Props = {
   Heading = "Both",
 } ---
 
-unit.Menu('PunctSymbols', Props, Data, "AccelKey")
+unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
 unit.UseSpace('PunctSymbols')
 
 ---------------------------------------- Space & Hyphen
@@ -377,7 +376,7 @@ Order = {
   { '   " "', ' ', 'MULTIPLY' }, { ' "-"/Num-', '-', 'SUBTRACT' },
   { '   "`"', '`', 'DIVIDE'   }, { ' "="/Num+', '=', 'ADD'      },
 } ---
-Data = {
+Datas = {
   { ' ', 'Thin sp.' }, { '­', 'Soft hyph.' }, { ' ', 'Fig. space ' }, { '‒', 'Fig. dash' },
   { ' ', 'En space' }, { '–', ' En dash  ' }, { ' ', 'Punct. sp. ' }, { '−', '  Minus  ' },
   { ' ', 'Em space' }, { '—', ' Em dash  ' }, { ' ', 'Hair space ' }, { '‐', ' Hyphen  ' },
@@ -391,7 +390,7 @@ Props = {
   --___ = true, -- DEBUG
 } ---
 
-unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Data, "DupleKey")
+unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
 
 --logShow(List.PunctSpaHyps.CfgData, "unit.Menu", 3)
 

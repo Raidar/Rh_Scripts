@@ -12,7 +12,6 @@
   -- group: RectMenu.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local require = require

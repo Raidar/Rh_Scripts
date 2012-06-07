@@ -6,10 +6,9 @@
   -- Меню Tortoise SVN.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -18,7 +17,7 @@ local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.farUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
+--local extUt = require "Rh_Scripts.Utils.extUtils"
 local runUt = require "Rh_Scripts.Utils.runUtils"
 
 ----------------------------------------
@@ -222,7 +221,7 @@ function Svn.MakeParams (Args, Command) --> (string | nil)
   -- Анализ параметров команды.
   u = CfgData[Command]
   if type(u) == 'table' then
-    for k, v in pairs(u) do t[#t+1] = v end
+    for _, v in pairs(u) do t[#t+1] = v end
   end
 
   return table.concat(t, ' ')

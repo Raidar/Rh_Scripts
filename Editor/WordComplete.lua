@@ -19,7 +19,6 @@
   © 1999, Andrey Tretjakov etc.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local require = require
 local setmetatable = setmetatable
@@ -44,7 +43,7 @@ local EditorRedraw  = editor.Redraw
 local EditorProcKey = editor.ProcessInput
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -53,7 +52,6 @@ local locale = require 'context.utils.useLocale'
 local numbers = require 'context.utils.useNumbers'
 local colors = require 'context.utils.useColors'
 
-local newFlags = utils.newFlags
 local isFlag, delFlag = utils.isFlag, utils.delFlag
 
 local abs = math.abs
@@ -62,16 +60,15 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local extUt = require "Rh_Scripts.Utils.extUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 local menUt = require "Rh_Scripts.Utils.menUtils"
 
 ----------------------------------------
-local fkeys = require "far2.keynames"
-
-local InputRecordToName = fkeys.InputRecordToName
+--local fkeys = require "far2.keynames"
+--local InputRecordToName = fkeys.InputRecordToName
 
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
@@ -80,7 +77,7 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
--- [[
+--[[
 local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -391,7 +388,7 @@ local function Dlg (Config) --> (dialog)
   D.sep           = {DI.Text,     0,   J3,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsSort"}
   D.txtSortKind   = {DI.Text,     A, J3+1,   Q,  0, 0, 0, 0, 0, L:config"SortKind"}
   D.cbxSortKind   = {DI.Combo,  Q+1, J3+1,   M,  0,
-                     ListItems(Config, "SortKind", L), 0, 0, DIF_Combo, ""}
+                     ListItems(Config, "SortKind", L), 0, 0, DIF.ComboList, ""}
   D.txtSortsMin   = {DI.Text,     B, J3+1, W-S,  0, 0, 0, 0, 0, L:config"SortsMin"}
   D.edtSortsMin   = {DI.Edit,   W-S, J3+1, W-1,  0, 0, 0, 0, 0, ""}
   -- Свойства списка слов:

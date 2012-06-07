@@ -18,7 +18,6 @@
   © 2009, Bart Bes.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 --local type = type
 --local pairs = pairs
@@ -30,7 +29,7 @@ local getmetatable, setmetatable = getmetatable, setmetatable
 --local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
-local context = context
+--local context = context
 
 --local utils = require 'context.utils.useUtils'
 

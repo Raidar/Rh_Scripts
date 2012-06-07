@@ -12,15 +12,12 @@
   -- group: Menus, Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local pairs = pairs
 
 ----------------------------------------
-local bit = bit64
-local bor = bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bit = bit64
 
 ----------------------------------------
 local far = far
@@ -29,7 +26,7 @@ local F = far.Flags
 local farColors = far.Colors
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local strings = require 'context.utils.useStrings'
 local numbers = require 'context.utils.useNumbers'
@@ -42,7 +39,7 @@ local isFlag, addFlag, delFlag = utils.isFlag, utils.addFlag, utils.delFlag
 local t_create, t_concat = tables.create, table.concat
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 --local extUt = require "Rh_Scripts.Utils.extUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
@@ -208,7 +205,6 @@ function unit.GetAutoHotChar (item, pos, hots) --> (pos, char | nil, nil)
 
   return unit.TextAutoHotChar(item.text, hots) -- Подходящая буква
 end ---- GetAutoHotChar
-local GetAutoHotChar = unit.GetAutoHotChar
 
 do
   local sat, ins = strings.sat, strings.ins
@@ -343,7 +339,8 @@ end -- do
 do
   local IndexColor = farUt.IndexColor
   local basics = colors.BaseColors
-  local make,  getBG = colors.make,  colors.getBG
+  local make = colors.make
+  local getFG, getBG = colors.getFG,  colors.getBG
   local setFG, setBG = colors.setFG, colors.setBG
 
 -- Получение всех возможных цветов меню.

@@ -13,7 +13,6 @@
   -- areas: any.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local setmetatable = setmetatable
@@ -23,7 +22,7 @@ local far = far
 local F = far.Flags
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
@@ -32,7 +31,7 @@ local strings = require 'context.utils.useStrings'
 local spaces = strings.spaces -- for text align
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 --local keyUt = require "Rh_Scripts.Utils.keyUtils"
 local menUt = require "Rh_Scripts.Utils.menUtils"

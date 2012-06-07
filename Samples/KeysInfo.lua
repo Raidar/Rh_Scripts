@@ -15,13 +15,14 @@
 В окне выводится информация о нажатой клавише. Закрытие окна - по ENTER/ESC!
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 local bit = bit64
-local band, bor = bit.band, bit.bor
+local band = bit.band
+local bshr = bit.rshift
+--local band, bor = bit.band, bit.bor
 --local bnot, bxor = bit.bnot, bit.bxor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local far = far
@@ -30,11 +31,10 @@ local F = far.Flags
 ----------------------------------------
 --local context = context
 
-local utils = require 'context.utils.useUtils'
+--local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
 
-local newFlags = utils.newFlags
 local tconcat, tfind = table.concat, tables.find
 
 local hex = numbers.hex8
@@ -45,7 +45,7 @@ local fkeys = require "far2.keynames"
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
 
 ----------------------------------------
--- [[
+--[[
 local log = require "context.samples.logging"
 local logShow = log.Show
 --]]
@@ -64,7 +64,9 @@ local function KeyPress_Dlg()
   local W, H = 48 - 4, 10 - 2 -- Width, Height
   local I, M = 3, bshr(W, 1) -- Indent, Width/2
   local Q = bshr(M, 1) -- Width/4
-  local A, B, C, K = I + 1, M + 1, M + Q + 1, I + 6
+  local A, K = I + 1, I + 6
+  local C = M + Q + 1
+  --local B, C = M + 1, M + Q + 1
 
   local D = dialog.NewDialog() -- Форма окна:
              -- 1         2  3    4  5  6  7  8  9  10
@@ -145,8 +147,6 @@ local Guid = win.Uuid("f218e7ec-b782-4746-a188-952d6231afbb")
 -- Показ нажатой клавиши в диалоге.
 local function KeyPress_Run ()
   local D = KeyPress_Dlg()
-
-  local diData = 10
 
   --logShow(D, "Dlg", "d2 n")
 

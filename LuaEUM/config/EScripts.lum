@@ -6,7 +6,6 @@
   -- Скрипты для редактора.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 --local context = context
@@ -33,9 +32,11 @@ if L == nil then
 end
 
 ---------------------------------------- Separator
-local Sep = {
+--[[
+local mSep = {
   separator = true,
 } ---
+--]]
 
 ---------------------------------------- Truncate
 local Truncate = (require "Rh_Scripts.Editor.VoidTruncate").Truncate

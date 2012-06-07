@@ -12,7 +12,6 @@
   -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local pairs, ipairs = pairs, ipairs
@@ -25,7 +24,7 @@ local io_open = io.open
 local OemToUtf8 = win.OemToUtf8
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local datas = require 'context.utils.useDatas'
 
@@ -239,7 +238,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
   end
   --logShow(Props._CP_, Name)
 
-  f = io_open(Name, 'r')
+  local f = io_open(Name, 'r')
   local Info = {
     Table = Table or {},    -- Таблица
     LineCtr = 0,            -- Номер текущей строки

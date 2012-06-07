@@ -12,7 +12,6 @@
   -- areas: panels.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local getFileType = context.detect.area.panels
 

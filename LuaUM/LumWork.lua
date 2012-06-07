@@ -12,13 +12,12 @@
   -- group: LUM.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local pairs = pairs
 local require = require
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 
@@ -97,7 +96,8 @@ function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
   local t, SError, FullName, isItem = {}
   -- Учёт внешнего объединения:
   t.Menu = { Title = Args.Title or "Main Menu", Items = {} }
-  local Items, SubKey = t.Menu.Items, Props.SubKey or "^UM%_([^%.]+)$"
+  local Items = t.Menu.Items
+  --local Items, SubKey = t.Menu.Items, Props.SubKey or "^UM%_([^%.]+)$"
   local u -- Временная таблица для данных
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
     -- Чтение данных (во временную таблицу).

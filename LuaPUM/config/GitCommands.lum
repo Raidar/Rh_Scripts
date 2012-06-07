@@ -6,10 +6,9 @@
   -- Меню команд Git.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local locale = require 'context.utils.useLocale'
@@ -22,7 +21,7 @@ local runUt = require "Rh_Scripts.Utils.runUtils"
 if utils.isPluginPanel() then return end
 
 ----------------------------------------
-local far = far
+--local far = far
 
 --------------------------------------------------------------------------------
 
@@ -82,7 +81,7 @@ local mSep = {
   separator = true,
 } --- mSep
 
-mItems = {
+local mItems = {
   { text = "Git GUI",
     CmdLine = "git gui citool" },
   { text = "Fetch origin…",

@@ -27,11 +27,10 @@
    Mail: gmaxfl@gmail.com
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 local bit = bit64
-local band, bor = bit.band, bit.bor
+local band = bit.band
 
 ----------------------------------------
 local far = far

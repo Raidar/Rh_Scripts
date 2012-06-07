@@ -22,7 +22,6 @@
   (c) 2009+, Shmuel Zeigerman.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local type = type
 local ipairs, pairs = ipairs, pairs
@@ -30,10 +29,10 @@ local require, pcall = require, pcall
 local setmetatable = setmetatable
 
 ----------------------------------------
-local win, far = win, far
+--local win, far = win, far
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local tables = require 'context.utils.useTables'
 
@@ -132,7 +131,7 @@ local function CreateMenu (Properties, Items, BreakKeys) --> (object)
     Options = Options,
   } --- self
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ---------------------------------------- Menu making
 --]]
@@ -190,7 +189,7 @@ local function MakeCheck (CheckItem) --> (func)
     end
     return Check(Text, Pattern, Item)
   end, MatchCase --
-end --function MakeCheck
+end -- MakeCheck
 
 -- Get filter name.
 -- Получение имени фильтра.
@@ -218,7 +217,7 @@ local function MappingItems (Items)
     Map[k] = Item
   end -- for
   return Map
-end --function MappingItems
+end -- MappingItems
 
 ---------------------------------------- Menu control
 
@@ -286,7 +285,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
         return isOk
       end
     end
-  end --function MapKeyPress
+  end -- MapKeyPress
 
   -- 2.3. Отбор пунктов на совпадение с шаблоном.
   local function PrepareItems (Pattern)
@@ -310,7 +309,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
        end
     end
     return n
-  end --function PrepareItems
+  end -- PrepareItems
 
   local function PrepAllItems ()
     for _, v in ipairs(MapItems) do
@@ -318,7 +317,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
       v.RectMenu = nil
     end -- for
     return AllCount
-  end --function PrepAllItems
+  end -- PrepAllItems
 
   local function ApplyFilter ()
     -- Отбор пунктов меню.
@@ -379,7 +378,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 
 --[[ 2. Управление меню ]]
   return RunMenu(Props, MapItems, BreakKeys)
-end --function Menu
+end -- Menu
 
 --------------------------------------------------------------------------------
 return unit.Menu

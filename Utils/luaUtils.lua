@@ -13,14 +13,13 @@
   something from stdlib project.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
-local format = string.format
+--local format = string.format
 
 ----------------------------------------
-local bit = bit64
-local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bit = bit64
+--local band, bor = bit.band, bit.bor
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 --local far = far -- DEBUG ONLY
@@ -62,7 +61,7 @@ function unit.s2v (s, tp, def, ...) --< (string) --> (value)
   if tp == 'nil' then return nil end
   local v = tp == 'string' and s or
             tp == 'number' and (tonumber(s, ...) or def) or
-            tp == 'boolean' and s2b(s, def) or
+            tp == 'boolean' and strings.s2b(s, def) or
             nil
   if v ~= nil then return v else return def end
 end ---- s2v
@@ -120,7 +119,7 @@ function unit.getvalue (env, name) --> (value)
 end ----
 
 -- Get a global variable (with possible creation)
--- by using a "strict" mode of work (strict.lua).
+-- when using a "strict" mode of work (strict.lua).
 -- Получение (с возможным созданием) глобальной переменной
 -- при использовании "строгого" режима работы (strict.lua).
 function unit.getglobal (varname, default) --> (var)

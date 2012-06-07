@@ -6,7 +6,6 @@
   -- Вставка шаблона: pascal.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 ----------------------------------------
 --local context = context
@@ -28,7 +27,7 @@ if L == nil then
 end
 
 ---------------------------------------- Lines
-local line_class = ''
+--local line_class = ''
 
 local line_len = 78
 local line_hymin = '{'..('-'):rep(line_len)..'}'

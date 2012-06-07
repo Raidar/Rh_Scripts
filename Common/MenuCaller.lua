@@ -13,7 +13,6 @@
   -- areas: any.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
 
 local require = require
 local setmetatable = setmetatable
