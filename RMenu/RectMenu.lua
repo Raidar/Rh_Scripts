@@ -15,8 +15,7 @@
 --------------------------------------------------------------------------------
 
 --local assert = assert
-local type, unpack = type, unpack
-local ipairs = ipairs
+local type = type
 local require = require
 local getmetatable, setmetatable = getmetatable, setmetatable
 
@@ -31,7 +30,7 @@ end
 
 ----------------------------------------
 local bit = bit64
-local band, bor = bit.band, bit.bor
+--local band, bor = bit.band, bit.bor
 --local bnot, bxor = bit.bnot, bit.bxor
 local bshl, bshr = bit.lshift, bit.rshift
 
@@ -93,7 +92,7 @@ local DrawClearItemText = RDraw.DrawClearItemText
 local DrawSeparItemText = RDraw.DrawSeparItemText
 
 ----------------------------------------
--- [[
+--[[
 local hex = numbers.hex8
 local tostring = tostring
 local dbg = require "context.utils.useDebugs"
@@ -101,7 +100,7 @@ local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
-local unit = {}
+--local unit = {}
 
 ---------------------------------------- Item cell
 
@@ -310,7 +309,7 @@ end --function CreateMenu
 function TMenu:isMenu (t) --> (bool | nil)
   if type(t) ~= 'table' then return end
   local mt = getmetatable(t._Menu or t)
-  return mt and mt.__index == Class or false
+  return mt and mt.__index == TMenu or false
 end ----
 
 -- Проверка на показ меню.
@@ -384,12 +383,13 @@ local function GetRect (hDlg)
   return SendDlgMessage(hDlg, F.DM_GETDLGRECT, 0)
 end --
 
+--[[
 -- Управление перерисовкой диалога.
 local function Redraw (hDlg, kind)
   return SendDlgMessage(hDlg, F.DM_ENABLEREDRAW, kind)
 end --
-
-local RedrawAll = farUt.RedrawAll
+--]]
+local RedrawAll = farUt.RedrawAll -- it's used instead of Redraw
 
 -- Обновление позиции окна меню.
 function TMenu:Move_Box (hDlg) --| Menu dialog position
@@ -502,7 +502,8 @@ local isItemPicked = menUt.isItem.Picked
 -- Информация о списке пунктов меню.
 function TMenu:DefineListInfo () --| List
   local Items = self.Menu.Items
-  local Data, List, RM = self.Data, self.List, self.RectMenu
+  local List, RM = self.List, self.RectMenu
+  --local Data, List, RM = self.Data, self.List, self.RectMenu
   local checked = RM.ShowChecked
 
   local j, k = 0, 0 -- Счётчики скрытых и видимых пунктов
@@ -593,8 +594,9 @@ local slinecount = luaUt.slinecount -- Широта строки с учётом
 
 -- Информация о пункте и разделителях пунктов меню.
 function TMenu:DefineSpotInfo () --| Zone
-  local Data, List = self.Data, self.List
-  local Props, RM = self.Props, self.RectMenu
+  --local Data, List = self.Data, self.List
+  --local Props, RM = self.Props, self.RectMenu
+  local Data, List, RM = self.Data, self.List, self.RectMenu
   local MultiLine = RM.MultiLine -- Многострочность текста пункта
 
   -- Используемые размеры пункта меню.
@@ -798,7 +800,8 @@ end ---- DefineZoneInfo
 
 -- Информация об окне диалога.
 function TMenu:DefineDBoxInfo () --| (Dlg...)
-  local Data, Zone, Titles = self.Data, self.Zone, self.Titles
+  local Zone, Titles = self.Zone, self.Titles
+  --local Data, Zone, Titles = self.Data, self.Zone, self.Titles
 
   -- Выравнивание меню с учётом надписей.
   local MenuAlign = self.RectMenu.MenuAlign or "LT"
@@ -1429,7 +1432,8 @@ local UnhotSKeys = {
 
 -- Обработка быстрых клавиш в меню.
 function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
-  local Ctrl, RM = self.Ctrl, self.RectMenu
+  local RM = self.RectMenu
+  --local Ctrl, RM = self.Ctrl, self.RectMenu
   if RM.NoRapidKey then return end -- TODO: --> Doc!
 
   local StrKey = VirKey.Name
@@ -1932,11 +1936,13 @@ function TMenu:DrawStatusBar ()
   local Index = self.SelIndex
   local Hint = Index and Index > 0 and self.List[Index].Hint or ""
 
-  local Rect = {
-          x = Rect.Left + Zone.HomeX,
-          --y = Rect.Top + Zone.LastY + 2 + Zone.EmbScrollH,
-          y = Rect.Top + Zone.LastY + Zone.BoxGage + 1 + Zone.EmbScrollH,
-          w = Zone.Width, h = 1, }
+  Rect = {
+    x = Rect.Left + Zone.HomeX,
+    --y = Rect.Top + Zone.LastY + 2 + Zone.EmbScrollH,
+    y = Rect.Top + Zone.LastY + Zone.BoxGage + 1 + Zone.EmbScrollH,
+    h = 1,
+    w = Zone.Width,
+  }
 
   LineFill(Rect, self.Colors.Col_MenuStatusBar, Hint, { Filler = Spaces })
 end ----
@@ -1973,7 +1979,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   --logShow(_Menu, "_Menu", "d1 t")
 
 --[[ 2. Управление диалогом ]]
-  local PosX, PosY
+  --local PosX, PosY -- TODO: for mouse
 
   -- ОБРАБОТЧИКИ УСТАНОВКИ ЦВЕТОВ:
   -- Установка цветов как у меню.
@@ -2048,8 +2054,8 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   local function DlgInputEvent (hDlg, ProcItem, MouseRec) --> (bool)
     far.RepairInput(MouseRec)
-    local Zone = _Menu.Zone
-    local X, Y = MouseRec.MousePositionX, MouseRec.MousePositionY
+    --local Zone = _Menu.Zone
+    --local X, Y = MouseRec.MousePositionX, MouseRec.MousePositionY
     if isFlag(MouseRec.ButtonState or 0, F.FROM_LEFT_1ST_BUTTON_PRESSED) then
     end
     --logShow({ MouseRec }, ProcItem, 2)

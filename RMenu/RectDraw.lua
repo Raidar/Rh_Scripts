@@ -22,7 +22,7 @@ local bit = bit64
 local bshr = bit.rshift
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
@@ -33,10 +33,11 @@ local max2, min2 = numbers.max2, numbers.min2
 --local divf = numbers.divf
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 
-local far_Text, farVText = far.Text, farUt.VText
+local far_Text = far.Text
+--local far_Text, farVText = far.Text, farUt.VText
 
 ----------------------------------------
 local menUt = require "Rh_Scripts.Utils.menUtils"
@@ -167,6 +168,7 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   return t
 end -- MakeParseText
 
+--[[
 -- Разбор текста на отдельные линии по символу новой строки.
 local function LineParseText (Rect, Color, Parse, Item, Options)
   local t = {}
@@ -179,6 +181,7 @@ local function LineParseText (Rect, Color, Parse, Item, Options)
 
   return t
 end -- LineParseText
+--]]
 
 -- Рисование разобранного текста как набора цветовых фрагментов.
 local function DrawParseText (Rect, Item, Parse) --> (table)
