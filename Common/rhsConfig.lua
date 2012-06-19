@@ -649,7 +649,7 @@ end ---- ConfigDlg
 local _UM = {}
 _UM.Start = [==[
 --[[ Rh_Scripts ]]--
--- This file is auto-generated. Don't edit.
+-- This file is auto-generated. Please, don't edit it.
 
 ----------------------------------------
 --[[ description:

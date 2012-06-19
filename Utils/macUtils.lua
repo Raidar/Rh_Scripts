@@ -281,7 +281,7 @@ local CEditorMacroActions = {
     local Here = self.Save; self.Save = nil
     return farEdit.SetPos(nil, {
            CurLine  = Here.CurLine,  CurPos = Here.CurPos,
-           OverType = Here.OverType, --CurTabPos = Here.CurTabPos,
+           Overtype = Here.Overtype, --CurTabPos = Here.CurTabPos,
            TopScreenLine = Here.TopScreenLine, LeftPos = Here.LeftPos })
   end,
 
