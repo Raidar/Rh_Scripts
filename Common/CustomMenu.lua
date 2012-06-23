@@ -130,8 +130,9 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
     },
     ItemPos = 1,        -- Позиция выбранного пункта меню
   } --- self
+
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ----------------------------------------
 -- Menu making.
@@ -999,7 +1000,7 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
   --logShow(Properties.Flags, "Flags")
 
   return _Menu:Run()
-end --function Menu
+end -- Menu
 
 --------------------------------------------------------------------------------
 return unit.Menu

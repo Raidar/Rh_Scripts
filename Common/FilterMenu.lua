@@ -202,10 +202,11 @@ local function GetCheckName (CheckItem) --> (string)
       Check = Check.CheckItem
       tp = type(Check)
     end
-  end -- if
+  end
+
   return name or tp == 'string' and Check or
                  tp == 'function' and 'function' or 'unknown'
-end --function GetCheckName
+end -- GetCheckName
 
 ---------------------------------------- Prepare
 -- "Отображение" пунктов меню.
@@ -325,7 +326,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
     -- Формирование надписей.
     Props.Title = Title:format(Pattern)
     Props.Bottom = Bottom:format(CurCount, AllCount, ShowCheck and CheckName)
-  end --function ApplyFilter
+  end -- ApplyFilter
 
   local Table, Flags = { Props, MapItems, BreakKeys }
 
@@ -365,7 +366,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
     ApplyFilter() -- Применение фильтра.
     --logShow(SelIndex, hex(FKey))
     return Table, Flags
-  end --function KeyPress
+  end -- KeyPress
 
   -- Назначение обработчика:
   Props.RectMenu = Props.RectMenu or {}

@@ -318,7 +318,7 @@ local function _isEqual (t, u) --> (bool)
   end
 
   return true
-end --function _isEqual
+end -- _isEqual
 unit.isEqual = _isEqual
 
 -- Выполнение gsub для значений ключей таблицы строк.

@@ -358,7 +358,7 @@ local function MakeDlgTypes (cData, aData)
   end
 
   return DlgTypes
-end --function MakeDlgTypes
+end -- MakeDlgTypes
 
 ---------------------------------------- Configure
 local ScriptName = "rhsConfig"
@@ -405,7 +405,7 @@ local function Configure (ArgData)
   --logShow(Config.Custom, "Custom")
 
   return Config
-end --function Configure
+end -- Configure
 
 ---------------------------------------- Locale
 local LocData -- Данные локализации
@@ -514,7 +514,7 @@ local function Dlg (Config) --> (dialog)
   --D.edtumFileName = {DI.Edit,    IC,  H-1, I3-1,  0, 0, 0, 0, 0, ""}
 
   return D
-end --function ConfigDlg
+end -- ConfigDlg
 
 -- Загрузка данных в элементы диалога.
 local function LoadDlgData (cData, aData, D, DlgTypes)
@@ -549,7 +549,7 @@ local function LoadDlgData (cData, aData, D, DlgTypes)
     local v, t = cData[n], DlgTypes[n]
     LoadDlgItem(t.enabled, v, D)
   end
-end --function LoadDlgData
+end -- LoadDlgData
 
 -- Сохранение данных из элементов диалога.
 local function SaveDlgData (cData, aData, D, DlgTypes)
@@ -583,7 +583,7 @@ local function SaveDlgData (cData, aData, D, DlgTypes)
     local v, t = cData[n], DlgTypes[n]
     SaveDlgItem(t.enabled, v, D)
   end
-end --function SaveDlgData
+end -- SaveDlgData
 
 local ConfigGuid = win.Uuid("140a8bd3-546d-469b-867b-e0e61f9b41af")
 

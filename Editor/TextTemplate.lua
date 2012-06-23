@@ -171,7 +171,7 @@ local function Configure (ArgData)
   --logShow(Config.Custom, "Custom")
 
   return Config
-end --function Configure
+end -- Configure
 
 ---------------------------------------- Locale
 local LocData -- Данные локализации
@@ -227,7 +227,7 @@ local function Dlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end --function Dlg
+end -- Dlg
 
 local ConfigGuid = win.Uuid("6227affb-5e24-42ce-9ec0-106868fad0ba")
 
@@ -342,7 +342,7 @@ local function FillTemplatesData (Config)
   --logShow(Kit, "Kit", 2)
 
   return Kit
-end --function FillTemplatesData
+end -- FillTemplatesData
 
 ---------------------------------------- Words
 local makeplain = strings.makeplain
@@ -431,7 +431,7 @@ local function FindTemplate (Config) --> (table)
   --if #t > 0 then logShow(t[#t], Config.Custom.options.KitName) end
   --logShow(Kit[Type], Type)
   return tLast and t or nil
-end --function FindTemplate
+end -- FindTemplate
 
 ---------------------------------------- Apply
 local EC_Actions = macUt.MacroActions.editor.cycle
@@ -507,7 +507,7 @@ local function ApplyTemplate (Cfg)
   end
 
   return false
-end --function ApplyTemplate
+end -- ApplyTemplate
 
 ---------------------------------------- Make
 local function MakeTemplate (Config) --> (bool | nil)
@@ -555,7 +555,7 @@ local function MakeTemplate (Config) --> (bool | nil)
   end --
 
   return isOk
-end --function MakeTemplate
+end -- MakeTemplate
 
 ---------------------------------------- main
 local curFileType = detect.area.current

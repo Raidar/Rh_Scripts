@@ -117,7 +117,7 @@ local function Configure (ArgData)
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
   return Config
-end --function Configure
+end -- Configure
 
 local Config = Configure()
 if not Config then return end

@@ -313,7 +313,7 @@ local function Configure (ArgData)
   --logShow(Config.Custom, "Custom")
 
   return Config
-end --function Configure
+end -- Configure
 
 ---------------------------------------- Locale
 local LocData -- Данные локализации
@@ -423,7 +423,7 @@ local function Dlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end --function Dlg
+end -- Dlg
 
 local ConfigGuid = win.Uuid("642eb0fd-d297-4855-bd87-dcecfc55bcc4")
 
@@ -523,7 +523,7 @@ local function SearchWords (Cfg, Ctrl) --> (table)
         -- число повторений, номер строки + место по порядку:
         Stat[w] = { Count = 1, Line = Line, Slot = k }
       end
-    end --function MakeWord
+    end -- MakeWord
 
     if WordFind then
       local v = s:match(StartPat)
@@ -677,8 +677,9 @@ local function SortWords (t, Cfg) --> (table)
   else
     u = t
   end
+
   return SortByChar(u) -- Посимвольно (по алфавиту)
-end --function SortWords
+end -- SortWords
 
 ---------------------------------------- Special
 local SharedMatch = "^(%s+)%s*\n%%1%s*"
@@ -688,16 +689,17 @@ local function SharedPart (Words, Cfg, Ctrl) --> (string)
   local Set, NoCase = Ctrl.CharsSet, not Cfg.MatchCase
   local SharedPat = SharedMatch:format(Set, Set, Set)
   Cfg.Patterns.Shared = SharedPat
-  local s, w = Words[1]
+  local s = Words[1]
   if NoCase then s = s:lower() end
   for k = 2, Words.n do
-    w = Words[k]
+    local w = Words[k]
     if NoCase then w = w:lower() end
     s = (s..'\n'..w):match(SharedPat)
     if not s then return "" end
-  end -- for
+  end
+
   return s
-end --function SharedPart
+end -- SharedPart
 
 ---------------------------------------- List
 local HotChars = "1234567890abcdefghijklmnopqrstuvwxyz"
@@ -775,7 +777,7 @@ local function PrepareMenu (Words, Cfg, Props) --> (table)
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
   return Items, Props
-end --function PrepareMenu
+end -- PrepareMenu
 
 -- Формирование списка-меню слов.
 local function MakeWordsList (Cfg, Props) --> (table)
@@ -832,7 +834,7 @@ local function MakeWordsList (Cfg, Props) --> (table)
   --if Word then logShow(CfgCur) end
 
   return PrepareMenu(Words, Cfg, Props)
-end --function MakeWordsList
+end -- MakeWordsList
 
 ---------------------------------------- Apply
 -- Удаление Count символов:
@@ -862,8 +864,9 @@ local function ApplyWordAction (Cfg, Complete, Action) --> (bool | nil)
   end
 
   EditorRedraw()
+
   return true
-end --function ApplyWordAction
+end -- ApplyWordAction
 
 ---------------------------------------- Make
 local WC_Flags = { isRedraw = false, isRedrawAll = true }
@@ -971,7 +974,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
     if Cfg.OnCharPress then Cfg.OnCharPress(VirKey, Char) end
 
     return MakeUpdate()
-  end --function KeyPress
+  end -- KeyPress
 
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
 
@@ -1021,11 +1024,11 @@ local function MakeComplete (Cfg) --> (bool | nil)
       ApplyWordAction(Cfg, Items[Pos].Word, Action)
     else
       return
-    end -- if
+    end
   until not Effect
 
   return true
-end --function MakeComplete
+end -- MakeComplete
 
 ---------------------------------------- main
 local Colors = menUt.MenuColors()

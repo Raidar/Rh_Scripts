@@ -142,7 +142,7 @@ local function Idx2Cell (Index, Data) --> (Row, Col)
   else
     return swap(i2c(Index, Data.Rows))
   end
-end --function Idx2Cell
+end -- Idx2Cell
 
 -- Получение одиночного индекса пункта из двойного.
 local function Cell2Idx (Row, Col, Data) --> (Index)
@@ -151,7 +151,7 @@ local function Cell2Idx (Row, Col, Data) --> (Index)
   else
     return c2i(Col, Row, Data.Rows)
   end
-end --function Cell2Idx
+end -- Cell2Idx
 
 ---------------------------------------- Catena
 
@@ -196,7 +196,7 @@ local function MenuCatCount (Majors, Minors, Count) --> (number, number)
   else
     return C, 1
   end
-end --function MenuCatCount
+end -- MenuCatCount
 
 local VisCount = { Base = 0, Pale = 0 }
 
@@ -301,8 +301,9 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
              BoxWidth = 0, BoxHeight = 0 },
     Form = 0, DlgFlags = 0, DlgPos = 0,
   } --- self
+
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ---------------------------------------- Class' methods
 -- Проверка на меню.
@@ -711,7 +712,7 @@ local function MakeFixedCats (Cats, Len, Sep, Count) --| Cats
   end
 
   Cats.Length = Cats.HeadLen + Cats.FootLen
-end --function MakeFixedCats
+end -- MakeFixedCats
 
 -- Информация об отображаемой части меню.
 function TMenu:DefineZoneInfo () --| Zone
@@ -1801,7 +1802,7 @@ local function DrawTitleLine (X, Y, TitleColor, Title, Color, Line, Show)
 
   return Show(X + LineLen + Len, Y,
               Color, Line:sub(1, Width - LineLen - Len))
-end --function DrawTitleLine
+end -- DrawTitleLine
 
 local SymsBoxChars = uChars.BoxChars
 
@@ -1866,7 +1867,7 @@ local function ScrollCaret (ALen, Cat, Count) --> (Pos, Len, End)
   if Count > 1 then Len = min2(Len, ALen - Pos + 1) end
 
   return Pos, Len, Pos + Len - 1 -- Допустимые значения
-end --function ScrollCaret
+end -- ScrollCaret
 
 local BoxDrawings = uChars.BoxDrawings
 local BlackShapes = uChars.GeometricShapes.Black
@@ -1886,7 +1887,7 @@ local function ScrollBar (Bar) --> (string)
   local Tail = Bar.Length - Bar.End
   return ((Bar.Pos > 1) and Strap:sub(1, Bar.Pos - 1) or "")..
          Caret:sub(1, Bar.Len)..((Tail > 0) and Strap:sub(1, Tail) or "")
-end --function ScrollBar
+end -- ScrollBar
 
 -- Рисование полос прокрутки меню.
 function TMenu:DrawScrollBars ()
@@ -1998,7 +1999,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     if not Form then return end
 
     return _Menu:DoMenuDraw(GetRect(hDlg))
-  end --function DlgItemDraw
+  end -- DlgItemDraw
 
 --[[ 2.2. Обработка реакции меню ]]
 
@@ -2017,7 +2018,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     end
 
     return false
-  end --function DlgMouseClick
+  end -- DlgMouseClick
   --]]
 
   -- Обработчик нажатия клавиши:
@@ -2050,7 +2051,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     -- 2. Обработка обычных нажатий.
     return _Menu:DoKeyPress(hDlg, VirKey)
-  end --function DlgCtrlEvent
+  end -- DlgCtrlEvent
 
   local function DlgInputEvent (hDlg, ProcItem, MouseRec) --> (bool)
     far.RepairInput(MouseRec)
@@ -2061,7 +2062,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --logShow({ MouseRec }, ProcItem, 2)
 
     return true
-  end --function DlgInputEvent
+  end -- DlgInputEvent
 
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
     if not _Menu.RectMenu.NoMouseEvent then -- TODO: --> doc!

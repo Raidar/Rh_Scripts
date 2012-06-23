@@ -76,8 +76,9 @@ local function CreateMenu (Properties, Items) --> (object)
 
     isHot = utils.isFlag(Flags, F.FMENU_SHOWAMPERSAND),
   } --- self
+
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ---------------------------------------- Menu making
 -- Check for submenus availability.
@@ -268,7 +269,7 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   end
 
   return Items
-end --function Menu
+end -- Menu
 
 --------------------------------------------------------------------------------
 return unit.Menu

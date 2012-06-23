@@ -44,10 +44,12 @@ local Keywords1 = {
 local function Keyword1 (Cfg)
   local s = Cfg.Template.Result
   local sn = s:match("`(%w-)$")
+
   s = Keywords1[sn]
   if s then return s end
+
   return false
-end --function Keyword1
+end -- Keyword1
 
 ---------------------------------------- Keywords adds
 local Keywords2 = {
@@ -89,10 +91,12 @@ local Keywords2 = {
 local function Keyword2 (Cfg)
   local s = Cfg.Template.Result
   local sn = s:match("``(%w-)$")
+
   s = Keywords2[sn]
   if s then return s end
+
   return false
-end --function Keyword2
+end -- Keyword2
 
 --------------------------------------------------------------------------------
 

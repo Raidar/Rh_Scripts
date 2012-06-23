@@ -400,7 +400,7 @@ local function isLuaFile (Name) --> (bool)
   f:close()
 
   return line:find("local", 1, true) == 1 or line:find("--", 1, true) == 1
-end --function isLuaFile
+end -- isLuaFile
 
 -- Чтение данных из ini/lua-файла в таблицу.
 --[[

@@ -42,7 +42,7 @@ local WC_CfgData = WC.AutoCfgData
 -- Использование АвтоШаблонов при Завершении слов.
 local function TT_CharPress (FarKey, Char)
   return TT_Execute(TT_CfgData)
-end --function TT_CharPress
+end --
 WC_CfgData.OnCharPress = TT_CharPress
 
 ---------------------------------------- Configure

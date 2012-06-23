@@ -102,8 +102,9 @@ local function CreateMenu (Config)
     Scope     = Scope,
     DefScope  = DefScope,
   } --- self
+
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ---------------------------------------- Menu control
 -- Локализация меню.

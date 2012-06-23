@@ -55,8 +55,9 @@ local function CreateMenu (Properties)--, Items) --> (object)
 
     Run = false, -- Вид запускаемого меню
   } --- self
+
   return setmetatable(self, MMenu)
-end --function CreateMenu
+end -- CreateMenu
 
 ---------------------------------------- Menu making
 -- Определение вида запускаемого меню.
@@ -85,7 +86,7 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
     return _Menu.Run(Properties, Items, BreakKeys, ShowMenu)
   end
   return _Menu.Call(_Menu.Run, Properties, Items, BreakKeys, ShowMenu)
-end --function Menu
+end -- Menu
 
 --------------------------------------------------------------------------------
 return unit.Menu

@@ -95,7 +95,7 @@ local function KeyPress_Dlg()
   D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
 
   return D
-end --function KeyPress_Dlg
+end -- KeyPress_Dlg
 
 ----------------------------------------
 local VKCS_Name = {
@@ -206,10 +206,10 @@ local function KeyPress_Run ()
     --elseif msg == F.DN_DRAWDLGITEM then return false
     end
     --return false
-  end --function DlgProc
+  end -- DlgProc
 
   return far.Dialog(Guid, -1, -1, D._[4]+4, D._[5]+2, nil, D, 0, DlgProc)
-end --function KeyPress_Run
+end -- KeyPress_Run
 
 --------------------------------------------------------------------------------
 return KeyPress_Run()
