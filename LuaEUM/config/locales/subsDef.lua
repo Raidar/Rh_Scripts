@@ -13,6 +13,8 @@ local Data = {
     SubtitleUnknownType = "Unknown subtitle filetype",
 
   TimeCalcer        = "&Q - Time Calcualtor",
+  CurLineData       = "&Y - Current line data",
+    CurrentLineData     = "Current line data",
 
   ----------------------------------------
 } --- Data

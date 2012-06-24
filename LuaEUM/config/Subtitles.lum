@@ -13,9 +13,8 @@
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
---local farUt = require "Rh_Scripts.Utils.farUtils"
-
---local RedrawAll = farUt.RedrawAll
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
 
 --------------------------------------------------------------------------------
 
@@ -46,7 +45,7 @@ local unit = {}
 local types = ctxdata.config.types
 
 function unit.SubtitleType () --| (window)
-  local SubType = TimeCalcer.getType()
+  local SubType = TimeCalcer.getFileType()
   local SubDesc = ""
   if SubType then SubDesc = types[SubType].desc or "" end
   if SubDesc ~= "" then SubDesc = "\n"..SubDesc end
@@ -55,10 +54,21 @@ function unit.SubtitleType () --| (window)
                      L.SubtitleTypeName)
 end ----
 
+function unit.CurLineData () --| (window)
+  local tp = TimeCalcer.getFileType()
+  if not tp then return end
+
+  local data = TimeCalcer.getLineData(tp)
+
+  return logShow(data, L.CurrentLineData)
+end ----
+
 ----------------------------------------
 local mTimeCalcer = {
   text = L.TimeCalcer,
   Items = {
+    { text = L.CurLineData,
+      Function = unit.CurLineData },
   } ---
 } --- mTimeCalcer
 

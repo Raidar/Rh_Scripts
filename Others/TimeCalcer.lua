@@ -51,16 +51,6 @@ local TplsInfo = { -- Информация о шаблонах:
   sub_srt   = { start = 1, stop = 3 },
 } ---
 
-local LineTpls = { -- Шаблоны линий:
-  sub_assa  = "^(.-%,)(.-)(%,)(.-)(%,.*)$", -- (нч,)(вр1)(,)(вр2)(,кц)
-  sub_srt   = "^(.-)( %-%-%> )(.-)\s*$",    -- (вр1)( --> )(вр2)
-} ---
-
-local LineFmts = { -- Форматы линий:
-  sub_assa  = "%s%s%s%s%s",
-  sub_srt   = "%s%s%s",
-} ---
-
 local TimeTpls = { -- Шаблоны времени:
   sub_assa  = "(%d)%:(%d%d)%:(%d%d)%.(%d%d)",       --  ч:нн:сс.зз
   sub_srt   = "(%d%d)%:(%d%d)%:(%d%d)%,(%d%d%d)",   -- чч:нн:сс,ззз
@@ -71,14 +61,45 @@ local TimeFmts = { -- Форматы времени:
   sub_srt   = "%2d:%2d:%2d,%3d",
 } ---
 
+local TimePats = { -- Шаблоны без захватов:
+  sub_assa  = TimeTpls.sub_assa:gsub("[%(%)]", ""),
+  sub_srt   = TimeTpls.sub_srt:gsub("[%(%)]", ""),
+} ---
+
+local LineTpls = { -- Шаблоны линий:
+  --sub_assa  = "^(.-%,)(.-)(%,)(.-)(%,.*)$", -- (нч,)(вр1)(,)(вр2)(,кц)
+  --sub_srt   = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
+  sub_assa  = format("^%s(%s)%s(%s)%s$",
+                     "(.-%: %d%,)",
+                     TimePats.sub_assa, --"(.-)",
+                     "(%,)",
+                     TimePats.sub_assa, --"(.-)",
+                     "(%,.*)"),
+  sub_srt   = format("^(%s)%s(%s)%s$",
+                     TimePats.sub_srt, --"(.-)",
+                     "( %-%-%> )",
+                     TimePats.sub_srt, --"(.-)",
+                     "(.*)"),
+} ---
+
+local LineFmts = { -- Форматы линий:
+  sub_assa  = "%s%s%s%s%s",
+  sub_srt   = "%s%s%s",
+} ---
+
+local tonumber = tonumber
+
 -- Функции разбора времени:
 local ParseTime = {
   sub_assa  = function (s) --> (time)
     local h, n, s, cz = s:match(TimeTpls.sub_assa)
-    return newTime(h, n, s, (cz or 0) * 10)
+    return newTime(tonumber(h), tonumber(n),
+                   tonumber(s), (tonumber(cz) or 0) * 10)
   end,
   sub_srt   = function (s) --> (time)
-    return newTime(s:match(TimeTpls.sub_srt))
+    local h, n, s, z = s:match(TimeTpls.sub_srt)
+    return newTime(tonumber(h), tonumber(n),
+                   tonumber(s), tonumber(z))
   end,
 } --- ParseTime
 
@@ -93,12 +114,23 @@ local StoreTime = {
 } --- StoreTime
 
 ---------------------------------------- parse & store
+-- Разбор времени.
+function unit.parseTime (s, tp) --> (time | nil)
+  return ParseTime[tp](s)
+end ----
+
+-- Заполнение времени.
+function unit.storeTime (time, tp) --> (string)
+  return StoreTime[tp](time)
+end ----
+
 -- Разбор линии.
 function unit.parseLine (s, tp) --> (data | nil)
   tp = tp or "sub_assa"
 
   -- Разбор линии на части.
   local t = { s:match(LineTpls[tp]) }
+  --logShow(t, tp)
   if t[1] == nil then return end
 
   t.type = tp
@@ -125,23 +157,82 @@ function unit.storeLine (data) --> (string)
   return s
 end ---- storeLine
 
--- Разбор времени.
-function unit.parseTime (s, tp) --> (time | nil)
-  return ParseTime[tp](s)
-end ----
-
--- Заполнение времени.
-function unit.storeTime (time, tp) --> (string)
-  return StoreTime[tp](time)
-end ----
-
 ---------------------------------------- make
 local context, ctxdata = context, ctxdata
 local configType = context.detect.use.configType
 
-function unit.getType () --> (string)
+-- Получение поддерживаемого типа файла субтитров.
+function unit.getFileType () --> (string)
   local ctype = ctxdata.editors.current.type -- current editor file type
   return configType(ctype, TplsInfo) -- existing config type for ctype
+end ----
+
+do
+  local EditorGetStr = editor.GetString
+
+-- Функции получения данных по линии:
+local GetLineData = {
+  sub_assa  = function (k) --> (number, string)
+    local k = (k or 0) - 1
+    local data
+    repeat
+      k = k + 1
+      local s = EditorGetStr(nil, k, 2)
+      if s == nil then break end
+
+      --logShow({ k, s })
+      data = unit.parseLine(s, "sub_assa")
+    until data --~= nil
+
+    if data then
+      data.line = k
+
+      return data
+    end
+  end,
+
+  sub_srt   = function (k) --> (number, string)
+    local k = (k or 0) - 1
+    local data
+    repeat
+      k = k + 1
+      local s = EditorGetStr(nil, k, 2)
+      if s == nil then break end
+
+      data = unit.parseLine(s, "sub_srt")
+    until data --~= nil
+
+    if data then
+      data.line = k
+
+      return data
+    end
+  end,
+} --- GetLineData
+
+-- Получение данных по линии файла.
+function unit.getLineData (tp) --> (number)
+  local Info = editor.GetInfo()
+  if not Info then return end
+
+  local data = GetLineData[tp](Info.CurLine)
+
+  editor.SetPosition(nil, Info) -- Restore cursor pos!
+
+  return data
+end ----
+
+end -- do
+
+-- Получение длины отрезка времени на линии файла.
+function unit.getLineTimeLen () --> (number | nil)
+  local tp = unit.getFileType()
+  if not tp then return end
+
+  local data = unit.getLineData(tp)
+  if not data then return end
+
+  return data.start:diff(data.stop)
 end ----
 
 --------------------------------------------------------------------------------
