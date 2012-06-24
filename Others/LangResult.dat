@@ -1,0 +1,68 @@
+local Data
+
+do local t = {}; Data = t
+  t.Formo = {}
+  t.Hemal = {
+    _Jonal_ = "j",
+    _Lawel_ = "w",
+    _Yocal_ = "y",
+  }
+  t.Hemil = {
+    "j",  "y",  "w", 
+
+    j = 1,  w = 3,  y = 2, 
+  }
+  t.Jonal = {
+    "bj", "dj", "vj", "qj", "zj", "gj",
+    "lj", "mj", "nj", "rj", "pj", "tj",
+    "fj", "xj", "sj", "kj", "cj", "hj",
+  }
+  t.Konal = {
+    "b",  "d",  "v",  "q",  "z",  "g", 
+    "l",  "m",  "n",  "r",  "p",  "t", 
+    "f",  "x",  "s",  "k",  "c",  "h", 
+
+    b = 1,  c = 17, d = 2,  f = 13, g = 6,  h = 18,
+    k = 16, l = 7,  m = 8,  n = 9,  p = 11, q = 4, 
+    r = 10, s = 15, t = 12, v = 3,  x = 14, z = 5, 
+  }
+  t.Liter = {
+    Hemil = "jyw",
+    Konal = "bdvqzglmnrptfxskch",
+    Sinel = "ptfxskch",
+    Sonor = "bdvqzglmnr",
+    Vocal = "aeiou",
+  }
+  t.Morfo = {}
+  do local u = {}; t.Order = u
+    u.Konal = {
+      "Sonor", "Sinel",
+    }
+    u.Liter = {
+      "Vocal", "Konal", "Hemil",
+    }
+  end
+  t.Sinel = {
+    "p",  "t",  "f",  "x",  "s",  "k",  "c",  "h", 
+
+    c = 7,  f = 3,  h = 8,  k = 6, 
+    p = 1,  s = 5,  t = 2,  x = 4, 
+  }
+  t.Sonor = {
+    "b",  "d",  "v",  "q",  "z", 
+    "g",  "l",  "m",  "n",  "r", 
+
+    b = 1,  d = 2,  g = 6,  l = 7,  m = 8, 
+    n = 9,  q = 4,  r = 10, v = 3,  z = 5, 
+  }
+  t.Vocal = {
+    "a",  "e",  "i",  "o",  "u", 
+
+    a = 1,  e = 2,  i = 3,  o = 4,  u = 5, 
+  }
+  t.Yocal = {
+    "ya", "ye", "yi", "yo", "yu",
+  }
+end
+
+return Data
