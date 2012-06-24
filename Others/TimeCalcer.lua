@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Time Calculator.
-  -- Калькулятор времени.
+  -- Time values Calculator.
+  -- Калькулятор значений времени.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -33,7 +33,7 @@ local format = string.format
 --local context = context
 
 ----------------------------------------
-local useTime = require "Rh_Scripts.Testing.useTime"
+local useTime = require "Rh_Scripts.Others.useTime"
 local newTime = useTime.newTime
 
 ----------------------------------------

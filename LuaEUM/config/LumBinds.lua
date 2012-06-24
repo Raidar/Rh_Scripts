@@ -53,6 +53,7 @@ local Data = {
   pascal = { Menu = "J_Pascal" },
   lua    = { Menu = "J_Lua" },
 
+  sub    = { Menu = "Subtitles;Characters" },
 } ---
 
 return Data

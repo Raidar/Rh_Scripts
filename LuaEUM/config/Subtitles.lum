@@ -1,0 +1,86 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Scripts to edit subtitles.
+  -- Скрипты для правки субтитров.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+--local farUt = require "Rh_Scripts.Utils.farUtils"
+
+--local RedrawAll = farUt.RedrawAll
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "Subtitles",
+  name = "subs",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separator
+-- [[
+local mSeparator = {
+  separator = true,
+} ---
+--]]
+
+---------------------------------------- TimeCalcer
+local TimeCalcer = require "Rh_Scripts.Others.TimeCalcer"
+
+local unit = {}
+
+local types = ctxdata.config.types
+
+function unit.SubtitleType () --| (window)
+  local SubType = TimeCalcer.getType()
+  local SubDesc = ""
+  if SubType then SubDesc = types[SubType].desc or "" end
+  if SubDesc ~= "" then SubDesc = "\n"..SubDesc end
+
+  return far.Message((SubType or L.SubtitleUnknownType)..SubDesc,
+                     L.SubtitleTypeName)
+end ----
+
+----------------------------------------
+local mTimeCalcer = {
+  text = L.TimeCalcer,
+  Items = {
+  } ---
+} --- mTimeCalcer
+
+---------------------------------------- ----
+local Scripts = {
+  text = L.Subtitles,
+  Items = {
+    mTimeCalcer, -- Калькулятор
+    mSeparator,
+    { text = L.SubtitleType,
+      Function = unit.SubtitleType },
+  } -- Items
+} --- Scripts
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.Subtitles,
+    Items = { Scripts },
+  },
+  --["Subtitles Scripts"] = Scripts,
+} ---
+
+return Data
+--------------------------------------------------------------------------------
