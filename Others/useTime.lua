@@ -52,8 +52,12 @@ function unit.newTime (h, n, s, z) --> (object)
 end -- newTime
 
 ---------------------------------------- handling
+function TTime:data () --> (h, n, s, z)
+  return self.h, self.n, self.s, self.z
+end ----
+
 function TTime:copy () --> (object)
-  return unit.newTime(self.h, self.n, self.s, self.z)
+  return unit.newTime(self:data())
 end ----
 
 -- Количество секунд без долей секунд.
@@ -104,7 +108,7 @@ end ----
 
 function TTime:from_n (v) --> (self)
   self.h = floor(v / 60)
-  v = v - h * 60
+  v = v - self.h * 60
   self.n, v = modf(v)
   self.s, v = modf(v * 60)
   self.z = round(v * 1000)
@@ -114,9 +118,9 @@ end ----
 
 function TTime:from_s (v) --> (self)
   self.h = floor(v / 3600)
-  v = v - h * 3600
+  v = v - self.h * 3600
   self.n = floor(v / 60)
-  v = v - n * 60
+  v = v - self.n * 60
   self.s, v = modf(v)
   self.z = round(v * 1000)
 
@@ -125,11 +129,11 @@ end ----
 
 function TTime:from_z (v) --> (self)
   self.h = floor(v / 3600 / 1000)
-  v = v - h * 3600 * 1000
+  v = v - self.h * 3600 * 1000
   self.n = floor(v / 60 / 1000)
-  v = v - n * 60 * 1000
+  v = v - self.n * 60 * 1000
   self.s = floor(v / 1000)
-  self.z = v - n * 1000
+  self.z = v - self.s * 1000
 
   return self
 end ----
