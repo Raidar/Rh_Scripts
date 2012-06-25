@@ -170,43 +170,33 @@ end ----
 do
   local EditorGetStr = editor.GetString
 
+local function DefGetLineData (k, tp)
+  local k = (k or 0) - 1
+  local data
+  repeat
+    k = k + 1
+    local s = EditorGetStr(nil, k, 2)
+    if s == nil then break end
+
+    --logShow({ k, s })
+    data = unit.parseLine(s, tp)
+  until data --~= nil
+
+  if data then
+    data.line = k
+
+    return data
+  end
+end -- DefGetLineData
+
 -- Функции получения данных по линии:
 local GetLineData = {
   sub_assa  = function (k) --> (number, string)
-    local k = (k or 0) - 1
-    local data
-    repeat
-      k = k + 1
-      local s = EditorGetStr(nil, k, 2)
-      if s == nil then break end
-
-      --logShow({ k, s })
-      data = unit.parseLine(s, "sub_assa")
-    until data --~= nil
-
-    if data then
-      data.line = k
-
-      return data
-    end
+    return DefGetLineData(k, "sub_assa")
   end,
 
   sub_srt   = function (k) --> (number, string)
-    local k = (k or 0) - 1
-    local data
-    repeat
-      k = k + 1
-      local s = EditorGetStr(nil, k, 2)
-      if s == nil then break end
-
-      data = unit.parseLine(s, "sub_srt")
-    until data --~= nil
-
-    if data then
-      data.line = k
-
-      return data
-    end
+    return DefGetLineData(k, "sub_srt")
   end,
 } --- GetLineData
 
@@ -225,14 +215,11 @@ end ----
 end -- do
 
 -- Получение длины отрезка времени на линии файла.
-function unit.getLineTimeLen () --> (number | nil)
-  local tp = unit.getFileType()
-  if not tp then return end
-
+function unit.getLineTimeLen (tp) --> (number | nil)
   local data = unit.getLineData(tp)
   if not data then return end
 
-  return data.start:diff(data.stop)
+  return data.stop:diff(data.start)
 end ----
 
 --------------------------------------------------------------------------------

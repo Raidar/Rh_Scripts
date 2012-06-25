@@ -10,11 +10,12 @@
 ----------------------------------------
 --local context = context
 
+local tables = require 'context.utils.useTables'
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
 local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
+local logShow, datShow = dbg.Show, dbg.ShowData
 
 --------------------------------------------------------------------------------
 
@@ -30,6 +31,16 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
+local format = string.format
+
+for k, v in tables.allpairs(L) do
+  local name = type(k) == 'string' and k:match("^cap%_(.*)$")
+  if name then
+    local h = L["hot_"..name]
+    L["itm_"..name] = h and type(v) == 'string' and format("&%s - %s", h, v) or v
+  end
+end
+
 ---------------------------------------- Separator
 -- [[
 local mSeparator = {
@@ -37,9 +48,13 @@ local mSeparator = {
 } ---
 --]]
 
----------------------------------------- TimeCalcer
+----------------------------------------
 local TimeCalcer = require "Rh_Scripts.Others.TimeCalcer"
 
+local useTime = require "Rh_Scripts.Others.useTime"
+local newTime = useTime.newTime
+
+---------------------------------------- Items
 local unit = {}
 
 local types = ctxdata.config.types
@@ -51,24 +66,47 @@ function unit.SubtitleType () --| (window)
   if SubDesc ~= "" then SubDesc = "\n"..SubDesc end
 
   return far.Message((SubType or L.SubtitleUnknownType)..SubDesc,
-                     L.SubtitleTypeName)
+                     L.cap_SubtitleType)
 end ----
 
-function unit.CurLineData () --| (window)
+function unit.CurrentLineData () --| (window)
   local tp = TimeCalcer.getFileType()
   if not tp then return end
 
   local data = TimeCalcer.getLineData(tp)
 
-  return logShow(data, L.CurrentLineData)
+  return logShow(data, L.cap_CurrentLineData)
+end ----
+
+function unit.CurLineTimeLen () --| (window)
+  local tp = TimeCalcer.getFileType()
+  if not tp then return end
+
+  local diff = TimeCalcer.getLineTimeLen(tp)
+  local time = newTime():from_z(diff)
+
+  local t = {
+    L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
+    L.TimeLenDataFmt:format(time:data()),
+    L.TimeLenMsecFmt:format(diff),
+    L.TimeLenTextFmt:format(time:data()),
+  } ---
+  local kind = {
+    ShowLineNumber = false,
+  }
+
+  return datShow(t, L.cap_CurLineTimeLen, kind)
 end ----
 
 ----------------------------------------
 local mTimeCalcer = {
   text = L.TimeCalcer,
   Items = {
-    { text = L.CurLineData,
-      Function = unit.CurLineData },
+    { text = L.itm_CurLineTimeLen,
+      Function = unit.CurLineTimeLen },
+    mSeparator,
+    { text = L.itm_CurrentLineData,
+      Function = unit.CurrentLineData },
   } ---
 } --- mTimeCalcer
 
@@ -78,7 +116,7 @@ local Scripts = {
   Items = {
     mTimeCalcer, -- Калькулятор
     mSeparator,
-    { text = L.SubtitleType,
+    { text = L.itm_SubtitleType,
       Function = unit.SubtitleType },
   } -- Items
 } --- Scripts
