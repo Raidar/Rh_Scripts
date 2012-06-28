@@ -10,8 +10,11 @@
 ----------------------------------------
 --local context = context
 
+local numbers = require 'context.utils.useNumbers'
 local tables = require 'context.utils.useTables'
 local locale = require 'context.utils.useLocale'
+
+local n2s = numbers.n2s
 
 ----------------------------------------
 local dbg = require "context.utils.useDebugs"
@@ -31,15 +34,28 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
-local format = string.format
+do
+  --local t = {}
+  local format = string.format
 
+--logShow(L, "Localize", nil, { pairs = tables.allpairs })
 for k, v in tables.allpairs(L) do
+  --t[#t+1] = "name = "..k
+  --t[#t+1] = "value = "..(type(v) == 'string' and v or tostring(v))
+
+  --if k:find('cap_', 1, true) then logShow({ name, v, k }, "cap") end
   local name = type(k) == 'string' and k:match("^cap%_(.*)$")
   if name then
     local h = L["hot_"..name]
-    L["itm_"..name] = h and type(v) == 'string' and format("&%s - %s", h, v) or v
+    --logShow({ name, v, h }, "cap+hot")
+    L["itm_"..name] = h and type(v) == 'string' and
+                      format("&%s - %s", h, v) or v
   end
 end
+--logShow(t, "allpairs")
+--logShow(L, "Extended Localize")
+
+end -- do
 
 ---------------------------------------- Separator
 -- [[
@@ -59,6 +75,7 @@ local unit = {}
 
 local types = ctxdata.config.types
 
+-- Показ типа файла субтитров.
 function unit.SubtitleType () --| (window)
   local SubType = TimeCalcer.getFileType()
   local SubDesc = ""
@@ -69,55 +86,80 @@ function unit.SubtitleType () --| (window)
                      L.cap_SubtitleType)
 end ----
 
-function unit.CurrentLineData () --| (window)
+-- Показ данных по линии файла.
+function unit.CurClauseData () --| (window)
   local tp = TimeCalcer.getFileType()
   if not tp then return end
 
   local data = TimeCalcer.getLineData(tp)
 
-  return logShow(data, L.cap_CurrentLineData)
+  return logShow(data, L.cap_CurClauseData)
 end ----
 
-function unit.CurLineTimeLen () --| (window)
-  local tp = TimeCalcer.getFileType()
-  if not tp then return end
-
-  local diff = TimeCalcer.getLineTimeLen(tp)
+-- Показ данных по разнице как времени.
+function unit.getClauseShowData (diff) --> (table, table)
+  local diff = diff or 0
   local time = newTime():from_z(diff)
 
-  local t = {
+  local show = {
     L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
     L.TimeLenDataFmt:format(time:data()),
-    L.TimeLenMsecFmt:format(diff),
+    L.TimeLenMsecFmt:format(n2s(diff)),
     L.TimeLenTextFmt:format(time:data()),
   } ---
   local kind = {
     ShowLineNumber = false,
   }
 
-  return datShow(t, L.cap_CurLineTimeLen, kind)
+  return show, kind 
+end ---- getClauseShowData
+
+-- Показ длины отрезка времени на линии файла.
+function unit.CurClauseLen () --| (window)
+  local tp = TimeCalcer.getFileType()
+  if not tp then return end
+
+  local diff = TimeCalcer.getClauseLen(tp)
+
+  local show, kind = unit.getClauseShowData(diff)
+
+  return datShow(show, L.cap_CurClauseLen, kind)
+end ----
+
+-- Показ длины паузы перед отрезком времени на линии файла.
+function unit.CurClauseGap () --| (window)
+  local tp = TimeCalcer.getFileType()
+  if not tp then return end
+
+  local diff = TimeCalcer.getClauseGap(tp)
+
+  local show, kind = unit.getClauseShowData(diff)
+
+  return datShow(show, L.cap_CurClauseLen, kind)
 end ----
 
 ----------------------------------------
-local mTimeCalcer = {
-  text = L.TimeCalcer,
+local mCurrentClause = {
+  text = L.CurrentClause,
   Items = {
-    { text = L.itm_CurLineTimeLen,
-      Function = unit.CurLineTimeLen },
-    mSeparator,
-    { text = L.itm_CurrentLineData,
-      Function = unit.CurrentLineData },
+    { text = L.itm_CurClauseLen,
+      Function = unit.CurClauseLen },
+    { text = L.itm_CurClauseGap,
+      Function = unit.CurClauseGap },
+    --mSeparator,
   } ---
-} --- mTimeCalcer
+} --- mCurrentClause
 
 ---------------------------------------- ----
 local Scripts = {
   text = L.Subtitles,
   Items = {
-    mTimeCalcer, -- Калькулятор
+    mCurrentClause,
     mSeparator,
     { text = L.itm_SubtitleType,
       Function = unit.SubtitleType },
+    { text = L.itm_CurClauseData,
+      Function = unit.CurClauseData },
   } -- Items
 } --- Scripts
 

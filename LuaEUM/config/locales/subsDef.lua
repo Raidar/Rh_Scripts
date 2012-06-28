@@ -8,23 +8,22 @@ local Data = {
   ----------------------------------------
   Subtitles         = "&Q - Subtitles",
 
-  hot_SubtitleType  = "Y",
-  cap_SubtitleType  = "Subtitle filetype",
-    SubtitleUnknownType = "Unknown subtitle filetype",
+    hot_SubtitleType    = "Y",
+    cap_SubtitleType    = "Subtitle filetype",
+      SubtitleUnknownType    = "Unknown subtitle filetype",
+    hot_CurClauseData   = "L",
+    cap_CurClauseData   = "Current line data",
 
-  TimeCalcer        = "&Q - Time Calculator",
-    hot_CurLineTimeLen  = "D",
-    cap_CurLineTimeLen  = "Clause duration",
-    hot_CurLineTimeGap  = "G",
-    cap_CurLineTimeGap  = "Gap before clause",
+  CurrentClause     = "&C - Current clause",
+    hot_CurClauseLen    = "D",
+    cap_CurClauseLen    = "Clause duration",
+    hot_CurClauseGap    = "G",
+    cap_CurClauseGap    = "Gap before clause",
                             -- 00:00:00:00,000
-      TimeLenAssaFmt        = "%01d:%02d:%02d.%02d",
+      TimeLenAssaFmt        = " %1d:%02d:%02d.%02d ",
       TimeLenDataFmt        = "%02d:%02d:%02d,%03d",
-      TimeLenMsecFmt        = "%03d milliseconds",
+      TimeLenMsecFmt        = " %s milliseconds",
       TimeLenTextFmt        = "%d h %d min %d,%03d sec",
-
-    hot_CurrentLineData = "Y",
-    cap_CurrentLineData = "Current line data",
 
   ----------------------------------------
 } --- Data

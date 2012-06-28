@@ -170,20 +170,24 @@ end ----
 do
   local EditorGetStr = editor.GetString
 
-local function DefGetLineData (k, tp)
-  local k = (k or 0) - 1
+-- Получение данных по линии файла (по умолчанию).
+local function DefGetLineData (tp, line, shift) --> (data)
+  local line = (line or 0) + (shift and 0 or -1)
+  local shift = shift or 1
   local data
   repeat
-    k = k + 1
-    local s = EditorGetStr(nil, k, 2)
+    line = line + shift
+    if line < 0 then break end
+
+    local s = EditorGetStr(nil, line, 2)
     if s == nil then break end
 
-    --logShow({ k, s })
+    logShow({ line, shift, s })
     data = unit.parseLine(s, tp)
-  until data --~= nil
+  until data
 
   if data then
-    data.line = k
+    data.line = line
 
     return data
   end
@@ -191,21 +195,21 @@ end -- DefGetLineData
 
 -- Функции получения данных по линии:
 local GetLineData = {
-  sub_assa  = function (k) --> (number, string)
-    return DefGetLineData(k, "sub_assa")
+  sub_assa  = function (line, shift) --> (data)
+    return DefGetLineData("sub_assa", line, shift)
   end,
 
-  sub_srt   = function (k) --> (number, string)
-    return DefGetLineData(k, "sub_srt")
+  sub_srt   = function (line, shift) --> (data)
+    return DefGetLineData("sub_srt", line, shift)
   end,
 } --- GetLineData
 
 -- Получение данных по линии файла.
-function unit.getLineData (tp) --> (number)
+function unit.getLineData (tp, line, shift) --> (number)
   local Info = editor.GetInfo()
   if not Info then return end
 
-  local data = GetLineData[tp](Info.CurLine)
+  local data = GetLineData[tp](line or Info.CurLine, shift)
 
   editor.SetPosition(nil, Info) -- Restore cursor pos!
 
@@ -215,11 +219,24 @@ end ----
 end -- do
 
 -- Получение длины отрезка времени на линии файла.
-function unit.getLineTimeLen (tp) --> (number | nil)
+function unit.getClauseLen (tp) --> (number | nil)
   local data = unit.getLineData(tp)
   if not data then return end
 
   return data.stop:diff(data.start)
+end ----
+
+-- Получение длины паузы перед отрезком времени на линии файла.
+function unit.getClauseGap (tp) --> (number | nil)
+  local curr = unit.getLineData(tp)
+  if not curr then return end
+
+  local prev = unit.getLineData(tp, curr.line, -1)
+  if not prev or curr.line == prev.line then
+    return curr.start:to_z()
+  end
+
+  return curr.start:diff(prev.stop)
 end ----
 
 --------------------------------------------------------------------------------
