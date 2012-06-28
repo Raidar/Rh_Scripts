@@ -31,7 +31,7 @@ local format = string.format
 
 far.Message(format("%.f", N), "MaxIncInt")
 
-N = format("%.f", N):reverse():gsub("...","%0 "):reverse()
+N = format("%.f", N):reverse():gsub("...", "%0 "):reverse()
 
 far.Message(N, "Maximum incremented integer")
 
