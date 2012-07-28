@@ -362,7 +362,7 @@ end -- MakeDlgTypes
 
 ---------------------------------------- Configure
 local ScriptName = "rhsConfig"
-local PluginPath = context.utils.PluginPath
+local PluginPath = utils.PluginPath
 local ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 --local umFilePath = "scripts\\Rh_Scripts\\"
 

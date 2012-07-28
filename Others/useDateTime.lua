@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Time class.
-  -- Класс времени.
+  -- Date and Time classes.
+  -- Классы даты и времени.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -34,6 +34,30 @@ local logShow = dbg.Show
 
 --------------------------------------------------------------------------------
 local unit = {}
+
+---------------------------------------- Date class
+local TDate = {} -- Класс даты
+local MDate = { __index = TDate }
+
+-- Создание объекта класса.
+function unit.newDate (d, m, y) --> (object)
+  local self = {
+    d = d or 0, -- количество дней
+    m = m or 0, -- количество месяцев
+    y = y or 0, -- количество лет
+  } --- self
+
+  return setmetatable(self, MDate)
+end -- newDate
+
+---------------------------------------- handling
+function TDate:data () --> (d, m, y)
+  return self.d, self.m, self.y
+end ----
+
+function TDate:copy () --> (object)
+  return unit.newDate(self:data())
+end ----
 
 ---------------------------------------- Time class
 local TTime = {} -- Класс времени

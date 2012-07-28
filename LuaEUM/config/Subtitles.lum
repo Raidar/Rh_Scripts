@@ -2,37 +2,29 @@
 
 ----------------------------------------
 --[[ description:
-  -- Scripts to edit subtitles.
-  -- Скрипты для правки субтитров.
+  -- Subtitles: correction.
+  -- Субтитры: корректирование.
 --]]
 --------------------------------------------------------------------------------
 
 ----------------------------------------
 --local context = context
 
-local numbers = require 'context.utils.useNumbers'
 local tables = require 'context.utils.useTables'
-local locale = require 'context.utils.useLocale'
-
-local n2s = numbers.n2s
 
 ----------------------------------------
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow, datShow = dbg.Show, dbg.ShowData
+--]]
 
 --------------------------------------------------------------------------------
 
+----------------------------------------
+local subs = require "Rh_Scripts.LuaEUM.scripts.Subtitles"
+
 ---------------------------------------- Locale
-local Custom = {
-  label = "Subtitles",
-  name = "subs",
-  path = "Rh_Scripts.LuaEUM.config.",
-  locale = { kind = 'require' },
-} ---
-local L, e1, e2 = locale.localize(Custom)
-if L == nil then
-  return locale.showError(e1, e2)
-end
+local L = subs.Locale
 
 do
   --local t = {}
@@ -64,88 +56,14 @@ local mSeparator = {
 } ---
 --]]
 
-----------------------------------------
-local TimeCalcer = require "Rh_Scripts.Others.TimeCalcer"
-
-local useTime = require "Rh_Scripts.Others.useTime"
-local newTime = useTime.newTime
-
 ---------------------------------------- Items
-local unit = {}
-
-local types = ctxdata.config.types
-
--- Показ типа файла субтитров.
-function unit.SubtitleType () --| (window)
-  local SubType = TimeCalcer.getFileType()
-  local SubDesc = ""
-  if SubType then SubDesc = types[SubType].desc or "" end
-  if SubDesc ~= "" then SubDesc = "\n"..SubDesc end
-
-  return far.Message((SubType or L.SubtitleUnknownType)..SubDesc,
-                     L.cap_SubtitleType)
-end ----
-
--- Показ данных по линии файла.
-function unit.CurClauseData () --| (window)
-  local tp = TimeCalcer.getFileType()
-  if not tp then return end
-
-  local data = TimeCalcer.getLineData(tp)
-
-  return logShow(data, L.cap_CurClauseData)
-end ----
-
--- Показ данных по разнице как времени.
-function unit.getClauseShowData (diff) --> (table, table)
-  local diff = diff or 0
-  local time = newTime():from_z(diff)
-
-  local show = {
-    L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
-    L.TimeLenDataFmt:format(time:data()),
-    L.TimeLenMsecFmt:format(n2s(diff)),
-    L.TimeLenTextFmt:format(time:data()),
-  } ---
-  local kind = {
-    ShowLineNumber = false,
-  }
-
-  return show, kind 
-end ---- getClauseShowData
-
--- Показ длины отрезка времени на линии файла.
-function unit.CurClauseLen () --| (window)
-  local tp = TimeCalcer.getFileType()
-  if not tp then return end
-
-  local diff = TimeCalcer.getClauseLen(tp)
-
-  local show, kind = unit.getClauseShowData(diff)
-
-  return datShow(show, L.cap_CurClauseLen, kind)
-end ----
-
--- Показ длины паузы перед отрезком времени на линии файла.
-function unit.CurClauseGap () --| (window)
-  local tp = TimeCalcer.getFileType()
-  if not tp then return end
-
-  local diff = TimeCalcer.getClauseGap(tp)
-
-  local show, kind = unit.getClauseShowData(diff)
-
-  return datShow(show, L.cap_CurClauseLen, kind)
-end ----
-
-----------------------------------------
 local mCurrentClause = {
   text = L.CurrentClause,
   Items = {
     { text = L.itm_CurClauseLen,
-      Function = unit.CurClauseLen },
+      Function = subs.CurClauseLen },
     { text = L.itm_CurClauseGap,
-      Function = unit.CurClauseGap },
+      Function = subs.CurClauseGap },
     --mSeparator,
   } ---
 } --- mCurrentClause
@@ -157,9 +75,9 @@ local Scripts = {
     mCurrentClause,
     mSeparator,
     { text = L.itm_SubtitleType,
-      Function = unit.SubtitleType },
+      Function = subs.SubtitleType },
     { text = L.itm_CurClauseData,
-      Function = unit.CurClauseData },
+      Function = subs.CurClauseData },
   } -- Items
 } --- Scripts
 

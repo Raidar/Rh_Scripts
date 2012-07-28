@@ -33,8 +33,8 @@ local format = string.format
 --local context = context
 
 ----------------------------------------
-local useTime = require "Rh_Scripts.Others.useTime"
-local newTime = useTime.newTime
+local useDtm = require "Rh_Scripts.Others.useDateTime"
+local newTime = useDtm.newTime
 
 ----------------------------------------
 -- [[
@@ -46,82 +46,108 @@ local logShow = dbg.Show
 local unit = {}
 
 ---------------------------------------- information
-local TplsInfo = { -- Информация о шаблонах:
-  sub_assa  = { start = 2, stop = 4 },
-  sub_srt   = { start = 1, stop = 3 },
+local TplKit = { -- Информация о шаблонах:
+  sub_default = {
+    -- Позиции захвата времени в линии:
+    start = 0, -- для начального времени
+    stop  = 0, -- для конечного  времени
+    -- форматы и шаблоны:
+    timefmt = "", -- формат времени для вывода
+    timecap = "", -- шаблон времени с захватами
+    timepat = "", -- шаблон времени без захватов
+    linefmt = "", -- формат линии с временами
+    linecap = "", -- шаблон линии с захватами времён
+
+    -- функции преобразования:
+    parse = false,  -- разбор строки со временем в класс-время
+    spell = false,  -- сбор строки со временем из класса-времени
+    },
+  sub_assa  = {
+    start = 2,
+    stop  = 4,
+
+    timefmt = "%*d:%2d:%2d.%2d",
+    timecap = "(%d+)%:(%d%d)%:(%d%d)%.(%d%d)",      --  ч:нн:сс.зз
+    timepat = false,
+    linefmt = "%s%s%s%s%s",
+    linecap = false,
+
+    parse = false,
+    spell = false,
+    },
+  sub_srt   = {
+    start = 1,
+    stop  = 3,
+
+    timefmt = "%2d:%2d:%2d,%3d",
+    timecap = "(%d%d)%:(%d%d)%:(%d%d)%,(%d%d%d)",   -- чч:нн:сс,ззз
+    timepat = false,
+    linefmt = "%s%s%s",
+    linecap = false,
+
+    parse = false,
+    spell = false,
+  },
 } ---
+unit.TplKit = TplKit
 
-local TimeTpls = { -- Шаблоны времени:
-  sub_assa  = "(%d)%:(%d%d)%:(%d%d)%.(%d%d)",       --  ч:нн:сс.зз
-  sub_srt   = "(%d%d)%:(%d%d)%:(%d%d)%,(%d%d%d)",   -- чч:нн:сс,ззз
-} ---
+do
+  -- Автоформирование шаблонов времени без захватов.
+  for _, v in pairs(TplKit) do
+    v.timepat = v.timecap:gsub("[%(%)]", "")
+  end
 
-local TimeFmts = { -- Форматы времени:
-  sub_assa  = "%*d:%2d:%2d.%2d",
-  sub_srt   = "%2d:%2d:%2d,%3d",
-} ---
+  local s2n = tonumber
 
-local TimePats = { -- Шаблоны без захватов:
-  sub_assa  = TimeTpls.sub_assa:gsub("[%(%)]", ""),
-  sub_srt   = TimeTpls.sub_srt:gsub("[%(%)]", ""),
-} ---
+  -- Формирование шаблонов линий с захватами времён.
+  -- Формирование функций разбора / сбора строки со временем.
 
-local LineTpls = { -- Шаблоны линий:
-  --sub_assa  = "^(.-%,)(.-)(%,)(.-)(%,.*)$", -- (нч,)(вр1)(,)(вр2)(,кц)
-  --sub_srt   = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
-  sub_assa  = format("^%s(%s)%s(%s)%s$",
-                     "(.-%: %d%,)",
-                     TimePats.sub_assa, --"(.-)",
-                     "(%,)",
-                     TimePats.sub_assa, --"(.-)",
-                     "(%,.*)"),
-  sub_srt   = format("^(%s)%s(%s)%s$",
-                     TimePats.sub_srt, --"(.-)",
-                     "( %-%-%> )",
-                     TimePats.sub_srt, --"(.-)",
-                     "(.*)"),
-} ---
+    -- ASSA
+  local sub = TplKit.sub_assa
+  sub.linecap = format("^%s(%s)%s(%s)%s$",
+                       "(.-%: %d%,)",
+                       sub.timepat, --"(.-)",
+                       "(%,)",
+                       sub.timepat, --"(.-)",
+                       "(%,.*)")
+  --sub.linecap = "^(.-%,)(.-)(%,)(.-)(%,.*)$", -- (нч,)(вр1)(,)(вр2)(,кц)
 
-local LineFmts = { -- Форматы линий:
-  sub_assa  = "%s%s%s%s%s",
-  sub_srt   = "%s%s%s",
-} ---
+  sub.parse = function (s) --> (time)
+    local h, n, s, cz = s:match(sub.timecap)
+    return newTime(s2n(h), s2n(n), s2n(s), (s2n(cz) or 0) * 10)
+  end
+  sub.spell = function (time) --> (string)
+    return format(sub.timefmt, time.h, time.n, time.s, time:cz())
+  end
 
-local tonumber = tonumber
+    -- SRT
+  local sub = TplKit.sub_srt
+  sub.linecap = format("^(%s)%s(%s)%s$",
+                       sub.timepat, --"(.-)",
+                       "( %-%-%> )",
+                       sub.timepat, --"(.-)",
+                       "(.*)")
+  --sub.linecap = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
 
--- Функции разбора времени:
-local ParseTime = {
-  sub_assa  = function (s) --> (time)
-    local h, n, s, cz = s:match(TimeTpls.sub_assa)
-    return newTime(tonumber(h), tonumber(n),
-                   tonumber(s), (tonumber(cz) or 0) * 10)
-  end,
-  sub_srt   = function (s) --> (time)
-    local h, n, s, z = s:match(TimeTpls.sub_srt)
-    return newTime(tonumber(h), tonumber(n),
-                   tonumber(s), tonumber(z))
-  end,
-} --- ParseTime
+  sub.parse = function (s) --> (time)
+    local h, n, s, z = s:match(sub.timecap)
+    return newTime(s2n(h), s2n(n), s2n(s), s2n(z))
+  end
+  sub.spell = function (time) --> (string)
+    return format(sub.timefmt, time.h, time.n, time.s, time.z)
+  end
 
--- Функции заполнения времени:
-local StoreTime = {
-  sub_assa  = function (time) --> (string)
-    return format(TimeFmts.sub_assa, time.h, time.n, time.s, time:cz())
-  end,
-  sub_srt   = function (time) --> (string)
-    return format(TimeFmts.sub_srt, time.h, time.n, time.s, time.z)
-  end,
-} --- StoreTime
+end -- do
 
 ---------------------------------------- parse & store
 -- Разбор времени.
 function unit.parseTime (s, tp) --> (time | nil)
-  return ParseTime[tp](s)
+  return TplKit[tp].parse(s)
 end ----
 
 -- Заполнение времени.
-function unit.storeTime (time, tp) --> (string)
-  return StoreTime[tp](time)
+function unit.spellTime (time, tp) --> (string)
+  return TplKit[tp].spell(time)
 end ----
 
 -- Разбор линии.
@@ -129,14 +155,14 @@ function unit.parseLine (s, tp) --> (data | nil)
   tp = tp or "sub_assa"
 
   -- Разбор линии на части.
-  local t = { s:match(LineTpls[tp]) }
+  local t = { s:match(TplKit[tp].linecap) }
   --logShow(t, tp)
   if t[1] == nil then return end
 
   t.type = tp
 
   -- Разбор времён на части.
-  local info = TplsInfo[tp]
+  local info = TplKit[tp]
   t.start = unit.parseTime(t[info.start], tp)
   t.stop  = unit.parseTime(t[info.stop], tp)
 
@@ -144,18 +170,18 @@ function unit.parseLine (s, tp) --> (data | nil)
 end ---- parseLine
 
 -- Заполнение линии.
-function unit.storeLine (data) --> (string)
+function unit.spellLine (data) --> (string)
   -- Заполнение времён.
   local tp = data.type
-  local info = TplsInfo[tp]
-  t[info.start] = unit.storeTime(t.start, tp)
-  t[info.stop]  = unit.storeTime(t.stop, tp)
+  local info = TplKit[tp]
+  t[info.start] = unit.spellTime(t.start, tp)
+  t[info.stop]  = unit.spellTime(t.stop, tp)
 
   -- Заполнение линии.
-  local s = format(LineFmts[tp], unpack(t))
+  local s = format(TplKit[tp].linefmt, unpack(t))
 
   return s
-end ---- storeLine
+end ---- spellLine
 
 ---------------------------------------- make
 local context, ctxdata = context, ctxdata
@@ -164,7 +190,7 @@ local configType = context.detect.use.configType
 -- Получение поддерживаемого типа файла субтитров.
 function unit.getFileType () --> (string)
   local ctype = ctxdata.editors.current.type -- current editor file type
-  return configType(ctype, TplsInfo) -- existing config type for ctype
+  return configType(ctype, TplKit) -- existing config type for ctype
 end ----
 
 do
@@ -182,7 +208,7 @@ local function DefGetLineData (tp, line, shift) --> (data)
     local s = EditorGetStr(nil, line, 2)
     if s == nil then break end
 
-    logShow({ line, shift, s })
+    --logShow({ line, shift, s })
     data = unit.parseLine(s, tp)
   until data
 
