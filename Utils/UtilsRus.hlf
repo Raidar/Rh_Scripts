@@ -30,7 +30,8 @@ $ #Файлы скриптов#: Служебные скрипты
     \37IniFile.lua\-    — ¦Работа с ini/lua-файлами.
     \37macUtils.lua\-   — ¦Работа с ~макросами-шаблонами~@Macros@.
     \37menUtils.lua\-   — ¦Работа с меню и пунктами меню.
-    \37unichars.lua\-   — ¦Некоторые Unicode-символы.
+    \37uniChars.lua\-   — ¦Некоторые Unicode-символы.
+    \37uniNames.lua\-   — ¦Названия Unicode-символов.
 
  ~Содержание~@Contents@
 

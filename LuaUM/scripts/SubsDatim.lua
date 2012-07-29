@@ -1,15 +1,15 @@
---[[ Time Calculator ]]--
+--[[ Subtitles' Date+Time ]]--
 
 ----------------------------------------
 --[[ description:
-  -- Time values Calculator.
-  -- Калькулятор значений времени.
+  -- Date and time values handler.
+  -- Обработчик значений даты и времени.
 --]]
 ----------------------------------------
 --[[ uses:
   LuaFAR,
   Rh Utils.
-  -- group: Common.
+  -- group: Subtitles, DateTime.
   -- areas: any.
 --]]
 --------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ local format = string.format
 --local context = context
 
 ----------------------------------------
-local useDtm = require "Rh_Scripts.Others.useDateTime"
-local newTime = useDtm.newTime
+local Datim = require "Rh_Scripts.Utils.DateTime"
+local newTime = Datim.newTime
 
 ----------------------------------------
 -- [[
@@ -66,7 +66,7 @@ local TplKit = { -- Информация о шаблонах:
     start = 2,
     stop  = 4,
 
-    timefmt = "%*d:%2d:%2d.%2d",
+    timefmt = "%1d:%02d:%02d.%02d",
     timecap = "(%d+)%:(%d%d)%:(%d%d)%.(%d%d)",      --  ч:нн:сс.зз
     timepat = false,
     linefmt = "%s%s%s%s%s",
@@ -79,7 +79,7 @@ local TplKit = { -- Информация о шаблонах:
     start = 1,
     stop  = 3,
 
-    timefmt = "%2d:%2d:%2d,%3d",
+    timefmt = "%02d:%02d:%02d,%03d",
     timecap = "(%d%d)%:(%d%d)%:(%d%d)%,(%d%d%d)",   -- чч:нн:сс,ззз
     timepat = false,
     linefmt = "%s%s%s",

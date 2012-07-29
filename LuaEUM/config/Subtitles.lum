@@ -21,7 +21,7 @@ local logShow, datShow = dbg.Show, dbg.ShowData
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local subs = require "Rh_Scripts.LuaEUM.scripts.Subtitles"
+local subs = require "Rh_Scripts.LuaUM.scripts.Subtitles"
 
 ---------------------------------------- Locale
 local L = subs.Locale
