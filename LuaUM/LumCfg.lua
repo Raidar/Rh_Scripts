@@ -153,7 +153,10 @@ function unit.Configure (ArgData, isDefData) --> (table)
   local DefConfig = not isDefData and unit.DefConfig or nil
   local DefData = DefConfig and DefConfig.ArgData
   --logShow(DefData, "DefData", 1)
-  ArgData.Custom = { name = DefB.LuaUMName, path = DefB.LuaUMPath }
+  ArgData.Custom = {
+    name = DefB.LuaUMName,
+    path = DefB.LuaUMPath,
+  }
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
 

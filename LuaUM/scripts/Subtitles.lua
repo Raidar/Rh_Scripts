@@ -49,11 +49,7 @@ local addNewData = tables.extend
 local DefCustom = {
   name = ScriptName,
   path = ScriptPath,
-
-  locale = {
-    kind = 'load',
-    pdir = "scripts\\Rh_Scripts\\LuaUM\\",
-  },
+  locale = { kind = 'load' },
 } ---
 
 local L, e1, e2 = locale.localize(DefCustom)

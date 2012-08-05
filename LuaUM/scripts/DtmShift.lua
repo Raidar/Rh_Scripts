@@ -85,10 +85,7 @@ local DefCustom = {
   file = FileName,
 
   help   = { topic = ScriptName },
-  locale = {
-    kind = 'load',
-    --pdir = "scripts\\Rh_Scripts\\LuaUM\\",
-  },
+  locale = { kind = 'load' },
 } --- DefCustom
 
 -- Обработка конфигурации.
@@ -234,7 +231,6 @@ function unit.TimeShiftDlg (Data)
   local HelpTopic = Config.Custom.help.tlink
   -- Локализация:
   LocData = locale.getData(Config.Custom)
-  logShow(LocData)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
