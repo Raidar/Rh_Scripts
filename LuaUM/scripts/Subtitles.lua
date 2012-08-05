@@ -34,6 +34,7 @@ local unit = {}
 
 ----------------------------------------
 local SubsDatim = require "Rh_Scripts.LuaUM.scripts.SubsDatim"
+local TplKit = SubsDatim.TplKit
 
 local Datim = require "Rh_Scripts.Utils.DateTime"
 local newTime = Datim.newTime
@@ -41,7 +42,7 @@ local newTime = Datim.newTime
 ---------------------------------------- Configure
 local ScriptName = "Subtitles"
 local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
+local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 local addNewData = tables.extend
 
@@ -49,7 +50,10 @@ local DefCustom = {
   name = ScriptName,
   path = ScriptPath,
 
-  locale = { kind = 'load' },
+  locale = {
+    kind = 'load',
+    pdir = "scripts\\Rh_Scripts\\LuaUM\\",
+  },
 } ---
 
 local L, e1, e2 = locale.localize(DefCustom)

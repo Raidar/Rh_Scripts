@@ -282,7 +282,6 @@ local DefCustom = {
   path = ScriptPath,
 
   label = "WC",
-  file = "WordCmpl",
 
   help   = { topic = ScriptName },
   locale = { kind = 'load' },

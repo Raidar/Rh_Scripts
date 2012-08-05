@@ -72,7 +72,7 @@ local DlgTypes = { -- Типы элементов диалогов:
 
 ---------------------------------------- Configure
 local ScriptName = "MorfoGener"
-local ScriptPath = "scripts\\Rh_Scripts\\Testing\\"
+local ScriptPath = "scripts\\Rh_Scripts\\Others\\"
 
 local DefCustom = {
   name = ScriptName,

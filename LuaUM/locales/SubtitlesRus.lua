@@ -1,10 +1,10 @@
---[[ LuaEUM menus: Russian ]]--
---[[ LuaEUM--меню: русский ]]--
+--[[ Subtitles: Russian ]]--
+--[[ Субтитры: русский ]]--
 
 --------------------------------------------------------------------------------
 local Data = {
   -- basic
-  Separator         = "Separator",
+  Separator         = "Разделитель",
 
   ----------------------------------------
   Subtitles         = "&Q - Субтитры",
@@ -21,9 +21,6 @@ local Data = {
     cap_CurClauseLen    = "Длительность фразы",
     --hot_CurClauseGap    = "G",
     cap_CurClauseGap    = "Пауза перед фразой",
-                            -- 00:00:00:00,000
-      --TimeLenAssaFmt        = "%01d:%02d:%02d.%02d",
-      --TimeLenDataFmt        = "%02d:%02d:%02d,%03d",
       TimeLenMsecFmt        = " %s миллисекунд",
       TimeLenTextFmt        = "%d ч %d мин %d,%03d сек",
 

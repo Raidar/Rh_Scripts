@@ -1,4 +1,4 @@
---[[ LuaEUM menus: English ]]--
+--[[ Subtitles: English ]]--
 
 --------------------------------------------------------------------------------
 local Data = {
@@ -20,7 +20,7 @@ local Data = {
     hot_CurClauseGap    = "G",
     cap_CurClauseGap    = "Gap before clause",
                             -- 00:00:00:00,000
-      TimeLenAssaFmt        = " %1d:%02d:%02d.%02d ",
+      TimeLenAssaFmt        = " %1d:%02d:%02d.%02d",
       TimeLenDataFmt        = "%02d:%02d:%02d,%03d",
       TimeLenMsecFmt        = " %s milliseconds",
       TimeLenTextFmt        = "%d h %d min %d,%03d sec",

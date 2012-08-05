@@ -133,7 +133,6 @@ local DefCustom = {
   path = ScriptPath,
 
   label = "TT",
-  file = "TextTmpl",
 
   help   = { topic = ScriptName },
   locale = { kind = 'load' },

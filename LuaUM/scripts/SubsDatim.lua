@@ -139,6 +139,13 @@ do
 
 end -- do
 
+--[[
+-- Получение информации о шаблонах.
+function unit.getKitInfo (tp) --> (table | nil)
+  return TplKit[tp]
+end ----
+--]]
+
 ---------------------------------------- parse & store
 -- Разбор времени.
 function unit.parseTime (s, tp) --> (time | nil)
