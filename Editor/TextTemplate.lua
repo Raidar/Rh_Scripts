@@ -65,7 +65,7 @@ local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -142,7 +142,7 @@ local DefOptions = {
   KitName  = "TextTemplate",
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = "TextTemplate",
-  FileName = "TextTmplBind",
+  FileName = "kit_config",
 } ---
 
 -- Обработка конфигурации.
@@ -304,6 +304,7 @@ local TplKits = {} -- Наборы шаблонов
 
 -- MAYBE: Сделать загрузку в зависимости от типа текущего файла!!??
 
+local format = string.format
 local prequire, newprequire = luaUt.prequire, luaUt.newprequire
 
 local CharControl = extUt.CharControl
@@ -312,17 +313,18 @@ local CharControl = extUt.CharControl
 -- Заполнение таблицы шаблонов.
 local function FillTemplatesData (Config)
   --far.Message("Load text templates", "Update")
-  local Cfg = Config.Custom.options
-  local Kit = TplKits[Cfg.KitName]
+  local Options = Config.Custom.options
+  local Kit = TplKits[Options.KitName]
   --logShow(Kit, "Kit", 2)
   if Kit then return end -- TODO: Убрать в случае избират. загрузки.
   --local dorequire = newprequire -- For separate use!
   local dorequire = Kit == false and newprequire or prequire
-  local FullDir = ("%s.%s."):format(Cfg.BaseDir, Cfg.WorkDir)
-  local typesBind = dorequire(("%s.%s"):format(Cfg.BaseDir, Cfg.FileName))
+  local FullDir = format("%s.%s.", Options.BaseDir, Options.WorkDir)
+  local typesBind = dorequire(FullDir..Options.FileName)
   if typesBind == nil then return end -- No templates
-  Kit = {}; TplKits[Cfg.KitName] = Kit
-  Cfg = Config.CfgData
+
+  Kit = {}; TplKits[Options.KitName] = Kit
+  local Cfg = Config.CfgData
 
   for k, v in pairs(typesBind) do
     local n = type(v) == 'string' and v ~= "" and v or tostring(k)

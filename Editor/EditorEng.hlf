@@ -68,14 +68,14 @@ They are similar to typed word properties from ~Word Completion~@WordComplete
 
 @TT_TypeBind
 $ #Binding of types#: TextTemplate
-  Binding of types to templates files is specified in \37TextTmplBind.lua\- file.
+  Binding of types to templates files is specified in \37kit_config.lua\- file.
 
-    \1FExamples of fields\- for \37Data\- table in \37TextTmplBind.lua\-:
+    \1FExamples of fields\- for \37Data\- table in \37kit_config.lua\-:
   \37lua     = \3Atrue\3F,  \37--\- A lua.lua file with templates for lua type
   \37ini     = \3Atrue\3F,  \37--\- An ini.lua file with templates for ini type
   \37reg     = 'ini'\3F, \37--\- Using ini.lua file with templates for reg type
 
-  A sample of \37TextTmplBind.lua\- file is included to pack.
+  A sample of \37kit_config.lua\- file is included to pack.
 In this file base file types is already specified as comments.
 
  ~Contents~@Contents@       ~Text Templates~@TextTemplate@
