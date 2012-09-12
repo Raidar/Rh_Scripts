@@ -311,15 +311,15 @@ unit.UseSpace('MathsScripts')
 --logShow(List.MathsScripts, "MathsScripts", 3)
 
 ---------------------------------------- Other indexes
-Order = "aijklmnprtuvxy"
+Order = "aijklmnprstuvxy"
 Datas = -- Char + Shift
-        "ₐᵢⱼₖₗₘₙₚᵣₜᵤᵥₓ "..
-        "ᵃⁱʲᵏˡᵐⁿᵖʳᵗᵘᵛˣʸ"..
+        "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
+        "ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ"..
         -- Ctrl + Shift
-        "              "..
-        "ᴬᴵᴶᴷᴸᴹᴺᴾᴿᵀᵁⱽ  "--..
+        "               "..
+        "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
         -- Alt + Shift
-        --"           "
+        --"               "
 Props = {
   Order = Order,
   Serial = true,
