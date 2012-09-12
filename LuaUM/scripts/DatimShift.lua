@@ -74,7 +74,7 @@ local DlgTypes = {
 
 ---------------------------------------- Configure
 local FileName   = "DateTime"
-local ScriptName = "DtmShift"
+local ScriptName = "DatimShift"
 local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 local DefCustom = {
