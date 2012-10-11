@@ -173,7 +173,6 @@ local function Configure (ArgData)
 end -- Configure
 
 ---------------------------------------- Locale
-local LocData -- Данные локализации
 local L -- Класс сообщений локализации
 
 ---------------------------------------- Dialog
@@ -236,7 +235,7 @@ function unit.ConfigDlg (Data)
   local Config = Configure(Data)
   local HelpTopic = Config.Custom.help.tlink
   -- Локализация:
-  LocData = locale.getData(Config.Custom)
+  local LocData = locale.getData(Config.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
