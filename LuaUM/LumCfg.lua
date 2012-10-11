@@ -225,12 +225,12 @@ local DI = dlgUt.DlgItemType
 local DIF = dlgUt.DlgItemFlag
 
 ----------------------------------------
-local LUM_Dlg = {}
+local Dlg = {}
 
 -- Виды диалогов:
 local CfgKinds = { "Basic", "Files", "UMenu" }
 
-function LUM_Dlg.Basic (Config, Derived) --> (dialog)
+function Dlg.Basic (Config, Derived) --> (dialog)
   local I, H, W = 3, 11, 58 -- Indent, Height, Width
   local M = bshr(W, 1) -- Medium -- Width/2
   local Q = bshr(M, 1) -- Quarta -- Width/4
@@ -265,7 +265,7 @@ function LUM_Dlg.Basic (Config, Derived) --> (dialog)
   return D
 end ---- Basic
 
-function LUM_Dlg.Files (Config, Derived) --> (dialog)
+function Dlg.Files (Config, Derived) --> (dialog)
   local I, H, W = 3, 12, 50 -- Indent, Height, Width
   local M = bshr(W, 1) -- Medium -- Width/2
 
@@ -292,7 +292,7 @@ function LUM_Dlg.Files (Config, Derived) --> (dialog)
   return D
 end ---- Files
 
-function LUM_Dlg.UMenu (Config, Derived) --> (dialog)
+function Dlg.UMenu (Config, Derived) --> (dialog)
   local I, J, H, W = 3, 3, 16, 52 -- Indent, Addend, Height, Width
 
   local D = dlg_NewDialog() -- Форма окна
@@ -371,7 +371,7 @@ local function ConfigDlg (Config, Kind, Derived)
     -- if not LocData then return nil, e1, e2 end -- CHECK!! also in LUM.lua
     L = locale.make(Config.Custom, LocData)
   end -- if
-  local D = LUM_Dlg[Kind](Config, Derived)
+  local D = Dlg[Kind](Config, Derived)
 
   local ROnly_Color = IndexColor(farColors.COL_DIALOGDISABLED)
 

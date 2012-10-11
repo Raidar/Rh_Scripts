@@ -144,11 +144,9 @@ function TMenu:Localize ()
   L.MenuItem = L:t2("UMenuItem", "UMenuName") -- Пункт меню
 
   return L
-end ----
+end ---- Localize
 
-----------------------------------------
--- Menu making.
-----------------------------------------
+---------------------------------------- Menu making
 function TMenu:Run ()
 
 --[[ 1. Конфигурирование меню ]]
@@ -293,6 +291,7 @@ end ---- Run
 
 function unit.LuaUserMenu (Config)
   local _Menu = CreateMenu(Config)
+
   return _Menu:Run()
 end --
 

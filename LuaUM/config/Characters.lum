@@ -337,6 +337,7 @@ unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
 ---------------------------------------- Symbols
 --[[
 /   - dot/point
+a   - acute
 op  - prime + modifier apostroph
 qw  - quote
 b   - bullet
@@ -351,7 +352,17 @@ Datas = -- Char + Shift
         -- Alt + Shift
         [[ ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
         [[ ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
---[[
+--[=[
+Order = [[/aopqwb`1234567890-\ ]]
+Datas = -- Char + Shift
+        [[…́‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
+        [[․̀‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
+        -- Ctrl + Shift
+        [[‥̋‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
+        [[⁝̏ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
+        -- Alt + Shift
+        [[ ̍ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
+        [[ ̎ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:
   ʹ - Greek Numeral Sign (Dexia keraia)
@@ -361,7 +372,7 @@ Datas = -- Char + Shift
   ΅ - Greek Dialytika Tonos
   \x0483-\x0487 Combining Cyrillic
   etc
---]]
+--]=]
 Props = {
   Order = Order,
   Serial = true,
