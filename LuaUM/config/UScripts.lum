@@ -45,6 +45,11 @@ local mQuickInfo = {
       Script = "LumScripts.lua",
       Function = "GlobalVarsData",
       Relative = "default" },
+    -- package content --
+    { text = L.OthQInfoPackage,
+      Script = "LumScripts.lua",
+      Function = "packageContent",
+      Relative = "default" },
   } ---
 } --- mQuickInfo
 

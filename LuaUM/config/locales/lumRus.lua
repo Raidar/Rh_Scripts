@@ -68,6 +68,7 @@ local Data = {
   OthQuickInfo      = "&I - Общая информация",
     OthQInfoVers        = "&V - Используемые версии",
     OthQInfoGlobal      = "&G - Глобальные данные",
+    OthQInfoPackage     = "&P - Содержимое package",
 
   OthLFcontext      = "&X - Применение LF context",
     OthLFcDetectType    = "&Y - Определение типа",

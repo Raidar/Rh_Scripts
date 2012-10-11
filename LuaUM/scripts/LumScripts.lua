@@ -87,6 +87,11 @@ function FunctionEnvironment ()
   logShow(getfenv(), "Function Environment", "d2 w _/")
 end ---- FunctionEnvironment
 
+-- Содержимое package --
+function packageContent ()
+  logShow(_G.package, "package content", "d0 w _/")
+end ---- packageContent
+
 --[[
 -- Локальная функция --
 local function LocalFunction ()

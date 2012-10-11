@@ -67,6 +67,7 @@ local Data = {
   OthQuickInfo      = "Common &information",
     OthQInfoVers        = "&Versions",
     OthQInfoGlobal      = "&Global data",
+    OthQInfoPackage     = "&package content",
 
   OthLFcontext      = "Using LF conte&xt",
     OthLFcDetectType    = "Detect t&ype",
