@@ -315,7 +315,6 @@ local function Configure (ArgData)
 end -- Configure
 
 ---------------------------------------- Locale
-local LocData -- Данные локализации
 local L -- Класс сообщений локализации
 
 ---------------------------------------- Dialog
@@ -432,7 +431,7 @@ function unit.ConfigDlg (Data)
   local Config = Configure(Data)
   local HelpTopic = Config.Custom.help.tlink
   -- Локализация:
-  LocData = locale.getData(Config.Custom)
+  local LocData = locale.getData(Config.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
@@ -473,13 +472,29 @@ function unit.ConfigDlg (Data)
   end
 end ---- ConfigDlg
 
----------------------------------------- Words
-local LuaCards    = extUt.const.LuaCards
---local LuaCardsSet = extUt.const.LuaCardsSet
-local CharControl = extUt.CharControl
+---------------------------------------- Main class
+local TMain = {
+  Guid = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
+}
+local MMain = { __index = TMain }
 
+-- Создание объекта основного класса.
+local function CreateMain (Config)
+
+  local self = {
+    Config    = Config,
+  } ---
+
+  return setmetatable(self, MMain)
+end -- CreateMain
+
+---------------------------------------- Main making
+
+---------------------------------------- ---- List
 -- Поиск слов, подходящих к текущему.
-local function SearchWords (Cfg, Ctrl) --> (table)
+function TMain:SearchWords (Ctrl) --> (table)
+
+  local Cfg = self.Config.CfgData
   local CfgCur = Cfg.Current
   local Word, Slab = CfgCur.Word, CfgCur.Slab
   local MaxLine, MinLen = CfgCur.MaxLine, Cfg.MinLength
@@ -542,6 +557,7 @@ local function SearchWords (Cfg, Ctrl) --> (table)
   --logShow(t, "SearchWords")
 
   if FindKind == "alternate" then
+    -- Поиск поочерёдно сверху / снизу.
     local LineU, LineD = Link.Line, Link.Line
     local LinesUp, LinesDown = Cfg.LinesUp, Cfg.LinesDown
     for k = 1, max2(LinesUp, LinesDown) do
@@ -586,76 +602,79 @@ local function SearchWords (Cfg, Ctrl) --> (table)
   return t
 end -- SearchWords
 
----------------------------------------- Sort
--- Сортировка таблицы строк: по частотности.
-local function SortByFreq (t) --> (table)
-  local f = t.Stat
-  --logShow(t, "SortByFreq", 2)
-  --local flog = dbg.open("tab_sort.txt")
-  --flog:logtab(t, "t", 3)
-  --flog:close()
+do
+  -- Сортировка таблицы строк: по частотности.
+  local function SortByFreq (t) --> (table)
+    local f = t.Stat
+    --logShow(t, "SortByFreq", 2)
+    --local flog = dbg.open("tab_sort.txt")
+    --flog:logtab(t, "t", 3)
+    --flog:close()
 
-  -- Сравнение слов по статистике:
-  local function StatCmp (w1, w2) --> (bool)
-    local f1, f2 = f[w1], f[w2]
-    --logShow({ tostring(w1), f1, tostring(w2), f2 }, "StatCmp", 1)
-    return f1.Count > f2.Count or
-           f1.Count == f2.Count and
-             (abs(f1.Line) < abs(f2.Line) or
-              f1.Line == f2.Line and f1.Slot < f2.Slot)
-  end --
-  t_sort(t, StatCmp)
+    -- Сравнение слов по статистике:
+    local function StatCmp (w1, w2) --> (bool)
+      local f1, f2 = f[w1], f[w2]
+      --logShow({ tostring(w1), f1, tostring(w2), f2 }, "StatCmp", 1)
+      return f1.Count > f2.Count or
+             f1.Count == f2.Count and
+               (abs(f1.Line) < abs(f2.Line) or
+                f1.Line == f2.Line and f1.Slot < f2.Slot)
+    end --
+    t_sort(t, StatCmp)
 
-  return t
-end -- SortByFreq
+    return t
+  end -- SortByFreq
 
--- Сортировка таблицы строк: по близости.
-local function SortByNear (t) --> (table)
-  local tLen  = #t
-  local tUp   = min2(t.Link.Up,   tLen)
-  local tDown = min2(t.Link.Down, tLen)
-  if tUp >= tLen or tDown >= tLen or tUp >= tDown then return t end
+  -- Сортировка таблицы строк: по близости.
+  local function SortByNear (t) --> (table)
+    local tLen  = #t
+    local tUp   = min2(t.Link.Up,   tLen)
+    local tDown = min2(t.Link.Down, tLen)
+    if tUp >= tLen or tDown >= tLen or tUp >= tDown then return t end
 
-  local n = t.n
-  local u = { n = n }
-  for k = 1, tUp - 1 do u[#u+1] = t[k] end
-  if #u > n then return u end
+    local n = t.n
+    local u = { n = n }
+    for k = 1, tUp - 1 do u[#u+1] = t[k] end
+    if #u > n then return u end
 
-  local uLen = tDown - tUp
-  local dLen = tLen - tDown + 1
-  local Count = min2(uLen, dLen)
-  for k = 0, Count - 1 do
-     u[#u+1] = t[tUp+k]
-     u[#u+1] = t[tDown+k]
-     if #u > n then return u end
-  end
-  if uLen == dLen then return u end
+    local uLen = tDown - tUp
+    local dLen = tLen - tDown + 1
+    local Count = min2(uLen, dLen)
+    for k = 0, Count - 1 do
+       u[#u+1] = t[tUp+k]
+       u[#u+1] = t[tDown+k]
+       if #u > n then return u end
+    end
+    if uLen == dLen then return u end
 
-  if uLen > dLen then
-    for k = tUp + Count, tDown - 1 do u[#u+1] = t[k] end
-  else -- dLen < uLen
-    for k = tDown + Count, tLen do u[#u+1] = t[k] end
-  end
+    if uLen > dLen then
+      for k = tUp + Count, tDown - 1 do u[#u+1] = t[k] end
+    else -- dLen < uLen
+      for k = tDown + Count, tLen do u[#u+1] = t[k] end
+    end
 
-  return u
-end -- SortByNear
+    return u
+  end -- SortByNear
 
--- Сортировка таблицы строк: посимвольная.
-local function SortByChar (t) --> (table)
-  -- Сравнение слов посимвольно без учёта регистра:
-  local function CharCmp (w1, w2) --> (bool)
-    --logShow({ w1, w2 }, "CharCmp")
-    return CompareString(w1, w2, nil, "S") < 0
-  end --
-  t_sort(t, CharCmp)
+  -- Сортировка таблицы строк: посимвольная.
+  local function SortByChar (t) --> (table)
+    -- Сравнение слов посимвольно без учёта регистра:
+    local function CharCmp (w1, w2) --> (bool)
+      --logShow({ w1, w2 }, "CharCmp")
+      return CompareString(w1, w2, nil, "S") < 0
+    end --
+    t_sort(t, CharCmp)
 
-  return t
-end -- SortByChar
+    return t
+  end -- SortByChar
 
 -- Сортировка таблицы строк.
-local function SortWords (t, Cfg) --> (table)
+function TMain:SortWords (t) --> (table)
+
+  local Cfg = self.Config.CfgData
   local FindKind, SortKind = Cfg.FindKind, Cfg.SortKind
   if t.n < Cfg.SortsMin then SortKind = "searching" end
+
   -- По мере поиска (без сортировки):
   if SortKind == "searching" then return t end
   -- По близости (расстоянию до текущей строки):
@@ -680,14 +699,20 @@ local function SortWords (t, Cfg) --> (table)
   return SortByChar(u) -- Посимвольно (по алфавиту)
 end -- SortWords
 
----------------------------------------- Special
-local SharedMatch = "^(%s+)%s*\n%%1%s*"
+end -- do
+
+---------------------------------------- ---- Menu
+do
+  local SharedMatch = "^(%s+)%s*\n%%1%s*"
 
 -- Поиск общей части строк.
-local function SharedPart (Words, Cfg, Ctrl) --> (string)
+function TMain:SharedPart (Words, Ctrl) --> (string)
+
+  local Cfg = self.Config.CfgData
   local Set, NoCase = Ctrl.CharsSet, not Cfg.MatchCase
   local SharedPat = SharedMatch:format(Set, Set, Set)
   Cfg.Patterns.Shared = SharedPat
+
   local s = Words[1]
   if NoCase then s = s:lower() end
   for k = 2, Words.n do
@@ -700,18 +725,21 @@ local function SharedPart (Words, Cfg, Ctrl) --> (string)
   return s
 end -- SharedPart
 
----------------------------------------- List
-local HotChars = "1234567890abcdefghijklmnopqrstuvwxyz"
-local HotCharsLen = HotChars:len()
+end -- do
 
-local ItemHotFmt, ItemHotLen = "&%s ", 2
---local ItemHotFmt, ItemHotLen = "&%s | ", 4
-local ItemTextFmt = ItemHotFmt.."%s"
+do
+  local HotChars = "1234567890abcdefghijklmnopqrstuvwxyz"
+  local HotCharsLen = HotChars:len()
 
-local Guid = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3") --> Class field
+  local ItemHotFmt, ItemHotLen = "&%s ", 2
+  --local ItemHotFmt, ItemHotLen = "&%s | ", 4
+  local ItemTextFmt = ItemHotFmt.."%s"
 
 -- Заполнение списка-меню.
-local function PrepareMenu (Words, Cfg, Props) --> (table)
+function TMain:PrepareMenu (Words, Props) --> (table)
+
+  local Cfg = self.Config.CfgData
+
   -- Создание таблицы пунктов меню.
   local Count = Words.n --or #Words
   local Width, Height = 0, Count
@@ -737,29 +765,30 @@ local function PrepareMenu (Words, Cfg, Props) --> (table)
     --logShow(Cfg.Patterns, "Cfg.Patterns")
     local SlabPat = Cfg.Patterns.Slab
     local SlabLen = Cfg.Current.Slab:len()
+
     if Cfg.HotChars then    -- text ~= Word:
       return Cfg.UseMagic and { " "..SlabPat } or
              { ItemHotLen + 1, ItemHotLen + SlabLen }
     else                    -- text == Word:
       return Cfg.UseMagic and { SlabPat } or { 1, SlabLen }
-    end -- if
+    end
   end --
 
   -- Задание параметров меню RectMenu.
   local RM_Props = Props.RectMenu
-  RM_Props.Guid = RM_Props.Guid or Guid
+  RM_Props.Guid = RM_Props.Guid or self.Guid
   --logShow(RM_Props, "RectMenu Props")
   if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
   -- Расчёт позиции и размера окна:
-  local Info, WM_Cfg = EditorGetInfo(), Cfg.WordsList
-  Width, Height = Width + WM_Cfg.CorLenH, Height + WM_Cfg.CorLenV
+  local Info, Popup = EditorGetInfo(), Cfg.Popup
+  Width, Height = Width + Popup.LenH, Height + Popup.LenV
   --[[
   local Rect, CursorPos = GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
   logShow({ Info, Rect, CursorPos }, "Window info")
   --]]
   local Pos = {
-    x = Info.CurPos  - Info.LeftPos       + WM_Cfg.CorPosX,
-    y = Info.CurLine - Info.TopScreenLine + WM_Cfg.CorPosY,
+    x = Info.CurPos  - Info.LeftPos       + Popup.PosX,
+    y = Info.CurLine - Info.TopScreenLine + Popup.PosY,
   } ---
   --logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
   Pos.y = Pos.y <= Height and Pos.y + 1 or Pos.y - Height
@@ -778,8 +807,16 @@ local function PrepareMenu (Words, Cfg, Props) --> (table)
   return Items, Props
 end -- PrepareMenu
 
+end -- do
+
+do
+  local CharControl = extUt.CharControl
+
 -- Формирование списка-меню слов.
-local function MakeWordsList (Cfg, Props) --> (table)
+function TMain:MakeWordsList (Props) --> (table)
+
+  local Cfg = self.Config.CfgData
+
   -- Базовая информация о редакторе:
   local Info = EditorGetInfo() -- Сохранение базовой позиции
   --logShow(Info, "Editor Info")
@@ -798,10 +835,11 @@ local function MakeWordsList (Cfg, Props) --> (table)
 
 -- 2. Отбор подходящих слов для завершения.
 
-  local WM_Cfg = Cfg.WordsList -- Число слов для отбора:
-  local lMax = Info.CurLine - Info.TopScreenLine            -- Учёт случаев:
-  lMax = max2(Info.WindowSizeY - lMax - 2, lMax)            -- список сверху
-  lMax = min2(Cfg.ListsMax, max2(lMax - WM_Cfg.CorLenV, 1)) -- список снизу
+  -- Число слов для отбора:
+  local Popup = Cfg.Popup
+  local lMax = Info.CurLine - Info.TopScreenLine      -- Учёт случаев:
+  lMax = max2(Info.WindowSizeY - lMax - 2, lMax)        -- список сверху
+  lMax = min2(Cfg.ListsMax, max2(lMax - Popup.LenV, 1)) -- список снизу
   CfgCur.WordsMax = max2(Cfg.FindsMax, lMax)
 
   -- Информация для работы со строками файла (Line number is 0-based):
@@ -809,7 +847,7 @@ local function MakeWordsList (Cfg, Props) --> (table)
   CfgCur.GetLine = function (n) return EditorGetStr(nil, n or -1, 2) end
 
   -- Поиск подходящих слов в строках файла:
-  local Words = SearchWords(Cfg, Ctrl)
+  local Words = self:SearchWords(Ctrl)
 
   EditorSetPos(nil, Info) -- Восстановление базовой позиции
 
@@ -823,30 +861,36 @@ local function MakeWordsList (Cfg, Props) --> (table)
 
 -- 3. Сортировка собранных слов.
 
-  Words = SortWords(Words, Cfg) -- Сортировка собранных слов
+  Words = self:SortWords(Words) -- Сортировка собранных слов
   --CfgCur.Words = Words
   --logShow(Words, "Words", 1)
 
 -- 4. Подготовка списка-меню слов.
 
-  CfgCur.Shared = SharedPart(Words, Cfg, Ctrl) -- Общая часть слов
+  CfgCur.Shared = self:SharedPart(Words, Ctrl) -- Общая часть слов
   --if Word then logShow(CfgCur) end
 
-  return PrepareMenu(Words, Cfg, Props)
+  return self:PrepareMenu(Words, Props)
 end -- MakeWordsList
 
----------------------------------------- Apply
--- Удаление Count символов:
-local EC_Actions = macUt.MacroActions.editor.cycle
-local DelChars = EC_Actions.del
-local BackChars = EC_Actions.bs
-
+end -- do
+---------------------------------------- Main control
 local function InsText (text)
   return EditorInsText(nil, text)
 end --
 
+---------------------------------------- ----- Apply
+do
+  -- Удаление Count символов:
+  local EC_Actions = macUt.MacroActions.editor.cycle
+  local DelChars = EC_Actions.del
+  local BackChars = EC_Actions.bs
+
 -- Завершение слова.
-local function ApplyWordAction (Cfg, Complete, Action) --> (bool | nil)
+function TMain:ApplyWordAction (Complete, Action) --> (bool | nil)
+
+  local Cfg = self.Config.CfgData
+
   local Word, Slab = Cfg.Current.Word, Cfg.Current.Slab
   local SLen = Slab:len()
   --logShow({ Complete, Word, Word:len(), Slab, SLen }, Action, 1)
@@ -867,11 +911,20 @@ local function ApplyWordAction (Cfg, Complete, Action) --> (bool | nil)
   return true
 end -- ApplyWordAction
 
----------------------------------------- Make
-local WC_Flags = { isRedraw = false, isRedrawAll = true }
-local CloseFlag, CancelFlag = { isClose = true }, { isCancel = true }
+end -- do
 
-local function MakeComplete (Cfg) --> (bool | nil)
+---------------------------------------- ----- Run
+do
+  local LuaCards    = extUt.const.LuaCards
+  --local LuaCardsSet = extUt.const.LuaCardsSet
+
+  local WC_Flags = { isRedraw = false, isRedrawAll = true }
+  local CloseFlag  = { isClose = true }
+  local CancelFlag = { isCancel = true }
+
+function TMain:Run () --> (bool | nil)
+
+  local Cfg = self.Config.CfgData
 
   local Action, Effect -- Действие
   local PressKey -- Нажатая клавиша
@@ -906,7 +959,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
       PressKey = false
       farUt.RedrawAll()
       -- Формирование нового списка-меню слов.
-      Items, Props = MakeWordsList(Cfg, Props)
+      Items, Props = self:MakeWordsList(Props)
       if not Items then return nil, CloseFlag end
       --logShow(SelIndex, hex(FKey))
       return { Props, Items, WC_Keys }, WC_Flags
@@ -922,7 +975,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
         -- Effect == E_Shared --
         Complete = Items[SelIndex].Word:sub(1, Cfg.Current.Shared:len())
         if Complete ~= "" then -- Выбор:
-          ApplyWordAction(Cfg, Complete, Action)
+          self:ApplyWordAction(Complete, Action)
         end
         return MakeUpdate()
       end
@@ -959,11 +1012,13 @@ local function MakeComplete (Cfg) --> (bool | nil)
     local Char = SpecKeyChar or VirKey.UnicodeChar
     --logShow(Char, hex(VKey))
 
-    if Cfg.Trailers:find(Char, 1, true) and not (Cfg.UseMagic and
-       (LuaCards:find(Char, 1, true) or Cfg.UsePoint and Char == '.')) then
+    if Cfg.Trailers:find(Char, 1, true) and
+       not (Cfg.UseMagic and
+            (LuaCards:find(Char, 1, true) or
+             Cfg.UsePoint and Char == '.') ) then
       --logShow(Char, Cfg.Trailers)
       if SelIndex then
-        ApplyWordAction(Cfg, Items[SelIndex].Word, A_Replace)
+        self:ApplyWordAction(Items[SelIndex].Word, A_Replace)
       end
       if not InsText(Char) then return end
       return nil, CancelFlag
@@ -985,7 +1040,7 @@ local function MakeComplete (Cfg) --> (bool | nil)
   repeat
 --[[ 1.2. Формирование начального списка-меню ]]
     Cfg.Current = { StartMenu = true }
-    Items, Props = MakeWordsList(Cfg, Props)
+    Items, Props = self:MakeWordsList(Props)
     Cfg.Current.StartMenu = nil
     --logShow({ Props, Items }, "Word Completion")
 
@@ -1015,38 +1070,46 @@ local function MakeComplete (Cfg) --> (bool | nil)
     if Effect then
       Complete = Items[Pos].Word:sub(1, Cfg.Current.Shared:len())
       if Complete ~= "" then -- Выбор:
-        ApplyWordAction(Cfg, Complete, Action)
+        self:ApplyWordAction(Complete, Action)
         --farUt.RedrawAll() -- Обновление!
       end
     elseif Action == "Replace" or Action == "Insert" then
       --logShow({ Action, Pos, Items }, "Making Action")
-      ApplyWordAction(Cfg, Items[Pos].Word, Action)
+      self:ApplyWordAction(Items[Pos].Word, Action)
     else
       return
     end
   until not Effect
 
   return true
-end -- MakeComplete
+end -- Run
+
+end -- do
 
 ---------------------------------------- main
-local Colors = menUt.MenuColors()
-local setBG = colors.setBG
-local HighlightOff = menUt.HighlightOff
+do
+  local Colors = menUt.MenuColors()
+  local setBG = colors.setBG
+  local HighlightOff = menUt.HighlightOff
 
--- Названия элементов для изменения цвета.
-local Col_MenuSelText = "COL_MENUSELECTEDTEXT"
-local Col_MenuSelMark = "COL_MENUSELECTEDMARKTEXT"
-local Col_MenuSelHigh = "COL_MENUSELECTEDHIGHLIGHT"
+  -- Названия элементов для изменения цвета.
+  local Col_MenuSelText = "COL_MENUSELECTEDTEXT"
+  local Col_MenuSelMark = "COL_MENUSELECTEDMARKTEXT"
+  local Col_MenuSelHigh = "COL_MENUSELECTEDHIGHLIGHT"
 
 function unit.Execute (Data) --> (bool | nil)
---[[ 1. Разбор параметров ]]
+
+--[[ 1. Конфигурирование Main ]]
+
   -- Конфигурация:
   local Config = Configure(Data)
-  local CfgData = Config.CfgData
+  local _Main = CreateMain(Config)
+
+  local CfgData = _Main.Config.CfgData
+
   --logShow(Data, "Data", 2)
-  --logShow(Config, "Config", "_d2")
-  --logShow(CfgData, "CfgData", 2)
+  --logShow(_Main.Config, "Config", "_d2")
+  --logShow(_Main.CfgData, "CfgData", 2)
   if not CfgData.Enabled then return end
 
   -- Свойства меню:
@@ -1076,18 +1139,20 @@ function unit.Execute (Data) --> (bool | nil)
   RM_Props.MenuEdge = 0 --1
   RM_Props.AltHotOnly = true
 
-  -- Значения для списка-меню:
-  local BoxLen = RM_Props.BoxKind and 2 or 0
-  local Info = EditorGetInfo()
-  local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
-  CfgData.WordsList = {
-    CorLenH = BoxLen + bshl(RM_Props.MenuEdge, 1), --+ (CfgData.HotChars and 2 or 0),
-    CorLenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
-    CorPosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
-    CorPosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
-    --CorPosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
-  } --
-  BoxLen, Info = nil
+  do -- Значения для списка-меню:
+    local BoxLen = RM_Props.BoxKind and 2 or 0
+    local Info = EditorGetInfo()
+    local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
+    CfgData.Popup = {
+      LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
+                    --+ (CfgData.HotChars and 2 or 0),
+      LenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
+      PosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
+      PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
+      --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
+    } --
+    BoxLen, Info = nil
+  end -- do
 
   -- Свойства набранного слова:
   -- Свойства отбора слов:
@@ -1100,9 +1165,11 @@ function unit.Execute (Data) --> (bool | nil)
     Props.Flags = delFlag(Props.Flags, F.FMENU_SHOWAMPERSAND)
   end
 
---[[ 2. Вызов с параметрами ]]
-  return MakeComplete(CfgData)
+--[[ 2. Управление Main ]]
+  return _Main:Run()
 end ---- Execute
+
+end -- do
 
 --------------------------------------------------------------------------------
 return unit
