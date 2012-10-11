@@ -134,9 +134,9 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
   return setmetatable(self, MMenu)
 end -- CreateMenu
 
-----------------------------------------
--- Menu making.
----------------------------------------- Common
+---------------------------------------- Menu making
+
+---------------------------------------- ---- Common
 
 -- Установка заголовка базового/главного меню.
 function TMenu:SetBaseTitle (Menu) --|> (Menu)
@@ -209,7 +209,7 @@ function TMenu:Finish ()
 end ---- Finish
 --]]
 
----------------------------------------- Properties
+---------------------------------------- ---- Properties
 
 -- Заполнение свойств для меню/пункта.
 function TMenu:FillProperties (Props, Table) --|> (Props)
@@ -248,7 +248,7 @@ function TMenu:ChangeProperties (Props, Table) --|> Props
   return Props
 end ----
 
----------------------------------------- User Item
+---------------------------------------- ---- User Item
 local ItemKinds = { -- Виды пунктов меню:
   Label     = "Label",    -- Метка
   Items     = "Menu",     -- Подменю
@@ -348,7 +348,7 @@ function TMenu:DefineMenuItem (Item) --| Item
   end
 end ---- DefineMenuItem
 
----------------------------------------- User Menu
+---------------------------------------- ---- User Menu
 
 -- Проверка на Главное меню.
 function TMenu:isMainMenu (Menu) --> (bool)
@@ -456,7 +456,7 @@ end ---- GetMenuTitle
 
 end -- do
 
----------------------------------------- FAR Item
+---------------------------------------- ---- FAR Item
 do
   local isSelection = farUt.IsSelection
 
@@ -506,7 +506,7 @@ end ----
 
 end -- do
 
----------------------------------------- FAR Menu
+---------------------------------------- ---- FAR Menu
 -- Формирование конфигурации текущего меню-таблицы.
 function TMenu:MakeMenuConfig () --> (table)
   --logShow(self.CurMenu.CfgData, "self.CurMenu.CfgData", 2)
@@ -665,9 +665,9 @@ end ---- MakeBreakKeys
 
 end -- do
 
-----------------------------------------
--- Menu control.
----------------------------------------- Action
+---------------------------------------- Menu control
+
+---------------------------------------- ---- Action
 do
   local runUt = require "Rh_Scripts.Utils.runUtils"
 
@@ -827,7 +827,7 @@ end ---- MakeAction
 
 end -- do
 
----------------------------------------- Show
+---------------------------------------- ---- Show
 do
   local DefBreakKeys = { --  BreakKeys по умолчанию:
     { BreakKey = "BS",      Action = "Back" },      -- Возврат в надменю
@@ -943,7 +943,7 @@ end ---- ShowLoop
 
 end -- do
 
----------------------------------------- Run
+---------------------------------------- ---- Run
 do
   local NoRetKinds = {
     Sequence  = true,
