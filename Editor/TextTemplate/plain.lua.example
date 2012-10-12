@@ -1,6 +1,10 @@
--- TextTemplate
--- Примеры шаблонов.
+--[[ TT: plain ]]--
 
+----------------------------------------
+--[[ description:
+  -- Templates for 'plain'.
+  -- Шаблоны для 'plain'.
+--]]
 --------------------------------------------------------------------------------
 -- Make Result upper.
 local function upperRes (Cfg) --> (string)
