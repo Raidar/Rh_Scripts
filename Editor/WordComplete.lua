@@ -77,7 +77,7 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
---[[
+-- [[
 local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -138,6 +138,21 @@ local KeyActionNames = {
 } --- KeyActionNames
 
 local KeyActions = macUt.MacroActions.editor.plain
+
+---------------------------------------- Custom
+local ScriptName = "WordComplete"
+local ScriptAuto = "AutoComplete"
+local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
+
+local DefCustom = {
+  name = ScriptName,
+  path = ScriptPath,
+
+  label = "WC",
+
+  help   = { topic = ScriptName },
+  locale = { kind = 'load' },
+} --- DefCustom
 
 ---------------------------------------- Config
 local DefCfgData = { -- Конфигурация по умолчанию:
@@ -217,7 +232,9 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = "AutoComplete",
+    name = ScriptAuto,
+    --help   = { topic = ScriptName },
+    locale = { kind = 'load', file =  ScriptName },
   }, --
 } --- AutoCfgData
 unit.AutoCfgData = AutoCfgData
@@ -274,19 +291,6 @@ local DlgTypes = { -- Типы элементов диалогов:
 } --- DlgTypes
 
 ---------------------------------------- Configure
-local ScriptName = "WordComplete"
-local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
-
-local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
-
-  label = "WC",
-
-  help   = { topic = ScriptName },
-  locale = { kind = 'load' },
-} --- DefCustom
-
 -- Обработка конфигурации.
 local function Configure (ArgData)
   -- 1. Заполнение ArgData.

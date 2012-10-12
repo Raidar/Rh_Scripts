@@ -75,6 +75,21 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
+---------------------------------------- Custom
+local ScriptName = "TextTemplate"
+local ScriptAuto = "AutoTemplate"
+local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
+
+local DefCustom = {
+  name = ScriptName,
+  path = ScriptPath,
+
+  label = "TT",
+
+  help   = { topic = ScriptName },
+  locale = { kind = 'load' },
+} --- DefCustom
+
 ---------------------------------------- Config
 local DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
@@ -101,10 +116,12 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = "AutoTemplate",
+    name = ScriptAuto,
     --options = {
     --  KitName  = "AutoTemplate",
     --},
+    help   = { topic = ScriptName },
+    locale = { kind = 'load', file = ScriptName },
   }, --
 } --- AutoCfgData
 unit.AutoCfgData = AutoCfgData
@@ -125,23 +142,10 @@ local DlgTypes = {
 } --- DlgTypes
 
 ---------------------------------------- Configure
-local ScriptName = "TextTemplate"
-local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
-
-local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
-
-  label = "TT",
-
-  help   = { topic = ScriptName },
-  locale = { kind = 'load' },
-} --- DefCustom
-
 local DefOptions = {
-  KitName  = "TextTemplate",
+  KitName  = ScriptName,
   BaseDir  = "Rh_Scripts.Editor",
-  WorkDir  = "TextTemplate",
+  WorkDir  = ScriptName,
   FileName = "kit_config",
 } ---
 
