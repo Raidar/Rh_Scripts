@@ -337,7 +337,7 @@ local function CheckMacroRep (Text, Pos) --> (string | nil)
 end -- CheckMacroRep
 
 -- Разбор макроса-шаблона.
-local function MakeTemplate (Text, MacroKeyChar) --> (table)
+local function Make (Text, MacroKeyChar) --> (table)
   --assert(Text)
   local MacroKeyChar = MacroKeyChar or DefMacroKeyChar
 
@@ -387,10 +387,10 @@ local function MakeTemplate (Text, MacroKeyChar) --> (table)
   --logShow(t, Text)
 
   return t
-end -- MakeTemplate
+end -- Make
 
 -- Выполнение действий макроса-шаблона.
-local function Exec (Macro) --> (bool | nil, Action)
+local function Play (Macro) --> (bool | nil, Action)
   local Actions = EditorMacroActions() -- Действия
   local InsText = Actions.text -- Вставка текста
 
@@ -412,10 +412,10 @@ local function Exec (Macro) --> (bool | nil, Action)
   end
 
   return true
-end -- Exec
+end -- Play
 
 -- Выполнение разобранного макроса-шаблона.
-local function ExecTemplate (Macro) --> (bool | nil, Action)
+local function Exec (Macro) --> (bool | nil, Action)
 
   if not farEdit.UndoRedo(nil, F.EUR_BEGIN) then
     return nil, "Begin UndoRedo"
@@ -437,14 +437,14 @@ local function ExecTemplate (Macro) --> (bool | nil, Action)
   farEdit.Redraw()
 
   return true
-end -- ExecTemplate
+end -- Exec
 
 -- Выполнение макроса (с разбором)
-function unit.RunMacro (Macro) --> (bool)
-  local t = MakeTemplate(Macro)
+function unit.Execute (Macro) --> (bool)
+  local t = Make(Macro)
   --logShow(t, Item.Macro)
 
-  return ExecTemplate(t)
+  return Exec(t)
 end ----
 
 MacroActions.use = {
@@ -462,10 +462,10 @@ MacroActions.run = {
   CheckMacroPos = CheckMacroPos,
   CheckMacroRep = CheckMacroRep,
 
-  Make      = MakeTemplate,
+  Make      = Make,
+  Play      = Play,
   Exec      = Exec,
-  Execute   = ExecTemplate,
-  Macro     = unit.RunMacro,
+  Macro     = unit.Execute,
 } ---
 
 --------------------------------------------------------------------------------

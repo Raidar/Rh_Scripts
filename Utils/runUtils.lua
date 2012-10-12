@@ -147,7 +147,7 @@ do
 -- Execute: macro-template.
 -- Выполнение: макро-шаблон.
 function unit.Macro (Value) --> (true | nil, error)
-  local Result, SError = macUt.RunMacro(Value)
+  local Result, SError = macUt.Execute(Value)
   if Result == nil then return nil, SError end
 
   return true
