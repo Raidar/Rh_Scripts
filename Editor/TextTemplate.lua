@@ -31,7 +31,8 @@ local setmetatable = setmetatable
 ----------------------------------------
 local bit = bit64
 --local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+local bshr = bit.rshift
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local win, far, regex = win, far, regex
@@ -53,19 +54,18 @@ local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
-local newFlags = utils.newFlags
-local isFlag, delFlag = utils.isFlag, utils.delFlag
+local isFlag = utils.isFlag
 
 local addNewData = tables.extend
 
 ----------------------------------------
 local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local extUt = require "Rh_Scripts.Utils.extUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
+--local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -195,7 +195,7 @@ local function Dlg (Config) --> (dialog)
   local H = DBox.Height - (isSmall and 1 or 2)
   local W = DBox.Width  - (isSmall and 0 or 2)
   local M = bshr(W, 1) -- Medium -- Width/2
-  local Q = bshr(M, 1) -- Quarta -- Width/4
+  --local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
   local A, B = I + 2, M + 2
   -- Some controls' sizes:
@@ -244,7 +244,7 @@ function unit.ConfigDlg (Data)
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
   -- Конфигурация:
-  local isAuto  = Config.Custom.isAuto
+  --local isAuto  = Config.Custom.isAuto
   local isSmall = Config.Custom.isSmall
   --if isSmall == nil then isSmall = true end
   -- Подготовка:
@@ -276,7 +276,25 @@ function unit.ConfigDlg (Data)
   end
 end ---- ConfigDlg
 
----------------------------------------- Regex
+---------------------------------------- Main class
+local TMain = {
+  Guid = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
+}
+local MMain = { __index = TMain }
+
+-- Создание объекта основного класса.
+local function CreateMain (Config)
+
+  local self = {
+    Config    = Config,
+  } ---
+
+  return setmetatable(self, MMain)
+end -- CreateMain
+
+---------------------------------------- Main making
+
+---------------------------------------- ---- Regex
 local far_find, far_gsub = regex.find, regex.gsub
 
 local find = {
@@ -302,53 +320,91 @@ local function sgsub (s, pat, res, flags, regex) --> (number | nil)
   if res and gsub[regex] then return gsub[regex](s, pat, res, flags) end
 end --
 
----------------------------------------- Templates
+---------------------------------------- ---- Prepare
 local TplKits = {} -- Наборы шаблонов
-
--- MAYBE: Сделать загрузку в зависимости от типа текущего файла!!??
-
-local format = string.format
-local prequire, newprequire = luaUt.prequire, luaUt.newprequire
 
 local CharControl = extUt.CharControl
 
--- Fill table with templates.
--- Заполнение таблицы шаблонов.
-local function FillTemplatesData (Config)
+-- -- Get kit templates for type tp.
+-- -- Получение шаблонов набора для типа tp.
+function TMain:KitTpls (Kit, tp)
+  --logShow(Kit, tp, 2)
+  local Tpls = Kit[tp]
+  if type(Tpls) == 'table' then return Tpls end
+
+  local v = Kit._KitCfg_[tp]
+  if not v then return end -- No file for type
+
+  local n = type(v) == 'string' and v ~= "" and v or tostring(tp)
+  Tpls = Kit._require_(Kit._FullDir_..n)
+  Kit[tp] = Tpls
+
+  if Tpls then
+    Tpls.regex = (Tpls.regex == nil or
+                  Tpls.regex == true) and "lua" or Tpls.regex or "none"
+    addNewData(Tpls, DefCfgData)
+    --if not Tpls.CharEnum and Cfg then Tpls.CharEnum = Cfg.CharEnum end
+    --if Cfg then addNewData(Tpls, Cfg) end -- For separate use!
+    --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
+    Tpls.CharControl = CharControl(Tpls)
+  end
+  --logShow(Tpls, tp, 2)
+
+  return Tpls
+end -- KitTpls
+
+do
+  local prequire, newprequire = luaUt.prequire, luaUt.newprequire
+
+-- -- Make templates kit.
+-- -- Формирование набора шаблонов.
+function TMain:MakeKit ()
+
   --far.Message("Load text templates", "Update")
-  local Options = Config.Custom.options
+  local Options = self.Config.Custom.options
   local Kit = TplKits[Options.KitName]
   --logShow(Kit, "Kit", 2)
-  if Kit then return end -- TODO: Убрать в случае избират. загрузки.
-  --local dorequire = newprequire -- For separate use!
-  local dorequire = Kit == false and newprequire or prequire
-  local FullDir = format("%s.%s.", Options.BaseDir, Options.WorkDir)
-  local typesBind = dorequire(FullDir..Options.FileName)
-  if typesBind == nil then return end -- No templates
+  if not Kit then
+    --local dorequire = newprequire -- For separate use!
+    local dorequire = Kit == false and newprequire or prequire
+    local FullDir = string.format("%s.%s.", Options.BaseDir, Options.WorkDir)
+    local KitCfg = dorequire(FullDir..Options.FileName)
+    if KitCfg == nil then return end -- No templates
 
-  Kit = {}; TplKits[Options.KitName] = Kit
-  local Cfg = Config.CfgData
-
-  for k, v in pairs(typesBind) do
-    local n = type(v) == 'string' and v ~= "" and v or tostring(k)
-    Kit[k] = dorequire(FullDir..n)
-
-    local w = Kit[k]
-    if w then
-      w.regex = (w.regex == nil or w.regex == true) and "lua" or w.regex or "none"
-      addNewData(w, DefCfgData)
-      --if not w.CharEnum and Cfg then w.CharEnum = Cfg.CharEnum end
-      --if Cfg then addNewData(w, Cfg) end -- For separate use!
-      --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
-      w.CharControl = CharControl(w)
-    end
+    Kit = {
+      _require_ = dorequire,
+      _FullDir_ = FullDir,
+      _KitCfg_  = KitCfg,
+    }
+    TplKits[Options.KitName] = Kit
   end
+
+  local Cfg = self.Config.CfgData
   --logShow(Kit, "Kit", 2)
 
-  return Kit
-end -- FillTemplatesData
+  return self:KitTpls(Kit, Cfg.Current.FileType)
+end -- MakeKit
 
----------------------------------------- Words
+end -- do
+do
+  local curFileType = detect.area.current
+
+-- Подготовка.
+-- Preparing.
+function TMain:Prepare ()
+
+  local Cfg = self.Config.CfgData
+
+  if not Cfg.CharEnum then Cfg.CharEnum = "%S" end
+                 --| Тип текущего файла, открытого в редакторе:
+  Cfg.Current = { FileType = Cfg.FileType or curFileType() }
+
+  return self:MakeKit()
+end -- Prepare
+
+end -- do
+
+---------------------------------------- ---- Words
 local makeplain = strings.makeplain
 
 local cfgFirstType = detect.use.configType
@@ -356,21 +412,25 @@ local cfgNextType  = detect.use.configNextType
 
 -- Find templates in line.
 -- Поиск шаблонов в строке.
-local function FindTemplate (Config) --> (table)
-  local Kit = TplKits[Config.Custom.options.KitName]
+function TMain:FindTemplate () --> (table)
+
+  local Kit = TplKits[self.Config.Custom.options.KitName]
   if not Kit then return end
   --logShow(Kit, Config.Custom.options.KitName, 1)
-  local Cfg = Config.CfgData
+
+  local Cfg = self.Config.CfgData
   --logShow(Cfg, "FindTemplate", "d2 t")
   local CfgCur = Cfg.Current
   local CurSlab = CfgCur.Slab -- CfgCur.Frag
 
   local t, tLast = {} -- Результаты поиска
   -- Цикл поиска по всем подходящим типам:
-  local tp = cfgFirstType(CfgCur.FileType, Kit)
+  local tp = cfgFirstType(CfgCur.FileType, Kit._KitCfg_)
   while tp do
     --logShow(t, tp)
-    local Tpls, noSkip = Kit[tp], true
+    local noSkip = true
+    local Tpls = self:KitTpls(Kit, tp)
+    if not Tpls then break end
     --logShow(Tpls, tp, 1)
     --logShow({ Tpls, Cfg, Cfg.CharEnum }, tp, 1)
 
@@ -427,7 +487,7 @@ local function FindTemplate (Config) --> (table)
         end -- if p
       end -- for
     end -- if noSkip
-    tp = cfgNextType(tp, Kit)
+    tp = cfgNextType(tp, Kit._KitCfg_)
   end -- while
 
   --if #t > 0 then logShow(t, "FindTemplate") end
@@ -437,22 +497,27 @@ local function FindTemplate (Config) --> (table)
   return tLast and t or nil
 end -- FindTemplate
 
----------------------------------------- Apply
-local EC_Actions = macUt.MacroActions.editor.cycle
-local DelChars = EC_Actions.del
---local BackChars = EC_Actions.bs
+---------------------------------------- Main control
 
-local RunMacro = macUt.RunMacro
+---------------------------------------- ---- Apply
+do
+  local EC_Actions = macUt.MacroActions.editor.cycle
+  local DelChars = EC_Actions.del
+  --local BackChars = EC_Actions.bs
 
-local function RunPlain (text) --> (bool)
-  if not EditorInsText(nil, text) then return end
-  EditorRedraw()
-  return true
-end --
+  local RunMacro = macUt.RunMacro
+
+  local function RunPlain (text) --> (bool)
+    if not EditorInsText(nil, text) then return end
+    EditorRedraw()
+    return true
+  end --
 
 -- Apply found template.
 -- Применение найденного шаблона.
-local function ApplyTemplate (Cfg)
+function TMain:ApplyTemplate ()
+
+  local Cfg = self.Config.CfgData
   --logShow(Cfg, "Cfg", "d2 t")
   --logShow(Cfg.Template, "Template", "d1 t")
   local CfgCur, CfgTpl = Cfg.Current, Cfg.Template
@@ -510,16 +575,16 @@ local function ApplyTemplate (Cfg)
     end
   end
 
-  return false
+  return false -- Шаблон не применён
 end -- ApplyTemplate
 
----------------------------------------- Make
-local function MakeTemplate (Config) --> (bool | nil)
+end -- do
+---------------------------------------- ---- Make
+function TMain:MakeTemplate () --> (bool | nil)
 
---[[ 1. Конфигурирование TextTemplate ]]
-  local Cfg = Config.CfgData
+  local Cfg = self.Config.CfgData
 
---[[ 1.1. Анализ текущей строки ]]
+--[[ 1. Анализ текущей строки ]]
 
   --logShow(Cfg, "CfgData")
   local Ctrl = CharControl(Cfg) -- Функции управления словом
@@ -541,48 +606,41 @@ local function MakeTemplate (Config) --> (bool | nil)
   --if Word then logShow(Cfg.Current) end
   CfgCur.Frag = CfgCur.Line:sub(1, CfgCur.Pos - 1)
 
---[[ 2. Управление шаблоном TextTemplate ]]
-
---[[ 2.1. Поиск шаблонов в строке ]]
+--[[ 2. Поиск шаблонов в строке ]]
   -- Получение подходящего шаблона:
-  local CfgTpl = FindTemplate(Config)
+  local CfgTpl = self:FindTemplate()
   if not CfgTpl then return false end
   --logShow(CfgTpl, "Templates", "d1 t")
   --Cfg.Templates = CfgTpl
 
---[[ 2.2. Обработка найденных шаблонов ]]
+--[[ 3. Обработка найденных шаблонов ]]
   local k, isOk = 1, false
   -- Поиск по всем до первого сработавшего:
   while isOk == false and k <= #CfgTpl do
     Cfg.Template, k = CfgTpl[k], k + 1
-    isOk = ApplyTemplate(Cfg)
+    isOk = self:ApplyTemplate()
   end --
 
   return isOk
 end -- MakeTemplate
 
 ---------------------------------------- main
-local curFileType = detect.area.current
 
 function unit.Execute (Data) --> (bool | nil)
---[[ 1. Разбор параметров ]]
+
   -- Конфигурация:
   local Config = Configure(Data)
-  local CfgData = Config.CfgData
+  local _Main = CreateMain(Config)
+
   --logShow(Data, "Data", 2)
   --logShow(Config, "Config", "_d2")
-  --logShow(CfgData, "CfgData", 2)
+  --logShow(Config.CfgData, "CfgData", 2)
   --logShow(Config.ArgData, "ArgData", 2)
-  if not CfgData.Enabled then return end
-  if not CfgData.CharEnum then CfgData.CharEnum = "%S" end
-                    --| Тип текущего файла, открытого в редакторе:
-  CfgData.Current = { FileType = CfgData.FileType or curFileType() }
+  if not Config.CfgData.Enabled then return end
 
-  -- Формирование таблицы шаблонов
-  FillTemplatesData(Config)
+  _Main:Prepare() -- Подготовка
 
---[[ 2. Вызов с параметрами ]]
-  return MakeTemplate(Config)
+  return _Main:MakeTemplate()
 end ---- Execute
 
 -- Сброс шаблонов для перезагрузки из файлов.
