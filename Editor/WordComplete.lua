@@ -77,7 +77,7 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
--- [[
+--[[
 local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -91,53 +91,23 @@ local usercall = farUt.usercall
 local RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
 
 ---------------------------------------- Keys
--- Названия действий завершения.
-local ActionNames = {
-  Cancel  = "Cancel",
-  Replace = "Replace",
-  Insert  = "Insert",
-} --- ActionNames
-local EffectNames = {
-  Shared  = "Shared",
-} --- EffectNames
+-- Названия действий.
+local A_Cancel  = "Cancel"
+local A_Replace = "Replace"
+local A_Insert  = "Insert"
+local E_Shared  = "Shared"
 
-local A_Cancel  = ActionNames.Cancel
-local A_Replace = ActionNames.Replace
-local A_Insert  = ActionNames.Insert
-local E_Shared  = EffectNames.Shared
-
-local CompleteKeys = { -- Клавиши завершения слова:
+unit.CompleteKeys = { -- Клавиши завершения слова:
   { BreakKey = "Tab",           Action = A_Replace },
   { BreakKey = "ShiftTab",      Action = A_Insert  },
   { BreakKey = "ShiftEnter",    Action = A_Insert  },
   { BreakKey = "ShiftNumEnter", Action = A_Insert  },
 } --- CompleteKeys
-local LocalUseKeys = { -- Клавиши локального использования:
+
+unit.LocalUseKeys = { -- Клавиши локального использования:
   { BreakKey = "CtrlEnter",       Action = A_Replace, Effect = E_Shared },
   { BreakKey = "CtrlShiftEnter",  Action = A_Insert,  Effect = E_Shared },
 } --- LocalUseKeys
-
--- Символы спец. клавиш:
-local SpecKeyChars = {
-  Decimal   = '.',
-  Multiply  = '*',
-  Add       = '+',
-  Subtract  = '-',
-  Divide    = '/',
-} --- SpecKeyChars
-
--- Названия действий клавиш.
-local KeyActionNames = {
-  Del       = "del",
-  BS        = "bs",
-  Left      = "left",
-  Right     = "right",
-  Up        = "up",
-  Down      = "down",
-  NumDel    = "del",
-} --- KeyActionNames
-
-local KeyActions = macUt.MacroActions.editor.plain
 
 ---------------------------------------- Custom
 local ScriptName = "WordComplete"
@@ -303,8 +273,8 @@ local function Configure (ArgData)
   local History = datas.newHistory(Custom.history.full)
   local CfgData = History:field(Custom.history.field)
   local WMenu = CfgData.Menu or {}; CfgData.Menu = WMenu
-  WMenu.CKeys = WMenu.CKeys or CompleteKeys
-  WMenu.LKeys = WMenu.LKeys or LocalUseKeys
+  WMenu.CKeys = WMenu.CKeys or unit.CompleteKeys
+  WMenu.LKeys = WMenu.LKeys or unit.LocalUseKeys
   -- 3. Дополнение конфигурации.
   setmetatable(CfgData, { __index = ArgData })
   --logShow(CfgData, "CfgData")
@@ -494,6 +464,84 @@ end -- CreateMain
 
 ---------------------------------------- Main making
 
+---------------------------------------- ---- Prepare
+do
+  local Colors = menUt.MenuColors()
+  local setBG = colors.setBG
+  local HighlightOff = menUt.HighlightOff
+
+  -- Названия элементов для изменения цвета.
+  local Col_MenuSelText = "COL_MENUSELECTEDTEXT"
+  local Col_MenuSelMark = "COL_MENUSELECTEDMARKTEXT"
+  local Col_MenuSelHigh = "COL_MENUSELECTEDHIGHLIGHT"
+
+function TMain:MakeProps ()
+
+end -- MakeProps
+
+-- Подготовка.
+-- Preparing.
+function TMain:Prepare ()
+
+  local Cfg = self.Config.CfgData
+
+  -- Свойства меню:
+  local WMenu = Cfg.Menu
+  local Props = WMenu.Props or {}
+  WMenu.Props = Props
+  Props.Title = ""
+  --Props.Title = "Completion"
+  Props.Flags = F.FMENU_WRAPMODE
+  Props.Flags = HighlightOff(Props.Flags)
+
+  -- Клавиши локального использования:
+  WMenu.LBKeys = menUt.ParseMenuHandleKeys(WMenu.LKeys)
+
+  -- Свойства RectMenu:
+  local RM_Props = Props.RectMenu or {}
+  Props.RectMenu = RM_Props
+  RM_Props.Cols = 1
+  RM_Props.BoxKind = "S"
+  RM_Props.NoShadow = true
+  --RM_Props.MenuOnly = true
+  RM_Props.Colors = {
+    [Col_MenuSelText] = setBG(Colors[Col_MenuSelText], 0x1),
+    [Col_MenuSelMark] = setBG(Colors[Col_MenuSelMark], 0x1),
+    [Col_MenuSelHigh] = setBG(Colors[Col_MenuSelHigh], 0x1),
+  } --
+  RM_Props.MenuEdge = 0 --1
+  RM_Props.AltHotOnly = true
+
+  do -- Значения для списка-меню:
+    local BoxLen = RM_Props.BoxKind and 2 or 0
+    local Info = EditorGetInfo()
+    local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
+    Cfg.Popup = {
+      LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
+                    --+ (Cfg.HotChars and 2 or 0),
+      LenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
+      PosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
+      PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
+      --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
+    } --
+    BoxLen, Info = nil
+  end -- do
+
+  -- Свойства набранного слова:
+  -- Свойства отбора слов:
+  -- Свойства сортировки:
+  -- Свойства списка слов:
+  -- Свойства завершения слова:
+
+  -- Свойства меню:
+  if Cfg.HotChars then
+    Props.Flags = delFlag(Props.Flags, F.FMENU_SHOWAMPERSAND)
+  end
+
+  return self:MakeProps()
+end -- Prepare
+
+end -- do
 ---------------------------------------- ---- List
 -- Поиск слов, подходящих к текущему.
 function TMain:SearchWords (Ctrl) --> (table)
@@ -878,6 +926,7 @@ function TMain:MakeWordsList (Props) --> (table)
 end -- MakeWordsList
 
 end -- do
+
 ---------------------------------------- Main control
 local function InsText (text)
   return EditorInsText(nil, text)
@@ -922,9 +971,32 @@ do
   local LuaCards    = extUt.const.LuaCards
   --local LuaCardsSet = extUt.const.LuaCardsSet
 
+  -- Флаги.
   local WC_Flags = { isRedraw = false, isRedrawAll = true }
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
+
+  -- Символы спец. клавиш:
+  local SpecKeyChars = {
+    Decimal   = '.',
+    Multiply  = '*',
+    Add       = '+',
+    Subtract  = '-',
+    Divide    = '/',
+  } --- SpecKeyChars
+
+  -- Названия действий клавиш.
+  local KeyActionNames = {
+    Del       = "del",
+    BS        = "bs",
+    Left      = "left",
+    Right     = "right",
+    Up        = "up",
+    Down      = "down",
+    NumDel    = "del",
+  } --- KeyActionNames
+
+  local KeyActions = macUt.MacroActions.editor.plain
 
 function TMain:Run () --> (bool | nil)
 
@@ -1091,89 +1163,22 @@ end -- Run
 end -- do
 
 ---------------------------------------- main
-do
-  local Colors = menUt.MenuColors()
-  local setBG = colors.setBG
-  local HighlightOff = menUt.HighlightOff
-
-  -- Названия элементов для изменения цвета.
-  local Col_MenuSelText = "COL_MENUSELECTEDTEXT"
-  local Col_MenuSelMark = "COL_MENUSELECTEDMARKTEXT"
-  local Col_MenuSelHigh = "COL_MENUSELECTEDHIGHLIGHT"
 
 function unit.Execute (Data) --> (bool | nil)
-
---[[ 1. Конфигурирование Main ]]
 
   -- Конфигурация:
   local Config = Configure(Data)
   local _Main = CreateMain(Config)
 
-  local CfgData = _Main.Config.CfgData
-
   --logShow(Data, "Data", 2)
-  --logShow(_Main.Config, "Config", "_d2")
-  --logShow(_Main.CfgData, "CfgData", 2)
-  if not CfgData.Enabled then return end
+  --logShow(Config, "Config", "_d2")
+  --logShow(Config.CfgData, "CfgData", 2)
+  if not Config.CfgData.Enabled then return end
 
-  -- Свойства меню:
-  local WMenu = CfgData.Menu
-  local Props = WMenu.Props or {}
-  WMenu.Props = Props
-  Props.Title = ""
-  --Props.Title = "Completion"
-  Props.Flags = F.FMENU_WRAPMODE
-  Props.Flags = HighlightOff(Props.Flags)
+  _Main:Prepare() -- Подготовка
 
-  -- Клавиши локального использования:
-  WMenu.LBKeys = menUt.ParseMenuHandleKeys(WMenu.LKeys)
-
-  -- Свойства RectMenu:
-  local RM_Props = Props.RectMenu or {}
-  Props.RectMenu = RM_Props
-  RM_Props.Cols = 1
-  RM_Props.BoxKind = "S"
-  RM_Props.NoShadow = true
-  --RM_Props.MenuOnly = true
-  RM_Props.Colors = {
-    [Col_MenuSelText] = setBG(Colors[Col_MenuSelText], 0x1),
-    [Col_MenuSelMark] = setBG(Colors[Col_MenuSelMark], 0x1),
-    [Col_MenuSelHigh] = setBG(Colors[Col_MenuSelHigh], 0x1),
-  } --
-  RM_Props.MenuEdge = 0 --1
-  RM_Props.AltHotOnly = true
-
-  do -- Значения для списка-меню:
-    local BoxLen = RM_Props.BoxKind and 2 or 0
-    local Info = EditorGetInfo()
-    local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
-    CfgData.Popup = {
-      LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
-                    --+ (CfgData.HotChars and 2 or 0),
-      LenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
-      PosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
-      PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
-      --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
-    } --
-    BoxLen, Info = nil
-  end -- do
-
-  -- Свойства набранного слова:
-  -- Свойства отбора слов:
-  -- Свойства сортировки:
-  -- Свойства списка слов:
-  -- Свойства завершения слова:
-
-  -- Свойства меню:
-  if CfgData.HotChars then
-    Props.Flags = delFlag(Props.Flags, F.FMENU_SHOWAMPERSAND)
-  end
-
---[[ 2. Управление Main ]]
   return _Main:Run()
 end ---- Execute
-
-end -- do
 
 --------------------------------------------------------------------------------
 return unit
