@@ -65,7 +65,7 @@ local extUt = require "Rh_Scripts.Utils.extUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -82,7 +82,7 @@ local ScriptName = "TextTemplate"
 local ScriptAuto = "AutoTemplate"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
-local DefCustom = {
+unit.DefCustom = {
   name = ScriptName,
   path = ScriptPath,
 
@@ -93,7 +93,7 @@ local DefCustom = {
 } --- DefCustom
 
 ----------------------------------------
-local DefOptions = {
+unit.DefOptions = {
   KitName  = ScriptName,
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = ScriptName,
@@ -101,7 +101,7 @@ local DefOptions = {
 } ---
 
 ---------------------------------------- ---- Config
-local DefCfgData = { -- Конфигурация по умолчанию:
+unit.DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
   -- Свойства набранного слова:
   CharEnum = "%S",   -- Допустимые символы слова.
@@ -110,10 +110,10 @@ local DefCfgData = { -- Конфигурация по умолчанию:
   UsePoint = false,  -- Использование символа '.' как "магического".
   UseInside  = true, -- Использование внутри слов.
   UseOutside = true, -- Использование вне слов.
-} --- DefCfgData
+} -- DefCfgData
 
 ----------------------------------------
-local AutoCfgData = { -- Конфигурация для авто-режима:
+unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Enabled = true,
   -- Свойства набранного слова:
   CharEnum = ".",
@@ -133,23 +133,20 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
     help   = { topic = ScriptName },
     locale = { kind = 'load', file = ScriptName },
   }, --
-} --- AutoCfgData
-unit.AutoCfgData = AutoCfgData
+} -- AutoCfgData
 
 ---------------------------------------- ---- Types
--- Типы элементов диалогов:
-local DlgTypes = {
+unit.DlgTypes = { -- Типы элементов диалога:
   Enabled = "chk",
   -- Свойства набранного слова:
   CharEnum = "edt",
   CharsMin = { Type = "edt", Format = "number",
-               --Default = DefCfgData.CharsMin,
                Range = { min = 0, max = 10 }, },
   UseMagic = "chk",
   UsePoint = "chk",
   UseInside  = "chk",
   UseOutside = "chk",
-} --- DlgTypes
+} -- DlgTypes
 
 ---------------------------------------- Main class
 local TMain = {
@@ -162,25 +159,25 @@ local MMain = { __index = TMain }
 local function CreateMain (ArgData)
 
   -- 1. Заполнение ArgData.
-  if ArgData == "AutoCfgData" then ArgData = AutoCfgData end
+  if ArgData == "AutoCfgData" then ArgData = unit.AutoCfgData end
 
   local self = {
-    ArgData = addNewData(ArgData, DefCfgData),
+    ArgData = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
     Options   = false,
     History   = false,
     CfgData   = false,
-    DlgTypes  = DlgTypes,
+    DlgTypes  = unit.DlgTypes,
 
     Current   = false,
   } ---
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
-  self.Custom = datas.customize(self.ArgData.Custom, DefCustom)
+  self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   --self.Custom.options.KitName = self.Custom.options.KitName or self.Custom.name
-  self.Options = addNewData(self.Custom.options, DefOptions)
+  self.Options = addNewData(self.Custom.options, unit.DefOptions)
   --logShow(self.ArgData, "ArgData")
 
   -- 2. Заполнение конфигурации.
@@ -347,7 +344,7 @@ function TMain:KitTpls (Kit, tp)
   if Tpls then
     Tpls.regex = (Tpls.regex == nil or
                   Tpls.regex == true) and "lua" or Tpls.regex or "none"
-    addNewData(Tpls, DefCfgData)
+    addNewData(Tpls, unit.DefCfgData)
     --if not Tpls.CharEnum and Cfg then Tpls.CharEnum = Cfg.CharEnum end
     --if Cfg then addNewData(Tpls, Cfg) end -- For separate use!
     --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end

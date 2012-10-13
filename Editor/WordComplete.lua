@@ -116,7 +116,7 @@ local ScriptName = "WordComplete"
 local ScriptAuto = "AutoComplete"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
-local DefCustom = {
+unit.DefCustom = {
   name = ScriptName,
   path = ScriptPath,
 
@@ -127,7 +127,7 @@ local DefCustom = {
 } --- DefCustom
 
 ---------------------------------------- ---- Config
-local DefCfgData = { -- Конфигурация по умолчанию:
+unit.DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
   -- Свойства набранного слова:
   CharEnum = "%w_",  -- Допустимые символы слова.
@@ -165,10 +165,10 @@ local DefCfgData = { -- Конфигурация по умолчанию:
   UndueOut = false,   -- Отмена завершения при неверных клавишах.
   LoneAuto = false,   -- Автодополнение при одном слове в списке.
   TailOnly = false,   -- Добавление только ненабранной части слова.
-} --- DefCfgData
+} -- DefCfgData
 
 ----------------------------------------
-local AutoCfgData = { -- Конфигурация для авто-режима:
+unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Enabled = true,
   -- Свойства набранного слова:
   CharEnum = "%w_",
@@ -208,16 +208,57 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
     --help   = { topic = ScriptName },
     locale = { kind = 'load', file =  ScriptName },
   }, --
-} --- AutoCfgData
-unit.AutoCfgData = AutoCfgData
+} -- AutoCfgData
+
+----------------------------------------
+unit.CodeCfgData = { -- Конфигурация для кодо-режима:
+  Enabled = true,
+  -- Свойства набранного слова:
+  CharEnum = "%w_",
+  CharsMin = 4,
+  UseMagic = false,
+  UsePoint = false,
+  UseInside  = false,
+  UseOutside = false,
+  -- Свойства отбора слов:
+  FindKind  = "alternate",
+  FindsMax  = 8,
+  MinLength = 4,
+  PartFind  = false,
+  MatchCase = false,
+  LinesUp   = 500,
+  LinesDown = 100,
+  -- Свойства сортировки:
+  SortKind = "searching",
+  SortsMin = 16,
+  -- Свойства списка слов:
+  ListsMax = 1,
+  SlabMark = true,
+  HotChars  = false,
+  ActionAlt = false,
+  EmptyList  = false,
+  EmptyStart = false,
+  -- Свойства завершения слова:
+  Trailers = "",
+  UndueOut = true,
+  LoneAuto = false,
+  TailOnly = false,
+  -- Специальные параметры:
+  Custom = {
+    isAuto = true,
+    --isSmall = false,
+    name = ScriptAuto,
+    --help   = { topic = ScriptName },
+    locale = { kind = 'load', file =  ScriptName },
+  }, --
+} -- CodeCfgData
 
 ---------------------------------------- ---- Types
-local DlgTypes = { -- Типы элементов диалогов:
+unit.DlgTypes = { -- Типы элементов диалога:
   Enabled = "chk",
   -- Свойства набранного слова:
   CharEnum = "edt",
   CharsMin = { Type = "edt", Format = "number",
-               --Default = DefCfgData.CharsMin,
                Range = { min = 0, max = 10 }, },
   UseMagic = "chk",
   UsePoint = "chk",
@@ -225,30 +266,24 @@ local DlgTypes = { -- Типы элементов диалогов:
   UseOutside = "chk",
   -- Свойства отбора слов:
   MinLength = { Type = "edt", Format = "number",
-                --Default = DefCfgData.MinLength,
                 Range = { min = 2, max = 9 }, },
   FindsMax = { Type = "edt", Format = "number",
-               --Default = DefCfgData.FindsMax,
                Range = { min =  8, max = 500 }, },
   PartFind = "chk",
   MatchCase = "chk",
   FindKind = { Type = "cbx", Prefix = "FK_";
                "customary", "unlimited", "alternate", "trimmable" },
   LinesUp   = { Type = "edt", Format = "number",
-                --Default = DefCfgData.LinesUp,
                 Range = { min = 0, max = 10000 }, },
   LinesDown = { Type = "edt", Format = "number",
-                --Default = DefCfgData.LinesDown,
                 Range = { min = 0, max = 10000 }, },
   -- Свойства сортировки:
   SortKind = { Type = "cbx", Prefix = "SK_";
                "searching", "character", "closeness", "frequency" },
   SortsMin = { Type = "edt", Format = "number",
-               --Default = DefCfgData.SortsMin,
                Range = { min = 2, max = 50 }, },
   -- Свойства списка слов:
   ListsMax = { Type = "edt", Format = "number",
-               --Default = DefCfgData.ListsMax,
                Range = { min = 1, max = 100 }, },
   SlabMark = "chk",
   HotChars = "chk",
@@ -260,7 +295,7 @@ local DlgTypes = { -- Типы элементов диалогов:
   UndueOut = "chk",
   LoneAuto = "chk",
   TailOnly = "chk",
-} --- DlgTypes
+} -- DlgTypes
 
 ---------------------------------------- Main class
 local TMain = {
@@ -276,16 +311,16 @@ TMain.PopupGuid = TMain.Guid
 local function CreateMain (ArgData)
 
   -- 1. Заполнение ArgData.
-  if ArgData == "AutoCfgData" then ArgData = AutoCfgData end
+  if ArgData == "AutoCfgData" then ArgData = unit.AutoCfgData end
 
   local self = {
-    ArgData = addNewData(ArgData, DefCfgData),
+    ArgData = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
     Options   = false,
     History   = false,
     CfgData   = false,
-    DlgTypes  = DlgTypes,
+    DlgTypes  = unit.DlgTypes,
 
     Menu      = false,
 
@@ -300,7 +335,7 @@ local function CreateMain (ArgData)
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
-  self.Custom = datas.customize(self.ArgData.Custom, DefCustom)
+  self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
 
   -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
@@ -314,7 +349,6 @@ local function CreateMain (ArgData)
   setmetatable(self.CfgData, { __index = self.ArgData })
   --logShow(self.CfgData, "CfgData")
 
-  --self.DefCfgData = DefCfgData
   locale.customize(self.Custom) -- Инфо локализации
   --logShow(self.Custom, "Custom")
 
@@ -810,13 +844,16 @@ function TMain:PrepareMenu () --> (table)
 
   -- Создание таблицы пунктов меню.
   local Count = self.Words.n --or #self.Words
+  --logShow(self.Words, "Words for Items")
   local Width, Height = 0, Count
-  if Count == 0 and (self.Current.StartMenu and
-     not Cfg.EmptyStart or not Cfg.EmptyList) then
+  if Count == 0 and
+     (not Cfg.EmptyList or
+      self.Current.StartMenu and not Cfg.EmptyStart) then
     return
   end
 
   local Words = self.Words
+  --logShow(self.Words, "Words for Items")
   local Items = {}; self.Items = Items
   for k = 1, Count do
     local Word = Words[k]
@@ -885,6 +922,8 @@ function TMain:MakeWordsList () --> (table)
 
   local Cfg = self.CfgData
 
+  self.Items = false -- Сброс меню (!)
+
   -- Базовая информация о редакторе:
   local Info = EditorGetInfo() -- Сохранение базовой позиции
   --logShow(Info, "Editor Info")
@@ -916,6 +955,7 @@ function TMain:MakeWordsList () --> (table)
 
   -- Поиск подходящих слов в строках файла:
   local Words = self:SearchWords(); self.Words = Words
+  --logShow(self.Words, "Words", 1)
 
   EditorSetPos(nil, Info) -- Восстановление базовой позиции
 
@@ -924,8 +964,7 @@ function TMain:MakeWordsList () --> (table)
   Words.n = min2(#Words, lMax) -- Максимальное число слов
   local wLink = Words.Link -- Информация для closeness-сортировки
   wLink.Up, wLink.Down = wLink.Up or Words.n, wLink.Down or Words.n
-
-  --logShow(Words, "Words", 2)
+  --logShow(self.Words, "Words", 2)
 
 -- 3. Сортировка собранных слов.
 
@@ -1049,6 +1088,8 @@ function TMain:Run () --> (bool | nil)
       farUt.RedrawAll()
       -- Формирование нового списка-меню слов.
       self:MakeWordsList()
+      --logShow(self.Words, "MakeUpdate")
+      --logShow(self.Items, "MakeUpdate")
       if not self.Items then return nil, CloseFlag end
       --logShow(SelIndex, hex(FKey))
       return { self.Props, self.Items, WC_Keys }, WC_Flags
@@ -1083,7 +1124,7 @@ function TMain:Run () --> (bool | nil)
     --logShow({ Name }, VirKey.KeyName)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
-      --logShow(KeyAction, VirKey.KeyName)
+      --logShow(Name, VirKey.KeyName)
       return MakeUpdate()
     end
     if IsModAlt(VMod) then
