@@ -421,7 +421,7 @@ local function Exec (Macro) --> (bool | nil, Action)
     return nil, "Begin UndoRedo"
   end
 
-  local isOk, Action = Exec(Macro)
+  local isOk, Action = Play(Macro)
 
   if not farEdit.UndoRedo(nil, F.EUR_END) then
     return nil, "End UndoRedo"
