@@ -60,7 +60,7 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local extUt = require "Rh_Scripts.Utils.extUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
@@ -113,7 +113,8 @@ unit.LocalUseKeys = { -- Клавиши локального использов�
 
 ---------------------------------------- ---- Custom
 local ScriptName = "WordComplete"
-local ScriptAuto = "AutoComplete"
+local ScriptAutoName = "AutoComplete"
+local ScriptCodeName = "CodeComplete"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
 unit.DefCustom = {
@@ -168,6 +169,15 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 } -- DefCfgData
 
 ----------------------------------------
+unit.DefOptions = {
+  useSuit  = false,
+  SuitName = ScriptName,
+  BaseDir  = "Rh_Scripts.Editor",
+  WorkDir  = ScriptName,
+  FileName = "kit_config",
+} ---
+
+----------------------------------------
 unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Enabled = true,
   -- Свойства набранного слова:
@@ -204,10 +214,15 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptAuto,
+    name = ScriptAutoName,
     --help   = { topic = ScriptName },
     locale = { kind = 'load', file =  ScriptName },
   }, --
+  --[[
+  Options = {
+    SuitName = ScriptAutoName,
+  }, --
+  --]]
 } -- AutoCfgData
 
 ----------------------------------------
@@ -247,10 +262,16 @@ unit.CodeCfgData = { -- Конфигурация для кодо-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptAuto,
+    name = ScriptCodeName,
     --help   = { topic = ScriptName },
     locale = { kind = 'load', file =  ScriptName },
   }, --
+  -- [[
+  Options = {
+    useSuit = true,
+    --SuitName = ScriptCodeName,
+  }, --
+  --]]
 } -- CodeCfgData
 
 ---------------------------------------- ---- Types
@@ -311,7 +332,11 @@ TMain.PopupGuid = TMain.Guid
 local function CreateMain (ArgData)
 
   -- 1. Заполнение ArgData.
-  if ArgData == "AutoCfgData" then ArgData = unit.AutoCfgData end
+  if ArgData == "AutoCfgData" then
+    ArgData = unit.AutoCfgData
+  elseif CodeComplete then
+    ArgData = unit.CodeCfgData
+  end
 
   local self = {
     ArgData = addNewData(ArgData, unit.DefCfgData),
@@ -336,6 +361,7 @@ local function CreateMain (ArgData)
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
+  self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
   -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
@@ -513,6 +539,72 @@ end ---- ConfigDlg
 end -- do
 ---------------------------------------- Main making
 
+---------------------------------------- ---- KitSuit
+unit.KitSuit = {} -- Комплект наборов шаблонов
+
+local CharControl = extUt.CharControl
+
+-- -- Get kit templates for type tp.
+-- -- Получение шаблонов набора для типа tp.
+function TMain:TypeKit (Kits, tp)
+  --logShow(Kits, tp, 2)
+  local Kit = Kits[tp]
+  if type(Kit) == 'table' then return Kit end
+
+  local v = Kits._KitCfg_[tp]
+  if not v then return end -- No file for type
+
+  local n = type(v) == 'string' and v ~= "" and v or tostring(tp)
+  Kit = Kits._require_(Kits._FullDir_..n)
+  Kits[tp] = Kit
+
+  if Kit then
+    Kit.regex = (Kit.regex == nil or
+                 Kit.regex == true) and "lua" or Kit.regex or "none"
+    addNewData(Kit, unit.DefCfgData)
+    --if not Kit.CharEnum and Cfg then Kit.CharEnum = Cfg.CharEnum end
+    --if Cfg then addNewData(Kit, Cfg) end -- For separate use!
+    --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
+    Kit.CharControl = CharControl(Kit)
+  end
+  --logShow(Kit, tp, 2)
+
+  return Kit
+end -- TypeKit
+
+do
+  local prequire, newprequire = luaUt.prequire, luaUt.newprequire
+
+-- -- Make templates kit.
+-- -- Формирование набора шаблонов.
+function TMain:MakeKit ()
+  if not self.Options.useSuit then return end
+
+  --far.Message("Load text templates", "Update")
+  local Kits = unit.KitSuit[self.Options.SuitName]
+  --logShow(Kits, "Kits", 2)
+  if not Kits then
+    --local dorequire = newprequire -- For separate use!
+    local dorequire = Kits == false and newprequire or prequire
+    local FullDir = string.format("%s.%s.", self.Options.BaseDir,
+                                            self.Options.WorkDir)
+    local KitCfg = dorequire(FullDir..self.Options.FileName)
+    if KitCfg == nil then return end -- No templates
+
+    Kits = {
+      _require_ = dorequire,
+      _FullDir_ = FullDir,
+      _KitCfg_  = KitCfg,
+    }
+    unit.KitSuit[self.Options.SuitName] = Kits
+  end
+  --logShow(Kits, "Kits", 2)
+
+  return self:TypeKit(Kits, self.Current.FileType)
+end -- MakeKit
+
+end -- do
+
 ---------------------------------------- ---- Prepare
 do
   local Colors = menUt.MenuColors()
@@ -526,25 +618,18 @@ do
 
 function TMain:MakeProps ()
 
-end -- MakeProps
-
--- Подготовка.
--- Preparing.
-function TMain:Prepare ()
-
   local Cfg = self.CfgData
 
   -- Свойства меню:
-  local WMenu = self.Menu
-  local Props = WMenu.Props or {}
-  WMenu.Props = Props
+  local Props = self.Menu.Props or {}
+  self.Menu.Props = Props
   Props.Title = ""
   --Props.Title = "Completion"
   Props.Flags = F.FMENU_WRAPMODE
   Props.Flags = HighlightOff(Props.Flags)
 
   -- Клавиши локального использования:
-  WMenu.LBKeys = menUt.ParseMenuHandleKeys(WMenu.LKeys)
+  self.Menu.LBKeys = menUt.ParseMenuHandleKeys(self.Menu.LKeys)
 
   -- Свойства RectMenu:
   local RM_Props = Props.RectMenu or {}
@@ -562,8 +647,8 @@ function TMain:Prepare ()
   RM_Props.AltHotOnly = true
 
   do -- Значения для списка-меню:
-    local BoxLen = RM_Props.BoxKind and 2 or 0
     local Info = EditorGetInfo()
+    local BoxLen = RM_Props.BoxKind and 2 or 0
     local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
     self.Popup = {
       LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
@@ -585,11 +670,19 @@ function TMain:Prepare ()
   if Cfg.HotChars then
     Props.Flags = delFlag(Props.Flags, F.FMENU_SHOWAMPERSAND)
   end
-
-  return self:MakeProps()
-end -- Prepare
+end -- MakeProps
 
 end -- do
+
+-- Подготовка.
+-- Preparing.
+function TMain:Prepare ()
+
+  self:MakeProps()
+
+  return self:MakeKit()
+end -- Prepare
+
 ---------------------------------------- ---- List
 -- Поиск слов, подходящих к текущему.
 function TMain:SearchWords () --> (table)
@@ -1057,11 +1150,10 @@ function TMain:Run () --> (bool | nil)
   local Action, Effect -- Действие
   local PressKey -- Нажатая клавиша
   --logShow(Cfg, "Cfg", 1)
-  local WMenu = self.Menu
-  self.Props, self.Items = WMenu.Props -- Информация о меню
+  self.Props, self.Items = self.Menu.Props -- Информация о меню
   -- Клавиши-завершители:
-  local WC_Keys = WMenu.CKeys
-  local LU_Keys, LB_Keys = WMenu.LKeys, WMenu.LBKeys
+  local WC_Keys = self.Menu.CKeys
+  local LU_Keys, LB_Keys = self.Menu.LKeys, self.Menu.LBKeys
 
 --[[ 1. Конфигурирование WordComplete ]]
 
