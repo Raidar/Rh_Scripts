@@ -77,7 +77,7 @@ local DefScope = {
 } --- DefScope
 
 ---------------------------------------- Menu class
-local TMenu = {} -- Класс меню
+local TMenu = {}
 local MMenu = { __index = TMenu }
 
 -- Создание объекта класса меню.

@@ -31,22 +31,17 @@
 ----------------------------------------
 --[[
 local hex = numbers.hex8
-
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
---module (...)
+local unit = {}
 
---------------------------------------------------------------------------------
---[[ Internal code ]]--[[ Внутренний код ]]--
+---------------------------------------- Internal
 
---[[ Internal code ]]--[[ Внутренний код ]]--
---------------------------------------------------------------------------------
---[[ Menu class ]]--[[ Класс меню ]]--
-
-local TMenu = {} -- Класс меню
+---------------------------------------- Menu class
+local TMenu = {}
 local MMenu = { __index = TMenu }
 
 -- Создание объекта класса меню.
@@ -65,15 +60,9 @@ local function CreateMenu (Properties, Items, BreakKeys) --> (object)
   return setmetatable(self, MMenu)
 end -- CreateMenu
 
---[[ Menu class ]]--[[ Класс меню ]]--
---------------------------------------------------------------------------------
---[[ Menu making ]]--[[ Формирование меню ]]--
+---------------------------------------- Menu making
 
-
---[[ Menu making ]]--[[ Формирование меню ]]--
---------------------------------------------------------------------------------
-
-local function Menu (Properties, Items, BreakKeys, ShowMenu)
+function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
                           --| (Menu) and/or --> (Menu|Items)
   if not Items then return end
 
@@ -94,5 +83,5 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu)
 end -- Menu
 
 --------------------------------------------------------------------------------
-return Menu
+return unit.Menu
 --------------------------------------------------------------------------------
