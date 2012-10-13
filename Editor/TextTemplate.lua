@@ -75,7 +75,9 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- Custom
+---------------------------------------- Main data
+
+---------------------------------------- ---- Custom
 local ScriptName = "TextTemplate"
 local ScriptAuto = "AutoTemplate"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
@@ -90,7 +92,15 @@ local DefCustom = {
   locale = { kind = 'load' },
 } --- DefCustom
 
----------------------------------------- Config
+----------------------------------------
+local DefOptions = {
+  KitName  = ScriptName,
+  BaseDir  = "Rh_Scripts.Editor",
+  WorkDir  = ScriptName,
+  FileName = "kit_config",
+} ---
+
+---------------------------------------- ---- Config
 local DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
   -- Свойства набранного слова:
@@ -126,7 +136,7 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
 } --- AutoCfgData
 unit.AutoCfgData = AutoCfgData
 
----------------------------------------- Types
+---------------------------------------- ---- Types
 -- Типы элементов диалогов:
 local DlgTypes = {
   Enabled = "chk",
@@ -141,55 +151,64 @@ local DlgTypes = {
   UseOutside = "chk",
 } --- DlgTypes
 
----------------------------------------- Configure
-local DefOptions = {
-  KitName  = ScriptName,
-  BaseDir  = "Rh_Scripts.Editor",
-  WorkDir  = ScriptName,
-  FileName = "kit_config",
-} ---
+---------------------------------------- Main class
+local TMain = {
+  Guid       = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
+  ConfigGuid = win.Uuid("6227affb-5e24-42ce-9ec0-106868fad0ba"),
+}
+local MMain = { __index = TMain }
 
--- Обработка конфигурации.
-local function Configure (ArgData)
+-- Создание объекта основного класса.
+local function CreateMain (ArgData)
+
   -- 1. Заполнение ArgData.
-  local ArgData = ArgData == "AutoCfgData" and AutoCfgData or ArgData
-  ArgData = addNewData(ArgData, DefCfgData)
-  ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logShow(ArgData, "ArgData")
-  local Custom = datas.customize(ArgData.Custom, DefCustom)
-  --Custom.options.KitName = Custom.options.KitName or Custom.name
-  addNewData(Custom.options, DefOptions)
-  --logShow(ArgData, "ArgData")
-  -- 2. Заполнение конфигурации.
-  local History = datas.newHistory(Custom.history.full)
-  local CfgData = History:field(Custom.history.field)
-  -- 3. Дополнение конфигурации.
-  setmetatable(CfgData, { __index = ArgData })
-  --logShow(CfgData, "CfgData")
-  local Config = { -- Конфигурация:
-    Custom = Custom, History = History, DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+  if ArgData == "AutoCfgData" then ArgData = AutoCfgData end
+
+  local self = {
+    ArgData = addNewData(ArgData, DefCfgData),
+
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    CfgData   = false,
+    DlgTypes  = DlgTypes,
+
+    Current   = false,
   } ---
-  locale.customize(Config.Custom) -- Инфо локализации
-  --logShow(Config.Custom, "Custom")
 
-  return Config
-end -- Configure
+  self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
+  --logShow(self.ArgData, "ArgData")
+  self.Custom = datas.customize(self.ArgData.Custom, DefCustom)
+  --self.Custom.options.KitName = self.Custom.options.KitName or self.Custom.name
+  self.Options = addNewData(self.Custom.options, DefOptions)
+  --logShow(self.ArgData, "ArgData")
 
----------------------------------------- Locale
-local L -- Класс сообщений локализации
+  -- 2. Заполнение конфигурации.
+  self.History = datas.newHistory(self.Custom.history.full)
+  self.CfgData = self.History:field(self.Custom.history.field)
+
+  -- 3. Дополнение конфигурации.
+  setmetatable(self.CfgData, { __index = self.ArgData })
+
+  --logShow(self.CfgData, "CfgData")
+  locale.customize(self.Custom) -- Инфо локализации
+  --logShow(self.Custom, "Custom")
+
+  return setmetatable(self, MMain)
+end -- CreateMain
 
 ---------------------------------------- Dialog
-local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+do
+  local dialog = require "far2.dialog"
+  local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
 
-local DI = dlgUt.DlgItemType
-local DIF = dlgUt.DlgItemFlag
+  local DI = dlgUt.DlgItemType
+  local DIF = dlgUt.DlgItemFlag
 
 -- Диалог конфигурации.
-local function Dlg (Config) --> (dialog)
-  local DBox = Config.DBox
-  local isAuto = Config.Custom.isAuto
+function TMain:DlgForm () --> (dialog)
+  local DBox = self.DBox
+  local isAuto = self.Custom.isAuto
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
   local H = DBox.Height - (isSmall and 1 or 2)
@@ -204,6 +223,8 @@ local function Dlg (Config) --> (dialog)
   --local G = 6  -- Large numbers
 
   local J1 = J  + 1
+
+  local L = self.L
   local Caption = L:caption(isAuto and "DlgAuto" or "Dialog")
 
   local D = dialog.NewDialog() -- Форма окна:
@@ -229,31 +250,29 @@ local function Dlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end -- Dlg
-
-local ConfigGuid = win.Uuid("6227affb-5e24-42ce-9ec0-106868fad0ba")
+end -- DlgForm
 
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
   -- Конфигурация:
-  local Config = Configure(Data)
-  local HelpTopic = Config.Custom.help.tlink
+  local _Main = CreateMain(Data)
+  local HelpTopic = _Main.Custom.help.tlink
   -- Локализация:
-  local LocData = locale.getData(Config.Custom)
+  _Main.LocData = locale.getData(_Main.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
-  if not LocData then return end
-  L = locale.make(Config.Custom, LocData)
+  if not _Main.LocData then return end
+  _Main.L = locale.make(_Main.Custom, _Main.LocData)
   -- Конфигурация:
-  --local isAuto  = Config.Custom.isAuto
-  local isSmall = Config.Custom.isSmall
+  --local isAuto  = _Main.Custom.isAuto
+  local isSmall = _Main.Custom.isSmall
   --if isSmall == nil then isSmall = true end
   -- Подготовка:
-  Config.DBox = {
+  local DBox = {
     cSlab = 3,
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
     Width = 0, Height = 0,
   } --
-  local DBox = Config.DBox
+  _Main.DBox = DBox
   DBox.Width  = 2 + 36*2 -- Edge + 2 columns
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 1*2 + -- group empty lines + group item lines
@@ -263,35 +282,21 @@ function unit.ConfigDlg (Data)
   end
 
   -- Настройка:
-  local D = Dlg(Config)
-  local cData, aData, Types = Config.CfgData, Config.ArgData, Config.DlgTypes
-  dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
-  local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
+  local D = _Main:DlgForm()
+  dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+  local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
+  --logShow(D, "D", 3)
   if D.btnOk and iDlg == D.btnOk.id then
-    dlgUt.SaveDlgData(cData, aData, D, Types) -- Сохранение конфигурации
-    Config.History:save() -- Сохранение файла
+    dlgUt.SaveDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+    --logShow(_Main, "Config", 3)
+    _Main.History:save()
 
     return true
   end
 end ---- ConfigDlg
 
----------------------------------------- Main class
-local TMain = {
-  Guid = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
-}
-local MMain = { __index = TMain }
-
--- Создание объекта основного класса.
-local function CreateMain (Config)
-
-  local self = {
-    Config    = Config,
-  } ---
-
-  return setmetatable(self, MMain)
-end -- CreateMain
-
+end -- do
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- Regex
@@ -361,14 +366,14 @@ do
 function TMain:MakeKit ()
 
   --far.Message("Load text templates", "Update")
-  local Options = self.Config.Custom.options
-  local Kit = TplKits[Options.KitName]
+  local Kit = TplKits[self.Options.KitName]
   --logShow(Kit, "Kit", 2)
   if not Kit then
     --local dorequire = newprequire -- For separate use!
     local dorequire = Kit == false and newprequire or prequire
-    local FullDir = string.format("%s.%s.", Options.BaseDir, Options.WorkDir)
-    local KitCfg = dorequire(FullDir..Options.FileName)
+    local FullDir = string.format("%s.%s.", self.Options.BaseDir,
+                                            self.Options.WorkDir)
+    local KitCfg = dorequire(FullDir..self.Options.FileName)
     if KitCfg == nil then return end -- No templates
 
     Kit = {
@@ -376,13 +381,11 @@ function TMain:MakeKit ()
       _FullDir_ = FullDir,
       _KitCfg_  = KitCfg,
     }
-    TplKits[Options.KitName] = Kit
+    TplKits[self.Options.KitName] = Kit
   end
-
-  local Cfg = self.Config.CfgData
   --logShow(Kit, "Kit", 2)
 
-  return self:KitTpls(Kit, Cfg.Current.FileType)
+  return self:KitTpls(Kit, self.Current.FileType)
 end -- MakeKit
 
 end -- do
@@ -393,11 +396,11 @@ do
 -- Preparing.
 function TMain:Prepare ()
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
   if not Cfg.CharEnum then Cfg.CharEnum = "%S" end
                  --| Тип текущего файла, открытого в редакторе:
-  Cfg.Current = { FileType = Cfg.FileType or curFileType() }
+  self.Current = { FileType = Cfg.FileType or curFileType() }
 
   return self:MakeKit()
 end -- Prepare
@@ -414,13 +417,13 @@ local cfgNextType  = detect.use.configNextType
 -- Поиск шаблонов в строке.
 function TMain:FindTemplate () --> (table)
 
-  local Kit = TplKits[self.Config.Custom.options.KitName]
+  local Kit = TplKits[self.Options.KitName]
   if not Kit then return end
-  --logShow(Kit, Config.Custom.options.KitName, 1)
+  --logShow(Kit, self.Options.KitName, 1)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
   --logShow(Cfg, "FindTemplate", "d2 t")
-  local CfgCur = Cfg.Current
+  local CfgCur = self.Current
   local CurSlab = CfgCur.Slab -- CfgCur.Frag
 
   local t, tLast = {} -- Результаты поиска
@@ -492,7 +495,7 @@ function TMain:FindTemplate () --> (table)
 
   --if #t > 0 then logShow(t, "FindTemplate") end
   --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
-  --if #t > 0 then logShow(t[#t], Config.Custom.options.KitName) end
+  --if #t > 0 then logShow(t[#t], self.Options.KitName) end
   --logShow(Kit[Type], Type)
   return tLast and t or nil
 end -- FindTemplate
@@ -517,12 +520,12 @@ do
 -- Применение найденного шаблона.
 function TMain:ApplyTemplate ()
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
   --logShow(Cfg, "Cfg", "d2 t")
   --logShow(Cfg.Template, "Template", "d1 t")
-  local CfgCur, CfgTpl = Cfg.Current, Cfg.Template
+  local CfgCur, CfgTpl = self.Current, Cfg.Template
   local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.Pos
-  
+
   local Line = CfgCur.Slab:sub(Pos, -1)
   local DelLen = Line:len()
   CfgCur.Delete = Line
@@ -549,7 +552,7 @@ function TMain:ApplyTemplate ()
     end
     --logShow({ isOk, res }, "apply", 2)
     if not isOk then
-      far.Message(res, "Error using "..DefCustom.Name, nil, "wl")
+      far.Message(res, "Error using "..DefCustom.name, nil, "wl")
       return
     end
     if type(res) ~= 'string' then return false end
@@ -582,7 +585,7 @@ end -- do
 ---------------------------------------- ---- Make
 function TMain:MakeTemplate () --> (bool | nil)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
 --[[ 1. Анализ текущей строки ]]
 
@@ -594,7 +597,7 @@ function TMain:MakeTemplate () --> (bool | nil)
   --logShow(Info, "Editor Info")
 
   -- Получение текущего слова под курсором (CurPos is 0-based):
-  local CfgCur = Cfg.Current
+  local CfgCur = self.Current
   CfgCur.Line = EditorGetStr(nil, -1, 2) or ""
   CfgCur.Pos  = Info.CurPos + 1 -- 0-based!
   local Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
@@ -611,7 +614,7 @@ function TMain:MakeTemplate () --> (bool | nil)
   local CfgTpl = self:FindTemplate()
   if not CfgTpl then return false end
   --logShow(CfgTpl, "Templates", "d1 t")
-  --Cfg.Templates = CfgTpl
+  --self.Templates = CfgTpl
 
 --[[ 3. Обработка найденных шаблонов ]]
   local k, isOk = 1, false
@@ -629,14 +632,13 @@ end -- MakeTemplate
 function unit.Execute (Data) --> (bool | nil)
 
   -- Конфигурация:
-  local Config = Configure(Data)
-  local _Main = CreateMain(Config)
+  local _Main = CreateMain(Data)
 
   --logShow(Data, "Data", 2)
-  --logShow(Config, "Config", "_d2")
-  --logShow(Config.CfgData, "CfgData", 2)
-  --logShow(Config.ArgData, "ArgData", 2)
-  if not Config.CfgData.Enabled then return end
+  --logShow(_Main, "Config", "_d2")
+  --logShow(_Main.CfgData, "CfgData", 2)
+  --logShow(_Main.ArgData, "ArgData", 2)
+  if not _Main.CfgData.Enabled then return end
 
   _Main:Prepare() -- Подготовка
 

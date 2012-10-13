@@ -77,7 +77,7 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
---[[
+-- [[
 local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -90,7 +90,9 @@ local usercall = farUt.usercall
 --local RunMenu = require "Rh_Scripts.RMenu.RectMenu"
 local RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
 
----------------------------------------- Keys
+---------------------------------------- Main data
+
+---------------------------------------- ---- Keys
 -- Названия действий.
 local A_Cancel  = "Cancel"
 local A_Replace = "Replace"
@@ -109,7 +111,7 @@ unit.LocalUseKeys = { -- Клавиши локального использов�
   { BreakKey = "CtrlShiftEnter",  Action = A_Insert,  Effect = E_Shared },
 } --- LocalUseKeys
 
----------------------------------------- Custom
+---------------------------------------- ---- Custom
 local ScriptName = "WordComplete"
 local ScriptAuto = "AutoComplete"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
@@ -124,7 +126,7 @@ local DefCustom = {
   locale = { kind = 'load' },
 } --- DefCustom
 
----------------------------------------- Config
+---------------------------------------- ---- Config
 local DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
   -- Свойства набранного слова:
@@ -209,7 +211,7 @@ local AutoCfgData = { -- Конфигурация для авто-режима:
 } --- AutoCfgData
 unit.AutoCfgData = AutoCfgData
 
----------------------------------------- Types
+---------------------------------------- ---- Types
 local DlgTypes = { -- Типы элементов диалогов:
   Enabled = "chk",
   -- Свойства набранного слова:
@@ -260,49 +262,78 @@ local DlgTypes = { -- Типы элементов диалогов:
   TailOnly = "chk",
 } --- DlgTypes
 
----------------------------------------- Configure
--- Обработка конфигурации.
-local function Configure (ArgData)
+---------------------------------------- Main class
+local TMain = {
+  Guid       = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
+  ConfigGuid = win.Uuid("642eb0fd-d297-4855-bd87-dcecfc55bcc4"),
+  PopupGuid  = false,
+}
+local MMain = { __index = TMain }
+
+TMain.PopupGuid = TMain.Guid
+
+-- Создание объекта основного класса.
+local function CreateMain (ArgData)
+
   -- 1. Заполнение ArgData.
-  local ArgData = ArgData == "AutoCfgData" and AutoCfgData or ArgData
-  ArgData = addNewData(ArgData, DefCfgData)
-  ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logShow(ArgData, "ArgData")
-  local Custom = datas.customize(ArgData.Custom, DefCustom)
-  -- 2. Заполнение конфигурации.
-  local History = datas.newHistory(Custom.history.full)
-  local CfgData = History:field(Custom.history.field)
-  local WMenu = CfgData.Menu or {}; CfgData.Menu = WMenu
-  WMenu.CKeys = WMenu.CKeys or unit.CompleteKeys
-  WMenu.LKeys = WMenu.LKeys or unit.LocalUseKeys
-  -- 3. Дополнение конфигурации.
-  setmetatable(CfgData, { __index = ArgData })
-  --logShow(CfgData, "CfgData")
-  local Config = { -- Конфигурация:
-    Custom = Custom, History = History, DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+  if ArgData == "AutoCfgData" then ArgData = AutoCfgData end
+
+  local self = {
+    ArgData = addNewData(ArgData, DefCfgData),
+
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    CfgData   = false,
+    DlgTypes  = DlgTypes,
+
+    Menu      = false,
+
+    Popup     = false,
+    Pattern   = false,
+    Current   = false,
+
+    Words     = false,
+    Items     = false,
+    Props     = false,
   } ---
-  locale.customize(Config.Custom) -- Инфо локализации
-  --logShow(Config.Custom, "Custom")
 
-  return Config
-end -- Configure
+  self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
+  --logShow(self.ArgData, "ArgData")
+  self.Custom = datas.customize(self.ArgData.Custom, DefCustom)
 
----------------------------------------- Locale
-local L -- Класс сообщений локализации
+  -- 2. Заполнение конфигурации.
+  self.History = datas.newHistory(self.Custom.history.full)
+  self.CfgData = self.History:field(self.Custom.history.field)
+
+  self.Menu = self.CfgData.Menu or {}
+  self.Menu.CKeys = self.Menu.CKeys or unit.CompleteKeys
+  self.Menu.LKeys = self.Menu.LKeys or unit.LocalUseKeys
+
+  -- 3. Дополнение конфигурации.
+  setmetatable(self.CfgData, { __index = self.ArgData })
+  --logShow(self.CfgData, "CfgData")
+
+  --self.DefCfgData = DefCfgData
+  locale.customize(self.Custom) -- Инфо локализации
+  --logShow(self.Custom, "Custom")
+
+  return setmetatable(self, MMain)
+end -- CreateMain
 
 ---------------------------------------- Dialog
-local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+do
+  local dialog = require "far2.dialog"
+  local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
 
-local DI = dlgUt.DlgItemType
-local DIF = dlgUt.DlgItemFlag
-local ListItems = dlgUt.ListItems
+  local DI = dlgUt.DlgItemType
+  local DIF = dlgUt.DlgItemFlag
+  local ListItems = dlgUt.ListItems
 
 -- Диалог конфигурации.
-local function Dlg (Config) --> (dialog)
-  local DBox = Config.DBox
-  local isAuto = Config.Custom.isAuto
+function TMain:DlgForm () --> (dialog)
+  local DBox = self.DBox
+  local isAuto = self.Custom.isAuto
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
 
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
@@ -320,6 +351,8 @@ local function Dlg (Config) --> (dialog)
   local J1 = J  + 1
   local J2 = J1 + DBox.cSlab + 2; local J3 = J2 + DBox.cFind + 2
   local J4 = J3 + DBox.cSort + 2; local J5 = J4 + DBox.cList + 2
+
+  local L = self.L
   local Caption = L:caption(isAuto and "DlgAuto" or "Dialog")
 
   local D = dialog.NewDialog() -- Форма окна:
@@ -342,7 +375,7 @@ local function Dlg (Config) --> (dialog)
   D.sep           = {DI.Text,     0,   J2,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsFind"}
   D.txtFindKind   = {DI.Text,     A, J2+1,   Q,  0, 0, 0, 0, 0, L:config"FindKind"}
   D.cbxFindKind   = {DI.Combo,  Q+1, J2+1,   M,  0,
-                     ListItems(Config, "FindKind", L), 0, 0, DIF.ComboList, ""}
+                     ListItems(self, "FindKind", L), 0, 0, DIF.ComboList, ""}
   D.txtFindsMax   = {DI.Text,     B, J2+1, W-S,  0, 0, 0, 0, 0, L:config"FindsMax"}
   D.edtFindsMax   = {DI.Edit,   W-S, J2+1, W-1,  0, 0, 0, 0, 0, ""}
   D.txtMinLength  = {DI.Text, B+S+1, J2+2, W-1,  0, 0, 0, 0, 0, L:config"MinLength"}
@@ -360,7 +393,7 @@ local function Dlg (Config) --> (dialog)
   D.sep           = {DI.Text,     0,   J3,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsSort"}
   D.txtSortKind   = {DI.Text,     A, J3+1,   Q,  0, 0, 0, 0, 0, L:config"SortKind"}
   D.cbxSortKind   = {DI.Combo,  Q+1, J3+1,   M,  0,
-                     ListItems(Config, "SortKind", L), 0, 0, DIF.ComboList, ""}
+                     ListItems(self, "SortKind", L), 0, 0, DIF.ComboList, ""}
   D.txtSortsMin   = {DI.Text,     B, J3+1, W-S,  0, 0, 0, 0, 0, L:config"SortsMin"}
   D.edtSortsMin   = {DI.Edit,   W-S, J3+1, W-1,  0, 0, 0, 0, 0, ""}
   -- Свойства списка слов:
@@ -395,33 +428,31 @@ local function Dlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end -- Dlg
-
-local ConfigGuid = win.Uuid("642eb0fd-d297-4855-bd87-dcecfc55bcc4")
+end -- DlgForm
 
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
   -- Конфигурация:
-  local Config = Configure(Data)
-  local HelpTopic = Config.Custom.help.tlink
+  local _Main = CreateMain(Data)
+  local HelpTopic = _Main.Custom.help.tlink
   -- Локализация:
-  local LocData = locale.getData(Config.Custom)
+  _Main.LocData = locale.getData(_Main.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
-  if not LocData then return end
-  L = locale.make(Config.Custom, LocData)
+  if not _Main.LocData then return end
+  _Main.L = locale.make(_Main.Custom, _Main.LocData)
   -- Конфигурация:
-  local isAuto = Config.Custom.isAuto
-  local isSmall = Config.Custom.isSmall
+  local isAuto = _Main.Custom.isAuto
+  local isSmall = _Main.Custom.isSmall
   if isSmall == nil then isSmall = true end
   -- Подготовка:
-  Config.DBox = {
+  local DBox = {
     cSlab = 3, cFind = 4, cSort = 1,
     cList = isAuto and 1 or 3,
     cCmpl = isAuto and 1 or 2,
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
     Width = 0, Height = 0,
   } --
-  local DBox = Config.DBox
+  _Main.DBox = DBox
   DBox.Width  = 2 + 36*2 -- Edge + 2 columns
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 5*2 + -- group empty lines + group item lines
@@ -431,37 +462,21 @@ function unit.ConfigDlg (Data)
   end
 
   -- Настройка:
-  local D = Dlg(Config)
-  local cData, aData, Types = Config.CfgData, Config.ArgData, Config.DlgTypes
-  dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
-  local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
+  local D = _Main:DlgForm()
+  dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+  local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
   --logShow(D, "D", 3)
   if D.btnOk and iDlg == D.btnOk.id then
-    dlgUt.SaveDlgData(cData, aData, D, Types) -- Сохранение конфигурации
-    --logShow(Config, "Config", 3)
-    Config.History:save()
+    dlgUt.SaveDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+    --logShow(_Main, "Config", 3)
+    _Main.History:save()
 
     return true
   end
 end ---- ConfigDlg
 
----------------------------------------- Main class
-local TMain = {
-  Guid = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
-}
-local MMain = { __index = TMain }
-
--- Создание объекта основного класса.
-local function CreateMain (Config)
-
-  local self = {
-    Config    = Config,
-  } ---
-
-  return setmetatable(self, MMain)
-end -- CreateMain
-
+end -- do
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- Prepare
@@ -483,10 +498,10 @@ end -- MakeProps
 -- Preparing.
 function TMain:Prepare ()
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
   -- Свойства меню:
-  local WMenu = Cfg.Menu
+  local WMenu = self.Menu
   local Props = WMenu.Props or {}
   WMenu.Props = Props
   Props.Title = ""
@@ -516,7 +531,7 @@ function TMain:Prepare ()
     local BoxLen = RM_Props.BoxKind and 2 or 0
     local Info = EditorGetInfo()
     local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
-    Cfg.Popup = {
+    self.Popup = {
       LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
                     --+ (Cfg.HotChars and 2 or 0),
       LenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
@@ -524,7 +539,6 @@ function TMain:Prepare ()
       PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
       --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
     } --
-    BoxLen, Info = nil
   end -- do
 
   -- Свойства набранного слова:
@@ -544,10 +558,9 @@ end -- Prepare
 end -- do
 ---------------------------------------- ---- List
 -- Поиск слов, подходящих к текущему.
-function TMain:SearchWords (Ctrl) --> (table)
+function TMain:SearchWords () --> (table)
 
-  local Cfg = self.Config.CfgData
-  local CfgCur = Cfg.Current
+  local Cfg, CfgCur = self.CfgData, self.Current
   local Word, Slab = CfgCur.Word, CfgCur.Slab
   local MaxLine, MinLen = CfgCur.MaxLine, Cfg.MinLength
   local wCtr, wMax = 0, CfgCur.WordsMax
@@ -563,13 +576,13 @@ function TMain:SearchWords (Ctrl) --> (table)
   local Link = t.Link -- "Ссылочная" информация
 
   --logShow({ CfgCur.Slab, Slab }, "Slab")
-  local SlabPat = Ctrl:asPattern(Slab) -- Подготовка Slab для поиска
-  local BasePat = ("(%s%s+)"):format(SlabPat, Ctrl.CharsSet)
+  local SlabPat = self.Ctrl:asPattern(Slab) -- Подготовка Slab для поиска
+  local BasePat = ("(%s%s+)"):format(SlabPat, self.Ctrl.CharsSet)
   local StartPat = '^'..BasePat
-  local MatchPat = Ctrl.SeparSet..BasePat
-  Cfg.Patterns = { Slab = SlabPat, Base = BasePat,
+  local MatchPat = self.Ctrl.SeparSet..BasePat
+  self.Pattern = { Slab = SlabPat, Base = BasePat,
                    Start = StartPat, Match = MatchPat }
-  --logShow(Cfg.Patterns, "SearchWords Patterns")
+  --logShow(self.Pattern, "SearchWords Patterns")
 
   -- Поиск слов в строке.
   local function MatchLineWords (s, Line) --> (number)
@@ -721,10 +734,12 @@ do
   end -- SortByChar
 
 -- Сортировка таблицы строк.
-function TMain:SortWords (t) --> (table)
+function TMain:SortWords () --> (table)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
   local FindKind, SortKind = Cfg.FindKind, Cfg.SortKind
+
+  local t = self.Words
   if t.n < Cfg.SortsMin then SortKind = "searching" end
 
   -- По мере поиска (без сортировки):
@@ -758,17 +773,18 @@ do
   local SharedMatch = "^(%s+)%s*\n%%1%s*"
 
 -- Поиск общей части строк.
-function TMain:SharedPart (Words, Ctrl) --> (string)
+function TMain:SharedPart () --> (string)
 
-  local Cfg = self.Config.CfgData
-  local Set, NoCase = Ctrl.CharsSet, not Cfg.MatchCase
+  local Set = self.Ctrl.CharsSet
+  local NoCase = not self.CfgData.MatchCase
   local SharedPat = SharedMatch:format(Set, Set, Set)
-  Cfg.Patterns.Shared = SharedPat
+  self.Pattern.Shared = SharedPat
 
-  local s = Words[1]
+  local t = self.Words
+  local s = t[1]
   if NoCase then s = s:lower() end
-  for k = 2, Words.n do
-    local w = Words[k]
+  for k = 2, t.n do
+    local w = t[k]
     if NoCase then w = w:lower() end
     s = (s..'\n'..w):match(SharedPat)
     if not s then return "" end
@@ -780,43 +796,44 @@ end -- SharedPart
 end -- do
 
 do
-  local HotChars = "1234567890abcdefghijklmnopqrstuvwxyz"
-  local HotCharsLen = HotChars:len()
+  local HotCharsStr = "1234567890abcdefghijklmnopqrstuvwxyz"
+  local HotCharsLen = #HotCharsStr -- Digits and latin chars only
 
   local ItemHotFmt, ItemHotLen = "&%s ", 2
   --local ItemHotFmt, ItemHotLen = "&%s | ", 4
   local ItemTextFmt = ItemHotFmt.."%s"
 
 -- Заполнение списка-меню.
-function TMain:PrepareMenu (Words, Props) --> (table)
+function TMain:PrepareMenu () --> (table)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
   -- Создание таблицы пунктов меню.
-  local Count = Words.n --or #Words
+  local Count = self.Words.n --or #self.Words
   local Width, Height = 0, Count
-  if Count == 0 and (Cfg.Current.StartMenu and
+  if Count == 0 and (self.Current.StartMenu and
      not Cfg.EmptyStart or not Cfg.EmptyList) then
     return
   end
 
-  local Items, Word, Text = {}
+  local Words = self.Words
+  local Items = {}; self.Items = Items
   for k = 1, Count do
-    Word = Words[k]
+    local Word = Words[k]
+    local Text = Word
     if Cfg.HotChars and k <= HotCharsLen then
-      Text = ItemTextFmt:format(HotChars:sub(k, k), Word)
-    else Text = Word end -- if
+      Text = ItemTextFmt:format(string.sub(HotCharsStr, k, k), Word)
+    end
     Items[#Items+1] = { text = Text, Word = Word, } ---
-    --Width = max2(Width, Word:len())
     Width = max2(Width, Text:len())
   end
   if Cfg.HotChars then Width = Width - 1 end
 
   -- Определение области маркировки.
   local function MakeSlabMark ()
-    --logShow(Cfg.Patterns, "Cfg.Patterns")
-    local SlabPat = Cfg.Patterns.Slab
-    local SlabLen = Cfg.Current.Slab:len()
+    --logShow(self.Pattern, "Patterns")
+    local SlabPat = self.Pattern.Slab
+    local SlabLen = self.Current.Slab:len()
 
     if Cfg.HotChars then    -- text ~= Word:
       return Cfg.UseMagic and { " "..SlabPat } or
@@ -827,12 +844,12 @@ function TMain:PrepareMenu (Words, Props) --> (table)
   end --
 
   -- Задание параметров меню RectMenu.
-  local RM_Props = Props.RectMenu
-  RM_Props.Guid = RM_Props.Guid or self.Guid
+  local RM_Props = self.Props.RectMenu
+  RM_Props.Guid = RM_Props.Guid or self.PopupGuid
   --logShow(RM_Props, "RectMenu Props")
   if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
   -- Расчёт позиции и размера окна:
-  local Info, Popup = EditorGetInfo(), Cfg.Popup
+  local Info, Popup = EditorGetInfo(), self.Popup
   Width, Height = Width + Popup.LenH, Height + Popup.LenV
   --[[
   local Rect, CursorPos = GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
@@ -856,7 +873,6 @@ function TMain:PrepareMenu (Words, Props) --> (table)
   --]]
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
-  return Items, Props
 end -- PrepareMenu
 
 end -- do
@@ -865,30 +881,30 @@ do
   local CharControl = extUt.CharControl
 
 -- Формирование списка-меню слов.
-function TMain:MakeWordsList (Props) --> (table)
+function TMain:MakeWordsList () --> (table)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
   -- Базовая информация о редакторе:
   local Info = EditorGetInfo() -- Сохранение базовой позиции
   --logShow(Info, "Editor Info")
-  local Ctrl = CharControl(Cfg) -- Функции управления словом
+  self.Ctrl = CharControl(Cfg) -- Функции управления словом
 
 -- 1. Анализ текущего набранного слова.
 
   -- Получение текущего слова под курсором (CurPos is 0-based):
-  local Word, Slab = Ctrl:atPosWord(EditorGetStr(nil, -1, 2), Info.CurPos + 1)
+  local Word, Slab = self.Ctrl:atPosWord(EditorGetStr(nil, -1, 2), Info.CurPos + 1)
   --logShow({ Word, Slab })
-  if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
+  if not self.Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
-  local CfgCur = Cfg.Current
+  local CfgCur = self.Current
   CfgCur.Word, CfgCur.Slab = Word, Slab
-  --if Word then logShow(Cfg.Current) end
+  --if Word then logShow(self.Current) end
 
 -- 2. Отбор подходящих слов для завершения.
 
   -- Число слов для отбора:
-  local Popup = Cfg.Popup
+  local Popup = self.Popup
   local lMax = Info.CurLine - Info.TopScreenLine      -- Учёт случаев:
   lMax = max2(Info.WindowSizeY - lMax - 2, lMax)        -- список сверху
   lMax = min2(Cfg.ListsMax, max2(lMax - Popup.LenV, 1)) -- список снизу
@@ -899,7 +915,7 @@ function TMain:MakeWordsList (Props) --> (table)
   CfgCur.GetLine = function (n) return EditorGetStr(nil, n or -1, 2) end
 
   -- Поиск подходящих слов в строках файла:
-  local Words = self:SearchWords(Ctrl)
+  local Words = self:SearchWords(); self.Words = Words
 
   EditorSetPos(nil, Info) -- Восстановление базовой позиции
 
@@ -913,16 +929,15 @@ function TMain:MakeWordsList (Props) --> (table)
 
 -- 3. Сортировка собранных слов.
 
-  Words = self:SortWords(Words) -- Сортировка собранных слов
-  --CfgCur.Words = Words
-  --logShow(Words, "Words", 1)
+  self:SortWords() -- Сортировка собранных слов
+  --logShow(self.Words, "Words", 1)
 
 -- 4. Подготовка списка-меню слов.
 
-  CfgCur.Shared = self:SharedPart(Words, Ctrl) -- Общая часть слов
+  CfgCur.Shared = self:SharedPart() -- Общая часть слов
   --if Word then logShow(CfgCur) end
 
-  return self:PrepareMenu(Words, Props)
+  return self:PrepareMenu()
 end -- MakeWordsList
 
 end -- do
@@ -942,9 +957,7 @@ do
 -- Завершение слова.
 function TMain:ApplyWordAction (Complete, Action) --> (bool | nil)
 
-  local Cfg = self.Config.CfgData
-
-  local Word, Slab = Cfg.Current.Word, Cfg.Current.Slab
+  local Word, Slab = self.Current.Word, self.Current.Slab
   local SLen = Slab:len()
   --logShow({ Complete, Word, Word:len(), Slab, SLen }, Action, 1)
 
@@ -952,7 +965,7 @@ function TMain:ApplyWordAction (Complete, Action) --> (bool | nil)
     if not DelChars(nil, Word:len() - SLen) then return end
   end
 
-  if Cfg.TailOnly then -- Только добавление остатка:
+  if self.CfgData.TailOnly then -- Только добавление остатка:
     if not InsText(Complete:sub(SLen + 1, -1)) then return end
   else -- Замена слова выбранным:
     if not BackChars(nil, SLen) then return end
@@ -1000,13 +1013,13 @@ do
 
 function TMain:Run () --> (bool | nil)
 
-  local Cfg = self.Config.CfgData
+  local Cfg = self.CfgData
 
   local Action, Effect -- Действие
   local PressKey -- Нажатая клавиша
   --logShow(Cfg, "Cfg", 1)
-  local WMenu = Cfg.Menu
-  local Props, Items = WMenu.Props -- Информация о меню
+  local WMenu = self.Menu
+  self.Props, self.Items = WMenu.Props -- Информация о меню
   -- Клавиши-завершители:
   local WC_Keys = WMenu.CKeys
   local LU_Keys, LB_Keys = WMenu.LKeys, WMenu.LBKeys
@@ -1014,7 +1027,7 @@ function TMain:Run () --> (bool | nil)
 --[[ 1. Конфигурирование WordComplete ]]
 
 --[[ 1.1. Управление настройками ]]
-  local RM_Props = Props.RectMenu
+  local RM_Props = self.Props.RectMenu
 
   --local VMod, VKey, SKey -- Информация о клавише
   local Index, Complete -- Локальное использование
@@ -1035,10 +1048,10 @@ function TMain:Run () --> (bool | nil)
       PressKey = false
       farUt.RedrawAll()
       -- Формирование нового списка-меню слов.
-      Items, Props = self:MakeWordsList(Props)
-      if not Items then return nil, CloseFlag end
+      self:MakeWordsList()
+      if not self.Items then return nil, CloseFlag end
       --logShow(SelIndex, hex(FKey))
-      return { Props, Items, WC_Keys }, WC_Flags
+      return { self.Props, self.Items, WC_Keys }, WC_Flags
     end --
 
     -- Учёт нажатия клавиш локального использования.
@@ -1049,7 +1062,7 @@ function TMain:Run () --> (bool | nil)
       --logShow({ Index, SelIndex }, Action)
       if Effect and SelIndex then
         -- Effect == E_Shared --
-        Complete = Items[SelIndex].Word:sub(1, Cfg.Current.Shared:len())
+        Complete = self.Items[SelIndex].Word:sub(1, self.Current.Shared:len())
         if Complete ~= "" then -- Выбор:
           self:ApplyWordAction(Complete, Action)
         end
@@ -1094,7 +1107,7 @@ function TMain:Run () --> (bool | nil)
              Cfg.UsePoint and Char == '.') ) then
       --logShow(Char, Cfg.Trailers)
       if SelIndex then
-        self:ApplyWordAction(Items[SelIndex].Word, A_Replace)
+        self:ApplyWordAction(self.Items[SelIndex].Word, A_Replace)
       end
       if not InsText(Char) then return end
       return nil, CancelFlag
@@ -1115,20 +1128,20 @@ function TMain:Run () --> (bool | nil)
 
   repeat
 --[[ 1.2. Формирование начального списка-меню ]]
-    Cfg.Current = { StartMenu = true }
-    Items, Props = self:MakeWordsList(Props)
-    Cfg.Current.StartMenu = nil
-    --logShow({ Props, Items }, "Word Completion")
+    self.Current = { StartMenu = true }
+    self:MakeWordsList()
+    self.Current.StartMenu = nil
+    --logShow({ self.Props, self.Items }, "Word Completion")
 
 --[[ 2. Управление списком WordComplete ]]
 
-    if Items and #Items == 1 and Cfg.LoneAuto then
-      Item, Pos = Items[1], 1
+    if self.Items and #self.Items == 1 and Cfg.LoneAuto then
+      Item, Pos = self.Items[1], 1
       --logShow({ Pos, Item }, "Lone AutoCompletion")
     else
-      --Item, Pos = RunMenu(Props, Items, WC_Keys)
-      Item, Pos = usercall(nil, RunMenu, Props, Items, WC_Keys)
-      if not Items or not Item then
+      --Item, Pos = RunMenu(self.Props, self.Items, WC_Keys)
+      Item, Pos = usercall(nil, RunMenu, self.Props, self.Items, WC_Keys)
+      if not self.Items or not Item then
         if PressKey then EditorProcKey(nil, PressKey) end
         return false
       end -- Отмена по Esc
@@ -1144,14 +1157,14 @@ function TMain:Run () --> (bool | nil)
     --if Action ~= "Replace" and Action ~= "Insert" then return nil, Action end
     Effect = Item.Effect
     if Effect then
-      Complete = Items[Pos].Word:sub(1, Cfg.Current.Shared:len())
+      Complete = self.Items[Pos].Word:sub(1, self.Current.Shared:len())
       if Complete ~= "" then -- Выбор:
         self:ApplyWordAction(Complete, Action)
         --farUt.RedrawAll() -- Обновление!
       end
     elseif Action == "Replace" or Action == "Insert" then
       --logShow({ Action, Pos, Items }, "Making Action")
-      self:ApplyWordAction(Items[Pos].Word, Action)
+      self:ApplyWordAction(self.Items[Pos].Word, Action)
     else
       return
     end
@@ -1167,13 +1180,12 @@ end -- do
 function unit.Execute (Data) --> (bool | nil)
 
   -- Конфигурация:
-  local Config = Configure(Data)
-  local _Main = CreateMain(Config)
+  local _Main = CreateMain(Data)
 
   --logShow(Data, "Data", 2)
-  --logShow(Config, "Config", "_d2")
-  --logShow(Config.CfgData, "CfgData", 2)
-  if not Config.CfgData.Enabled then return end
+  --logShow(_Main, "Config", "_d2")
+  --logShow(_Main.CfgData, "CfgData", 2)
+  if not _Main.CfgData.Enabled then return end
 
   _Main:Prepare() -- Подготовка
 
