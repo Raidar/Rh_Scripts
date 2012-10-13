@@ -183,10 +183,10 @@ $ #Typed word properties#: WordComplete
     ¦Minimal count of typed word characters for completion.
 
   #UseMagic# (bool) — Using magic modifiers.
-  — ¦Magic Lua characters-modifiers are "\37?*+-\-".
-  — ¦They are used together with #CharEnum# on current word analysis.
-  — ¦They are used in search pattern on matching words find.
-  — ¦They are excluded from completion characters in ~Trailers~@WC_Props_Cmpl@.
+    ¦Magic Lua characters-modifiers are "\37?*+-\-" and:
+    · ¦they are used together with #CharEnum# on current word analysis.
+    · ¦they are used in search pattern on matching words find.
+    · ¦they are excluded from completion characters in ~Trailers~@WC_Props_Cmpl@.
 
   #UsePoint# (bool) — Using '\37.\-' as magic character.
   — ¦It is used only together with #UseMagic#.
