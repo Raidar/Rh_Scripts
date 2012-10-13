@@ -79,7 +79,7 @@ local unit = {}
 
 ---------------------------------------- ---- Custom
 local ScriptName = "TextTemplate"
-local ScriptAuto = "AutoTemplate"
+local ScriptAutoName = "AutoTemplate"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
 unit.DefCustom = {
@@ -94,7 +94,7 @@ unit.DefCustom = {
 
 ----------------------------------------
 unit.DefOptions = {
-  KitName  = ScriptName,
+  SuitName = ScriptName,
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = ScriptName,
   FileName = "kit_config",
@@ -126,13 +126,15 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptAuto,
-    --options = {
-    --  KitName  = "AutoTemplate",
-    --},
+    name = ScriptAutoName,
     help   = { topic = ScriptName },
     locale = { kind = 'load', file = ScriptName },
   }, --
+  --[[
+  Options = {
+    SuitName = ScriptAutoName,
+  }, --
+  --]]
 } -- AutoCfgData
 
 ---------------------------------------- ---- Types
@@ -176,9 +178,7 @@ local function CreateMain (ArgData)
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
-  --self.Custom.options.KitName = self.Custom.options.KitName or self.Custom.name
-  self.Options = addNewData(self.Custom.options, unit.DefOptions)
-  --logShow(self.ArgData, "ArgData")
+  self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
   -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
@@ -322,38 +322,38 @@ local function sgsub (s, pat, res, flags, regex) --> (number | nil)
   if res and gsub[regex] then return gsub[regex](s, pat, res, flags) end
 end --
 
----------------------------------------- ---- Prepare
-local TplKits = {} -- Наборы шаблонов
+---------------------------------------- ---- KitSuit
+unit.KitSuit = {} -- Комплект наборов шаблонов
 
 local CharControl = extUt.CharControl
 
 -- -- Get kit templates for type tp.
 -- -- Получение шаблонов набора для типа tp.
-function TMain:KitTpls (Kit, tp)
-  --logShow(Kit, tp, 2)
-  local Tpls = Kit[tp]
-  if type(Tpls) == 'table' then return Tpls end
+function TMain:TypeKit (Kits, tp)
+  --logShow(Kits, tp, 2)
+  local Kit = Kits[tp]
+  if type(Kit) == 'table' then return Kit end
 
-  local v = Kit._KitCfg_[tp]
+  local v = Kits._KitCfg_[tp]
   if not v then return end -- No file for type
 
   local n = type(v) == 'string' and v ~= "" and v or tostring(tp)
-  Tpls = Kit._require_(Kit._FullDir_..n)
-  Kit[tp] = Tpls
+  Kit = Kits._require_(Kits._FullDir_..n)
+  Kits[tp] = Kit
 
-  if Tpls then
-    Tpls.regex = (Tpls.regex == nil or
-                  Tpls.regex == true) and "lua" or Tpls.regex or "none"
-    addNewData(Tpls, unit.DefCfgData)
-    --if not Tpls.CharEnum and Cfg then Tpls.CharEnum = Cfg.CharEnum end
-    --if Cfg then addNewData(Tpls, Cfg) end -- For separate use!
+  if Kit then
+    Kit.regex = (Kit.regex == nil or
+                 Kit.regex == true) and "lua" or Kit.regex or "none"
+    addNewData(Kit, unit.DefCfgData)
+    --if not Kit.CharEnum and Cfg then Kit.CharEnum = Cfg.CharEnum end
+    --if Cfg then addNewData(Kit, Cfg) end -- For separate use!
     --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
-    Tpls.CharControl = CharControl(Tpls)
+    Kit.CharControl = CharControl(Kit)
   end
-  --logShow(Tpls, tp, 2)
+  --logShow(Kit, tp, 2)
 
-  return Tpls
-end -- KitTpls
+  return Kit
+end -- TypeKit
 
 do
   local prequire, newprequire = luaUt.prequire, luaUt.newprequire
@@ -363,35 +363,35 @@ do
 function TMain:MakeKit ()
 
   --far.Message("Load text templates", "Update")
-  local Kit = TplKits[self.Options.KitName]
-  --logShow(Kit, "Kit", 2)
-  if not Kit then
+  local Kits = unit.KitSuit[self.Options.SuitName]
+  --logShow(Kits, "Kits", 2)
+  if not Kits then
     --local dorequire = newprequire -- For separate use!
-    local dorequire = Kit == false and newprequire or prequire
+    local dorequire = Kits == false and newprequire or prequire
     local FullDir = string.format("%s.%s.", self.Options.BaseDir,
                                             self.Options.WorkDir)
     local KitCfg = dorequire(FullDir..self.Options.FileName)
     if KitCfg == nil then return end -- No templates
 
-    Kit = {
+    Kits = {
       _require_ = dorequire,
       _FullDir_ = FullDir,
       _KitCfg_  = KitCfg,
     }
-    TplKits[self.Options.KitName] = Kit
+    unit.KitSuit[self.Options.SuitName] = Kits
   end
-  --logShow(Kit, "Kit", 2)
+  --logShow(Kits, "Kits", 2)
 
-  return self:KitTpls(Kit, self.Current.FileType)
+  return self:TypeKit(Kits, self.Current.FileType)
 end -- MakeKit
 
 end -- do
+
+---------------------------------------- ---- Prepare
 do
   local curFileType = detect.area.current
 
--- Подготовка.
--- Preparing.
-function TMain:Prepare ()
+function TMain:MakeProps ()
 
   local Cfg = self.CfgData
 
@@ -399,10 +399,18 @@ function TMain:Prepare ()
                  --| Тип текущего файла, открытого в редакторе:
   self.Current = { FileType = Cfg.FileType or curFileType() }
 
-  return self:MakeKit()
-end -- Prepare
+end -- MakeProps
 
 end -- do
+
+-- Подготовка.
+-- Preparing.
+function TMain:Prepare ()
+
+  self:MakeProps()
+
+  return self:MakeKit()
+end -- Prepare
 
 ---------------------------------------- ---- Words
 local makeplain = strings.makeplain
@@ -414,9 +422,9 @@ local cfgNextType  = detect.use.configNextType
 -- Поиск шаблонов в строке.
 function TMain:FindTemplate () --> (table)
 
-  local Kit = TplKits[self.Options.KitName]
-  if not Kit then return end
-  --logShow(Kit, self.Options.KitName, 1)
+  local Kits = unit.KitSuit[self.Options.SuitName]
+  if not Kits then return end
+  --logShow(Kits, self.Options.SuitName, 1)
 
   local Cfg = self.CfgData
   --logShow(Cfg, "FindTemplate", "d2 t")
@@ -425,17 +433,17 @@ function TMain:FindTemplate () --> (table)
 
   local t, tLast = {} -- Результаты поиска
   -- Цикл поиска по всем подходящим типам:
-  local tp = cfgFirstType(CfgCur.FileType, Kit._KitCfg_)
+  local tp = cfgFirstType(CfgCur.FileType, Kits._KitCfg_)
   while tp do
     --logShow(t, tp)
     local noSkip = true
-    local Tpls = self:KitTpls(Kit, tp)
-    if not Tpls then break end
-    --logShow(Tpls, tp, 1)
-    --logShow({ Tpls, Cfg, Cfg.CharEnum }, tp, 1)
+    local Kit = self:TypeKit(Kits, tp)
+    if not Kit then break end
+    --logShow(Kit, tp, 1)
+    --logShow({ Kit, Cfg, Cfg.CharEnum }, tp, 1)
 
     local Word, Slab
-    local Ctrl = Cfg.CharEnum ~= Tpls.CharEnum and Tpls.CharControl
+    local Ctrl = Cfg.CharEnum ~= Kit.CharEnum and Kit.CharControl
     if Ctrl then
       Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
       noSkip = Ctrl:isWordUse(Word, Slab) -- Проверка на пропуск
@@ -450,9 +458,9 @@ function TMain:FindTemplate () --> (table)
 
     if noSkip then
       local q = 0 -- (!)
-      local D_rex = Tpls.regex
+      local D_rex = Kit.regex
       -- Цикл поиска по всем шаблонам:
-      for k, v in ipairs(Tpls) do
+      for k, v in ipairs(Kit) do
         local f = v.find
         local regex = (v.regex == nil or
                        v.regex == true) and D_rex or
@@ -472,7 +480,7 @@ function TMain:FindTemplate () --> (table)
           if Ctrl and is_q or not Ctrl and is_p then
             tLast = {
               Tpl = v, Find = f, Pos = p, qPos = q, regex = regex,
-              Type = tp, Index = k, --Tpls = Tpls, -- DEBUG
+              Type = tp, Index = k, --Kit = Kit, -- DEBUG
             } --
             --logShow({ k, f, t[#t], tLast }, tp)
             if #t == 0 then
@@ -487,13 +495,13 @@ function TMain:FindTemplate () --> (table)
         end -- if p
       end -- for
     end -- if noSkip
-    tp = cfgNextType(tp, Kit._KitCfg_)
+    tp = cfgNextType(tp, Kits._KitCfg_)
   end -- while
 
   --logShow(tLast, "FindTemplate Last")
   --if #t > 0 then logShow(t, "FindTemplate") end
   --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
-  --if #t > 0 then logShow(t[#t], self.Options.KitName) end
+  --if #t > 0 then logShow(t[#t], self.Options.SuitName) end
   return tLast and t --or nil
 end -- FindTemplate
 
@@ -644,7 +652,7 @@ end ---- Execute
 
 -- Сброс шаблонов для перезагрузки из файлов.
 function unit.Update ()
-  for k in pairs(TplKits) do TplKits[k] = false end
+  for k in pairs(unit.KitSuit) do unit.KitSuit[k] = false end
   far.Message("Templates will be reloaded!", "Update text templates")
 end ----
 
