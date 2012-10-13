@@ -50,7 +50,7 @@ in \37_usermenu.lua\- file for #LuaFAR for Editor# plugin:
 $ #Text Templates# (TextTemplate.lua)
   TextTemplate is a script for text templates insert.
  This script allows to replace typed text with other text by template.
-Templates store separately for each file type as Lua table in files.
+Templates store separately for each file type as lua‑table in files.
 
     ~Script parameters~@TT_Props@
     ~Binding of types~@TT_TypeBind@
