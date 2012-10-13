@@ -106,13 +106,14 @@ local ItemChecks = { -- Проверки на шаблон:
   end, -- pattern
 } ---
 
---[[
-local tcopy = tables.copy
 ---------------------------------------- Menu class
 local TMenu = {
   Guid = win.Uuid("3751918c-5cd0-4b56-8d32-13898f612930"),
-} -- Класс меню
+}
 local MMenu = { __index = TMenu }
+
+--[[
+local tcopy = tables.copy
 
 -- Создание объекта класса меню.
 local function CreateMenu (Properties, Items, BreakKeys) --> (object)
@@ -223,10 +224,10 @@ end -- MappingItems
 ---------------------------------------- Menu control
 
 ---------------------------------------- main
-local DoChange = { isUpdate = true }
-local NoChange = { isUpdate = false }
-
-local Guid = win.Uuid("3751918c-5cd0-4b56-8d32-13898f612930") -- TODO: DEL
+do
+  -- Флаги
+  local DoChange = { isUpdate = true }
+  local NoChange = { isUpdate = false }
 
 function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 
@@ -371,7 +372,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   -- Назначение обработчика:
   Props.RectMenu = Props.RectMenu or {}
   local RM_Props = Props.RectMenu
-  RM_Props.Guid = RM_Props.Guid or Guid
+  RM_Props.Guid = RM_Props.Guid or TMenu.Guid
   RM_Props.OnKeyPress = KeyPress
 
   -- Предварительный отбор:
@@ -380,6 +381,8 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 --[[ 2. Управление меню ]]
   return RunMenu(Props, MapItems, BreakKeys)
 end -- Menu
+
+end -- do
 
 --------------------------------------------------------------------------------
 return unit.Menu
