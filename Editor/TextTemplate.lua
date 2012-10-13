@@ -65,7 +65,7 @@ local extUt = require "Rh_Scripts.Utils.extUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -493,11 +493,11 @@ function TMain:FindTemplate () --> (table)
     tp = cfgNextType(tp, Kit._KitCfg_)
   end -- while
 
+  --logShow(tLast, "FindTemplate Last")
   --if #t > 0 then logShow(t, "FindTemplate") end
   --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
   --if #t > 0 then logShow(t[#t], self.Options.KitName) end
-  --logShow(Kit[Type], Type)
-  return tLast and t or nil
+  return tLast and t --or nil
 end -- FindTemplate
 
 ---------------------------------------- Main control
@@ -508,7 +508,7 @@ do
   local DelChars = EC_Actions.del
   --local BackChars = EC_Actions.bs
 
-  local RunMacro = macUt.RunMacro
+  local RunMacro = macUt.Execute
 
   local function RunPlain (text) --> (bool)
     if not EditorInsText(nil, text) then return end
@@ -583,7 +583,7 @@ end -- ApplyTemplate
 
 end -- do
 ---------------------------------------- ---- Make
-function TMain:MakeTemplate () --> (bool | nil)
+function TMain:Run () --> (bool | nil)
 
   local Cfg = self.CfgData
 
@@ -606,14 +606,14 @@ function TMain:MakeTemplate () --> (bool | nil)
   if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
   CfgCur.Word, CfgCur.Slab = Word, Slab
-  --if Word then logShow(Cfg.Current) end
+  --if Word then logShow(self.Current) end
   CfgCur.Frag = CfgCur.Line:sub(1, CfgCur.Pos - 1)
 
 --[[ 2. Поиск шаблонов в строке ]]
   -- Получение подходящего шаблона:
   local CfgTpl = self:FindTemplate()
   if not CfgTpl then return false end
-  --logShow(CfgTpl, "Templates", "d1 t")
+  --logShow(CfgTpl, "Templates", "d1")
   --self.Templates = CfgTpl
 
 --[[ 3. Обработка найденных шаблонов ]]
@@ -625,7 +625,7 @@ function TMain:MakeTemplate () --> (bool | nil)
   end --
 
   return isOk
-end -- MakeTemplate
+end -- Run
 
 ---------------------------------------- main
 
@@ -642,7 +642,7 @@ function unit.Execute (Data) --> (bool | nil)
 
   _Main:Prepare() -- Подготовка
 
-  return _Main:MakeTemplate()
+  return _Main:Run()
 end ---- Execute
 
 -- Сброс шаблонов для перезагрузки из файлов.
