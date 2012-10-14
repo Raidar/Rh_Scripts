@@ -77,7 +77,7 @@ local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
--- [[
+--[[
 local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -334,7 +334,7 @@ local function CreateMain (ArgData)
   -- 1. Заполнение ArgData.
   if ArgData == "AutoCfgData" then
     ArgData = unit.AutoCfgData
-  elseif CodeComplete then
+  elseif ArgData == "CodeCfgData" then
     ArgData = unit.CodeCfgData
   end
 
@@ -687,22 +687,21 @@ end -- Prepare
 -- Поиск слов, подходящих к текущему.
 function TMain:SearchWords () --> (table)
 
-  local Cfg, CfgCur = self.CfgData, self.Current
-  local Word, Slab = CfgCur.Word, CfgCur.Slab
-  local MaxLine, MinLen = CfgCur.MaxLine, Cfg.MinLength
-  local wCtr, wMax = 0, CfgCur.WordsMax
-  local wMid, GetLine = bshr(wMax, 1), CfgCur.GetLine
+  local Cfg, CurCfg = self.CfgData, self.Current
+  local Word, Slab = CurCfg.Word, CurCfg.Slab
+  local MaxLine, MinLen = CurCfg.MaxLine, Cfg.MinLength
+  local wCtr, wMax = 0, CurCfg.WordsMax
+  local wMid, GetLine = bshr(wMax, 1), CurCfg.GetLine
 
-  local WordFind, FindKind = not Cfg.PartFind, Cfg.FindKind
   local Limited = Cfg.FindKind ~= "unlimited"
   local Trimmed = Cfg.FindKind == "trimmable"
 
   -- Таблица слов с дополнительной информацией:
-  local t = { Stat = {}, Link = { Line = CfgCur.CurLine } }
+  local t = { Stat = {}, Link = { Line = CurCfg.CurLine } }
   local Stat = t.Stat -- Статистика встречаемости
   local Link = t.Link -- "Ссылочная" информация
 
-  --logShow({ CfgCur.Slab, Slab }, "Slab")
+  --logShow({ CurCfg.Slab, Slab }, "Slab")
   local SlabPat = self.Ctrl:asPattern(Slab) -- Подготовка Slab для поиска
   local BasePat = ("(%s%s+)"):format(SlabPat, self.Ctrl.CharsSet)
   local StartPat = '^'..BasePat
@@ -731,24 +730,24 @@ function TMain:SearchWords () --> (table)
       end
     end -- MakeWord
 
-    if WordFind then
+    if Cfg.PartFind then
+      for w in s:gmatch(BasePat) do MakeWord(w) end
+    else
       local v = s:match(StartPat)
       if v then MakeWord(v) end
       for w in s:gmatch(MatchPat) do MakeWord(w) end
-    else
-      for w in s:gmatch(BasePat) do MakeWord(w) end
     end
 
     return k
   end -- function MatchLineWords
 
   -- Поиск слов в текущей строке.
-  Link.Line = CfgCur.CurLine
+  Link.Line = CurCfg.CurLine
   wCtr = wCtr + MatchLineWords(GetLine(), 0)
   if Limited and wCtr >= wMax then return t end
   --logShow(t, "SearchWords")
 
-  if FindKind == "alternate" then
+  if Cfg.FindKind == "alternate" then
     -- Поиск поочерёдно сверху / снизу.
     local LineU, LineD = Link.Line, Link.Line
     local LinesUp, LinesDown = Cfg.LinesUp, Cfg.LinesDown
@@ -1029,8 +1028,8 @@ function TMain:MakeWordsList () --> (table)
   --logShow({ Word, Slab })
   if not self.Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
-  local CfgCur = self.Current
-  CfgCur.Word, CfgCur.Slab = Word, Slab
+  local CurCfg = self.Current
+  CurCfg.Word, CurCfg.Slab = Word, Slab
   --if Word then logShow(self.Current) end
 
 -- 2. Отбор подходящих слов для завершения.
@@ -1040,11 +1039,11 @@ function TMain:MakeWordsList () --> (table)
   local lMax = Info.CurLine - Info.TopScreenLine      -- Учёт случаев:
   lMax = max2(Info.WindowSizeY - lMax - 2, lMax)        -- список сверху
   lMax = min2(Cfg.ListsMax, max2(lMax - Popup.LenV, 1)) -- список снизу
-  CfgCur.WordsMax = max2(Cfg.FindsMax, lMax)
+  CurCfg.WordsMax = max2(Cfg.FindsMax, lMax)
 
   -- Информация для работы со строками файла (Line number is 0-based):
-  CfgCur.CurLine, CfgCur.MaxLine = Info.CurLine, Info.TotalLines
-  CfgCur.GetLine = function (n) return EditorGetStr(nil, n or -1, 2) end
+  CurCfg.CurLine, CurCfg.MaxLine = Info.CurLine, Info.TotalLines
+  CurCfg.GetLine = function (n) return EditorGetStr(nil, n or -1, 2) end
 
   -- Поиск подходящих слов в строках файла:
   local Words = self:SearchWords(); self.Words = Words
@@ -1066,8 +1065,8 @@ function TMain:MakeWordsList () --> (table)
 
 -- 4. Подготовка списка-меню слов.
 
-  CfgCur.Shared = self:SharedPart() -- Общая часть слов
-  --if Word then logShow(CfgCur) end
+  CurCfg.Shared = self:SharedPart() -- Общая часть слов
+  --if Word then logShow(CurCfg) end
 
   return self:PrepareMenu()
 end -- MakeWordsList
