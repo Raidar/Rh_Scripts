@@ -592,7 +592,7 @@ function TMain:Run () --> (bool | nil)
 
   local Cfg = self.CfgData
 
---[[ 1. Анализ текущей строки ]]
+  -- Анализ текущей строки --
 
   --logShow(Cfg, "CfgData")
   local Ctrl = CharControl(Cfg) -- Функции управления словом
@@ -601,7 +601,7 @@ function TMain:Run () --> (bool | nil)
   local Info = EditorGetInfo() -- Базовая информация о редакторе
   --logShow(Info, "Editor Info")
 
-  -- Получение текущего слова под курсором (CurPos is 0-based):
+  -- Получение слова под курсором (CurPos is 0-based):
   local CfgCur = self.Current
   CfgCur.Line = EditorGetStr(nil, -1, 2) or ""
   CfgCur.Pos  = Info.CurPos + 1 -- 0-based!
@@ -614,14 +614,14 @@ function TMain:Run () --> (bool | nil)
   --if Word then logShow(self.Current) end
   CfgCur.Frag = CfgCur.Line:sub(1, CfgCur.Pos - 1)
 
---[[ 2. Поиск шаблонов в строке ]]
+  -- Поиск шаблонов в строке --
   -- Получение подходящего шаблона:
   local CfgTpl = self:FindTemplate()
   if not CfgTpl then return false end
   --logShow(CfgTpl, "Templates", "d1")
   --self.Templates = CfgTpl
 
---[[ 3. Обработка найденных шаблонов ]]
+  -- Обработка найденных шаблонов --
   local k, isOk = 1, false
   -- Поиск по всем до первого сработавшего:
   while isOk == false and k <= #CfgTpl do

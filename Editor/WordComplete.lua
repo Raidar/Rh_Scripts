@@ -684,8 +684,16 @@ function TMain:Prepare ()
 end -- Prepare
 
 ---------------------------------------- ---- List
--- Поиск слов, подходящих к текущему.
-function TMain:SearchWords () --> (table)
+-- Поиск слов в шаблоне.
+function TMain:SearchCodeWords () --> (table)
+  -- Таблица слов с дополнительной информацией:
+  local t = { Stat = {}, Link = { Line = CurCfg.CurLine } }
+
+  return t
+end -- SearchCodeWords
+
+-- Поиск слов в тексте.
+function TMain:SearchTextWords () --> (table)
 
   local Cfg, CurCfg = self.CfgData, self.Current
   local Word, Slab = CurCfg.Word, CurCfg.Slab
@@ -791,6 +799,15 @@ function TMain:SearchWords () --> (table)
   end -- if FindKind
 
   return t
+end -- SearchTextWords
+
+-- Поиск слов, подходящих к текущему.
+function TMain:SearchWords () --> (table)
+  if self.Options.useSuit then
+    return self:SearchCodeWords()
+  else
+    return self:SearchTextWords()
+  end
 end -- SearchWords
 
 do
@@ -1154,15 +1171,16 @@ function TMain:Run () --> (bool | nil)
   local WC_Keys = self.Menu.CKeys
   local LU_Keys, LB_Keys = self.Menu.LKeys, self.Menu.LBKeys
 
---[[ 1. Конфигурирование WordComplete ]]
+  -- 1. Конфигурирование --
 
---[[ 1.1. Управление настройками ]]
+  -- Управление настройками --
   local RM_Props = self.Props.RectMenu
 
   --local VMod, VKey, SKey -- Информация о клавише
   local Index, Complete -- Локальное использование
 
---[[ 2.1. Обработка нажатия клавиши ]]
+  -- Обработка нажатия клавиши --
+
   -- Обработчик нажатия клавиши.
   local function KeyPress (VirKey, SelIndex)
     local SKey = VirKey.Name --or InputRecordToName(VirKey)
@@ -1259,13 +1277,13 @@ function TMain:Run () --> (bool | nil)
   local Item, Pos -- Выбранный пункт и его позиция
 
   repeat
---[[ 1.2. Формирование начального списка-меню ]]
+    -- Формирование начального списка-меню ---
     self.Current = { StartMenu = true }
     self:MakeWordsList()
     self.Current.StartMenu = nil
     --logShow({ self.Props, self.Items }, "Word Completion")
 
---[[ 2. Управление списком WordComplete ]]
+    -- 2. Управление списком --
 
     if self.Items and #self.Items == 1 and Cfg.LoneAuto then
       Item, Pos = self.Items[1], 1
@@ -1281,8 +1299,9 @@ function TMain:Run () --> (bool | nil)
     end
     Action = Item.Action or A_Replace -- По умолчанию -- Выбор по Enter
 
---[[ 2.2. Выполнение выбранного действия ]]
+    -- Выполнение выбранного действия --
     --logShow({ Action, Pos, Items }, "Completion Action")
+
     -- Реакция на отмену: Закрытие без всякого выбора.
     if Action == A_Cancel then return false end
     -- Реакция на неизвестное действие: Выход с ошибкой.
