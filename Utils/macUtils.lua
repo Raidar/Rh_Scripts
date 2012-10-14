@@ -59,17 +59,14 @@ local DefMacroKeyChar = '@' -- Masyamba
 local MacroKeys = { -- Макро-ключи:
   "left", "right", "up", "down",
   "home", "end",
-  "return", "indret",
+  --"return", "indret",
   "enter", "indenter",
   -- bsln must be before bs!
   "del", "bsln", "bs",
   "here", "back",
   "stop", "resume",
+  --"copy", "paste", -- TODO: Clip: copy & paste!!!
   "nop",
-} ---
-local MacroKeyNames = { -- Названия действий:
-  ["return"] = "enter",
-  indret = "indenter",
 } ---
 local MacroValues = "1234567890" -- Цифры повторения макро-ключей
 
@@ -225,7 +222,7 @@ local EditorCycleActions = {
 MacroActions.editor.cycle = EditorCycleActions
 
 ---------------------------------------- Macro actions
-local CEditorMacroActions = {
+local TEditorMacroActions = {
 
   text = function (self, Info, Count, text) -- Вставка текста
     if not InsText(Info, Count, text) then return end
@@ -296,7 +293,7 @@ local CEditorMacroActions = {
   end, --- indenter
   nop = function (self, Info, Count) return true end,
 } ---
-local MEditorMacroActions = { __index = CEditorMacroActions }
+local MEditorMacroActions = { __index = TEditorMacroActions }
 
 local function EditorMacroActions (Data) --> (table)
   local Data = Data or Null -- No change!
@@ -306,7 +303,7 @@ local function EditorMacroActions (Data) --> (table)
     Save = Data.Save, --or nil -- Информация о редакторе для Here и Back
     MoveStop = Data.MoveStop or false, -- Двигаемость курсора для Stop и Resume
 
-    Selections = {}, -- Список блоков текста
+    Clip = {}, -- TODO: Внутренний буфер обмена
   } --- self
 
   return setmetatable(self, MEditorMacroActions)
@@ -363,9 +360,6 @@ local function Make (Text, MacroKeyChar) --> (table)
 
       if key then
         t[#t+1] = { Action = key }
-        if MacroKeyNames[key] then
-          t[#t].Action = MacroKeyNames[key]
-        end
         k = k + key:len() - 1
 
       else -- Action value:
