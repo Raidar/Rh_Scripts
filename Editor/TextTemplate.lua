@@ -428,12 +428,12 @@ function TMain:FindTemplate () --> (table)
 
   local Cfg = self.CfgData
   --logShow(Cfg, "FindTemplate", "d2 t")
-  local CfgCur = self.Current
-  local CurSlab = CfgCur.Slab -- CfgCur.Frag
+  local CurCfg = self.Current
+  local CurSlab = CurCfg.Slab -- CurCfg.Frag
 
   local t, tLast = {} -- Результаты поиска
   -- Цикл поиска по всем подходящим типам:
-  local tp = cfgFirstType(CfgCur.FileType, Kits._KitCfg_)
+  local tp = cfgFirstType(CurCfg.FileType, Kits._KitCfg_)
   while tp do
     --logShow(t, tp)
     local noSkip = true
@@ -445,7 +445,7 @@ function TMain:FindTemplate () --> (table)
     local Word, Slab
     local Ctrl = Cfg.CharEnum ~= Kit.CharEnum and Kit.CharControl
     if Ctrl then
-      Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
+      Word, Slab = Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
       noSkip = Ctrl:isWordUse(Word, Slab) -- Проверка на пропуск
       --[[
       logShow({ { Word, Slab, noSkip },
@@ -528,12 +528,12 @@ function TMain:ApplyTemplate ()
   local Cfg = self.CfgData
   --logShow(Cfg, "Cfg", "d2 t")
   --logShow(Cfg.Template, "Template", "d1 t")
-  local CfgCur, CfgTpl = self.Current, Cfg.Template
+  local CurCfg, CfgTpl = self.Current, Cfg.Template
   local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.Pos
 
-  local Line = CfgCur.Slab:sub(Pos, -1)
+  local Line = CurCfg.Slab:sub(Pos, -1)
   local DelLen = Line:len()
-  CfgCur.Delete = Line
+  CurCfg.Delete = Line
 
 -- 1. Учёт способа вставки шаблона: замена или добавление.
   local res, isOk = Tpl.replace or Tpl.macro or Tpl.plain
@@ -542,7 +542,7 @@ function TMain:ApplyTemplate ()
 -- 2. Учёт использования регулярных выражений.
   res = sgsub(Line, Find, res, Tpl.flags, CfgTpl.regex)
   CfgTpl.Result = res or Line
-  --logShow({ CfgCur }, "CfgCur", 2)
+  --logShow({ CurCfg }, "CurCfg", 2)
 
 -- 3. Вставка шаблона в текст с учётом его вида.
   local kind = Tpl.kind --or (Tpl.replace and "macro")
@@ -574,8 +574,8 @@ function TMain:ApplyTemplate ()
 
   if RunTpl then
     if not Tpl.add then -- Замена
-      EditorSetPos(nil, { CurPos = CfgCur.Frag:len() - DelLen })
-      --logShow({ res, CfgCur.Frag:len(), DelLen }, "RunTpl")
+      EditorSetPos(nil, { CurPos = CurCfg.Frag:len() - DelLen })
+      --logShow({ res, CurCfg.Frag:len(), DelLen }, "RunTpl")
       if not DelChars(nil, DelLen) then return end
 
       --logShow(res, "RunTpl")
@@ -602,17 +602,17 @@ function TMain:Run () --> (bool | nil)
   --logShow(Info, "Editor Info")
 
   -- Получение слова под курсором (CurPos is 0-based):
-  local CfgCur = self.Current
-  CfgCur.Line = EditorGetStr(nil, -1, 2) or ""
-  CfgCur.Pos  = Info.CurPos + 1 -- 0-based!
-  local Word, Slab = Ctrl:atPosWord(CfgCur.Line, CfgCur.Pos)
+  local CurCfg = self.Current
+  CurCfg.Line = EditorGetStr(nil, -1, 2) or ""
+  CurCfg.Pos  = Info.CurPos + 1 -- 0-based!
+  local Word, Slab = Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   -- Проверки: внутри слова, вне слова, мин. число символов:
   --logShow({ Word, Word:len(), Slab, Slab:len(), Cfg }, "Make", 2)
   if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
 
-  CfgCur.Word, CfgCur.Slab = Word, Slab
+  CurCfg.Word, CurCfg.Slab = Word, Slab
   --if Word then logShow(self.Current) end
-  CfgCur.Frag = CfgCur.Line:sub(1, CfgCur.Pos - 1)
+  CurCfg.Frag = CurCfg.Line:sub(1, CurCfg.Pos - 1)
 
   -- Поиск шаблонов в строке --
   -- Получение подходящего шаблона:
