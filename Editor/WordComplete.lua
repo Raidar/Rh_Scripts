@@ -114,7 +114,7 @@ unit.LocalUseKeys = { -- Клавиши локального использов�
 ---------------------------------------- ---- Custom
 local ScriptName = "WordComplete"
 local ScriptAutoName = "AutoComplete"
-local ScriptCodeName = "CodeComplete"
+local ScriptCodeName = "WordSuitlete"
 local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
 unit.DefCustom = {
@@ -685,12 +685,19 @@ end -- Prepare
 
 ---------------------------------------- ---- List
 -- Поиск слов в шаблоне.
-function TMain:SearchCodeWords () --> (table)
+function TMain:SearchSuitWords () --> (table)
+
+  local Kits = unit.KitSuit[self.Options.SuitName]
+  if not Kits then return end
+  --logShow(Kits, self.Options.SuitName, 1)
+
+  local Cfg, CurCfg = self.CfgData, self.Current
+
   -- Таблица слов с дополнительной информацией:
   local t = { Stat = {}, Link = { Line = CurCfg.CurLine } }
 
   return t
-end -- SearchCodeWords
+end -- SearchSuitWords
 
 -- Поиск слов в тексте.
 function TMain:SearchTextWords () --> (table)
@@ -804,7 +811,7 @@ end -- SearchTextWords
 -- Поиск слов, подходящих к текущему.
 function TMain:SearchWords () --> (table)
   if self.Options.useSuit then
-    return self:SearchCodeWords()
+    return self:SearchSuitWords()
   else
     return self:SearchTextWords()
   end
@@ -947,7 +954,7 @@ do
   local ItemTextFmt = ItemHotFmt.."%s"
 
 -- Заполнение списка-меню.
-function TMain:PrepareMenu () --> (table)
+function TMain:MakeWordsMenu () --> (table)
 
   local Cfg = self.CfgData
 
@@ -1019,7 +1026,7 @@ function TMain:PrepareMenu () --> (table)
   --]]
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
-end -- PrepareMenu
+end -- MakeWordsMenu
 
 end -- do
 
@@ -1040,14 +1047,16 @@ function TMain:MakeWordsList () --> (table)
 
 -- 1. Анализ текущего набранного слова.
 
-  -- Получение текущего слова под курсором (CurPos is 0-based):
-  local Word, Slab = self.Ctrl:atPosWord(EditorGetStr(nil, -1, 2), Info.CurPos + 1)
-  --logShow({ Word, Slab })
-  if not self.Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
-
+  -- Получение слова под курсором (CurPos is 0-based):
   local CurCfg = self.Current
-  CurCfg.Word, CurCfg.Slab = Word, Slab
-  --if Word then logShow(self.Current) end
+  CurCfg.Line = EditorGetStr(nil, -1, 2) or ""
+  CurCfg.Pos  = Info.CurPos + 1 -- 0-based!
+  CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
+  --logShow(CurCfg) -- Проверка на выход:
+  if not self.Ctrl:isWordUse(CurCfg.Word, CurCfg.Slab) then return end
+
+  --if CurCfg.Word then logShow(CurCfg) end
+  CurCfg.Frag = CurCfg.Line:sub(1, CurCfg.Pos - 1)
 
 -- 2. Отбор подходящих слов для завершения.
 
@@ -1085,7 +1094,7 @@ function TMain:MakeWordsList () --> (table)
   CurCfg.Shared = self:SharedPart() -- Общая часть слов
   --if Word then logShow(CurCfg) end
 
-  return self:PrepareMenu()
+  return self:MakeWordsMenu()
 end -- MakeWordsList
 
 end -- do
@@ -1308,7 +1317,7 @@ function TMain:Run () --> (bool | nil)
     --if Action ~= "Replace" and Action ~= "Insert" then return nil, Action end
     Effect = Item.Effect
     if Effect then
-      Complete = self.Items[Pos].Word:sub(1, self.Current.Shared:len())
+      local Complete = self.Items[Pos].Word:sub(1, self.Current.Shared:len())
       if Complete ~= "" then -- Выбор:
         self:ApplyWordAction(Complete, Action)
         --farUt.RedrawAll() -- Обновление!

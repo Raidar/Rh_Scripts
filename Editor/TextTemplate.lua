@@ -426,9 +426,8 @@ function TMain:FindTemplate () --> (table)
   if not Kits then return end
   --logShow(Kits, self.Options.SuitName, 1)
 
-  local Cfg = self.CfgData
+  local Cfg, CurCfg = self.CfgData, self.Current
   --logShow(Cfg, "FindTemplate", "d2 t")
-  local CurCfg = self.Current
   local CurSlab = CurCfg.Slab -- CurCfg.Frag
 
   local t, tLast = {} -- Результаты поиска
@@ -474,19 +473,19 @@ function TMain:FindTemplate () --> (table)
           --logShow({ k, f, t[#t] }, tp)
 
           -- Отбор с макс. длиной совпадения (мин. нач. позицией):
-          local is_p =       (not tLast or p == 1 or tLast.Pos  > p)
+          local is_p =       (not tLast or p == 1 or tLast.sPos > p)
           local is_q = q and (not tLast or q == 1 or tLast.qPos > q)
 
           if Ctrl and is_q or not Ctrl and is_p then
             tLast = {
-              Tpl = v, Find = f, Pos = p, qPos = q, regex = regex,
+              Tpl = v, Find = f, sPos = p, qPos = q, regex = regex,
               Type = tp, Index = k, --Kit = Kit, -- DEBUG
             } --
             --logShow({ k, f, t[#t], tLast }, tp)
             if #t == 0 then
               t[1] = tLast
             elseif (Ctrl and q and q == 1 and t[#t].qPos == 1) or
-                   (not Ctrl   and p == 1 and t[#t].Pos  == 1) then
+                   (not Ctrl   and p == 1 and t[#t].sPos == 1) then
               t[#t+1] = tLast
             else
               t[#t] = tLast
@@ -529,11 +528,11 @@ function TMain:ApplyTemplate ()
   --logShow(Cfg, "Cfg", "d2 t")
   --logShow(Cfg.Template, "Template", "d1 t")
   local CurCfg, CfgTpl = self.Current, Cfg.Template
-  local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.Pos
+  local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.sPos
 
   local Line = CurCfg.Slab:sub(Pos, -1)
   local DelLen = Line:len()
-  CurCfg.Delete = Line
+  --CurCfg.Delete = Line
 
 -- 1. Учёт способа вставки шаблона: замена или добавление.
   local res, isOk = Tpl.replace or Tpl.macro or Tpl.plain
@@ -557,7 +556,7 @@ function TMain:ApplyTemplate ()
     end
     --logShow({ isOk, res }, "apply", 2)
     if not isOk then
-      far.Message(res, "Error using "..DefCustom.name, nil, "wl")
+      far.Message(res, "Error using "..unit.DefCustom.name, nil, "wl")
       return
     end
     if type(res) ~= 'string' then return false end
@@ -595,7 +594,7 @@ function TMain:Run () --> (bool | nil)
   -- Анализ текущей строки --
 
   --logShow(Cfg, "CfgData")
-  local Ctrl = CharControl(Cfg) -- Функции управления словом
+  self.Ctrl = CharControl(Cfg) -- Функции управления словом
   --logShow(Ctrl, "CharControl")
 
   local Info = EditorGetInfo() -- Базовая информация о редакторе
@@ -605,13 +604,12 @@ function TMain:Run () --> (bool | nil)
   local CurCfg = self.Current
   CurCfg.Line = EditorGetStr(nil, -1, 2) or ""
   CurCfg.Pos  = Info.CurPos + 1 -- 0-based!
-  local Word, Slab = Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
+  CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   -- Проверки: внутри слова, вне слова, мин. число символов:
-  --logShow({ Word, Word:len(), Slab, Slab:len(), Cfg }, "Make", 2)
-  if not Ctrl:isWordUse(Word, Slab) then return end -- Проверка на выход
+  --logShow(CurCfg) -- Проверка на выход:
+  if not self.Ctrl:isWordUse(CurCfg.Word, CurCfg.Slab) then return end
 
-  CurCfg.Word, CurCfg.Slab = Word, Slab
-  --if Word then logShow(self.Current) end
+  --if CurCfg.Word then logShow(CurCfg) end
   CurCfg.Frag = CurCfg.Line:sub(1, CurCfg.Pos - 1)
 
   -- Поиск шаблонов в строке --
