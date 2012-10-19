@@ -953,7 +953,7 @@ do
 -- Вывод меню и обработка выбранного пункта.
 function TMenu:Run ()
   repeat
-    self:ShowLoop() -- Цикл вывода
+    self:ShowLoop()
     if self.Error then return nil, self.Error end
 
     if not self.ActItem then
