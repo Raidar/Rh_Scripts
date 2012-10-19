@@ -420,14 +420,14 @@ local cfgNextType  = detect.use.configNextType
 
 -- Find templates in line.
 -- Поиск шаблонов в строке.
-function TMain:FindTemplate () --> (table)
+function TMain:FindTemplates () --> (table)
 
   local Kits = unit.KitSuit[self.Options.SuitName]
   if not Kits then return end
   --logShow(Kits, self.Options.SuitName, 1)
 
   local Cfg, CurCfg = self.CfgData, self.Current
-  --logShow(Cfg, "FindTemplate", "d2 t")
+  --logShow(Cfg, "FindTemplates", "d2 t")
   local CurSlab = CurCfg.Slab -- CurCfg.Frag
 
   local t, tLast = {} -- Результаты поиска
@@ -497,16 +497,16 @@ function TMain:FindTemplate () --> (table)
     tp = cfgNextType(tp, Kits._KitCfg_)
   end -- while
 
-  --logShow(tLast, "FindTemplate Last")
-  --if #t > 0 then logShow(t, "FindTemplate") end
+  --logShow(tLast, "FindTemplates Last")
+  --if #t > 0 then logShow(t, "FindTemplates") end
   --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
   --if #t > 0 then logShow(t[#t], self.Options.SuitName) end
   return tLast and t --or nil
-end -- FindTemplate
+end -- FindTemplates
 
 ---------------------------------------- Main control
 
----------------------------------------- ---- Apply
+---------------------------------------- ---- Action
 do
   local EC_Actions = macUt.MacroActions.editor.cycle
   local DelChars = EC_Actions.del
@@ -524,10 +524,10 @@ do
 -- Применение найденного шаблона.
 function TMain:ApplyTemplate ()
 
-  local Cfg = self.CfgData
+  local Cfg, CurCfg = self.CfgData, self.Current
   --logShow(Cfg, "Cfg", "d2 t")
   --logShow(Cfg.Template, "Template", "d1 t")
-  local CurCfg, CfgTpl = self.Current, Cfg.Template
+  local CfgTpl = Cfg.Template
   local Tpl, Find, Pos = CfgTpl.Tpl, CfgTpl.Find, CfgTpl.sPos
 
   local Line = CurCfg.Slab:sub(Pos, -1)
@@ -541,7 +541,7 @@ function TMain:ApplyTemplate ()
 -- 2. Учёт использования регулярных выражений.
   res = sgsub(Line, Find, res, Tpl.flags, CfgTpl.regex)
   CfgTpl.Result = res or Line
-  --logShow({ CurCfg }, "CurCfg", 2)
+  --logShow({ CurCfg, CfgTpl, res }, "CurCfg", 2)
 
 -- 3. Вставка шаблона в текст с учётом его вида.
   local kind = Tpl.kind --or (Tpl.replace and "macro")
@@ -586,7 +586,26 @@ function TMain:ApplyTemplate ()
 end -- ApplyTemplate
 
 end -- do
----------------------------------------- ---- Make
+
+-- Process found templates.
+-- Обработка найденных шаблонов.
+function TMain:ProcessTemplates () --> (bool | nil)
+
+  local Cfg = self.CfgData
+  local CfgTpl = self.Templates
+
+  -- Обработка найденных шаблонов
+  local k, isOk = 1, false
+  -- Поиск по всем до первого сработавшего:
+  while isOk == false and k <= #CfgTpl do
+    Cfg.Template, k = CfgTpl[k], k + 1
+    isOk = self:ApplyTemplate()
+  end --
+
+  return isOk
+end -- ProcessTemplates
+
+---------------------------------------- ---- Run
 function TMain:Run () --> (bool | nil)
 
   local Cfg = self.CfgData
@@ -614,27 +633,18 @@ function TMain:Run () --> (bool | nil)
 
   -- Поиск шаблонов в строке --
   -- Получение подходящего шаблона:
-  local CfgTpl = self:FindTemplate()
-  if not CfgTpl then return false end
+  self.Templates = self:FindTemplates()
+  if not self.Templates then return false end
   --logShow(CfgTpl, "Templates", "d1")
-  --self.Templates = CfgTpl
 
-  -- Обработка найденных шаблонов --
-  local k, isOk = 1, false
-  -- Поиск по всем до первого сработавшего:
-  while isOk == false and k <= #CfgTpl do
-    Cfg.Template, k = CfgTpl[k], k + 1
-    isOk = self:ApplyTemplate()
-  end --
-
-  return isOk
+  -- Обработка найденных шаблонов
+  return self:ProcessTemplates()
 end -- Run
 
 ---------------------------------------- main
 
 function unit.Execute (Data) --> (bool | nil)
 
-  -- Конфигурация:
   local _Main = CreateMain(Data)
 
   --logShow(Data, "Data", 2)
@@ -643,7 +653,7 @@ function unit.Execute (Data) --> (bool | nil)
   --logShow(_Main.ArgData, "ArgData", 2)
   if not _Main.CfgData.Enabled then return end
 
-  _Main:Prepare() -- Подготовка
+  _Main:Prepare()
 
   return _Main:Run()
 end ---- Execute

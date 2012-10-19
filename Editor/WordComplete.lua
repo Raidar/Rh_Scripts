@@ -39,8 +39,6 @@ local EditorGetInfo = editor.GetInfo
 local EditorSetPos  = editor.SetPosition
 local EditorGetStr  = editor.GetString
 local EditorInsText = editor.InsertText
-local EditorRedraw  = editor.Redraw
-local EditorProcKey = editor.ProcessInput
 
 ----------------------------------------
 --local context = context
@@ -60,7 +58,7 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local extUt = require "Rh_Scripts.Utils.extUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
@@ -368,8 +366,8 @@ local function CreateMain (ArgData)
   self.CfgData = self.History:field(self.Custom.history.field)
 
   self.Menu = self.CfgData.Menu or {}
-  self.Menu.CKeys = self.Menu.CKeys or unit.CompleteKeys
-  self.Menu.LKeys = self.Menu.LKeys or unit.LocalUseKeys
+  self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
+  self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
 
   -- 3. Дополнение конфигурации.
   setmetatable(self.CfgData, { __index = self.ArgData })
@@ -540,6 +538,7 @@ end -- do
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- KitSuit
+--[=[
 unit.KitSuit = {} -- Комплект наборов шаблонов
 
 local CharControl = extUt.CharControl
@@ -571,13 +570,15 @@ function TMain:TypeKit (Kits, tp)
 
   return Kit
 end -- TypeKit
+--]=]
 
 do
-  local prequire, newprequire = luaUt.prequire, luaUt.newprequire
+  --local prequire, newprequire = luaUt.prequire, luaUt.newprequire
 
 -- -- Make templates kit.
 -- -- Формирование набора шаблонов.
 function TMain:MakeKit ()
+--[=[
   if not self.Options.useSuit then return end
 
   --far.Message("Load text templates", "Update")
@@ -601,6 +602,7 @@ function TMain:MakeKit ()
   --logShow(Kits, "Kits", 2)
 
   return self:TypeKit(Kits, self.Current.FileType)
+--]=]
 end -- MakeKit
 
 end -- do
@@ -629,7 +631,7 @@ function TMain:MakeProps ()
   Props.Flags = HighlightOff(Props.Flags)
 
   -- Клавиши локального использования:
-  self.Menu.LBKeys = menUt.ParseMenuHandleKeys(self.Menu.LKeys)
+  self.Menu.BreakUseKeys = menUt.ParseMenuHandleKeys(self.Menu.LocalUseKeys)
 
   -- Свойства RectMenu:
   local RM_Props = Props.RectMenu or {}
@@ -686,7 +688,7 @@ end -- Prepare
 ---------------------------------------- ---- List
 -- Поиск слов в шаблоне.
 function TMain:SearchSuitWords () --> (table)
-
+  --[[
   local Kits = unit.KitSuit[self.Options.SuitName]
   if not Kits then return end
   --logShow(Kits, self.Options.SuitName, 1)
@@ -697,6 +699,7 @@ function TMain:SearchSuitWords () --> (table)
   local t = { Stat = {}, Link = { Line = CurCfg.CurLine } }
 
   return t
+  --]]
 end -- SearchSuitWords
 
 -- Поиск слов в тексте.
@@ -1104,7 +1107,7 @@ local function InsText (text)
   return EditorInsText(nil, text)
 end --
 
----------------------------------------- ----- Apply
+---------------------------------------- ----- Action
 do
   -- Удаление Count символов:
   local EC_Actions = macUt.MacroActions.editor.cycle
@@ -1129,20 +1132,20 @@ function TMain:ApplyWordAction (Complete, Action) --> (bool | nil)
     if not InsText(Complete) then return end
   end
 
-  EditorRedraw()
+  editor.Redraw()
 
   return true
 end -- ApplyWordAction
 
 end -- do
 
----------------------------------------- ----- Run
+---------------------------------------- ----- Show
 do
   local LuaCards    = extUt.const.LuaCards
   --local LuaCardsSet = extUt.const.LuaCardsSet
 
   -- Флаги.
-  local WC_Flags = { isRedraw = false, isRedrawAll = true }
+  local CompleteFlags = { isRedraw = false, isRedrawAll = true }
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
 
@@ -1168,27 +1171,16 @@ do
 
   local KeyActions = macUt.MacroActions.editor.plain
 
-function TMain:Run () --> (bool | nil)
+function TMain:AssignKeyPress () --> (bool | nil)
 
   local Cfg = self.CfgData
+  local Menu, Popup = self.Menu, self.Popup
 
-  local Action, Effect -- Действие
-  local PressKey -- Нажатая клавиша
   --logShow(Cfg, "Cfg", 1)
   self.Props, self.Items = self.Menu.Props -- Информация о меню
-  -- Клавиши-завершители:
-  local WC_Keys = self.Menu.CKeys
-  local LU_Keys, LB_Keys = self.Menu.LKeys, self.Menu.LBKeys
-
-  -- 1. Конфигурирование --
-
-  -- Управление настройками --
-  local RM_Props = self.Props.RectMenu
-
-  --local VMod, VKey, SKey -- Информация о клавише
-  local Index, Complete -- Локальное использование
 
   -- Обработка нажатия клавиши --
+  Popup.PressKey = false -- Нажатая клавиша
 
   -- Обработчик нажатия клавиши.
   local function KeyPress (VirKey, SelIndex)
@@ -1196,13 +1188,13 @@ function TMain:Run () --> (bool | nil)
     if SKey == "Esc" then return nil, CancelFlag end
 
     -- Предварительный анализ клавиши.
-    PressKey = Cfg.UndueOut and VirKey or false
+    Popup.PressKey = Cfg.UndueOut and VirKey or false
     local VKey = VirKey.VirtualKeyCode
     local VMod = GetModBase(VirKey.ControlKeyState)
     --logShow({ VKey, VMod, SKey }, "VirKey", 1, "xv2")
 
     local function MakeUpdate () -- Обновление!
-      PressKey = false
+      Popup.PressKey = false
       farUt.RedrawAll()
       -- Формирование нового списка-меню слов.
       self:MakeWordsList()
@@ -1210,19 +1202,20 @@ function TMain:Run () --> (bool | nil)
       --logShow(self.Items, "MakeUpdate")
       if not self.Items then return nil, CloseFlag end
       --logShow(SelIndex, hex(FKey))
-      return { self.Props, self.Items, WC_Keys }, WC_Flags
-    end --
+      return { self.Props, self.Items, Menu.CompleteKeys }, CompleteFlags
+    end -- MakeUpdate
 
     -- Учёт нажатия клавиш локального использования.
-    Index = LB_Keys[SKey]
+    local Index = Menu.BreakUseKeys[SKey]
     if Index then
-      Action = LU_Keys[Index].Action or A_Replace
-      Effect = LU_Keys[Index].Effect or E_Shared
-      --logShow({ Index, SelIndex }, Action)
+      local Effect = Menu.LocalUseKeys[Index].Effect or E_Shared
+      --logShow({ Index, SelIndex }, Effect)
       if Effect and SelIndex then
-        -- Effect == E_Shared --
-        Complete = self.Items[SelIndex].Word:sub(1, self.Current.Shared:len())
+        --Effect == E_Shared -- DEBUG only
+        local Complete = self.Items[SelIndex].Word:sub(1, self.Current.Shared:len())
         if Complete ~= "" then -- Выбор:
+          local Action = Menu.LocalUseKeys[Index].Action or A_Replace
+          --logShow({ Complete, Action }, Effect)
           self:ApplyWordAction(Complete, Action)
         end
         return MakeUpdate()
@@ -1239,7 +1232,7 @@ function TMain:Run () --> (bool | nil)
 
     -- Учёт нажатия клавиш действий.
     local Name = KeyActionNames[VirKey.KeyName]
-    --logShow({ Name }, VirKey.KeyName)
+    --logShow(Name, VirKey.KeyName)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
       --logShow(Name, VirKey.KeyName)
@@ -1256,10 +1249,10 @@ function TMain:Run () --> (bool | nil)
       --logShow({ VirKey, Cfg.UndueOut, CancelFlag }, "Key is not Char")
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
+
     --logShow(VirKey, "Info on Key Press: Char")
     local Char = SpecKeyChar or VirKey.UnicodeChar
     --logShow(Char, hex(VKey))
-
     if Cfg.Trailers:find(Char, 1, true) and
        not (Cfg.UseMagic and
             (LuaCards:find(Char, 1, true) or
@@ -1281,41 +1274,56 @@ function TMain:Run () --> (bool | nil)
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
 
   -- Назначение обработчика:
+  local RM_Props = self.Props.RectMenu
   RM_Props.OnKeyPress = KeyPress
+end -- AssignKeyPress
 
+end --
+do
+  local EditorProcKey = editor.ProcessInput
+
+-- Цикл вывода меню слов до выбора.
+function TMain:ShowLoop () --> (bool | nil)
+
+  local Cfg, Popup = self.CfgData, self.Popup
+  --logShow(Cfg, "Cfg", 1)
+
+  -- Информация о меню:
+  self.Items = false
+  self.Props = self.Menu.Props
   local Item, Pos -- Выбранный пункт и его позиция
 
   repeat
-    -- Формирование начального списка-меню ---
+    -- Формирование начального списка-меню --
     self.Current = { StartMenu = true }
     self:MakeWordsList()
     self.Current.StartMenu = nil
     --logShow({ self.Props, self.Items }, "Word Completion")
 
-    -- 2. Управление списком --
-
+    -- Управление списком --
     if self.Items and #self.Items == 1 and Cfg.LoneAuto then
       Item, Pos = self.Items[1], 1
       --logShow({ Pos, Item }, "Lone AutoCompletion")
     else
-      --Item, Pos = RunMenu(self.Props, self.Items, WC_Keys)
-      Item, Pos = usercall(nil, RunMenu, self.Props, self.Items, WC_Keys)
+      --Item, Pos = RunMenu(self.Props, self.Items, Menu.CompleteKeys)
+      Item, Pos = usercall(nil, RunMenu,
+                           self.Props, self.Items, self.Menu.CompleteKeys)
       if not self.Items or not Item then
-        if PressKey then EditorProcKey(nil, PressKey) end
+        if Popup.PressKey then EditorProcKey(nil, Popup.PressKey) end
         return false
       end -- Отмена по Esc
       editor.Select(nil, { BlockType = "BTYPE_NONE" }) -- Снятие выделения
     end
-    Action = Item.Action or A_Replace -- По умолчанию -- Выбор по Enter
 
     -- Выполнение выбранного действия --
+    local Action = Item.Action or A_Replace -- По умолчанию -- Выбор по Enter
     --logShow({ Action, Pos, Items }, "Completion Action")
 
     -- Реакция на отмену: Закрытие без всякого выбора.
     if Action == A_Cancel then return false end
     -- Реакция на неизвестное действие: Выход с ошибкой.
     --if Action ~= "Replace" and Action ~= "Insert" then return nil, Action end
-    Effect = Item.Effect
+    local Effect = Item.Effect
     if Effect then
       local Complete = self.Items[Pos].Word:sub(1, self.Current.Shared:len())
       if Complete ~= "" then -- Выбор:
@@ -1331,15 +1339,24 @@ function TMain:Run () --> (bool | nil)
   until not Effect
 
   return true
-end -- Run
+end -- ShowLoop
 
 end -- do
+
+---------------------------------------- ----- Run
+function TMain:Run () --> (bool | nil)
+
+  self:AssignKeyPress()
+
+  --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
+
+  return self:ShowLoop()
+end -- Run
 
 ---------------------------------------- main
 
 function unit.Execute (Data) --> (bool | nil)
 
-  -- Конфигурация:
   local _Main = CreateMain(Data)
 
   --logShow(Data, "Data", 2)
@@ -1347,7 +1364,7 @@ function unit.Execute (Data) --> (bool | nil)
   --logShow(_Main.CfgData, "CfgData", 2)
   if not _Main.CfgData.Enabled then return end
 
-  _Main:Prepare() -- Подготовка
+  _Main:Prepare()
 
   return _Main:Run()
 end ---- Execute
