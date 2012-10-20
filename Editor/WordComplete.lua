@@ -84,11 +84,15 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
-local usercall = farUt.usercall
---local RunMenu = require "Rh_Scripts.RMenu.RectMenu"
-local RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
-
 ---------------------------------------- Main data
+unit.ScriptName = "WordComplete"
+unit.ScriptAutoName = "AutoComplete"
+unit.ScriptCodeName = "CodeComplete"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
+
+local usercall = farUt.usercall
+--local unit.RunMenu = require "Rh_Scripts.RMenu.RectMenu"
+unit.RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
 
 ---------------------------------------- ---- Keys
 -- Названия действий.
@@ -110,18 +114,13 @@ unit.LocalUseKeys = { -- Клавиши локального использов�
 } --- LocalUseKeys
 
 ---------------------------------------- ---- Custom
-local ScriptName = "WordComplete"
-local ScriptAutoName = "AutoComplete"
-local ScriptCodeName = "WordSuitlete"
-local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
-
 unit.DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
 
   label = "WC",
 
-  help   = { topic = ScriptName },
+  help   = { topic = unit.ScriptName },
   locale = { kind = 'load' },
 } --- DefCustom
 
@@ -169,9 +168,9 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 ----------------------------------------
 unit.DefOptions = {
   useSuit  = false,
-  SuitName = ScriptName,
+  SuitName = unit.ScriptName,
   BaseDir  = "Rh_Scripts.Editor",
-  WorkDir  = ScriptName,
+  WorkDir  = unit.ScriptName,
   FileName = "kit_config",
 } ---
 
@@ -212,13 +211,13 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptAutoName,
-    --help   = { topic = ScriptName },
-    locale = { kind = 'load', file =  ScriptName },
+    name = unit.ScriptAutoName,
+    --help   = { topic = unit.ScriptName },
+    locale = { kind = 'load', file = unit.ScriptName },
   }, --
   --[[
   Options = {
-    SuitName = ScriptAutoName,
+    SuitName = unit.ScriptAutoName,
   }, --
   --]]
 } -- AutoCfgData
@@ -260,14 +259,14 @@ unit.CodeCfgData = { -- Конфигурация для кодо-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptCodeName,
-    --help   = { topic = ScriptName },
-    locale = { kind = 'load', file =  ScriptName },
+    name = unit.ScriptCodeName,
+    --help   = { topic = unit.ScriptName },
+    locale = { kind = 'load', file = unit.ScriptName },
   }, --
   -- [[
   Options = {
     useSuit = true,
-    --SuitName = ScriptCodeName,
+    --SuitName = unit.ScriptCodeName,
   }, --
   --]]
 } -- CodeCfgData
@@ -344,16 +343,24 @@ local function CreateMain (ArgData)
     History   = false,
     CfgData   = false,
     DlgTypes  = unit.DlgTypes,
+    TextTemplate = false,
 
-    Menu      = false,
+    -- Текущее состояние:
+    --Error    = false,   -- Текст ошибки
+    Menu      = false,    -- CfgData.Menu or {}
 
-    Popup     = false,
-    Pattern   = false,
-    Current   = false,
+    Popup     = false,    -- Всплывающее меню-список
+    Pattern   = false,    -- Паттерны поиска
+    Current   = false,    -- Текущие данные
 
-    Words     = false,
-    Items     = false,
-    Props     = false,
+    Words     = false,    -- Список слов
+    Items     = false,    -- Список пунктов меню
+    Props     = false,    -- Свойства меню
+
+    ActItem   = false,    -- Выбранный пункт меню
+    ItemPos   = false,    -- Позиция выбранного пункта меню
+    Action    = false,    -- Выбранное действие
+    Effect    = false,    -- Выбранный эффект
   } ---
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -411,12 +418,11 @@ function TMain:DlgForm () --> (dialog)
   local J4 = J3 + DBox.cSort + 2; local J5 = J4 + DBox.cList + 2
 
   local L = self.L
-  local Caption = L:caption(isAuto and "DlgAuto" or "Dialog")
-
   local D = dialog.NewDialog() -- Форма окна:
                     -- 1          2     3    4   5  6  7  8  9  10
                     -- Type      X1    Y1   X2  Y2  L  H  M  F  Data
-  D._             = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0, Caption}
+  D._             = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0,
+                     L:caption(isAuto and "DlgAuto" or "Dialog")}
   -- Свойства набранного слова:
   D.sep           = {DI.Text,     0,   J1,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"TypedWord"}
   D.txtCharEnum   = {DI.Text,     A, J1+1, M-T,  0, 0, 0, 0, 0, L:config"CharEnum"}
@@ -538,71 +544,48 @@ end -- do
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- KitSuit
---[=[
-unit.KitSuit = {} -- Комплект наборов шаблонов
-
-local CharControl = extUt.CharControl
-
--- -- Get kit templates for type tp.
--- -- Получение шаблонов набора для типа tp.
-function TMain:TypeKit (Kits, tp)
-  --logShow(Kits, tp, 2)
-  local Kit = Kits[tp]
-  if type(Kit) == 'table' then return Kit end
-
-  local v = Kits._KitCfg_[tp]
-  if not v then return end -- No file for type
-
-  local n = type(v) == 'string' and v ~= "" and v or tostring(tp)
-  Kit = Kits._require_(Kits._FullDir_..n)
-  Kits[tp] = Kit
-
-  if Kit then
-    Kit.regex = (Kit.regex == nil or
-                 Kit.regex == true) and "lua" or Kit.regex or "none"
-    addNewData(Kit, unit.DefCfgData)
-    --if not Kit.CharEnum and Cfg then Kit.CharEnum = Cfg.CharEnum end
-    --if Cfg then addNewData(Kit, Cfg) end -- For separate use!
-    --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
-    Kit.CharControl = CharControl(Kit)
-  end
-  --logShow(Kit, tp, 2)
-
-  return Kit
-end -- TypeKit
---]=]
-
 do
-  --local prequire, newprequire = luaUt.prequire, luaUt.newprequire
+  local TextTemplate = require "Rh_Scripts.Editor.TextTemplate"
 
 -- -- Make templates kit.
 -- -- Формирование набора шаблонов.
 function TMain:MakeKit ()
---[=[
-  if not self.Options.useSuit then return end
 
-  --far.Message("Load text templates", "Update")
-  local Kits = unit.KitSuit[self.Options.SuitName]
-  --logShow(Kits, "Kits", 2)
-  if not Kits then
-    --local dorequire = newprequire -- For separate use!
-    local dorequire = Kits == false and newprequire or prequire
-    local FullDir = string.format("%s.%s.", self.Options.BaseDir,
-                                            self.Options.WorkDir)
-    local KitCfg = dorequire(FullDir..self.Options.FileName)
-    if KitCfg == nil then return end -- No templates
+  local ArgData = self.ArgData
+  local Custom  = ArgData.Custom
 
-    Kits = {
-      _require_ = dorequire,
-      _FullDir_ = FullDir,
-      _KitCfg_  = KitCfg,
-    }
-    unit.KitSuit[self.Options.SuitName] = Kits
-  end
-  --logShow(Kits, "Kits", 2)
+  local Data = {
+    Enabled = ArgData.Enabled,
+    -- Свойства набранного слова:
+    CharEnum = ArgData.CharEnum,
+    CharsMin = ArgData.CharsMin,
+    UseMagic = ArgData.UseMagic,
+    UsePoint = ArgData.UsePoint,
+    UseInside  = ArgData.UseInside,
+    UseOutside = ArgData.UseOutside,
+    Custom = {
+      isAuto = Custom.isAuto,
+      --isSmall = false,
+      name = Custom.name,
+      help   = { topic = TextTemplate.ScriptName },
+      locale = { kind = 'load', file = TextTemplate.ScriptName },
+    }, --
+    --[[
+    Options = {
+      SuitName = unit.ScriptCodeName,
+    }, --
+    --]]
+  } --
 
-  return self:TypeKit(Kits, self.Current.FileType)
---]=]
+  self.TextTemplate = TextTemplate.Execute(Data)
+
+  -- TODO: Реализовать завершение кода:
+  -- !. Шаблонами будут подходящие слова, выводимые затем в виде списка.
+  -- !. Реализовать поддержку пункта меню apply вместо вывода слова!
+  -- !. Заменить метод обработки шаблонов self.TextTemplate:ProcessTemplates
+  -- на свой метод вывода списка подходящих слов.
+
+  return true
 end -- MakeKit
 
 end -- do
@@ -966,7 +949,8 @@ function TMain:MakeWordsMenu () --> (table)
   --logShow(self.Words, "Words for Items")
   local Width, Height = 0, Count
   if Count == 0 and
-     (not Cfg.EmptyList or
+     (not Cfg.EmptyList or -- Не пустой список слов или
+      -- Не пустой список слов при первоначальном показе
       self.Current.StartMenu and not Cfg.EmptyStart) then
     return
   end
@@ -1115,13 +1099,20 @@ do
   local BackChars = EC_Actions.bs
 
 -- Завершение слова.
-function TMain:ApplyWordAction (Complete, Action) --> (bool | nil)
+function TMain:ApplyWordAction () --> (bool | nil)
+
+  local Complete = self.ActItem.Word
+  if self.Effect == E_Shared then
+    Complete = Complete:sub(1, self.Current.Shared:len())
+  end
+  if Complete == "" then return false end
+  if self.Action ~= A_Replace and self.Action ~= A_Insert then return end
 
   local Word, Slab = self.Current.Word, self.Current.Slab
   local SLen = Slab:len()
   --logShow({ Complete, Word, Word:len(), Slab, SLen }, Action, 1)
 
-  if Action == A_Replace then -- Удаление конца
+  if self.Action == A_Replace then -- Удаление конца
     if not DelChars(nil, Word:len() - SLen) then return end
   end
 
@@ -1140,6 +1131,13 @@ end -- ApplyWordAction
 end -- do
 
 ---------------------------------------- ----- Show
+-- Показ меню заданного вида.
+function TMain:ShowMenu () --> (item, pos)
+  return usercall(nil, unit.RunMenu,
+                  self.Props, self.Items, self.Menu.CompleteKeys)
+  --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
+end ----
+
 do
   local LuaCards    = extUt.const.LuaCards
   --local LuaCardsSet = extUt.const.LuaCardsSet
@@ -1183,7 +1181,7 @@ function TMain:AssignKeyPress () --> (bool | nil)
   Popup.PressKey = false -- Нажатая клавиша
 
   -- Обработчик нажатия клавиши.
-  local function KeyPress (VirKey, SelIndex)
+  local function KeyPress (VirKey, ItemPos)
     local SKey = VirKey.Name --or InputRecordToName(VirKey)
     if SKey == "Esc" then return nil, CancelFlag end
 
@@ -1201,25 +1199,23 @@ function TMain:AssignKeyPress () --> (bool | nil)
       --logShow(self.Words, "MakeUpdate")
       --logShow(self.Items, "MakeUpdate")
       if not self.Items then return nil, CloseFlag end
-      --logShow(SelIndex, hex(FKey))
+      --logShow(ItemPos, hex(FKey))
       return { self.Props, self.Items, Menu.CompleteKeys }, CompleteFlags
     end -- MakeUpdate
 
     -- Учёт нажатия клавиш локального использования.
     local Index = Menu.BreakUseKeys[SKey]
-    if Index then
-      local Effect = Menu.LocalUseKeys[Index].Effect or E_Shared
-      --logShow({ Index, SelIndex }, Effect)
-      if Effect and SelIndex then
-        --Effect == E_Shared -- DEBUG only
-        local Complete = self.Items[SelIndex].Word:sub(1, self.Current.Shared:len())
-        if Complete ~= "" then -- Выбор:
-          local Action = Menu.LocalUseKeys[Index].Action or A_Replace
-          --logShow({ Complete, Action }, Effect)
-          self:ApplyWordAction(Complete, Action)
-        end
-        return MakeUpdate()
-      end
+    --logShow({ SKey, Index }, "BreakUseKeys")
+    if Index and ItemPos then
+      --logShow({ Index, ItemPos }, Effect)
+      self.ActItem, self.ItemPos = self.Items[ItemPos], ItemPos
+      --self.Effect = E_Shared -- DEBUG only
+      local KeyData = Menu.LocalUseKeys[Index]
+      self.Effect = KeyData.Effect or E_Shared
+      self.Action = KeyData.Action or A_Replace
+      if self:ApplyWordAction() == nil then return end
+
+      return MakeUpdate()
     end -- if Index
 
     --logShow(VirKey, "Info on Key Press: before")
@@ -1258,8 +1254,10 @@ function TMain:AssignKeyPress () --> (bool | nil)
             (LuaCards:find(Char, 1, true) or
              Cfg.UsePoint and Char == '.') ) then
       --logShow(Char, Cfg.Trailers)
-      if SelIndex then
-        self:ApplyWordAction(self.Items[SelIndex].Word, A_Replace)
+      if ItemPos then
+        self.ActItem, self.ItemPos = self.Items[ItemPos], ItemPos
+        self.Effect, self.Action = false, A_Replace
+        if self:ApplyWordAction() == nil then return end
       end
       if not InsText(Char) then return end
       return nil, CancelFlag
@@ -1291,7 +1289,6 @@ function TMain:ShowLoop () --> (bool | nil)
   -- Информация о меню:
   self.Items = false
   self.Props = self.Menu.Props
-  local Item, Pos -- Выбранный пункт и его позиция
 
   repeat
     -- Формирование начального списка-меню --
@@ -1300,15 +1297,17 @@ function TMain:ShowLoop () --> (bool | nil)
     self.Current.StartMenu = nil
     --logShow({ self.Props, self.Items }, "Word Completion")
 
+    -- Сброс текущего выбора
+    --self.Action, self.Effect = false, false
+    --self.ActItem, self.ItemPos = false, false
+
     -- Управление списком --
     if self.Items and #self.Items == 1 and Cfg.LoneAuto then
-      Item, Pos = self.Items[1], 1
-      --logShow({ Pos, Item }, "Lone AutoCompletion")
+      self.ActItem, self.ItemPos = self.Items[1], 1
+      --logShow({ self.ItemPos, self.ActItem }, "Lone AutoCompletion")
     else
-      --Item, Pos = RunMenu(self.Props, self.Items, Menu.CompleteKeys)
-      Item, Pos = usercall(nil, RunMenu,
-                           self.Props, self.Items, self.Menu.CompleteKeys)
-      if not self.Items or not Item then
+      self.ActItem, self.ItemPos = self:ShowMenu()
+      if not self.Items or not self.ActItem then
         if Popup.PressKey then EditorProcKey(nil, Popup.PressKey) end
         return false
       end -- Отмена по Esc
@@ -1316,27 +1315,19 @@ function TMain:ShowLoop () --> (bool | nil)
     end
 
     -- Выполнение выбранного действия --
-    local Action = Item.Action or A_Replace -- По умолчанию -- Выбор по Enter
-    --logShow({ Action, Pos, Items }, "Completion Action")
+    self.Action = self.ActItem.Action or A_Replace -- По умолчанию -- Выбор по Enter
+    --logShow({ self.Action, self.ItemPos, self.ActItem }, "Completion Action")
 
     -- Реакция на отмену: Закрытие без всякого выбора.
-    if Action == A_Cancel then return false end
-    -- Реакция на неизвестное действие: Выход с ошибкой.
-    --if Action ~= "Replace" and Action ~= "Insert" then return nil, Action end
-    local Effect = Item.Effect
-    if Effect then
-      local Complete = self.Items[Pos].Word:sub(1, self.Current.Shared:len())
-      if Complete ~= "" then -- Выбор:
-        self:ApplyWordAction(Complete, Action)
-        --farUt.RedrawAll() -- Обновление!
-      end
-    elseif Action == "Replace" or Action == "Insert" then
+    if self.Action == A_Cancel then return false end
+
+    if self.ItemPos then
+      self.Effect = self.ActItem.Effect
       --logShow({ Action, Pos, Items }, "Making Action")
-      self:ApplyWordAction(self.Items[Pos].Word, Action)
-    else
-      return
+      self.ActItem = self.Items[self.ItemPos]
+      if self:ApplyWordAction() == nil then return end
     end
-  until not Effect
+  until not self.Effect
 
   return true
 end -- ShowLoop
