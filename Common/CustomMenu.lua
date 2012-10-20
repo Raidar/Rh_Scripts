@@ -112,17 +112,17 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
     BaseMenu = false,   -- Ссылка на базовое меню в Menus
 
     -- Текущее состояние:
-    Error    = false,    -- Текст ошибки
-    SelPos   = 1,        -- Позиция пункта-меню в надменю
-    isNova   = true,     -- Признак показа нового меню
-    CurMenu  = false,    -- Текущее меню-таблица
-    CurName  = "(none)", -- Имя этого текущего меню
-    CurData  = false,    -- Таблица данных конфигурации меню
-    CurProps = false,    -- Таблица свойств (для вывода) меню
+    Error    = false,     -- Текст ошибки
+    SelPos   = 1,         -- Позиция пункта-меню в надменю
+    isNova   = true,      -- Признак показа нового меню
+    CurMenu  = false,     -- Текущее меню-таблица
+    CurName  = "(none)",  -- Имя этого текущего меню
+    CurData  = false,     -- Таблица данных конфигурации меню
+    CurProps = false,     -- Таблица свойств (для вывода) меню
 
-    RunMenu  = false,    -- Текущее запускаемое меню
-    RunItem  = false,    -- Текущий пункт этого меню
-    RunCount = 0,        -- Число пунктов этого меню
+    RunMenu  = false,     -- Текущее запускаемое меню
+    RunItem  = false,     -- Текущий пункт этого меню
+    RunCount = 0,         -- Число пунктов этого меню
 
     ActItem = {         -- Выбранный пункт этого меню
       Menu = false,       -- Ссылка на запускаемое меню
@@ -838,7 +838,7 @@ do
   local Call = require "Rh_Scripts.Common.MenuCaller"
 
 -- Показ меню заданного вида.
-function TMenu:ShowMenu (Properties, Items) --> (bool | nil, error)
+function TMenu:ShowMenu (Properties, Items) --> (item, pos)
   if not (Items and Items[1]) then return nil, nil end
   -- Объединение всех BreakKey.
   local BreakKeys = self:MakeBreakKeys(Items, DefBreakKeys)
