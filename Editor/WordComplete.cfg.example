@@ -1,0 +1,37 @@
+do local t = {}; Data = t
+  do local t = {}; Data["WordComplete"] = t
+    do local t = {}; Data["WordComplete"]["Menu"] = t
+      do local t = {}; Data["WordComplete"]["Menu"]["CompleteKeys"] = t
+        do local t = {}; Data["WordComplete"]["Menu"]["CompleteKeys"][1] = t
+          t["BreakKey"] = "Tab"
+          t["Action"] = "Replace"
+        end
+        do local t = {}; Data["WordComplete"]["Menu"]["CompleteKeys"][2] = t
+          t["BreakKey"] = "NumEnter"
+          t["Action"] = "Replace"
+        end
+        do local t = {}; Data["WordComplete"]["Menu"]["CompleteKeys"][3] = t
+          t["BreakKey"] = "ShiftEnter"
+          t["Action"] = "Insert"
+        end
+      end
+      do local t = {}; Data["WordComplete"]["Menu"]["LocalUseKeys"] = t
+        do local t = {}; Data["WordComplete"]["Menu"]["LocalUseKeys"][1] = t
+          t["BreakKey"] = "Ins"
+          t["Action"] = "Insert"
+          t["Effect"] = "Shared"
+        end
+        do local t = {}; Data["WordComplete"]["Menu"]["LocalUseKeys"][2] = t
+          t["BreakKey"] = "CtrlEnter"
+          t["Action"] = "Replace"
+          t["Effect"] = "Shared"
+        end
+        do local t = {}; Data["WordComplete"]["Menu"]["LocalUseKeys"][3] = t
+          t["BreakKey"] = "CtrlShiftEnter"
+          t["Action"] = "Insert"
+          t["Effect"] = "Shared"
+        end
+      end
+    end
+  end
+end
