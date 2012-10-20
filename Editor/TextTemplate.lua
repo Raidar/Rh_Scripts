@@ -76,27 +76,26 @@ local logShow = dbg.Show
 local unit = {}
 
 ---------------------------------------- Main data
+unit.ScriptName = "TextTemplate"
+unit.ScriptAutoName = "AutoTemplate"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
 ---------------------------------------- ---- Custom
-local ScriptName = "TextTemplate"
-local ScriptAutoName = "AutoTemplate"
-local ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
-
 unit.DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
 
   label = "TT",
 
-  help   = { topic = ScriptName },
+  help   = { topic = unit.ScriptName },
   locale = { kind = 'load' },
 } --- DefCustom
 
 ----------------------------------------
 unit.DefOptions = {
-  SuitName = ScriptName,
+  SuitName = unit.ScriptName,
   BaseDir  = "Rh_Scripts.Editor",
-  WorkDir  = ScriptName,
+  WorkDir  = unit.ScriptName,
   FileName = "kit_config",
 } ---
 
@@ -126,9 +125,9 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Custom = {
     isAuto = true,
     --isSmall = false,
-    name = ScriptAutoName,
-    help   = { topic = ScriptName },
-    locale = { kind = 'load', file = ScriptName },
+    name = unit.ScriptAutoName,
+    help   = { topic = unit.ScriptName },
+    locale = { kind = 'load', file = unit.ScriptName },
   }, --
   --[[
   Options = {
@@ -222,12 +221,11 @@ function TMain:DlgForm () --> (dialog)
   local J1 = J  + 1
 
   local L = self.L
-  local Caption = L:caption(isAuto and "DlgAuto" or "Dialog")
-
   local D = dialog.NewDialog() -- Форма окна:
                     -- 1          2     3    4   5  6  7  8  9  10
                     -- Type      X1    Y1   X2  Y2  L  H  M  F  Data
-  D._             = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0, Caption}
+  D._             = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0,
+                     L:caption(isAuto and "DlgAuto" or "Dialog")}
   -- Свойства набранного слова:
   --D.sep           = {DI.Text,     0,   J1,   0,  0, 0, 0, DIF.SeparLine, L:fmtsep"TypedWord"}
   D.txtCharEnum   = {DI.Text,     A, J1+1, M-T,  0, 0, 0, 0, 0, L:config"CharEnum"}
