@@ -938,9 +938,31 @@ do
   local ItemHotFmt, ItemHotLen = "&%s ", 2
   --local ItemHotFmt, ItemHotLen = "&%s | ", 4
   local ItemTextFmt = ItemHotFmt.."%s"
+  local s_sub = string.sub
+
+-- Заполнение пункта списка-меню.
+function TMain:MakePopupItem (Index) --> (table)
+
+  local Word = self.Words[Index]
+
+  local Text = Word
+  if self.CfgData.HotChars and Index <= HotCharsLen then
+    Text = ItemTextFmt:format(s_sub(HotCharsStr, Index, Index), Word)
+  end
+
+  local Item = {
+    text = Text,
+    Word = Word,
+  } ---
+
+  return Item, Text
+end -- MakePopupItem
+
+end -- do
+do
 
 -- Заполнение списка-меню.
-function TMain:MakeWordsMenu () --> (table)
+function TMain:MakePopupMenu () --> (table)
 
   local Cfg = self.CfgData
 
@@ -959,12 +981,8 @@ function TMain:MakeWordsMenu () --> (table)
   --logShow(self.Words, "Words for Items")
   local Items = {}; self.Items = Items
   for k = 1, Count do
-    local Word = Words[k]
-    local Text = Word
-    if Cfg.HotChars and k <= HotCharsLen then
-      Text = ItemTextFmt:format(string.sub(HotCharsStr, k, k), Word)
-    end
-    Items[#Items+1] = { text = Text, Word = Word, } ---
+    local Text
+    Items[#Items+1], Text = self:MakePopupItem(k)
     Width = max2(Width, Text:len())
   end
   if Cfg.HotChars then Width = Width - 1 end
@@ -1013,7 +1031,7 @@ function TMain:MakeWordsMenu () --> (table)
   --]]
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
-end -- MakeWordsMenu
+end -- MakePopupMenu
 
 end -- do
 
@@ -1081,7 +1099,7 @@ function TMain:MakeWordsList () --> (table)
   CurCfg.Shared = self:SharedPart() -- Общая часть слов
   --if Word then logShow(CurCfg) end
 
-  return self:MakeWordsMenu()
+  return self:MakePopupMenu()
 end -- MakeWordsList
 
 end -- do
@@ -1092,6 +1110,16 @@ local function InsText (text)
 end --
 
 ---------------------------------------- ----- Action
+-- Текст для завершения.
+function TMain:CompletionText ()
+  local Complete = self.ActItem.Word
+
+  if self.Effect == E_Shared then
+    return Complete:sub(1, self.Current.Shared:len())
+  end
+
+  return Complete
+end ---- CompletionText
 do
   -- Удаление Count символов:
   local EC_Actions = macUt.MacroActions.editor.cycle
@@ -1101,10 +1129,7 @@ do
 -- Завершение слова.
 function TMain:ApplyWordAction () --> (bool | nil)
 
-  local Complete = self.ActItem.Word
-  if self.Effect == E_Shared then
-    Complete = Complete:sub(1, self.Current.Shared:len())
-  end
+  local Complete = self:CompletionText()
   if Complete == "" then return false end
   if self.Action ~= A_Replace and self.Action ~= A_Insert then return end
 
