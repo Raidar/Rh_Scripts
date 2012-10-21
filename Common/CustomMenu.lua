@@ -370,7 +370,7 @@ do
   local CompNameFmt = "%s.%s"
 
 -- Получение имени меню (полное).
-function TMenu:GetMenuName (BackName, Name) --> (string, table | nil)
+function TMenu:GetNameMenu (BackName, Name) --> (string, table | nil)
   -- Имя меню (с учётом имени надменю):
   local Name = Name and self.Menus[Name] and Name or
                CompNameFmt:format(BackName or NoneName, Name or NoneName)
@@ -393,7 +393,7 @@ end --
 --]]
 
 -- Получение имени пункта меню (краткое и полное).
-function TMenu:GetItemName (Name) --> (string, string, table | nil)
+function TMenu:GetNameItem (Name) --> (string, string, table | nil)
   local CurMenu = self.CurMenu
   --logShow(self, Name, 1)
   local Base = CurMenu[Name] or -- Краткое имя-результат...
@@ -410,13 +410,13 @@ function TMenu:GetItemName (Name) --> (string, string, table | nil)
 
   --logShow(self, Base, 1)
   local FullName -- Полное имя (имя с учётом имени меню):
-  FullName, Menu = self:GetMenuName(self.CurName, Base)
+  FullName, Menu = self:GetNameMenu(self.CurName, Base)
   Menu = Menu or _GetBackMenu(CurMenu, FullName) -- Поиск таблицы!
   --logShow(Menu, FullName, 1)
   return Base, FullName, Menu
   --]]
-  --return Base, self:GetMenuName(self.CurName, Base)
-end ---- GetItemName
+  --return Base, self:GetNameMenu(self.CurName, Base)
+end ---- GetNameItem
 
 end -- do
 
@@ -427,9 +427,8 @@ end ----
 
 do
   -- TODO: Change to use as options
-  local U = unicode.utf8.char
   local BindNameFmt = "%s (%s)"
-  local MenuMSign = U(0x25BA)
+  local MenuMSign = "►" -- 0x25BA
   local CompTitleFmt = "%s %s %s"
 
 -- Формирование заголовка меню.
@@ -567,7 +566,7 @@ function TMenu:MakeMenuProps () --> (table)
   return Props
 end ---- MakeMenuProps
 
--- Формирование пункта запускаемого меню.
+-- Формирование запускаемого пункта.
 function TMenu:MakeRunItem () --> (table)
   local CurMenu = self.CurMenu
   local RunItem = self.RunItem
@@ -588,12 +587,13 @@ function TMenu:MakeRunItem () --> (table)
   -- Определение полей пункта меню.
   --self:ChangeProperties({ MenuView = Props.MenuView }, RunItem)
   self:DefineMenuItem(RunItem)
+
   self.RunMenu[self.RunCount] = RunItem
   --logShow(RunItem, "RunItem #"..tostring(self.RunCount), 2)
 end ---- MakeRunItem
 
--- Преобразование пункта-таблицы меню.
-function TMenu:ConvertItem (Item, Index) --> (true | nil, error)
+-- Формирование пункта-таблицы запускаемого меню.
+function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
   local CurName, BaseName = self.CurName
 
   if type(Item) == 'table' then
@@ -601,7 +601,7 @@ function TMenu:ConvertItem (Item, Index) --> (true | nil, error)
     -- Получение реального пункта меню с его именем:
     BaseName, self.RunItem = tostring(Index), Item
     Item.Name = Item.Name or ("%s.%s"):format(CurName, BaseName)
-    self:MakeRunItem()
+    return self:MakeRunItem()
 
   elseif type(Item) == 'string' then
 
@@ -610,20 +610,20 @@ function TMenu:ConvertItem (Item, Index) --> (true | nil, error)
       --logShow({ self.Menus, CurName, s }, "RunItem # "..tostring(k), 1)
       -- Получение реального пункта меню с его именем:
       local ItemName
-      BaseName, ItemName, self.RunItem = self:GetItemName(s)
+      BaseName, ItemName, self.RunItem = self:GetNameItem(s)
       if not self.RunItem then
         self.Error = self.L:et1("MnuSecNotFound", BaseName, ItemName or "(none)")
         return
       end
       self.RunItem.Name = ItemName
-      self:MakeRunItem()
+      return self:MakeRunItem()
     end --
 
   else
     self.Error = self.L:et1("MnuWrongItem", type(Item), CurName, Index)
     return
   end
-end ---- ConvertItem
+end ---- MakeRunMenuItem
 
 -- Формирование запускаемого меню из текущего меню-таблицы.
 function TMenu:MakeRunMenu () --> (table)
@@ -636,7 +636,7 @@ function TMenu:MakeRunMenu () --> (table)
   self.RunMenu, self.RunCount = {}, 0
 
   for k = 1, #CurMenu.Items do
-    self:ConvertItem(CurMenu.Items[k], k)
+    self:MakeRunMenuItem(CurMenu.Items[k], k)
     if self.Error then return end
   end
   --logShow(self.RunMenu, "self.RunMenu")
