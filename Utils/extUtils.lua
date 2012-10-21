@@ -248,7 +248,7 @@ end -- do
 
 -- Count for next character c.
 -- Подсчёт для очередного символа c.
-function TCharControl:Char (c) --> (bool | nil)
+function TCharCounter:Char (c) --> (bool | nil)
   if c == nil then return end
   local cfg, Count = self.cfg, self.Count
 
