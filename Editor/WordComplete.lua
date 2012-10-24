@@ -571,7 +571,7 @@ function TMain:MakeKit ()
       locale = { kind = 'load', file = TextTemplate.ScriptName },
     }, --
     --[[
-    Options = {
+    Options = { -- TODO: использовать unit.DefOptions
       SuitName = unit.ScriptCodeName,
     }, --
     --]]
@@ -935,7 +935,7 @@ do
   local HotCharsStr = "1234567890abcdefghijklmnopqrstuvwxyz"
   local HotCharsLen = #HotCharsStr -- Digits and latin chars only
 
-  local ItemHotFmt, ItemHotLen = "&%s ", 2
+  local ItemHotFmt = "&%s "
   --local ItemHotFmt, ItemHotLen = "&%s | ", 4
   local ItemTextFmt = ItemHotFmt.."%s"
   local s_sub = string.sub
@@ -960,6 +960,7 @@ end -- MakePopupItem
 
 end -- do
 do
+  local ItemHotLen = 2
 
 -- Заполнение списка-меню.
 function TMain:MakePopupMenu () --> (table)
