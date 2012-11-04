@@ -404,6 +404,7 @@ function Svn.MakeItems (Operations, Kinds) --> (Items)
       if #t > 0 and not t[#t].separator then
         t[#t+1] = v
       end
+
     elseif v.command then -- TEMP
       local name = v.name or v.command
       local q = Svn.Item
