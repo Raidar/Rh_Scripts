@@ -1,5 +1,6 @@
 Rh_Scripts pack 3.0x
 
+[Info]
 Ver. : 3.0.4.7
 Date : 2012-11-04
 Ware : Freeware
@@ -7,7 +8,7 @@ Lic. : Lua License
 Reqs : FAR v.3.0.2574,
        LuaFAR v.3.0.8,
        LuaFAR for Editor v.3.0.5,
-       LuaFAR context v.3.0.4.2
+       LuaFAR context v.3.0.4.3
 Type : Plugin for FAR Manager (Script package)
 Desc : Rh_Scripts package for LuaFAR for Editor
 
@@ -19,8 +20,11 @@ Copy : 2009/2012+
 Mail : pmi-rai@narod.ru
 
 Home : http://pmi-rai.narod.ru/
-Link : /Programs/FScripts.htm
+Link : /Programs/FarUsing.htm
 
+Repo : https://github.com/Raidar/Rh_Scripts
+
+[Anons]
   Rh_Scripts is a package of scripts and utilities for "LuaFAR for Editor".
   Rh_Scripts pack — пакет скриптов и утилит для "LuaFAR для Редактора".
 

@@ -6,16 +6,22 @@ Don't forget to save your settings and scripts,
 and restore them after package installation.
 
 Install:
-1. Delete whole ~Rh_Scripts~ directory in ~scripts~ directory of plugin.
+1. Delete whole ~Rh_Scripts~ directory in ~scripts~ directory of plugin.
 2. Copy ~Rh_Scripts~ directory from downloaded archive
-   to ~scripts~ directory of 'LuaFAR for Editor' plugin.
-3. Create "_usermenu.lua" file in plugin directory, if it does not exist.
-   Add following string to the file:
+   to ~scripts~ directory of 'LuaFAR for Editor' plugin.
+3. Create "_usermenu.lua" file in plugin directory, if it does not exist.
+   Add following string to the file:
 AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
-4. Rename "_usermenu.lua.example" to "_usermenu.lua".
-5. Clear plugins cache and reload FAR Manager.
-6. Open configuration menu of 'LuaFAR for Editor'.
-   Choose "Rh_Scripts package" item and customize package.
+4. Rename "_usermenu.lua.example" to "_usermenu.lua".
+5. Clear plugins cache and reload FAR Manager.
+6. Open configuration menu of 'LuaFAR for Editor'.
+   Choose "Rh_Scripts package" item and customize package.
+
+Additions:
+  To work with Tortoise SVN menu:
+1. copy "TortoiseSVN.cfg.example" file to "TortoiseSVN.cfg" file
+   of ~scripts\Rh_Scripts\LuaPUM\config~ directory, if file is absent in it.
+2. Customize configuration parameters in "TortoiseSVN.cfg" file.
 
 ―――――――
 P.S. It's also recommended view a history of changes
