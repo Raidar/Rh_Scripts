@@ -38,7 +38,7 @@ local rhals = require "Rh_Scripts.Utils.FarMacEx"
 local LW = require "Rh_Scripts.LuaUM.LumWork"
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -171,9 +171,12 @@ function TMenu:Run ()
   local Args, Props
 
   -- Считывание привязок типов к меню.
-  Args = { Base = PluginPath, DefExt = ".lui",
-           Enum = Cfg_Files.MenusFile, Path = Cfg_Files.FilesPath,
-           DefEnum = Cfg_Basic.BindsFile, DefPath = Cfg_Basic.CfgUMPath }
+  Args = { Base = PluginPath,
+           DefExt = ".lui",
+           Enum = Cfg_Files.MenusFile,
+           Path = Cfg_Files.FilesPath,
+           DefEnum = Cfg_Basic.BindsFile,
+           DefPath = Cfg_Basic.CfgUMPath }
   --Props = { IlkSep = ';' }
   local BindsData, SError = LW.GetFileEnumData(Args, Props)
   if not BindsData then
@@ -182,11 +185,16 @@ function TMenu:Run ()
   --logShow(BindsData, "BindsData")
 
   -- Файл, для которого формируется меню LUM.
-  Scope.BindsType = Scope.FileType and Scope.FileType ~= "none" and
-                    asBindsType(Scope.FileType, BindsData, '=') or "none"
+  --logShow(Scope.FileType, "BindsType")
+  --logShow(asBindsType(Scope.FileType, BindsData, '='), Scope.FileType)
+  Scope.BindsType = Scope.FileType and
+                    Scope.FileType ~= "none" and
+                    asBindsType(Scope.FileType, BindsData, '=') or
+                    Scope.FileType or "none"
 
   -- TODO: Use all features: inherit + Default -- for full Menu, Aliases, Props etc!!! -|v
   --Make concat order!
+  --logShow(BindsData, Scope.FileType)
   --LUM_Binds = GetBindsTypeData(Scope.BindsType, BindsData) --- !?
   local LUM_Binds = BindsData[Scope.BindsType] or {} -- Таблица раздела типа
   --if not LUM_Binds then
