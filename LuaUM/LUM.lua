@@ -185,8 +185,6 @@ function TMenu:Run ()
   --logShow(BindsData, "BindsData")
 
   -- Файл, для которого формируется меню LUM.
-  --logShow(Scope.FileType, "BindsType")
-  --logShow(asBindsType(Scope.FileType, BindsData, '='), Scope.FileType)
   Scope.BindsType = Scope.FileType and
                     Scope.FileType ~= "none" and
                     asBindsType(Scope.FileType, BindsData, '=') or "none"
