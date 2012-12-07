@@ -441,6 +441,7 @@ function TMenu:GetMenuTitle () --> (string)
   if UMenu.MenuTitleBind and isBMenu then
     -- MAYBE: FileType как альтернатива / дополнение.
     local BindName = self.Scope.BindsType
+    if BindName == 'none' then BindName = self.Scope.FileType.."*" end
     Title = BindNameFmt:format(Title, BindName)
   end
 

@@ -189,8 +189,7 @@ function TMenu:Run ()
   --logShow(asBindsType(Scope.FileType, BindsData, '='), Scope.FileType)
   Scope.BindsType = Scope.FileType and
                     Scope.FileType ~= "none" and
-                    asBindsType(Scope.FileType, BindsData, '=') or
-                    Scope.FileType or "none"
+                    asBindsType(Scope.FileType, BindsData, '=') or "none"
 
   -- TODO: Use all features: inherit + Default -- for full Menu, Aliases, Props etc!!! -|v
   --Make concat order!
