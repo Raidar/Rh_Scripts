@@ -122,7 +122,7 @@ $ #Filtration parameters#: FilterMenu
   — ¦They are added into start and end of pattern.
   — ¦They allow do not input changeless part of pattern.
 
-  #MatchCase# (bool) — ¦Indicator of comparing with match case.
+  #MatchCase# (bool) — ¦Match case comparing indicator.
 
   #Name# (string) — ¦Filter name for show in menu.
 
