@@ -341,8 +341,107 @@ function unit.EditorSetSelection (Id, Info) --> (boolean)
   end]]--
 
   return editor.Select(Id, SelInfo)
-end ----
+end ---- EditorSetSelection
 
+do
+  local tconcat = table.concat
+
+  local farEdit = {
+    GetInfo  = editor.GetInfo,
+    GetStr   = editor.GetString,
+    SetPos   = editor.SetPosition,
+    InsText  = editor.InsertText,
+
+    GetSel   = editor.GetSelection,
+    SetSel   = unit.EditorSetSelection,
+    DelSel   = editor.DeleteBlock,
+  } ---
+
+-- TODO: Добавить поддержку column-блоков через доп. параметр
+-- AsColumn: nil - as BlockType, false - as stream, true - as column.
+
+-- Copy selected text to string.
+-- Копирование выделенного текста в строку (от начала блока до конца блока).
+function unit.EditorCopySelection (Info) --> (string)
+  local Info = Info or farEdit.GetInfo()
+  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
+  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+
+  --logShow(SelInfo, "SelInfo")
+
+  local first, last = SelInfo.StartLine, SelInfo.EndLine
+  if first == last then
+    -- Одна выделенная cтрока
+    local LineInfo = farEdit.GetStr(Info.EditorID, first, 0)
+    if LineInfo == nil then return end -- Нет строки
+    --logShow(LineInfo, "LineInfo")
+    local s = LineInfo.StringText
+    if s == nil then return end
+    if LineInfo.SelEnd < 0 then
+      return s:sub(LineInfo.SelStart + 1, -1).."\r"
+    end
+
+    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
+  end
+
+  -- Несколько выделенных cтрок
+  local id = Info.EditorID
+  local s = farEdit.GetStr(id, first, 2) or ""
+  local t = {
+    s:sub(SelInfo.StartPos + 1, -1), -- first
+  } ---
+
+  for line = first + 1, last - 1 do
+    t[#t+1] = farEdit.GetStr(id, line, 2) or "" -- inners
+  end
+
+  local LineInfo = farEdit.GetStr(id, last, 1)
+  local s = LineInfo.StringText
+  if s ~= nil then
+    if LineInfo.SelEnd < 0 then
+      t[#t+1] = s:sub(1, -1) -- last
+      t[#t+1] = "" -- with last EOL
+    else
+      t[#t+1] = s:sub(1, SelInfo.EndPos) -- last
+    end
+  end
+
+  farEdit.SetPos(Info.EditorID, Info)
+
+  --logShow(tconcat(t, "\r"), "CopySelection")
+
+  return tconcat(t, "\r")
+end -- EditorCopySelection
+
+-- Cut selected text to string.
+-- Вырезание выделенного текста в строку (от начала блока до конца блока).
+function unit.EditorCutSelection (Info) --> (string)
+  local Info = Info or farEdit.GetInfo()
+  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
+  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+
+  local s = unit.EditorCopySelection(Info)
+
+  if SelInfo.BlockType == F.BTYPE_COLUMN then
+    SelInfo.BlockType = F.BTYPE_STREAM
+    farEdit.SetSel(Info.EditorID, SelInfo)
+  end
+  farEdit.DelSel(Info.EditorID)
+
+  return s
+end -- EditorCutSelection
+
+-- Paste string to text.
+-- Вставка строки в текст.
+function unit.EditorPasteSelection (Info, text) --> (string)
+  local Info = Info or farEdit.GetInfo()
+
+  --logShow(text, "PasteSelection")
+  -- TODO: Добавить выделение блока вставленного текста!
+  return farEdit.InsText(Info.EditorID, text)
+end -- EditorPasteSelection
+
+end -- do
 do
   local EditorGetStr = editor.GetString
 

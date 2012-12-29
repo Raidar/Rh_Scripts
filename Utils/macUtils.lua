@@ -84,14 +84,17 @@ local farEdit = {
   GetInfo  = editor.GetInfo,
   GetStr   = editor.GetString,
   SetPos   = editor.SetPosition,
-  GetSel   = editor.GetSelection,
-  SetSel   = farUt.EditorSetSelection,
-  DelSel   = editor.DeleteBlock,
   InsText  = editor.InsertText,
   InsStr   = editor.InsertString,
   DelChar  = editor.DeleteChar,
   UndoRedo = editor.UndoRedo,
   Redraw   = editor.Redraw,
+
+  CopySel  = farUt.EditorCopySelection,
+  CutSel   = farUt.EditorCutSelection,
+  PasteSel = farUt.EditorPasteSelection,
+
+  GetCurStrLen = false,
 } ---
 
 -- Получение длины текущей строки.
@@ -305,84 +308,6 @@ local EditorCycleActions = {
 MacroActions.editor.cycle = EditorCycleActions
 
 ---------------------------------------- Macro actions
-  local tconcat = table.concat
-
--- Копирование выделенного текста в строку (от начала блока до конца блока).
-local function CopySelText (Info) --> (string)
-  local Info = Info or farEdit.GetInfo()
-  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
-  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
-
-  --logShow(SelInfo, "SelInfo")
-
-  local first, last = SelInfo.StartLine, SelInfo.EndLine
-  if first == last then
-    -- Одна выделенная
-    local LineInfo = farEdit.GetStr(Info.EditorID, first, 0)
-    if LineInfo == nil then return end -- Нет строки
-    --logShow(LineInfo, "LineInfo")
-    local s = LineInfo.StringText
-    if s == nil then return end
-    if LineInfo.SelEnd < 0 then
-      return s:sub(LineInfo.SelStart + 1, -1).."\r"
-    end
-
-    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
-  end
-
-  local s = farEdit.GetStr(Info.EditorID, first, 2) or ""
-  local t = {
-    s:sub(SelInfo.StartPos + 1, -1), -- first
-  } ---
-
-  for line = first + 1, last - 1 do
-    t[#t+1] = farEdit.GetStr(Info.EditorID, line, 2) or "" -- block
-  end
-
-  local LineInfo = farEdit.GetStr(Info.EditorID, last, 1)
-  local s = LineInfo.StringText
-  if s ~= nil then
-    if LineInfo.SelEnd < 0 then
-      t[#t+1] = s:sub(1, -1) -- last
-      t[#t+1] = "" -- with last EOL
-    else
-      t[#t+1] = s:sub(1, SelInfo.EndPos) -- last
-    end
-  end
-
-  farEdit.SetPos(Info.EditorID, Info)
-
-  --logShow(tconcat(t, "\r"), "CopySelText")
-
-  return tconcat(t, "\r")
-end -- CopySelText
-
--- Вырезание выделенного текста в строку (от начала блока до конца блока).
-local function CutSelText (Info) --> (string)
-  local Info = Info or farEdit.GetInfo()
-  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
-  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
-
-  local s = CopySelText(Info)
-
-  if SelInfo.BlockType == F.BTYPE_COLUMN then
-    SelInfo.BlockType = F.BTYPE_STREAM
-    farEdit.SetSel(Info.EditorID, SelInfo)
-  end
-  farEdit.DelSel(Info.EditorID)
-
-  return s
-end -- CutSelText
-
--- Вставка строки в текст.
-local function PasteSelText (Info, text) --> (string)
-  local Info = Info or farEdit.GetInfo()
-
-  --logShow(text, "PasteSelText")
-  -- TODO: Добавить выделение блока вставленного текста!
-  return farEdit.InsText(Info.EditorID, text)
-end -- PasteSelText
-
 local TEditorMacroActions = {
 
   text = function (self, Info, Count, text) -- Вставка текста
