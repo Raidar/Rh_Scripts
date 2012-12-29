@@ -317,6 +317,32 @@ function unit.IsSelection (Area) --> (bool)
   end
 end ----
 
+-- Select block in editor.
+-- Выделение блока в редакторе.
+function unit.EditorSetSelection (Id, Info) --> (boolean)
+  local Info = Info
+  local SelInfo = {
+    BlockType = Info.BlockType,
+    BlockStartLine = Info.StartLine,
+    BlockStartPos  = Info.StartPos,
+    BlockHeight = Info.EndLine - Info.StartLine + 1,
+    -- TODO: Учесть Info.EndPos < 0 - нужно учесть и выделить следующую строку.
+    BlockWidth  = Info.EndPos  - Info.StartPos  + 1,
+  } ---
+
+  if Info.EndPos < 0 then
+    SelInfo.BlockHeight = SelInfo.BlockHeight + 1
+    SelInfo.BlockWidth  = -Info.StartPos
+  end
+
+  --[[if Info.StartPos == Info.EndPos then
+    SelInfo.BlockStartPos = SelInfo.BlockStartPos +
+                            (Info.EndLine > Info.StartLine and 1 or -1)
+  end]]--
+
+  return editor.Select(Id, SelInfo)
+end ----
+
 do
   local EditorGetStr = editor.GetString
 
