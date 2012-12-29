@@ -42,6 +42,7 @@ local min2, max2 = numbers.min2, numbers.max2
 
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local farUt = require "Rh_Scripts.Utils.farUtils"
 
 ----------------------------------------
 --[[
@@ -65,7 +66,7 @@ local MacroKeys = { -- Макро-ключи:
   "del", "bsln", "bs",
   "here", "back",
   "stop", "resume",
-  --"copy", "paste", -- TODO: Clip: copy & paste!!!
+  "cut", "paste",
   "nop",
 } ---
 local MacroValues = "1234567890" -- Цифры повторения макро-ключей
@@ -81,8 +82,11 @@ unit.MacroActions = MacroActions
 ---------------------------------------- Macro actions in editor
 local farEdit = {
   GetInfo  = editor.GetInfo,
-  SetPos   = editor.SetPosition,
   GetStr   = editor.GetString,
+  SetPos   = editor.SetPosition,
+  GetSel   = editor.GetSelection,
+  SetSel   = farUt.EditorSetSelection,
+  DelSel   = editor.DeleteBlock,
   InsText  = editor.InsertText,
   InsStr   = editor.InsertString,
   DelChar  = editor.DeleteChar,
@@ -91,102 +95,172 @@ local farEdit = {
 } ---
 
 -- Получение длины текущей строки.
-function farEdit.GetCurStrLen ()
-  return (farEdit.GetStr(nil, -1, 2) or ""):len()
+function farEdit.GetCurStrLen (Info)
+  return (farEdit.GetStr(Info.EditorID, -1, 2) or ""):len()
 end ----
 
 ---------------------------------------- Plain actions
 
-local function BackChar (Info) -- Удаление символа слева
-  if Info.CurPos == 0 then return true end
-  if not farEdit.SetPos(nil, { CurPos = Info.CurPos - 1 }) then return end
+-- Удаление символа слева.
+local function BackChar (Info)
+  if Info.CurPos == 0 then
+    return true
+  end
+  if not farEdit.SetPos(Info.EditorID, { CurPos = Info.CurPos - 1 }) then
+    return
+  end
 
-  return farEdit.DelChar()
-end --
+  return farEdit.DelChar(Info.EditorID)
+end -- BackChar
 
 local EditorPlainActions = { -- Функции выполнения простых действий:
-  text = function (Info, text) return farEdit.InsText(nil, text) end,
-  line = function (Info, indent) return farEdit.InsStr(nil, indent) end,
+  text = function (Info, text)
+    return farEdit.InsText(Info.EditorID, text)
+  end,
+  line = function (Info, indent)
+    return farEdit.InsStr(Info.EditorID, indent)
+  end,
 
   left  = function (Info)
-    return farEdit.SetPos(nil, { CurPos = max2(Info.CurPos - 1, 0) })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = max2(Info.CurPos - 1, 0) })
   end, --- left
   right = function (Info)
-    return farEdit.SetPos(nil, { CurPos = Info.CurPos + 1 })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = Info.CurPos + 1 })
   end, --- right
   up    = function (Info)
-    return farEdit.SetPos(nil, { CurLine = max2(Info.CurLine - 1, 0) })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurLine = max2(Info.CurLine - 1, 0) })
   end, --- up
   down  = function (Info)
-    return farEdit.SetPos(nil, { CurLine = Info.CurLine + 1 })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurLine = Info.CurLine + 1 })
   end, --- down
 
   home    = function (Info)
-    return farEdit.SetPos(nil, { CurPos = 0 })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = 0 })
   end, --- home
   ["end"] = function (Info)
-    return farEdit.SetPos(nil, { CurPos = farEdit.GetCurStrLen() })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = farEdit.GetCurStrLen() })
   end, --- end
 
-  del  = function (Info) return farEdit.DelChar() end, -- del
+  del  = function (Info)
+    return farEdit.DelChar(Info.EditorID)
+  end, -- del
   bs   = BackChar, -- bs
   bsln = function (Info)
     if Info.CurPos > 0 then
-      if not farEdit.SetPos(nil, { CurPos = Info.CurPos - 1 }) then return end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurPos = Info.CurPos - 1 }) then
+        return
+      end
     else
-      if not farEdit.SetPos(nil, { CurLine = Info.CurLine - 1 }) then return end
-      if not farEdit.SetPos(nil, { CurPos = farEdit.GetCurStrLen() }) then return end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurLine = Info.CurLine - 1 }) then
+        return
+      end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurPos = farEdit.GetCurStrLen(Info) }) then
+        return
+      end
     end
-    return farEdit.DelChar()
+
+    return farEdit.DelChar(Info.EditorID)
   end, --- bsln
 
-  enter    = function (Info) return farEdit.InsStr(nil, false) end, -- simple enter
-  indenter = function (Info) return farEdit.InsStr(nil, true)  end, -- indent enter
+  enter    = function (Info)
+    return farEdit.InsStr(Info.EditorID, false) -- simple enter
+  end,
+  indenter = function (Info)
+    return farEdit.InsStr(Info.EditorID, true) -- indent enter
+  end,
+  nop = function (Info) return true end,
+
+  --[[
+  cut = function (self, Info, Index)
+    return true
+  end, --- copy
+  paste = function (self, Info, Index)
+    return true
+  end, --- paste
+  ]]--
 } --- EditorPlainActions
 MacroActions.editor.plain = EditorPlainActions
 
 ---------------------------------------- Cycle actions
 
-local function InsText (Info, Count, text) -- Вставка текста
-  if Count > 1 then text = text:rep(Count) end
-  return farEdit.InsText(nil, text)
-end --
-
-local function NewLine (Info, Count, indent) -- Новая строка
-  for _ = 1, Count do
-    if not farEdit.InsStr(nil, indent) then return end
+-- Вставка текста.
+local function InsText (Info, Count, text)
+  local Info = Info or farEdit.GetInfo()
+  if Count > 1 then
+    text = text:rep(Count)
   end
-  return true
-end --
 
-local function DelText (Info, Count) -- Удаление текста
+  return farEdit.InsText(Info.EditorID, text)
+end -- InsText
+
+-- Вставка новой строки (построчно).
+local function NewLine (Info, Count, indent)
+  local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
-    if not farEdit.DelChar() then return end
+    if not farEdit.InsStr(Info.EditorID, indent) then return end
   end
-  return true
-end --
 
-local function BackText (Info, Count) -- Удаление текста слева
+  return true
+end -- NewLine
+
+-- Удаление текста справа (посимвольно).
+local function DelText (Info, Count)
+  local Info = Info or farEdit.GetInfo()
+  for _ = 1, Count do
+    if not farEdit.DelChar(Info.EditorID) then
+      return
+    end
+  end
+
+  return true
+end -- DelText
+
+-- Удаление текста слева (до начала строки).
+local function BackText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local Count = min2(Count, Info.CurPos)
-  if not farEdit.SetPos(nil, { CurPos = Info.CurPos - Count }) then return end
-  return DelText(Info, Count)
-end --
+  if not farEdit.SetPos(Info.EditorID,
+                        { CurPos = Info.CurPos - Count }) then
+    return
+  end
 
-local function BackLine (Info, Count) -- Удаление текста слева
-  local Info = Info or farEdit.GetInfo() -- с учётом перехода строку выше
+  return DelText(Info, Count)
+end -- BackText
+
+-- Удаление текста слева с учётом перехода строку выше.
+local function BackLine (Info, Count)
+  local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
     if Info.CurPos > 0 then
-      if not farEdit.SetPos(nil, { CurPos = Info.CurPos - 1 }) then return end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurPos = Info.CurPos - 1 }) then
+        return
+      end
     else
-      if not farEdit.SetPos(nil, { CurLine = Info.CurLine - 1 }) then return end
-      if not farEdit.SetPos(nil, { CurPos = farEdit.GetCurStrLen() }) then return end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurLine = Info.CurLine - 1 }) then
+        return
+      end
+      if not farEdit.SetPos(Info.EditorID,
+                            { CurPos = farEdit.GetCurStrLen(Info) }) then
+        return
+      end
     end
 
     Info = farEdit.GetInfo()
   end -- for
+
   return DelText(Info, Count)
-end --
+end -- BackLine
 
 local EditorCycleActions = {
   text = InsText, -- text
@@ -194,19 +268,23 @@ local EditorCycleActions = {
 
   left  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(nil, { CurPos = max2(Info.CurPos - Count, 0) })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = max2(Info.CurPos - Count, 0) })
   end,
   right = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(nil, { CurPos = Info.CurPos + Count })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurPos = Info.CurPos + Count })
   end,
   up    = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(nil, { CurLine = max2(Info.CurLine - Count, 0) })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurLine = max2(Info.CurLine - Count, 0) })
   end,
   down  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(nil, { CurLine = Info.CurLine + Count })
+    return farEdit.SetPos(Info.EditorID,
+                          { CurLine = Info.CurLine + Count })
   end,
 
   home    = EditorPlainActions.home,
@@ -216,18 +294,103 @@ local EditorCycleActions = {
   bs   = BackText, -- bs
   bsln = BackLine, -- bsln
 
-  enter    = function (Info, Count) return NewLine(Info, Count, false) end,
-  indenter = function (Info, Count) return NewLine(Info, Count, true)  end,
+  enter    = function (Info, Count)
+    return NewLine(Info, Count, false)
+  end,
+  indenter = function (Info, Count)
+    return NewLine(Info, Count, true)
+  end,
+  nop = function (Info, Count) return true end,
 } --- EditorCycleActions
 MacroActions.editor.cycle = EditorCycleActions
 
 ---------------------------------------- Macro actions
+  local tconcat = table.concat
+
+-- Копирование выделенного текста в строку (от начала блока до конца блока).
+local function CopySelText (Info) --> (string)
+  local Info = Info or farEdit.GetInfo()
+  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
+  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+
+  --logShow(SelInfo, "SelInfo")
+
+  local first, last = SelInfo.StartLine, SelInfo.EndLine
+  if first == last then
+    -- Одна выделенная
+    local LineInfo = farEdit.GetStr(Info.EditorID, first, 0)
+    if LineInfo == nil then return end -- Нет строки
+    --logShow(LineInfo, "LineInfo")
+    local s = LineInfo.StringText
+    if s == nil then return end
+    if LineInfo.SelEnd < 0 then
+      return s:sub(LineInfo.SelStart + 1, -1).."\r"
+    end
+
+    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
+  end
+
+  local s = farEdit.GetStr(Info.EditorID, first, 2) or ""
+  local t = {
+    s:sub(SelInfo.StartPos + 1, -1), -- first
+  } ---
+
+  for line = first + 1, last - 1 do
+    t[#t+1] = farEdit.GetStr(Info.EditorID, line, 2) or "" -- block
+  end
+
+  local LineInfo = farEdit.GetStr(Info.EditorID, last, 1)
+  local s = LineInfo.StringText
+  if s ~= nil then
+    if LineInfo.SelEnd < 0 then
+      t[#t+1] = s:sub(1, -1) -- last
+      t[#t+1] = "" -- with last EOL
+    else
+      t[#t+1] = s:sub(1, SelInfo.EndPos) -- last
+    end
+  end
+
+  farEdit.SetPos(Info.EditorID, Info)
+
+  --logShow(tconcat(t, "\r"), "CopySelText")
+
+  return tconcat(t, "\r")
+end -- CopySelText
+
+-- Вырезание выделенного текста в строку (от начала блока до конца блока).
+local function CutSelText (Info) --> (string)
+  local Info = Info or farEdit.GetInfo()
+  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
+  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+
+  local s = CopySelText(Info)
+
+  if SelInfo.BlockType == F.BTYPE_COLUMN then
+    SelInfo.BlockType = F.BTYPE_STREAM
+    farEdit.SetSel(Info.EditorID, SelInfo)
+  end
+  farEdit.DelSel(Info.EditorID)
+
+  return s
+end -- CutSelText
+
+-- Вставка строки в текст.
+local function PasteSelText (Info, text) --> (string)
+  local Info = Info or farEdit.GetInfo()
+
+  --logShow(text, "PasteSelText")
+  -- TODO: Добавить выделение блока вставленного текста!
+  return farEdit.InsText(Info.EditorID, text)
+end -- PasteSelText
+
 local TEditorMacroActions = {
 
   text = function (self, Info, Count, text) -- Вставка текста
-    if not InsText(Info, Count, text) then return end
+    if not InsText(Info, Count, text) then
+      return
+    end
     if self.MoveStop then
-      return farEdit.SetPos(nil, {
+      return farEdit.SetPos(Info.EditorID, {
              CurLine = Info.CurLine, CurPos = Info.CurPos,
              TopScreenLine = Info.TopScreenLine, LeftPos = Info.LeftPos })
     end
@@ -236,7 +399,7 @@ local TEditorMacroActions = {
   line = function (self, Info, Count, indent) -- Вставка строки
     if not NewLine(Info, Count, indent) then return end
     if self.MoveStop then
-      return farEdit.SetPos(nil, {
+      return farEdit.SetPos(Info.EditorID, {
              CurLine = Info.CurLine, CurPos = Info.CurPos,
              TopScreenLine = Info.TopScreenLine, LeftPos = Info.LeftPos })
     end
@@ -255,7 +418,7 @@ local TEditorMacroActions = {
   bs   = function (self, Info, Count)
     if not BackText(Info, Count) then return end
     if self.MoveStop then
-      return farEdit.SetPos(nil, {
+      return farEdit.SetPos(Info.EditorID, {
              CurLine = Info.CurLine, CurPos = Info.CurPos })
     end
     return true
@@ -263,7 +426,7 @@ local TEditorMacroActions = {
   bsln = function (self, Info, Count)
     if not BackLine(Info, Count) then return end
     if self.MoveStop then
-      return farEdit.SetPos(nil, {
+      return farEdit.SetPos(Info.EditorID, {
              CurLine = Info.CurLine, CurPos = Info.CurPos })
     end
     return true
@@ -276,14 +439,20 @@ local TEditorMacroActions = {
   back = function (self, Info, Count)
     if not self.Save then return end
     local Here = self.Save; self.Save = nil
-    return farEdit.SetPos(nil, {
+    return farEdit.SetPos(Info.EditorID, {
            CurLine  = Here.CurLine,  CurPos = Here.CurPos,
            Overtype = Here.Overtype, --CurTabPos = Here.CurTabPos,
            TopScreenLine = Here.TopScreenLine, LeftPos = Here.LeftPos })
   end,
 
-  stop   = function (self, Info, Count) self.MoveStop = true;  return true end,
-  resume = function (self, Info, Count) self.MoveStop = false; return true end,
+  stop   = function (self, Info, Count)
+    self.MoveStop = true
+    return true
+  end, --- stop
+  resume = function (self, Info, Count)
+    self.MoveStop = false
+    return true
+  end, --- resume
 
   enter    = function (self, Info, Count)
     return self:line(Info, Count, false)
@@ -292,6 +461,15 @@ local TEditorMacroActions = {
     return self:line(Info, Count, true)
   end, --- indenter
   nop = function (self, Info, Count) return true end,
+
+  cut = function (self, Info, Index)
+    self.Clip[Index] = CutSelText(Info) or ""
+    return true
+  end, --- copy
+  paste = function (self, Info, Index)
+    PasteSelText(Info, self.Clip[Index] or "")
+    return true
+  end, --- paste
 } ---
 local MEditorMacroActions = { __index = TEditorMacroActions }
 
@@ -301,9 +479,9 @@ local function EditorMacroActions (Data) --> (table)
   local self = {
     Data = Data,
     Save = Data.Save, --or nil -- Информация о редакторе для Here и Back
-    MoveStop = Data.MoveStop or false, -- Двигаемость курсора для Stop и Resume
+    MoveStop = Data.MoveStop or false, -- Передвигаемость курсора для Stop и Resume
 
-    Clip = {}, -- TODO: Внутренний буфер обмена
+    Clip = {}, -- Внутренний буфер обмена
   } --- self
 
   return setmetatable(self, MEditorMacroActions)
@@ -390,11 +568,12 @@ local function Play (Macro) --> (bool | nil, Action)
 
   -- Цикл по действиям
   for _, v in ipairs(Macro) do
-    local Info, isOk = farEdit.GetInfo()
+    local Info = farEdit.GetInfo()
     local Action, Value = v.Action, v.Value or 1
     --farEdit.Redraw(); logShow(v, _..": # = "..Value)
 
     -- Выполнение действия макроса:
+    local isOk
     if Action == "text" then
       isOk = InsText(Actions, Info, Value, v.Text)
     elseif Actions[Action] then
