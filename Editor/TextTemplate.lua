@@ -354,6 +354,7 @@ function TMain:TypeKit (Kits, tp)
 end -- TypeKit
 
 do
+  local format = string.format
   local prequire, newprequire = luaUt.prequire, luaUt.newprequire
 
 -- -- Make templates kit.
@@ -366,8 +367,8 @@ function TMain:MakeKit ()
   if not Kits then
     --local dorequire = newprequire -- For separate use!
     local dorequire = Kits == false and newprequire or prequire
-    local FullDir = string.format("%s.%s.", self.Options.BaseDir,
-                                            self.Options.WorkDir)
+    local FullDir = format("%s.%s.", self.Options.BaseDir,
+                                     self.Options.WorkDir)
     local KitCfg = dorequire(FullDir..self.Options.FileName)
     if KitCfg == nil then return end -- No templates
 
