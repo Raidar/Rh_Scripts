@@ -360,9 +360,9 @@ do
 -- TODO: Добавить поддержку column-блоков через доп. параметр
 -- AsColumn: nil - as BlockType, false - as stream, true - as column.
 
--- Copy selected text to string.
--- Копирование выделенного текста в строку (от начала блока до конца блока).
-function unit.EditorCopySelection (Info) --> (string)
+-- Copy selected text to string/table.
+-- Копирование выделенного текста в строку/таблицу (от начала блока до конца блока).
+function unit.EditorCopySelection (Info) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
   local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
   if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
@@ -410,12 +410,12 @@ function unit.EditorCopySelection (Info) --> (string)
 
   --logShow(tconcat(t, "\r"), "CopySelection")
 
-  return tconcat(t, "\r")
+  return t
 end -- EditorCopySelection
 
--- Cut selected text to string.
--- Вырезание выделенного текста в строку (от начала блока до конца блока).
-function unit.EditorCutSelection (Info) --> (string)
+-- Cut selected text to string/table.
+-- Вырезание выделенного текста в строку/таблицу (от начала блока до конца блока).
+function unit.EditorCutSelection (Info) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
   local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
   if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
@@ -435,6 +435,9 @@ end -- EditorCutSelection
 -- Вставка строки в текст.
 function unit.EditorPasteSelection (Info, text) --> (string)
   local Info = Info or farEdit.GetInfo()
+
+  if text == nil or text == "" then return end
+  if type(text) == 'table' then text = tconcat(text, "\r") end
 
   --logShow(text, "PasteSelection")
   -- TODO: Добавить выделение блока вставленного текста!
