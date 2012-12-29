@@ -58,16 +58,16 @@ local DefMacroKeyChar = '@' -- Masyamba
 
 --local MacroKeyLen = 12
 local MacroKeys = { -- Макро-ключи:
-  "left", "right", "up", "down",
-  "home", "end",
+                        -- перемещение курсора
+  "left", "right", "up", "down", "home", "end",
   --"return", "indret",
-  "enter", "indenter",
+  "enter", "indenter",  -- новая строка
   -- bsln must be before bs!
-  "del", "bsln", "bs",
-  "here", "back",
-  "stop", "resume",
-  "cut", "paste",
-  "nop",
+  "del", "bsln", "bs",  -- удаление текста
+  "here", "back",       -- управление закладками
+  "stop", "resume",     -- управление перемещением
+  "cut", "paste",       -- работа с выделенным блоком
+  "nop",                -- нет операции
 } ---
 local MacroValues = "1234567890" -- Цифры повторения макро-ключей
 
@@ -432,13 +432,13 @@ local TEditorMacroActions = {
     return true
   end, --- bsln
 
-  here = function (self, Info, Count)
-    self.Save = farEdit.GetInfo()
-    return self.Save ~= nil
+  here = function (self, Info, Index)
+    self.Save[Index] = farEdit.GetInfo()
+    return self.Save[Index] ~= nil
   end,
-  back = function (self, Info, Count)
-    if not self.Save then return end
-    local Here = self.Save; self.Save = nil
+  back = function (self, Info, Index)
+    if not self.Save[Index] then return end
+    local Here = self.Save[Index]; self.Save[Index] = nil
     return farEdit.SetPos(Info.EditorID, {
            CurLine  = Here.CurLine,  CurPos = Here.CurPos,
            Overtype = Here.Overtype, --CurTabPos = Here.CurTabPos,
@@ -478,10 +478,14 @@ local function EditorMacroActions (Data) --> (table)
 
   local self = {
     Data = Data,
-    Save = Data.Save, --or nil -- Информация о редакторе для Here и Back
+    Save = { -- Информация о редакторе для Here и Back
+      Data.Save, -- 1 --
+    }, --
     MoveStop = Data.MoveStop or false, -- Передвигаемость курсора для Stop и Resume
 
-    Clip = {}, -- Внутренний буфер обмена
+    Clip = { -- Внутренний буфер обмена
+      Data.Clip or false, -- 1 --
+    }, --
   } --- self
 
   return setmetatable(self, MEditorMacroActions)
