@@ -14,7 +14,6 @@ local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.farUtils"
-local runUt = require "Rh_Scripts.Utils.runUtils"
 
 ----------------------------------------
 --[[
@@ -36,9 +35,8 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
----------------------------------------- Local
+---------------------------------------- local
 local format = string.format
-local Macro = runUt.Macro
 
 -- Quote text considering selected block.
 -- Вставка кавычек в текст с учётом выделенного блока.
@@ -330,7 +328,7 @@ local mInsert = {
       Macro = PairTag("div"),
       AccelStr = "C+P" },
     { text = "",
-      --Sequence = '',
+      --Macro = PairTag(""),
       separator = true,
       AccelStr = "A+P" },
     -- Q -- quote chars
