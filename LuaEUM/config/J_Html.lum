@@ -12,6 +12,16 @@
 
 local locale = require 'context.utils.useLocale'
 
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.farUtils"
+local runUt = require "Rh_Scripts.Utils.runUtils"
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
+
 --------------------------------------------------------------------------------
 
 ---------------------------------------- Locale
@@ -25,6 +35,96 @@ local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
 end
+
+---------------------------------------- Local
+local format = string.format
+local Macro = runUt.Macro
+
+-- Quote text considering selected block.
+-- Вставка кавычек в текст с учётом выделенного блока.
+--[[
+  -- @params:
+  left  (string) - left "quote".
+  right (string) - right "quote".
+--]]
+local function TextQuote (left, right) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри "кавычек":
+    return format("%s@Here%s@Back", left, right)
+  end
+
+  -- Выделенный блок есть: блок внутри кавычек, курсор вне кавычек:
+  return format("@Cut%s@Paste%s", left, right)
+end -- TextQuote
+
+-- Insert paired tag considering selected block.
+-- Вставка парного тега с учётом выделенного блока.
+--[[
+  -- @params:
+  tag   (string) - tag name.
+  block   (bool) - flag for block-level tag.
+--]]
+local function PairTag (tag, block) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри тега:
+    local block = block and "@Enter@Enter@Up" or "" -- блочный элемент
+    return format("<%s>@Here</%s>@Back%s", tag, tag, block)
+  end
+
+  -- Выделенный блок есть: блок внутри тега, курсор вне тега:
+  --local count = tag:len() + 3
+  return format("@Cut<%s>@Paste</%s>", tag, tag)
+end -- PairTag
+
+-- Insert single tag with parameter considering selected block.
+-- Вставка одиночного тега с параметром с учётом выделенного блока.
+--[[
+  -- @params:
+  tag   (string) - tag name.
+  param (string) - param name.
+  rest  (string) - rest params of tag.
+  block   (bool) - flag for block-level tag.
+--]]
+local function SingleTag (tag, param, rest, block) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри параметра тега:
+    local block = block and "" or "" -- блочный элемент
+    return format('<%s %s="@Here"%s%s />@Back',
+                  tag, param, rest or "", block)
+  end
+
+  -- Выделенный блок есть: блок и курсор внутри параметров тега:
+  --local count = tag:len() + 3
+  return format('@Cut<%s %s="@Here"%s />@Left@4@Paste@Back',
+                tag, param, rest or "")
+end -- SingleTag
+
+-- Insert paired tag with parameter considering selected block.
+-- Вставка парного тега с параметром с учётом выделенного блока.
+--[[
+  -- @params:
+  tag   (string) - tag name.
+  param (string) - param name.
+  rest  (string) - rest params of tag.
+  block   (bool) - flag for block-level tag.
+--]]
+local function ParamTag (tag, param, rest, block) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри параметра тега:
+    local block = block and "@Enter@Enter" or "" -- блочный элемент
+    return format('<%s %s="@Here"%s>%s</%s>@Back',
+                  tag, param, rest or "", block, tag)
+  end
+
+  -- Выделенный блок есть: блок внутри тега, курсор внутри параметра тега:
+  local count = tag:len() + 3
+  return format('@Cut<%s %s="@Here"%s>@Paste</%s>@Back',
+                tag, param, rest or "", tag)
+end -- ParamTag
 
 ---------------------------------------- ----
 local mInsert = {
@@ -48,183 +148,186 @@ local mInsert = {
     -- A -- anchor
     { text = "A", Label = true },
     { text = "Anchor href",
-      Sequence = '$Tpl.PairTagX(\"<a href=\\\"\", \"\\\"></a>\",4)',
+      Macro = ParamTag("a", "href"),
       AccelStr = "A" },
     { text = "Anchor name",
-      Sequence = '$Tpl.PairTagX(\"<a name=\\\"\", \"\\\"></a>\",4)',
+      Macro = ParamTag("a", "name"),
       AccelStr = "S+A" },
     { text = "A-r target",
-      Sequence = '$Tpl.PairTagX(\"<a name=\\\"\", \"\\\" target=\\\"\\\"></a>\",4)',
+      Macro = ParamTag("a", "name", ' target=""'),
       AccelStr = "C+A" },
     { text = "Abbreviate",
-      Sequence = '$Tpl.PairTag(abbr,7)',
+      Macro = PairTag("abbr"),
       AccelStr = "A+A" },
     -- B -- physical format
     { text = "B", Label = true },
     { text = "Bold",
-      Sequence = '$Tpl.PairTag(b,4)',
+      Macro = PairTag("b"),
       AccelStr = "B" },
     { text = "Italic",
-      Sequence = '$Tpl.PairTag(i,4)',
+      Macro = PairTag("i"),
       AccelStr = "S+B" },
     { text = "Bidi Orient",
-      Sequence = '$Tpl.PairTag(bdo,6)',
+      Macro = PairTag("bdo"),
       AccelStr = "C+B" },
     { text = "Html Body",
-      Sequence = '$Tpl.PairTagM(body)', -- $Tpl.PairTag(body,7)
+      Macro = PairTag("body", true),
       AccelStr = "A+B" },
     -- C -- cite / quote
     { text = "C", Label = true },
     { text = "Cite",
-      Sequence = '$Tpl.PairTag(cite,7)',
+      Macro = PairTag("cite"),
       AccelStr = "C" },
     { text = "Cite Quote",
-      Sequence = '$Tpl.PairTag(q,4)',
+      Macro = PairTag("q"),
       AccelStr = "S+C" },
     { text = "BlockQuote",
-      Sequence = '$Tpl.PairTagM(blockquote)', -- $Tpl.PairTag(blockquote,13)
+      Macro = PairTag("blockquote", true),
       AccelStr = "C+C" },
     { text = "Acronym",
-      Sequence = '$Tpl.PairTag(acronym,10)',
+      Macro = PairTag("acronym"),
       AccelStr = "A+C" },
     -- D -- definition
     { text = "D", Label = true },
     { text = "Def-Data",
-      Sequence = '$Tpl.PairTag(dd,5)',
+      Macro = PairTag("dd"),
       AccelStr = "D" },
     { text = "Def-Term",
-      Sequence = '$Tpl.PairTag(dt,5)',
+      Macro = PairTag("dt"),
       AccelStr = "S+D" },
     { text = "Def-List",
-      Sequence = '$Tpl.PairTagM(dl)', -- $Tpl.PairTag(dl,5)
+      Macro = PairTag("dl", true),
       AccelStr = "C+D" },
     { text = "DeFiNition",
-      Sequence = '$Tpl.PairTag(dfn,6)',
+      Macro = PairTag("dfn"),
       AccelStr = "A+D" },
     -- E -- logical format
     { text = "E", Label = true },
     { text = "EmPhasis",
-      Sequence = '$Tpl.PairTag(em,5)',
+      Macro = PairTag("em"),
       AccelStr = "E" },
     { text = "Strong",
-      Sequence = '$Tpl.PairTag(strong,9)',
+      Macro = PairTag("strong"),
       AccelStr = "S+E" },
     { text = "PreFormat",
-      Sequence = '$Tpl.PairTagM(pre)', -- $Tpl.PairTag(pre,6)
+      Macro = PairTag("pre", true),
       AccelStr = "C+E" },
     { text = "TeleType",
-      Sequence = '$Tpl.PairTag(tt,5)',
+      Macro = PairTag("tt"),
       AccelStr = "A+E" },
     -- F -- frame
     { text = "F", Label = true },
     { text = "Frame",
-      Sequence = '$Tpl.PairTagX(\"<frame name=\\\"\", \"\\\" src=\\\"\\\" />\",4)',
+      Macro = SingleTag("frame", "name", ' src=""'),
       AccelStr = "F" },
     { text = "Frame Set",
-      Sequence = '$Tpl.PairTagM(frameset)',
+      Macro = PairTag("frameset", true),
       AccelStr = "S+F" },
     { text = "Inner Frame",
-      Sequence = '$Tpl.PairTagX(\"<iframe name=\\\"\", \"\\\" src=\\\"\\\" />\",4)',
+      Macro = SingleTag("iframe", "name", ' src=""'),
       AccelStr = "C+F" },
     { text = "No Frames",
-      Sequence = '$Tpl.PairTagM(noframes)',
+      Macro = PairTag("noframes", true),
       AccelStr = "A+F" },
     -- H -- heading
     { text = "H", Label = true },
     { text = "Heading 1",
-      Sequence = '$Tpl.PairTag(h1,5)',
+      Macro = PairTag("h1"),
       AccelStr = "H" },
     { text = "Heading 2",
-      Sequence = '$Tpl.PairTag(h2,5)',
+      Macro = PairTag("h2"),
       AccelStr = "S+H" },
     { text = "Heading 3",
-      Sequence = '$Tpl.PairTag(h3,5)',
+      Macro = PairTag("h3"),
       AccelStr = "C+H" },
     { text = "Html Head",
-      Sequence = '$Tpl.PairTagM(head)', -- $Tpl.PairTag(head,7)
+      Macro = PairTag("head", true),
       AccelStr = "A+H" },
     -- I -- object / change
     { text = "I", Label = true },
     { text = "Image",
-      Sequence = '$Tpl.PairTagX(\"<img alt=\\\"\", \"\\\" src=\\\"\\\" />\",3)',
+      Macro = SingleTag("img", "alt", ' src=""'),
       AccelStr = "I" },
     { text = "Insert",
-      Sequence = '$Tpl.PairTag(ins,6)',
+      Macro = PairTag("ins"),
       AccelStr = "S+I" },
     { text = "Delete",
-      Sequence = '$Tpl.PairTag(del,6)',
+      Macro = PairTag("del"),
       AccelStr = "C+I" },
     { text = "Object",
-      Sequence = '$Tpl.PairTagX(\"<object classid=\\\"\", \"\\\"></object>\",9)',
+      Macro = ParamTag("object", "classid"),
       AccelStr = "A+I" },
     -- K -- link
     { text = "K", Label = true },
     { text = "Link rel",
-      Sequence = '$Tpl.PairM(\"<link rel=\\\"\",\"\\\" href=\\\"\\\" />\")',
+      Macro = SingleTag("link", "rel", ' href=""'),
       AccelStr = "K" },
     { text = "Link style",
-      Sequence = '$Tpl.PairM(\"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\",\".css\\\" />\")',
+      Macro = SingleTag('link rel="stylesheet" type="text/css"', "href"),
+      --Macro = SingleTag('link rel="stylesheet" type="text/css"', "href", '@Left.css@Right'),
       AccelStr = "S+K" },
     { text = "Link favicon",
-      Sequence = '$Tpl.PairM(\"<link rel=\\\"SHORTCUT ICON\\\" href=\\\"\",\"favicon.ico\\\" />\")',
+      Macro = SingleTag('link rel="shortcut icon" type="image/x-icon"', "href"),
+      --Macro = SingleTag('link rel="shortcut icon" type="image/x-icon"', "href", '@Leftfavicon.ico@Right'),
       AccelStr = "C+K" },
     { text = "Base link",
-      Sequence = '$Tpl.PairM(\"<base href=\\\"\",\"\\\" />\")',
+      Macro = SingleTag("base", "href"),
       AccelStr = "A+K" },
     -- L -- list
     { text = "L", Label = true },
     { text = "List Item",
-      Sequence = '$Tpl.PairTag(li,5)',
+      Macro = PairTag("li"),
       AccelStr = "L" },
     { text = "Ordered List",
-      Sequence = '$Tpl.PairTagM(ol)', -- $Tpl.PairTag(ol,5)
+      Macro = PairTag("ol", true),
       AccelStr = "S+L" },
     { text = "Unord. List",
-      Sequence = '$Tpl.PairTagM(ul)', -- $Tpl.PairTag(ul,5)
+      Macro = PairTag("ul", true),
       AccelStr = "C+L" },
     { text = "Html Title",
-      Sequence = '$Tpl.PairTag(title,8)',
+      Macro = PairTag("title"),
       AccelStr = "A+L" },
     -- M -- meta
     { text = "M", Label = true },
     { text = "Meta name",
-      Sequence = '$Tpl.PairM(\"<meta name=\\\"\",\"\\\" content=\\\"\\\" />\")',
+      Macro = SingleTag("meta", "name", ' content=""'),
       AccelStr = "M" },
     { text = "Meta h-eqv",
-      Sequence = '$Tpl.PairM(\"<meta http-equiv=\\\"\",\"\\\" content=\\\"\\\" />\")',
+      Macro = SingleTag("meta", "http-equiv", ' content=""'),
       AccelStr = "S+M" },
     { text = "Meta charset",
-      Plain = '<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />',
-      --Plain = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
+      Plain = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />',
+      --Plain = '<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />',
       --Macro = '<meta http-equiv="Content-Type" content="text/html; charset=@Here" />@Back',
+      --Macro = SingleTag('meta http-equiv="Content-Type"', "http-equiv", ' content=""'),
       AccelStr = "C+M" },
     { text = "Html Html",
-      Sequence = '$Tpl.PairTagM(html)', -- $Tpl.PairTag(html,7)
+      Macro = PairTag("html", true),
       AccelStr = "A+M" },
     -- O -- mono-format
     { text = "O", Label = true },
     { text = "Code",
-      Sequence = '$Tpl.PairTag(code,7)',
+      Macro = PairTag("code"),
       AccelStr = "O" },
     { text = "Kbd input",
-      Sequence = '$Tpl.PairTag(kbd,6)',
+      Macro = PairTag("kbd"),
       AccelStr = "S+O" },
     { text = "Sample out",
-      Sequence = '$Tpl.PairTag(samp,7)',
+      Macro = PairTag("samp"),
       AccelStr = "C+O" },
     { text = "Variable",
-      Sequence = '$Tpl.PairTag(var,6)',
+      Macro = PairTag("var"),
       AccelStr = "A+O" },
     -- P -- para-format
     { text = "P", Label = true },
     { text = "Paragraph",
-      Sequence = '$Tpl.PairTag(p,4)',
+      Macro = PairTag("p"),
       AccelStr = "P" },
     { text = "Text Span",
-      Sequence = '$Tpl.PairTag(span,7)',
+      Macro = PairTag("span"),
       AccelStr = "S+P" },
     { text = "Division",
-      Sequence = '$Tpl.PairTag(div,6)',
+      Macro = PairTag("div"),
       AccelStr = "C+P" },
     { text = "",
       --Sequence = '',
@@ -233,16 +336,16 @@ local mInsert = {
     -- Q -- quote chars
     { text = "Q", Label = true },
     { text = "simple Quote",
-      Sequence = '$Tpl.PairX(\"&quot;&quot;\",6)',
+      Macro = TextQuote("&quot;", "&quot;"),
       AccelStr = "Q" },
     { text = "single Quote",
-      Sequence = '$Tpl.PairX(\"&lsaquo;&rsaquo;\",8)',
+      Macro = TextQuote("&lsaquo;", "&rsaquo;"),
       AccelStr = "S+Q" },
     { text = "double Quote",
-      Sequence = '$Tpl.PairX(\"&laquo;&raquo;\",7)',
+      Macro = TextQuote("&laquo;", "&raquo;"),
       AccelStr = "C+Q" },
     { text = "Caption",
-      Sequence = '$Tpl.PairTag(caption,10)',
+      Macro = PairTag("caption"),
       AccelStr = "A+Q" },
     -- R -- break
     { text = "R", Label = true },
@@ -250,41 +353,41 @@ local mInsert = {
       Plain = '<br />',
       AccelStr = "R" },
     { text = "No-Break",
-      Sequence = '$Tpl.PairTag(nobr,7)',
+      Macro = PairTag("nobr"),
       AccelStr = "S+R" },
     { text = "Horiz. Rule",
       Plain = '<hr />',
       AccelStr = "C+R" },
     { text = "Address",
-      Sequence = '$Tpl.PairTagM(address)',
+      Macro = PairTag("address", true),
       AccelStr = "A+R" },
     -- T -- table
     { text = "T", Label = true },
     { text = "Table Data",
-      Sequence = '$Tpl.PairTag(td,5)',
+      Macro = PairTag("td"),
       AccelStr = "T" },
     { text = "Table Row",
-      Sequence = '$Tpl.PairTag(tr,5)',
+      Macro = PairTag("tr"),
       AccelStr = "S+T" },
     { text = "Table Head",
-      Sequence = '$Tpl.PairTag(th,5)',
+      Macro = PairTag("th"),
       AccelStr = "C+T" },
     { text = "Table",
-      Sequence = '$Tpl.PairTagM(table)',
+      Macro = PairTag("table", true),
       AccelStr = "A+T" },
     -- U -- scripts
     { text = "U", Label = true },
     { text = "SubScript",
-      Sequence = '$Tpl.PairTag(sub,6)',
+      Macro = PairTag("sub"),
       AccelStr = "U" },
     { text = "SuperScript",
-      Sequence = '$Tpl.PairTag(sup,6)',
+      Macro = PairTag("sup"),
       AccelStr = "S+U" },
     { text = "Script",
-      Sequence = '$Tpl.PairTagM(script)',
+      Macro = PairTag("script", true),
       AccelStr = "C+U" },
     { text = "No Script",
-      Sequence = '$Tpl.PairTagM(noscript)',
+      Macro = PairTag("noscript", true),
       AccelStr = "A+U" },
     -- W -- special chars
     { text = "W", Label = true },
@@ -303,22 +406,22 @@ local mInsert = {
     -- Y -- table ext.
     { text = "Y", Label = true },
     { text = "Table Body",
-      Sequence = '$Tpl.PairTagM(tbody)',
+      Macro = PairTag("tbody", true),
       AccelStr = "Y" },
     { text = "Table Header",
-      Sequence = '$Tpl.PairTagM(thead)',
+      Macro = PairTag("thead", true),
       AccelStr = "S+Y" },
     { text = "Table Footer",
-      Sequence = '$Tpl.PairTagM(tfoot)',
+      Macro = PairTag("tfoot", true),
       AccelStr = "C+Y" },
     { text = "Style",
-      Sequence = '$Tpl.PairTagM(style)',
+      Macro = PairTag("style", true),
       AccelStr = "A+Y" },
     --[[
     -- Z -- ??? - TEST
     { text = "Z", Label = true },
     { text = "Z testing",
-      Sequence = '$Tpl.PairTagM(test)',
+      Macro = PairTag("test", true),
       AccelStr = "Z" },
     --]]
   } -- Items
