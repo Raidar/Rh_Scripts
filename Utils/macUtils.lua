@@ -388,11 +388,11 @@ local TEditorMacroActions = {
   nop = function (self, Info, Count) return true end,
 
   cut = function (self, Info, Index)
-    self.Clip[Index] = CutSelText(Info) or ""
+    self.Clip[Index] = farEdit.CutSel(Info) or ""
     return true
   end, --- copy
   paste = function (self, Info, Index)
-    PasteSelText(Info, self.Clip[Index] or "")
+    farEdit.PasteSel(Info, self.Clip[Index] or "")
     return true
   end, --- paste
 } ---
