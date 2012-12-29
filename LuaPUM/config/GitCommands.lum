@@ -81,6 +81,10 @@ local mSep = {
   separator = true,
 } --- mSep
 
+local dLogGraphFormat =
+  '%C(blue bold)%h%Creset %C(green bold)%ad%Creset | '..
+  '%C(white)%s%Creset%C(yellow bold)%d%Creset [%C(white bold)%an%Creset]'
+
 local mItems = {
   { text = "Git GUI",
     CmdLine = "git gui citool" },
@@ -105,8 +109,49 @@ local mItems = {
     CmdLine = "edit:<git diff" },
   { text = "Show &log",
     CmdLine = "edit:<git log" },
-  { text = "Log for &2",
-    CmdLine = "edit:<git log -2" },
+  { text = "E&xtended log view",
+    Hint = "Press q to quit from console view",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        NocheckChar = " ",
+        MinWidth = 29, -- Hint:len()
+      }, -- RectMenu
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+      },
+    },
+
+    Items = {
+      { text = "Log last &2 commits",
+        Hint = "View last 2 commits in editor",
+        CmdLine = "edit:<git log -2" },
+      { text = "View log &all as tree",
+        Hint = "Press q to quit from log view",
+        -- %h   -- abbreviated commit hash
+        -- %ad  -- author date
+        -- %s   -- subject
+        -- %an  -- author name
+        -- %d   -- ref names
+        CmdLine = 'git log --graph --all --abbrev-commit --pretty=format:"'..
+                  dLogGraphFormat..'" -- ' },
+      { text = "View &current history",
+        Hint = "Press q to quit from log view",
+        CmdLine = 'git log --graph --abbrev-commit --pretty=format:"'..
+                  dLogGraphFormat..'" -- ' },
+    },
+  },
   { text = "&Find changes",
     CmdLine = "edit:<git show" },
   { text = "Log &graph",
@@ -115,9 +160,18 @@ local mItems = {
   { text = "Fix last commit…",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit --amend -a -m ""' },
-  { text = "Reset to head…",
+  { text = "Unstage…",
+    Hint = "Clear index (Reset to head)",
     Function = FillCmdLine,
     Arguments = "git reset HEAD " },
+  { text = "Undo head…",
+    Hint = "Reset to pre-head",
+    Function = FillCmdLine,
+    Arguments = "git reset --soft HEAD^ " },
+  { text = "Redo head…",
+    Hint = "Redo to old head",
+    Function = FillCmdLine,
+    Arguments = "git commit -a -c ORIG_HEAD " },
   { text = "Discard changes…",
     Function = FillCmdLine,
     Arguments = "rem git checkout -- " },
