@@ -78,6 +78,7 @@ function Truncate.Spaces (n) --> (number)
   local s, q = EditorGetStr(nil, n, 2)
   s, q = s:gsub(SpaceTruncPat, TruncSub)
   if q > 0 then EditorSetStr(nil, n, s) end
+
   return q
 end ----
 local TruncateSpaces = Truncate.Spaces
@@ -110,6 +111,7 @@ function Truncate.Text () --> (number)
     q = q + TruncateSpaces(k)
   end
   EditorSetPos(nil, Info)
+
   return q
 end ----
 local TruncateText = Truncate.Text
