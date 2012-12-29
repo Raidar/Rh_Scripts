@@ -726,6 +726,7 @@ function TMenu:RunScript (Item)
   if not ChunkArgs and SError then return nil, SError end
 
   -- Обработка имени функции скрипта.
+  -- TODO: Убрать аргументы в названии скрипта!?
   Item.Function, Item.Arguments, Args =
       runUt.splitNameArgs(Item.Function, Item.Arguments)
   --logShow(Item, tostring(Item.Function))
