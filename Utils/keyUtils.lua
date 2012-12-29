@@ -610,17 +610,22 @@ do
   KeySep  -- разделитель модификаторов и самой клавиши.
 --]]
 function unit.SKeyToName (StrKey, KeySep) --> (string)
-  local t = {}
-
   local mod, c, a, s, key = ParseStrKey(StrKey, KeySep or '+')
   --logShow({ mod, c, a, s, key }, StrKey)
   if not mod or mod == "" then return key or StrKey end
 
-  if c and c ~= "" then t[#t+1] = c == "RC" and "RCtrl" or "Ctrl" end
-  if a and a ~= "" then t[#t+1] = a == "RA" and "RAlt"  or "Alt"  end
-  if s and s ~= "" then t[#t+1] = "Shift" end
+  local t = {
+    "", -- c
+    "", -- a
+    "", -- s
+    key or "",
+  } ---
 
-  return tconcat(t)..(key or "")
+  if c and c ~= "" then t[1] = c == "RC" and "RCtrl" or "Ctrl" end
+  if a and a ~= "" then t[2] = a == "RA" and "RAlt"  or "Alt"  end
+  if s and s ~= "" then t[3] = "Shift" end
+
+  return tconcat(t)
 end ---- SKeyToName
 
   local ParseFullName = unit.ParseFullName
@@ -632,16 +637,22 @@ end ---- SKeyToName
   KeySep  -- разделитель модификаторов и самой клавиши.
 --]]
 function unit.NameToSKey (KeyName, KeySep) --> (string)
-  local t = {}
-
   local mod, c, a, s, key = ParseFullName(KeyName)
   if not mod or mod == "" then return key or KeyName end
 
-  if c and c ~= "" then t[#t+1] = c == "RCtrl" and "RC" or "C" end
-  if a and a ~= "" then t[#t+1] = a == "RAlt"  and "RA" or "A" end
-  if s and s ~= "" then t[#t+1] = "S" end
+  local t = {
+    "", -- c
+    "", -- a
+    "", -- s
+    KeySep or '+',
+    key or "",
+  } ---
 
-  return tconcat(t)..(KeySep or '+')..(key or "")
+  if c and c ~= "" then t[1] = c == "RCtrl" and "RC" or "C" end
+  if a and a ~= "" then t[2] = a == "RAlt"  and "RA" or "A" end
+  if s and s ~= "" then t[3] = "S" end
+
+  return tconcat(t)
 end ---- NameToSKey
 
 end -- do
