@@ -223,7 +223,7 @@ function VisCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
   --local sum = extUt.t_isum(Len, Fixes.Min, k) + Fixes.Length
   --logShow({ k, Total, Sep, L, T, Len, Base, sum, Fixes }, "Base", 2)
 
-  local odd = L <= T -- Поправка:
+  local odd = (L <= T) -- Поправка:
   L = L - Sep - (odd and 0 or Len[k]) + Fixes.Length
   k = k - Base + 1 - (odd and 0 or 1) + Fixes.Count
 
@@ -259,7 +259,7 @@ function VisCount.Pale (Len, Sep, Total, Pale, Fixes) --> (number, number)
   --local sum = extUt.t_isum(Len, k, Fixes.Max) + Fixes.Length
   --logShow({ k, Total, Sep, L, T, Len, Pale, sum, Fixes }, "Pale", 2)
 
-  local odd = L <= T -- Поправка:
+  local odd = (L <= T) -- Поправка:
   L = L - Sep - (odd and 0 or Len[k]) + Fixes.Length
   k = Pale - k + 1 - (odd and 0 or 1) + Fixes.Count
 
@@ -740,27 +740,30 @@ function TMenu:DefineZoneInfo () --| Zone
   -- Размеры края окна диалога.
   local MenuOnly, MenuEdge = RM.MenuOnly, RM.MenuEdge
   Zone.BoxGage = (MenuOnly or RM.BoxKind == "") and 0 or 1 -- Толщина рамки
-  Zone.HomeX =      (RM.MenuEdgeH or MenuEdge)     + Zone.BoxGage
+  Zone.HomeX = (RM.MenuEdgeH or      MenuEdge)     + Zone.BoxGage
   Zone.HomeY = (RM.MenuEdgeV or bshr(MenuEdge, 1)) + Zone.BoxGage
   --Zone.EdgeH, Zone.EdgeV = 2*Zone.HomeX, 2*Zone.HomeY
   Zone.EdgeH, Zone.EdgeV = bshl(Zone.HomeX, 1), bshl(Zone.HomeY, 1)
 
   -- Размеры поля меню окна диалога.
-  local Width  = RM.Width  or self.Area.Width
-  local Height = RM.Height or self.Area.Height
+  local MaxWidth  = RM.MaxWidth  or self.Area.Width
+  local MaxHeight = RM.MaxHeight or self.Area.Height
+  local MinWidth  = min2(RM.MinWidth  or 1, self.Area.Width)
+  local MinHeight = min2(RM.MinHeight or 1, self.Area.Height)
   --[[
   Width  = (Width < 10 and 10 or Width) - Zone.EdgeH - 1
   Height = (Height < 5 and 5 or Height) - Zone.EdgeV - 1
   Zone.Width, Zone.Height = Width, Height
   --]]
-  Zone.Width  = (Width < 10 and 10 or Width) - Zone.EdgeH - 1
-  Zone.Height = (Height < 5 and 5 or Height) - Zone.EdgeV - 1
+  Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH + 1) - Zone.EdgeH - 1
+  Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV + 1) - Zone.EdgeV - 1
   -- Отображаемые кол-во рядов и реальные размеры.
   Zone.Cols, Zone.Width  = self:VisibleColCount(1)
   Zone.Rows, Zone.Height = self:VisibleRowCount(1)
-  --if RM.ForceSize then Zone.Width, Zone.Height = Width, Height end
-  Zone.LastX = Zone.HomeX + Zone.Width  - 1
-  Zone.LastY = Zone.HomeY + Zone.Height - 1
+  Zone.MenuWidth  = max2(Zone.Width,  MinWidth)
+  Zone.MenuHeight = max2(Zone.Height, MinHeight)
+  --Zone.LastX = Zone.HomeX + Zone.Width  - 1
+  --Zone.LastY = Zone.HomeY + Zone.Height - 1
   --logShow(self.Zone, "self.Zone")
 
   -- Показываемая часть пунктов меню.
@@ -813,6 +816,7 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   -- Поправка на длину горизонтальных надписей.
   Length = max2(Titles.Top:len(), Titles.Bottom:len())
   if Length > 0 then Length = Length + 4 end
+  Length = max2(Length, Zone.MenuWidth)
   Delta = Length - Zone.Width -- Избыток пустоты
   --logShow({ Titles, Titles.Top:len(), Titles.Bottom:len(),
   --          Length, Zone.Width, Delta, bshr(Delta, 1) }, "self.Zone")
@@ -822,12 +826,6 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
       Zone.IndentH = 0
     elseif MenuAlign:find("R", 1, true) then
       Zone.IndentH = Delta
-    --[[
-    if     MenuAlign:find("L", 1, true) then
-      Zone.Width  = Length
-    elseif MenuAlign:find("R", 1, true) then
-      Zone.IndentH = Delta
-    --]]
     else
       Zone.IndentH = bshr(Delta, 1)  end -- "C" --
   end
@@ -835,6 +833,7 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   -- Поправка на длину вертикальных надписей.
   Length = max2(Titles.Left:len(), Titles.Right:len())
   --if Length > 0 then Length = Length + 4 end -- no + 4
+  Length = max2(Length, Zone.MenuHeight)
   Delta = Length - Zone.Height -- Избыток пустоты
   if Delta > 0 then -- Выравнивание:
     Zone.Height = Length
@@ -842,15 +841,12 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
       Zone.IndentV = 0
     elseif MenuAlign:find("B", 1, true) then
       Zone.IndentV = Delta
-    --[[
-    if     MenuAlign:find("T", 1, true) then
-      Zone.Height = Length
-    elseif MenuAlign:find("B", 1, true) then
-      Zone.IndentV = Delta
-    --]]
     else
       Zone.IndentV = bshr(Delta, 1)  end -- "M" --
   end
+
+  Zone.LastX = Zone.HomeX + Zone.Width  - 1
+  Zone.LastY = Zone.HomeY + Zone.Height - 1
 
   -- Размеры окна диалога.
   Zone.BoxWidth  = Zone.Width  + Zone.EdgeH + Zone.EmbScrollV
@@ -1843,16 +1839,20 @@ function TMenu:CalcScrollBars () --| ScrollBars
   local SH = { -- Горизонтальная прокрутка:
     X1 = Rect.Left + Zone.HomeX,
     Y1 = Rect.Top  + Zone.LastY + 1,
+    --Y1 = Rect.Top  + Zone.HomeY + Zone.MenuHeight,
     X2 = 0, Y2 = 0,
     Length = Zone.Width  - 2, -- За вычетом стрелок
+    --Length = Zone.MenuWidth  - 2, -- За вычетом стрелок
   } --- SH
   SH.X2, SH.Y2 = SH.X1 + SH.Length + 1, SH.Y1
 
   local SV = { -- Вертикальная прокрутка:
     X1 = Rect.Left + Zone.LastX + 1,
+    --X1 = Rect.Left + Zone.HomeX + Zone.MenuWidth,
     Y1 = Rect.Top  + Zone.HomeY,
     X2 = 0, Y2 = 0,
     Length = Zone.Height - 2, -- За вычетом стрелок
+    --Length = Zone.MenuHeight - 2, -- За вычетом стрелок
   } --- SV
   SV.X2, SV.Y2 = SV.X1, SV.Y1 + SV.Length + 1
 
@@ -1940,13 +1940,16 @@ function TMenu:DrawStatusBar ()
   Rect = {
     x = Rect.Left + Zone.HomeX,
     --y = Rect.Top + Zone.LastY + 2 + Zone.EmbScrollH,
-    y = Rect.Top + Zone.LastY + Zone.BoxGage + 1 + Zone.EmbScrollH,
+    --y = Rect.Top + Zone.LastY + 1 + Zone.BoxGage + Zone.EmbScrollH,
+    y = Rect.Top +
+        Zone.HomeY + Zone.MenuHeight +
+        Zone.BoxGage + Zone.EmbScrollH, -- TODO: Check
     h = 1,
     w = Zone.Width,
   }
 
   LineFill(Rect, self.Colors.Col_MenuStatusBar, Hint, { Filler = Spaces })
-end ----
+end ---- DrawStatusBar
 
 -- Обработчик рисования меню.
 function TMenu:DoMenuDraw (Rect)

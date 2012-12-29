@@ -133,10 +133,13 @@ $ #Menu window properties#: RectMenu
   — ¦Format: \37{ x = \-<number>\37, y = \-<number> \37}\-
   — ¦A window centering is used by default: \37{ x = -1, y = -1 }\-.
 
-  #Width# & #Height# (number) — Menu output area (width & height).
-    ¦Following values are used by default:
-  window field width  = \37(Width or 80)\- characters,
-  window field height = \37((Height or 25) + 1)\- characters.
+  #MinWidth# & #MinHeight#,
+  #MaxWidth# & #MaxHeight# (number) — Constraints for menu output area.
+    ¦Following values are used by default for window field:
+      min. width  = \37(MinWidth  or 10)\- characters,
+      min. height = \37(MinHeight or  5)\- characters,
+      max. width  = \37(MaxWidth or 80)\- characters,
+      max. height = \37(MaxHeight or 25) + 1\- characters.
 
   #Colors#      (table) — Table of menu colors for usual items.
   #FixedColors# (table) — Table of menu colors for fixed items.
