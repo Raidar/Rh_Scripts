@@ -14,16 +14,6 @@
 --]]
 --------------------------------------------------------------------------------
 
---local format = string.format
-
-----------------------------------------
---local bit = bit64
---local band, bor = bit.band, bit.bor
---local bshl, bshr = bit.lshift, bit.rshift
-
-----------------------------------------
---local far = far -- DEBUG ONLY
-
 ----------------------------------------
 --local context = context
 
@@ -43,31 +33,7 @@ local unit = {}
   The most part of functions haven't value & type checking for arguments.
   Большинство функций не выполняют проверки значений и типов для параметров.
 --]]
----------------------------------------- Number
-
 ---------------------------------------- String
-do
-  local tonumber = tonumber
-
--- Convert a string to required type value.
--- Преобразование строки к значению нужного типа.
---[[
-  -- @params:
-  s  (string) - converted string.
-  tp (string) - required type.
-  def   (any) - default value (type(default) == required type).
---]]
-function unit.s2v (s, tp, def, ...) --< (string) --> (value)
-  if tp == 'nil' then return nil end
-  local v = tp == 'string' and s or
-            tp == 'number' and (tonumber(s, ...) or def) or
-            tp == 'boolean' and strings.s2b(s, def) or
-            nil
-  if v ~= nil then return v else return def end
-end ---- s2v
-
-end -- do
-
 do
   local sfind = ("").cfind or ("").find
 
@@ -104,8 +70,6 @@ function unit.slinemax (s) --> (number, string | 0, nil)
 
   return max, x
 end ---- slinemax
-
----------------------------------------- Tables
 
 ---------------------------------------- Package
 do
@@ -227,12 +191,11 @@ end ---- ffind
 
 end -- do
 
----------------------------------------- System
-
 ---------------------------------------- Common
 do
   local type = type
--- Value Length.
+
+-- Value length.
 -- Длина значения.
 function unit.length (v) --> (number)
   local tp = type(v)
