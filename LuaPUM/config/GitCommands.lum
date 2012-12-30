@@ -109,7 +109,7 @@ local mItems = {
     CmdLine = "edit:<git diff" },
   { text = "Show &log",
     CmdLine = "edit:<git log" },
-  { text = "E&xtended log view",
+  { text = "E&xtended log",
     Hint = "Press q to quit from console view",
 
     MenuView = DefCfgData.MenuView,
@@ -157,7 +157,8 @@ local mItems = {
   { text = "Log &graph",
     CmdLine = "gitk" },
   mSep,
-  { text = "Fix last commit…",
+  { text = "Amend…",
+    Hint = "Fix last commit",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit --amend -a -m ""' },
   { text = "Unstage…",
