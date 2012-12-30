@@ -31,6 +31,65 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
+---------------------------------------- local
+local farEditor = farUt.editor
+
+local farEdit = {
+  --GetInfo  = editor.GetInfo,
+  --GetStr   = editor.GetString,
+  SetPos   = editor.SetPosition,
+  InsText  = editor.InsertText,
+} ---
+
+-- Quote text considering selected block.
+-- Закавычивание текста с учётом выделенного блока.
+--[[
+  -- @params:
+  left  (string) - left "quote".
+  right (string) - right "quote".
+--]]
+local function QuoteSelection (left, right) --> (macro)
+  local Info = farEdit.GetInfo()
+  local SelType = farUt.BlockTypes[SelInfo.BlockType]
+
+  if SelType == "none" then -- Нет блока:
+    if not farEdit.InsText(Info.EditorID, left) then return end
+    local Info = farEdit.GetInfo()
+    if not farEdit.InsText(Info.EditorID, right) then return end
+    if not farEdit.SetPos(Info.EditorID, Info) then return end
+
+    return true
+  end
+
+  local SelInfo = editor.GetSelection()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = farEditor.CutSelection(Info, SelType)
+  if not block then return end
+
+  if     SelType == "stream" then
+    if     type(block) == 'string' then
+      block = left..block..right
+    elseif type(block) == 'table' then
+      block[1] = left..block[1]
+      block[#block] = block[#block]..right
+    end
+
+  elseif SelType == "column" then
+    if     type(block) == 'string' then
+      block = left..block..right
+    elseif type(block) == 'table' then
+      for k = 1, #block do
+        block[k] = left..block[k]..right
+      end
+    end
+
+  end
+  if not farEditor.PasteSelection(Info, block, SelType) then return end
+
+  return true
+end -- QuoteSelection
+
 ---------------------------------------- Separator
 --[[
 local mSep = {
