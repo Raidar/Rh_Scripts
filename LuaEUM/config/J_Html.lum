@@ -45,7 +45,7 @@ local format = string.format
   left  (string) - left "quote".
   right (string) - right "quote".
 --]]
-local function TextQuote (left, right) --> (macro)
+local function QuoteText (left, right) --> (macro)
   --logShow(farUt.EditorSelType(), tag)
   if farUt.EditorSelType() == "none" then
     -- Выделенного блока нет: курсор внутри "кавычек":
@@ -54,7 +54,7 @@ local function TextQuote (left, right) --> (macro)
 
   -- Выделенный блок есть: блок внутри кавычек, курсор вне кавычек:
   return format("@Cut%s@Paste%s", left, right)
-end -- TextQuote
+end -- QuoteText
 
 -- Insert paired tag considering selected block.
 -- Вставка парного тега с учётом выделенного блока.
@@ -334,13 +334,13 @@ local mInsert = {
     -- Q -- quote chars
     { text = "Q", Label = true },
     { text = "simple Quote",
-      Macro = TextQuote("&quot;", "&quot;"),
+      Macro = QuoteText("&quot;", "&quot;"),
       AccelStr = "Q" },
     { text = "single Quote",
-      Macro = TextQuote("&lsaquo;", "&rsaquo;"),
+      Macro = QuoteText("&lsaquo;", "&rsaquo;"),
       AccelStr = "S+Q" },
     { text = "double Quote",
-      Macro = TextQuote("&laquo;", "&raquo;"),
+      Macro = QuoteText("&laquo;", "&raquo;"),
       AccelStr = "C+Q" },
     { text = "Caption",
       Macro = PairTag("caption"),
