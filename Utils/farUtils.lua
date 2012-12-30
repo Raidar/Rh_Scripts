@@ -26,6 +26,7 @@ local PanelsGetInfo = panel.GetPanelInfo
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
 
 local isFlag = utils.isFlag
 
@@ -191,7 +192,7 @@ end
 -- Проверка на базисную область.
 unit.FarIsBasicAreaType = {
   panels = true,
-  editor = true, 
+  editor = true,
   viewer = true,
 } --
 
@@ -283,22 +284,25 @@ function unit.PanelsSelCount (handle, kind)
   return 0
 end ---- PanelsSelCount
 
-do
-  -- Type of selected block.
-  -- Тип выделенного блока.
-  local BlockTypes = {
-    [F.BTYPE_NONE]   = "none",
-    [F.BTYPE_STREAM] = "stream",
-    [F.BTYPE_COLUMN] = "column",
-  } --- BlockTypes
+-- Type of selected block.
+-- Тип выделенного блока.
+local BlockTypes = {
+  -- flags
+  None    = F.BTYPE_NONE,
+  Stream  = F.BTYPE_STREAM,
+  Column  = F.BTYPE_COLUMN,
+  -- names
+  [F.BTYPE_NONE]   = "none",
+  [F.BTYPE_STREAM] = "stream",
+  [F.BTYPE_COLUMN] = "column",
+} --- BlockTypes
+unit.BlockTypes = BlockTypes
 
 -- Type of selected block in editor.
 -- Тип выделенного блока в редакторе.
-function unit.EditorSelType (Id) --> (string)
-  return BlockTypes[EditorGetInfo(Id).BlockType]
+function unit.EditorSelType (id) --> (string)
+  return BlockTypes[EditorGetInfo(id).BlockType]
 end ----
-
-end -- do
 
 -- Check selection presence.
 -- Проверка наличия выделения.
@@ -317,9 +321,31 @@ function unit.IsSelection (Area) --> (bool)
   end
 end ----
 
+---------------------------------------- Editor
+local farEditor = {
+  GetSelection = editor.GetSelection,
+  SetSelection = false,
+  DelSelection = editor.DeleteBlock,
+
+  GetSelectionType = unit.EditorSelType,
+
+  CopyStreamSelection = false,
+  CopyColumnSelection = false,
+  CopySelection = false,
+
+  DeleteSelection = false,
+  CutSelection = false,
+
+  PasteStreamSelection = false,
+  PasteColumnSelection = false,
+  PasteSelection = false,
+} ---
+unit.editor = farEditor
+
+---------------------------------------- -- Selection
 -- Select block in editor.
 -- Выделение блока в редакторе.
-function unit.EditorSetSelection (Id, Info) --> (boolean)
+function farEditor.SetSelection (id, Info) --> (boolean)
   local Info = Info
   local SelInfo = {
     BlockType = Info.BlockType,
@@ -340,8 +366,8 @@ function unit.EditorSetSelection (Id, Info) --> (boolean)
                             (Info.EndLine > Info.StartLine and 1 or -1)
   end]]--
 
-  return editor.Select(Id, SelInfo)
-end ---- EditorSetSelection
+  return editor.Select(id, SelInfo)
+end -- SetSelection
 
 do
   local tconcat = table.concat
@@ -351,28 +377,28 @@ do
     GetStr   = editor.GetString,
     SetPos   = editor.SetPosition,
     InsText  = editor.InsertText,
-
-    GetSel   = editor.GetSelection,
-    SetSel   = unit.EditorSetSelection,
-    DelSel   = editor.DeleteBlock,
   } ---
 
--- TODO: Добавить поддержку column-блоков через доп. параметр
--- AsColumn: nil - as BlockType, false - as stream, true - as column.
-
--- Copy selected text to string/table.
--- Копирование выделенного текста в строку/таблицу (от начала блока до конца блока).
-function unit.EditorCopySelection (Info) --> (nil|string|table)
+-- Copy selected stream block.
+-- Копирование выделенного строкового блока.
+--[[
+  -- @params:
+  Info (nil|table) - info about editor state.
+--]]
+function farEditor.CopyStreamSelection (Info) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
-  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
-  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+  if Info.BlockType == BlockTypes.None then return end
+
+  local id = Info.EditorID
+  local SelInfo = farEditor.GetSelection(id) -- Нет блока:
+  if SelInfo == nil then return end
 
   --logShow(SelInfo, "SelInfo")
 
   local first, last = SelInfo.StartLine, SelInfo.EndLine
   if first == last then
     -- Одна выделенная cтрока
-    local LineInfo = farEdit.GetStr(Info.EditorID, first, 0)
+    local LineInfo = farEdit.GetStr(id, first, 0)
     if LineInfo == nil then return end -- Нет строки
     --logShow(LineInfo, "LineInfo")
     local s = LineInfo.StringText
@@ -385,7 +411,6 @@ function unit.EditorCopySelection (Info) --> (nil|string|table)
   end
 
   -- Несколько выделенных cтрок
-  local id = Info.EditorID
   local s = farEdit.GetStr(id, first, 2) or ""
   local t = {
     s:sub(SelInfo.StartPos + 1, -1), -- first
@@ -406,43 +431,215 @@ function unit.EditorCopySelection (Info) --> (nil|string|table)
     end
   end
 
-  farEdit.SetPos(Info.EditorID, Info)
+  farEdit.SetPos(id, Info)
 
   --logShow(tconcat(t, "\r"), "CopySelection")
 
   return t
-end -- EditorCopySelection
+end ---- CopyStreamSelection
 
--- Cut selected text to string/table.
--- Вырезание выделенного текста в строку/таблицу (от начала блока до конца блока).
-function unit.EditorCutSelection (Info) --> (nil|string|table)
+  local spaces = strings.spaces -- to add spaces after end
+
+-- TODO: Проверить, возможен ли EndPos == -1 при вертикальном выделении!!!
+
+-- Copy selected column block.
+-- Копирование выделенного вертикального блока.
+--[[
+  -- @params:
+  Info (nil|table) - info about editor state.
+--]]
+function farEditor.CopyColumnSelection (Info) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
-  local SelInfo = farEdit.GetSel(Info.EditorID) -- Нет блока:
-  if SelInfo == nil or SelInfo.BlockType == F.BTYPE_NONE then return end
+  if Info.BlockType == BlockTypes.None then return end
 
-  local s = unit.EditorCopySelection(Info)
+  local id = Info.EditorID
+  local SelInfo = farEditor.GetSelection(id) -- Нет блока:
+  if SelInfo == nil then return end
 
-  if SelInfo.BlockType == F.BTYPE_COLUMN then
-    SelInfo.BlockType = F.BTYPE_STREAM
-    farEdit.SetSel(Info.EditorID, SelInfo)
+  --logShow(SelInfo, "SelInfo")
+
+  local first, last = SelInfo.StartLine, SelInfo.EndLine
+  if first == last then
+    -- Одна выделенная cтрока
+    local LineInfo = farEdit.GetStr(id, first, 0)
+    if LineInfo == nil then return end -- Нет строки
+    --logShow(LineInfo, "LineInfo")
+    local s = LineInfo.StringText
+    if s == nil then return end
+    --[[
+    if LineInfo.SelEnd < 0 then
+      return s:sub(LineInfo.SelStart + 1, -1)
+    end
+    --]]
+
+    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)..
+           spaces[LineInfo.SelEnd - s:len() + 1]
   end
-  farEdit.DelSel(Info.EditorID)
+
+  -- Несколько выделенных cтрок
+  local s = farEdit.GetStr(id, first, 2) or ""
+  local t = {}
+  for line = first, last do
+    local s = farEdit.GetStr(id, line, 2) or ""
+    t[#t+1] = s:sub(SelInfo.StartPos + 1, SelInfo.EndPos)..
+              spaces[SelInfo.EndPos - s:len() + 1]
+  end
+
+  farEdit.SetPos(id, Info)
+
+  --logShow(tconcat(t, "\r"), "CopySelection")
+
+  return t
+end ---- CopyColumnSelection
+
+-- Copy selected block.
+-- Копирование выделенного блока.
+--[[
+  -- @params:
+  Info  (nil|table) - info about editor state.
+  Type (nil|string) - block type for action:
+                      @default = nil - as in Info,
+                      "stream" - as stream block,
+                      "column" - as column block.
+--]]
+function farEditor.CopySelection (Info, Type) --> (nil|string|table, flag)
+  local Info = Info or farEdit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+  if SelType == "none" then return end
+
+  local Type = Type or SelType
+
+  if     Type == "stream" then
+    return farEditor.CopyStreamSelection(Info)
+  elseif Type == "column" then
+    return farEditor.CopyColumnSelection(Info)
+  end
+end ---- CopySelection
+
+-- Delete selected block.
+-- Удаление выделенного блока.
+--[[
+  -- @params: @see farEditor.CopySelection.
+--]]
+function farEditor.DeleteSelection (Info, Type) --> (bool)
+  local Info = Info or farEdit.GetInfo()
+  if Info.BlockType == BlockTypes.None then return end
+
+  local id = Info.EditorID
+  local SelInfo = farEditor.GetSelection(id) -- Нет блока:
+  if SelInfo == nil then return end
+
+  local SelType = BlockTypes[SelInfo.BlockType]
+  local Type = Type or SelType
+
+  if Type ~= SelType then
+    if     Type == "stream" then
+      -- Convert block to stream type
+      SelInfo.BlockType = BlockTypes.Stream
+    elseif Type == "column" then
+      -- Convert block to column type
+      SelInfo.BlockType = BlockTypes.Column
+    end
+
+    farEditor.SetSelection(id, SelInfo)
+  end
+
+  return farEditor.DelSelection(id)
+end ---- DeleteSelection
+
+-- Cut selected block.
+-- Вырезание выделенного блока.
+--[[
+  -- @params: @see farEditor.CopySelection.
+--]]
+function farEditor.CutSelection (Info, Type) --> (nil|string|table)
+  local Info = Info or farEdit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+  if SelType == "none" then return end
+
+  local Type = Type or SelType
+
+  local s = farEditor.CopySelection(Info, Type)
+
+  farEditor.DeleteSelection(Info, Type)
 
   return s
-end -- EditorCutSelection
+end ---- CutSelection
 
--- Paste string to text.
--- Вставка строки в текст.
-function unit.EditorPasteSelection (Info, text) --> (string)
+-- Paste stream block.
+-- Вставка строкового блока.
+--[[
+  -- @params:
+  Info     (nil|table) - info about editor state.
+  block (string|table) - string block to insert.
+--]]
+function farEditor.PasteStreamSelection (Info, block) --> (bool)
+
+  if (block or "") == "" then return end
+
   local Info = Info or farEdit.GetInfo()
 
-  if text == nil or text == "" then return end
-  if type(text) == 'table' then text = tconcat(text, "\r") end
+  if type(block) == 'table' then block = tconcat(block, "\r") end
 
   --logShow(text, "PasteSelection")
-  -- TODO: Добавить выделение блока вставленного текста!
-  return farEdit.InsText(Info.EditorID, text)
-end -- EditorPasteSelection
+  return farEdit.InsText(Info.EditorID, block)
+end ---- PasteStreamSelection
+
+-- Paste column block.
+-- Вставка вертикального блока.
+--[[
+  -- @params:
+  Info     (nil|table) - info about editor state.
+  block (string|table) - string block to insert.
+--]]
+function farEditor.PasteColumnSelection (Info, block) --> (bool)
+
+  if (block or "") == "" then return end
+
+  local Info = Info or farEdit.GetInfo()
+  local id = Info.EditorID
+
+  if type(block) == 'string' then
+    if not farEdit.InsText(id, block) then return end
+    return farEdit.SetPos(id, Info)
+  end
+
+  local Pos = {
+    CurPos  = Info.CurPos,
+    CurLine = Info.CurLine
+  } ---
+  for k = 1, #block do
+    if not farEdit.InsText(id, block[k]) then return end
+    Pos.CurLine = Pos.CurLine + 1
+    if not farEdit.SetPos(id, Pos) then return end
+  end
+
+  --logShow(text, "PasteSelection")
+  return farEdit.SetPos(id, Info)
+end ---- PasteColumnSelection
+
+-- Paste block.
+-- Вставка блока.
+--[[
+  -- @params:
+  Info     (nil|table) - @see farEditor.CopySelection.
+  block (string|table) - string block to insert.
+  Type    (nil|string) - @see farEditor.CopySelection.
+--]]
+function farEditor.PasteSelection (Info, block, Type) --> (bool)
+
+  if (block or "") == "" then return end
+
+  local Info = Info or farEdit.GetInfo()
+
+  --logShow(text, "PasteSelection")
+
+  if     Type == "stream" then
+    return farEditor.PasteStreamSelection(Info, block)
+  elseif Type == "column" then
+    return farEditor.PasteColumnSelection(Info, block)
+  end
+end ---- PasteSelection
 
 end -- do
 do
@@ -453,8 +650,8 @@ do
 -- (maxfl's implementation: block_iterator.lua.)
 --[[
   -- @params:
-  count (number) - число просматриваемых строк.
-  line  (number) - номер текущей выдаваемой строки.
+  count (number) - count of viewed lines.
+  line  (number) - number of current used line.
 --]]
 function unit.nextEditorSelect (count, line) --> (number, table)
   if not count then return nil, nil end
@@ -465,6 +662,7 @@ function unit.nextEditorSelect (count, line) --> (number, table)
       local s = EditorGetStr(nil, line, 1)
       if s.SelEnd ~= 0 then return line, s end
     end
+
   elseif line >= 0 then
     return -1, EditorGetStr(nil, line, 1)
   end
@@ -478,7 +676,7 @@ function unit.pairsEditorSelect (line) --> (iterator, count, line)
   if line then
     return nextEditorSelect, -1, line == -1 and Info.CurLine
   end
-  if Info.BlockType ~= F.BTYPE_NONE then
+  if Info.BlockType ~= BlockTypes.None then
     return nextEditorSelect, Info.TotalLines, Info.BlockStartLine - 1
   end
 
