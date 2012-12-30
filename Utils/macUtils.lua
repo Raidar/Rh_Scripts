@@ -90,9 +90,9 @@ local farEdit = {
   UndoRedo = editor.UndoRedo,
   Redraw   = editor.Redraw,
 
-  CopySel  = farUt.EditorCopySelection,
-  CutSel   = farUt.EditorCutSelection,
-  PasteSel = farUt.EditorPasteSelection,
+  CopySel  = farUt.editor.CopySelection,
+  CutSel   = farUt.editor.CutSelection,
+  PasteSel = farUt.editor.PasteSelection,
 
   GetCurStrLen = false,
 } ---
@@ -388,11 +388,11 @@ local TEditorMacroActions = {
   nop = function (self, Info, Count) return true end,
 
   cut = function (self, Info, Index)
-    self.Clip[Index] = farEdit.CutSel(Info) or ""
+    self.Clip[Index] = farEdit.CutSel(Info, "stream") or ""
     return true
   end, --- copy
   paste = function (self, Info, Index)
-    farEdit.PasteSel(Info, self.Clip[Index] or "")
+    farEdit.PasteSel(Info, self.Clip[Index] or "", "stream")
     return true
   end, --- paste
 } ---
