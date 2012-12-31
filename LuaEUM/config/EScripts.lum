@@ -17,6 +17,12 @@ local farUt = require "Rh_Scripts.Utils.farUtils"
 
 local RedrawAll = farUt.RedrawAll
 
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
+
 --------------------------------------------------------------------------------
 
 ---------------------------------------- Locale
@@ -35,7 +41,7 @@ end
 local farEditor = farUt.editor
 
 local farEdit = {
-  --GetInfo  = editor.GetInfo,
+  GetInfo  = editor.GetInfo,
   --GetStr   = editor.GetString,
   SetPos   = editor.SetPosition,
   InsText  = editor.InsertText,
@@ -68,7 +74,7 @@ local function QuoteSelection (left, right) --> (macro)
   if not block then return end
 
   if     SelType == "stream" then
-    if     type(block) == 'string' then
+    if type(block) == 'string' then
       block = left..block..right
     elseif type(block) == 'table' then
       block[1] = left..block[1]
@@ -76,7 +82,7 @@ local function QuoteSelection (left, right) --> (macro)
     end
 
   elseif SelType == "column" then
-    if     type(block) == 'string' then
+    if type(block) == 'string' then
       block = left..block..right
     elseif type(block) == 'table' then
       for k = 1, #block do
@@ -89,6 +95,84 @@ local function QuoteSelection (left, right) --> (macro)
 
   return true
 end -- QuoteSelection
+
+-- Unquote text considering selected block.
+-- Раскавычивание текста с учётом выделенного блока.
+--[[
+  -- @params:
+  left  (s|n|nil) - left "quote" or its length: @default = 1.
+  right (s|n|nil) - right "quote" or its length: @default = left.
+--]]
+local function UnquoteSelection (left, right) --> (macro)
+  local SelInfo = farEditor.GetSelection()
+  if SelInfo == nil then return end -- Нет блока?
+
+  -- Define params:
+  if left == nil then
+    left = 1
+  elseif type(left) == 'string' then
+    left = left:len()
+  end
+  if right == nil then
+    right = left
+  elseif type(right) == 'string' then
+    right = right:len()
+  end
+
+  local SelType = farUt.BlockTypes[SelInfo.BlockType]
+  local block = farEditor.CutSelection(farEdit.GetInfo(), SelType)
+  if not block then return end
+
+  --logShow({ left, right, block }, SelType)
+
+  if     SelType == "stream" then
+    if type(block) == 'string' then
+      local len = block:len()
+      if len <= left + right then
+        block = ""
+      elseif block:sub(len, len) ~= "\r" then
+        block = block:sub(left + 1, len - right)
+      else
+        block = block:sub(left + 1, len - right - 1).."\r"
+      end
+    elseif type(block) == 'table' then
+      block[1] = block[1]:sub(left + 1, -1)
+      block[#block] = block[#block]:sub(1, -right - 1)
+    end
+
+  elseif SelType == "column" then
+    if type(block) == 'string' then
+      local len = block:len()
+      if len <= left + right then
+        block = ""
+      else
+        block = block:sub(left + 1, len - right)
+      end
+    elseif type(block) == 'table' then
+      for k = 1, #block do
+        block[k] = block[k]:sub(left + 1, -right - 1)
+      end
+    end
+
+  end -- if
+
+  if not farEditor.PasteSelection(farEdit.GetInfo(), block, SelType) then
+    return
+  end
+
+  return true
+end -- UnquoteSelection
+
+local unpack = unpack
+
+local function UnquoteText (Args, Cfg)
+  --logShow(Args, "UnquoteText")
+  --if type(Args) == 'table' then
+    return UnquoteSelection(unpack(Args))
+  --else
+  --  return UnquoteSelection(Args)
+  --end
+end ----
 
 ---------------------------------------- Separator
 --[[
@@ -128,18 +212,14 @@ local mPairUnpair = {
   Area = "editor;selected",
 
   Items = {
-    { text = L.LuaPairUnSingle, -- TEMP: Replace with Macro!
-      ['"Sequence"'] = [["
-$Sel.ProcB %l=len(%s);
- $If(%l>2) %ss=substr(%s,1,%l-2); %l=clip(1,%ss); $End
-$Sel.ProcE"
-]], },
-    { text = L.LuaPairUnDouble, -- TEMP: Replace with Macro!
-      ['"Sequence"'] = [["
-$Sel.ProcB %l=len(%s);
- $If(%l>4) %ss=substr(%s,2,%l-4); %l=clip(1,%ss); $End
-$Sel.ProcE"
-]], },
+    { text = L.LuaPairUnSingle,
+     Function = UnquoteText,
+     Arguments = { 1, 1 },
+    },
+    { text = L.LuaPairUnDouble,
+     Function = UnquoteText,
+     Arguments = { 2, 2 },
+    },
   } ---
 } --- mPairUnpair
 
