@@ -382,10 +382,10 @@ do
 -- Copy selected stream block.
 -- Копирование выделенного строкового блока.
 --[[
-  -- @params:
-  Info (nil|table) - info about editor state.
+  -- @params: @see farEditor.CopySelection (without Type).
+  -- @return: @see farEditor.CopySelection.
 --]]
-function farEditor.CopyStreamSelection (Info) --> (nil|string|table)
+function farEditor.CopyStreamSelection (Info, ToPos) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
   if Info.BlockType == BlockTypes.None then return end
 
@@ -431,7 +431,7 @@ function farEditor.CopyStreamSelection (Info) --> (nil|string|table)
     end
   end
 
-  farEdit.SetPos(id, Info)
+  if ToPos or ToPos == nil then farEdit.SetPos(id, Info) end
 
   --logShow(tconcat(t, "\r"), "CopySelection")
 
@@ -445,8 +445,8 @@ end ---- CopyStreamSelection
 -- Copy selected column block.
 -- Копирование выделенного вертикального блока.
 --[[
-  -- @params:
-  Info (nil|table) - info about editor state.
+  -- @params: @see farEditor.CopySelection (without Type).
+  -- @return: @see farEditor.CopySelection.
 --]]
 function farEditor.CopyColumnSelection (Info) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
@@ -485,7 +485,7 @@ function farEditor.CopyColumnSelection (Info) --> (nil|string|table)
               spaces[SelInfo.EndPos - s:len() + 1]
   end
 
-  farEdit.SetPos(id, Info)
+  if ToPos or ToPos == nil then farEdit.SetPos(id, Info) end
 
   --logShow(tconcat(t, "\r"), "CopySelection")
 
@@ -501,8 +501,14 @@ end ---- CopyColumnSelection
                       @default = nil - as in Info,
                       "stream" - as stream block,
                       "column" - as column block.
+  ToPos  (nil|bool) - flag to restore position after action.
+  -- @return:
+  @first:
+         (nil) - no selection block or error.
+    s (string) - one line only in selection block, may be with "\r".
+    t  (table) - table with lines in selection block, last line may be empty.
 --]]
-function farEditor.CopySelection (Info, Type) --> (nil|string|table, flag)
+function farEditor.CopySelection (Info, Type, ToPos) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
   if SelType == "none" then return end
@@ -510,9 +516,9 @@ function farEditor.CopySelection (Info, Type) --> (nil|string|table, flag)
   local Type = Type or SelType
 
   if     Type == "stream" then
-    return farEditor.CopyStreamSelection(Info)
+    return farEditor.CopyStreamSelection(Info, ToPos)
   elseif Type == "column" then
-    return farEditor.CopyColumnSelection(Info)
+    return farEditor.CopyColumnSelection(Info, ToPos)
   end
 end ---- CopySelection
 
@@ -521,7 +527,7 @@ end ---- CopySelection
 --[[
   -- @params: @see farEditor.CopySelection.
 --]]
-function farEditor.DeleteSelection (Info, Type) --> (bool)
+function farEditor.DeleteSelection (Info, Type, ToPos) --> (bool)
   local Info = Info or farEdit.GetInfo()
   if Info.BlockType == BlockTypes.None then return end
 
@@ -541,16 +547,24 @@ function farEditor.DeleteSelection (Info, Type) --> (bool)
       SelInfo.BlockType = BlockTypes.Column
     end
 
-    farEditor.SetSelection(id, SelInfo)
+    if not farEditor.SetSelection(id, SelInfo) then return end
   end
 
-  return farEditor.DelSelection(id)
+  if not farEditor.DelSelection(id) then return end
+
+  if ToPos or ToPos == nil then
+    return farEdit.SetPos(id, { CurPos  = SelInfo.StartPos,
+                                CurLine = SelInfo.StartLine })
+  end
+
+  return true
 end ---- DeleteSelection
 
 -- Cut selected block.
 -- Вырезание выделенного блока.
 --[[
   -- @params: @see farEditor.CopySelection.
+  -- @return: @see farEditor.CopySelection.
 --]]
 function farEditor.CutSelection (Info, Type) --> (nil|string|table)
   local Info = Info or farEdit.GetInfo()
@@ -559,9 +573,9 @@ function farEditor.CutSelection (Info, Type) --> (nil|string|table)
 
   local Type = Type or SelType
 
-  local s = farEditor.CopySelection(Info, Type)
+  local s = farEditor.CopySelection(Info, Type, false)
 
-  farEditor.DeleteSelection(Info, Type)
+  farEditor.DeleteSelection(Info, Type, true)
 
   return s
 end ---- CutSelection
@@ -569,9 +583,8 @@ end ---- CutSelection
 -- Paste stream block.
 -- Вставка строкового блока.
 --[[
-  -- @params:
-  Info     (nil|table) - info about editor state.
-  block (string|table) - string block to insert.
+  -- @params: @see farEditor.PasteSelection (without Type).
+  -- @return: @see farEditor.PasteSelection.
 --]]
 function farEditor.PasteStreamSelection (Info, block) --> (bool)
 
@@ -581,7 +594,7 @@ function farEditor.PasteStreamSelection (Info, block) --> (bool)
 
   if type(block) == 'table' then block = tconcat(block, "\r") end
 
-  --logShow(text, "PasteSelection")
+  --logShow(block, "PasteColumnSelection")
   return farEdit.InsText(Info.EditorID, block)
 end ---- PasteStreamSelection
 
@@ -589,8 +602,8 @@ end ---- PasteStreamSelection
 -- Вставка вертикального блока.
 --[[
   -- @params:
-  Info     (nil|table) - info about editor state.
-  block (string|table) - string block to insert.
+  -- @params: @see farEditor.PasteSelection (without Type).
+  -- @return: @see farEditor.PasteSelection.
 --]]
 function farEditor.PasteColumnSelection (Info, block) --> (bool)
 
@@ -610,11 +623,12 @@ function farEditor.PasteColumnSelection (Info, block) --> (bool)
   } ---
   for k = 1, #block do
     if not farEdit.InsText(id, block[k]) then return end
+    --logShow({ block[k], Pos, Info }, "PasteColumnSelection")
     Pos.CurLine = Pos.CurLine + 1
     if not farEdit.SetPos(id, Pos) then return end
   end
 
-  --logShow(text, "PasteSelection")
+  --logShow(block, "PasteColumnSelection")
   return farEdit.SetPos(id, Info)
 end ---- PasteColumnSelection
 
@@ -632,7 +646,7 @@ function farEditor.PasteSelection (Info, block, Type) --> (bool)
 
   local Info = Info or farEdit.GetInfo()
 
-  --logShow(text, "PasteSelection")
+  --logShow({ block, Type, Info }, "PasteSelection")
 
   if     Type == "stream" then
     return farEditor.PasteStreamSelection(Info, block)
