@@ -769,7 +769,11 @@ function TMenu:MakeAction ()
       local Sequence = ActItem.Sequence
       -- Учёт возврата LF4Ed в меню
       if LF4Ed_Cfg and LF4Ed_Cfg.ReturnToMainMenu then
+        if context.use.LFVer >= 3 then -- FAR23
+        Sequence = "if Area.Menu then Keys'Esc' end\r\n"..Sequence
+        else
         Sequence = "$If(Menu) Esc $End "..Sequence
+        end
       end
       return runUt.FarSeq(Sequence, ActItem.Flags)
     end, --
