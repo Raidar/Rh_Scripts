@@ -141,18 +141,16 @@ function sItem.MakeKey (item, Keys, key, char)
   if Keys[key] then item.AccelKey = Keys[key](char) end
 end ----
 
-local CharNameFmt = "U+%s — %s" -- utf-8 string
+do
+  local CharNameFmt = "U+%s — %s" -- utf-8 string
 
--- Представление кодовой точки символа в виде строки.
-local function uCP (c) --> (code point)
-  --return ("0000%x"):format(c):sub(-4):upper() -- Base Plan only
-  return ("%4x"):format(c):upper():gsub(" ", "0") -- Any Plan
-end --
+  -- Представление кодовой точки символа в виде строки.
+  local uCP = strings.ucp2s
 
--- Получение имени символа по её кодовой точке.
-local function uCPname (c) --> (string)
-  return CharNames[c] and CharNames[c].name or ""
-end --
+  -- Получение имени символа по её кодовой точке.
+  local function uCPname (c) --> (string)
+    return CharNames[c] and CharNames[c].name or ""
+  end --
 
 -- Make menu item.
 -- Формирование пункта меню.
@@ -167,7 +165,7 @@ function sItem.MakeItem (text, Keys, key, char, hint) --> (table)
   if hint == true then
     if x:len() == 1 then
       local u = u_byte(x)
-      hint = CharNameFmt:format(uCP(u), uCPname(u))
+      hint = CharNameFmt:format(uCP(u, true), uCPname(u))
     end
   end
   if hint then t.Hint = hint end
@@ -182,6 +180,7 @@ function sItem.MakeItem (text, Keys, key, char, hint) --> (table)
   return t
 end ---- MakeItem
 
+end -- do
 ---------------------------------------- Character items
 -- Create characters items for menu.
 -- Создание пунктов для меню. -- TODO: Convert to OOP-kind.
