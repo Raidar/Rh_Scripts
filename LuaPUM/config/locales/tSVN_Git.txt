@@ -11,20 +11,20 @@ G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
 J —
-K — checKout    / fetch?
+K — checKout    / fetch
 L — Log         / =
 M — Merge       / =
 N — reName      / move
 O — resOlve     / —
-P — Patch
+P — Patch       / Pull
 Q —
 R — Repo        / —
 S — Settings    / —
 T — branch+Tag  / Tag
-U — Update      / (fetch)
+U — Update      / pUsh
 V — (revert)    / =
 W — sWitch      / =
-X —
+X — —           / extended logs
 Y —
 Z —
 
