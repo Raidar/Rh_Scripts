@@ -94,7 +94,8 @@ function unit.getClauseShowData (diff) --> (table, table)
   } ---
   local kind = {
     ShowLineNumber = false,
-  }
+    --ChosenToClip   = true,
+  } ---
 
   return show, kind 
 end ---- getClauseShowData

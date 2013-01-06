@@ -17,8 +17,8 @@ local Data = {
   CurrentClause     = "&C - Current clause",
     hot_CurClauseLen    = "D",
     cap_CurClauseLen    = "Clause duration",
-    hot_CurClauseGap    = "G",
-    cap_CurClauseGap    = "Gap before clause",
+    hot_CurClauseGap    = "W",
+    cap_CurClauseGap    = "Wait for clause",
                             -- 00:00:00:00,000
       TimeLenAssaFmt        = " %1d:%02d:%02d.%02d",
       TimeLenDataFmt        = "%02d:%02d:%02d,%03d",
