@@ -501,7 +501,7 @@ local function Dlg (Config) --> (dialog)
     v = Data[n]
     Area = v.Area
     --D["txta"..n]  = {DI.Text,     A,    J, I0-2,  0, 0, 0, 0, 0, Area}
-    D["txtrk"..n] = {DI.Text,  I0-1,    J, IH-2,  0, 0, 0, 0, 0, L:config("Res_Keys_"..v.Name)}
+    D["txtrk"..n] = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:config("Res_Keys_"..v.Name)}
     D["txtr"..n]  = {DI.Text,    IH,    J, I1-1,  0, 0, 0, 0, 0, L:config("Res_"..v.Name)}
     D["chkr"..n]  = {DI.Check,   I1,    J, IL-1,  0, 0, 0, 0, 0, ""}
     D["txtrd"..n] = {DI.Text,  IL+1,    J, I3-1,  0, 0, 0, 0, 0, L:config("Res_Desc_"..v.Name)}

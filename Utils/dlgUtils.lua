@@ -168,7 +168,7 @@ unit.DlgItemFlag = {
   Privileged    = F.DIF_SETSHIELD,          -- Необходимость прав администратора
 
   -- Комбинации:
-  SeparLine     = newFlags(F.DIF_BOXCOLOR, F.DIF_SEPARATOR),
+  SeparLine     = newFlags(F.DIF_BOXCOLOR, F.DIF_SEPARATOR, F.DIF_CENTERTEXT),
   ComboList     = newFlags(F.DIF_DROPDOWNLIST, F.DIF_LISTWRAPMODE),
   DlgButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS),
   DefButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS, F.DIF_DEFAULTBUTTON),
