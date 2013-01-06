@@ -411,16 +411,7 @@ end ----
 
 ---------------------------------------- Menu making
 do
-  local BoxKindNames = {
-    S = "Single",
-    D = "Double",
-    H = "DoubleH",
-    V = "DoubleV",
-    R = "Rounded",
-    L = "Light",
-    Y = "Heavy",
-    B = "Block",
-  } --- BoxKindNames
+  local BoxKindNames = uChars.BoxKindNames
 
 -- Информация о свойствах (и флагах) меню.
 function TMenu:DefinePropInfo () --| Props

@@ -295,10 +295,24 @@ unit.GeometricShapes = GeometricShapes
 
 ---------------------------------------- BoxChars
 do
+
+-- Names for box kinds.
+-- Названия для видов рамок.
+unit.BoxKindNames = {
+  S = "Single",
+  D = "Double",
+  H = "DoubleH",
+  V = "DoubleV",
+  R = "Rounded",
+  L = "Light",
+  Y = "Heavy",
+  B = "Block",
+} --- BoxKindNames
+
   local BlackShapes = GeometricShapes.Black
 
--- Characters for varied boxes.
--- Символы для различных рамок.
+-- Characters for varied box kinds.
+-- Символы для различных видов рамок.
 local BoxChars = {
   Single = { -- Обычная рамка:
     H  = BoxDrawings.H1,
