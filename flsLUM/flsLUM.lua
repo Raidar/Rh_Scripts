@@ -42,8 +42,8 @@ local function flsUserMenu (args)
   --logShow(Scope, "Scope")
 
   -- 2. Задание пути поиска скриптов.
-  --local extUt = require "Rh_Scripts.Utils.extUtils"
-  --extUt.AddLibPath("", os.getenv("LUA_CPATH") or "")
+  --local luaUt = require "Rh_Scripts.Utils.luaUtils"
+  --luaUt.AddLibPath("", os.getenv("LUA_CPATH") or "")
 
   -- 3. Вызов пользовательского меню.
   local LUM = require "Rh_Scripts.LuaUM.LUM"

@@ -40,7 +40,6 @@ local tfind = tables.find
 
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
 
 ----------------------------------------
 --[[

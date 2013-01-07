@@ -30,7 +30,6 @@ local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
 local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
 
 ----------------------------------------
 --[[
@@ -233,7 +232,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
 
   local Props = Props or {}
   if not Props._CP_ then
-    Props._CP_ = extUt.CheckFileCP(Name) -- Примерная кодировка файла
+    Props._CP_ = luaUt.CheckFileCP(Name) -- Примерная кодировка файла
     if Props._CP_ == nil then return nil, Msgs.FileCannotOpen..Name end
   end
   --logShow(Props._CP_, Name)
@@ -332,7 +331,7 @@ function unit.GetBufIniData (Name, Table, Props) --> (Table | nil, error)
   -- Получение кодировки:
   Props = Props or {}
   if not Props._CP_ then
-    Props._CP_ = extUt.CheckLineCP(Str) -- Примерная кодировка файла
+    Props._CP_ = luaUt.CheckLineCP(Str) -- Примерная кодировка файла
   end
   --logShow(Props._CP_, Name)
   --logShow(Str, Name)

@@ -43,6 +43,7 @@ local EditorInsText = editor.InsertText
 ----------------------------------------
 --local context = context
 
+local lua = require 'context.utils.useLua'
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
@@ -58,8 +59,7 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
+local luaUt = require "Rh_Scripts.Utils.luaUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 local menUt = require "Rh_Scripts.Utils.menUtils"
@@ -1037,7 +1037,7 @@ end -- MakePopupMenu
 end -- do
 
 do
-  local CharControl = extUt.CharControl
+  local CharControl = luaUt.CharControl
 
 -- Формирование списка-меню слов.
 function TMain:MakeWordsList () --> (table)
@@ -1165,8 +1165,8 @@ function TMain:ShowMenu () --> (item, pos)
 end ----
 
 do
-  local LuaCards    = extUt.const.LuaCards
-  --local LuaCardsSet = extUt.const.LuaCardsSet
+  local LuaCards    = lua.regex.Cards
+  --local LuaCardsSet = lua.regex.CardsSet
 
   -- Флаги.
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }

@@ -60,7 +60,6 @@ local addNewData = tables.extend
 
 ----------------------------------------
 local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local extUt = require "Rh_Scripts.Utils.extUtils"
 --local farUt = require "Rh_Scripts.Utils.farUtils"
 local macUt = require "Rh_Scripts.Utils.macUtils"
 
@@ -323,7 +322,7 @@ end --
 ---------------------------------------- ---- KitSuit
 unit.KitSuit = {} -- Комплект наборов шаблонов
 
-local CharControl = extUt.CharControl
+local CharControl = luaUt.CharControl
 
 -- -- Get kit templates for type tp.
 -- -- Получение шаблонов набора для типа tp.

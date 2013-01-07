@@ -40,7 +40,6 @@ local t_create, t_concat = tables.create, table.concat
 
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local extUt = require "Rh_Scripts.Utils.extUtils"
 local farUt = require "Rh_Scripts.Utils.farUtils"
 local keyUt = require "Rh_Scripts.Utils.keyUtils"
 

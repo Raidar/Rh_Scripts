@@ -18,15 +18,13 @@ $ #Utility scripts#
 
 @Utl_ScriptFiles
 $ #Script files#: Utility scripts
-    \37luaUtils.lua\-   — ¦Elementary functions.
-    \37extUtils.lua\-   — ¦Additional Lua functions.
+    \37luaUtils.lua\-   — ¦Extended Lua functions.
     \37farUtils.lua\-   — ¦Additional LuaFAR functions.
     \37runUtils.lua\-   — ¦Action run functions.
     \37keyUtils.lua\-   — ¦Working with keys.
 
     \37Binding.lua\-    — ¦Working with binds.
     \37dlgUtils.lua\-   — ¦Handling dialogs.
-    \37FarMacEx.lua\-   — ¦Working with FAR macro aliases.
     \37IniFile.lua\-    — ¦Working with ini/lua-files.
     \37macUtils.lua\-   — ¦Working with ~macro-templates~@Macros@.
     \37menUtils.lua\-   — ¦Working with menus and menu items.
