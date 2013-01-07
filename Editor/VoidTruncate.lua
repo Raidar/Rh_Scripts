@@ -26,6 +26,15 @@
    © 2008, maxfl.
    Mail: gmaxfl@gmail.com
 --]]
+----------------------------------------
+--[[ @notes:
+   A truncation is:
+   - deletion spaces at end of lines,
+   - deletion empty / spaced lines at end of file.
+   Усечение - это:
+   - удаление пробелов в конце линий,
+   - удаление пустых/пробельных линий в конце файла.
+--]]
 --------------------------------------------------------------------------------
 
 ----------------------------------------
@@ -55,6 +64,8 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
+-- A table of functions for truncation.
+-- Таблица для функций усечения.
 local Truncate = {}
 unit.Truncate = Truncate
 
@@ -72,7 +83,7 @@ local SpaceTruncPat, EmptyTruncPat, TruncSub = "%s+$", "^%s-$", ""
 
 ---------------------------------------- Truncate
 -- Truncate spaces in specified line.
--- Усечение пробелов в заданной строке.
+-- Усечение пробелов в заданной линии.
 function Truncate.Spaces (n) --> (number)
   --n = n or -1
   local s, q = EditorGetStr(nil, n, 2)
@@ -84,7 +95,7 @@ end ----
 local TruncateSpaces = Truncate.Spaces
 
 -- Update cursor position for line end.
--- Обновление позиции курсора для конца строки.
+-- Обновление позиции курсора для конца линии.
 function Truncate.UpdateEnd ()
   local p = EditorGetInfo().CurPos
   local l = (EditorGetStr(nil, -1, 2) or ""):len()
@@ -94,7 +105,7 @@ end ----
 local TruncateUpdateEnd = Truncate.UpdateEnd
 
 -- Truncate spaces in current line.
--- Усечение пробелов в текущей строке.
+-- Усечение пробелов в текущей линии.
 function Truncate.Line () --> (number)
   local q = TruncateSpaces(-1)
   if q == 0 then return 0 end
@@ -118,15 +129,19 @@ local TruncateText = Truncate.Text
 
 -- Truncate empty lines in end of file.
 -- Усечение пустых строк в конце файла.
+--[[
+  -- @params:
+  keep (number) - a number of empty lines to preserve.
+--]]
 function Truncate.File (keep) --> (number)
   local keep = keep or 1
   local Info = EditorGetInfo()
   local l = Info.TotalLines - 1
   EditorSetPos(nil, { CurLine = l })
 
-  -- Проверка на пустоту строк:
+  -- Проверка на пустоту линий:
   local q = 0
-  for k = l, l - keep + 1, -1 do -- Учёт сохраняемых строк:
+  for k = l, l - keep + 1, -1 do
     local s = EditorGetStr(nil, k, 2)
     if s and not s:find(EmptyTruncPat) then
       EditorSetPos(nil, Info)
@@ -136,14 +151,16 @@ function Truncate.File (keep) --> (number)
   end
   --logShow({ l, keep, -q }, "TruncateFile")
 
-  -- Отсечение пустых строк:
+  -- Отсечение пустых линий:
   q = 0
   for k = l - keep, 0, -1 do
     local s = EditorGetStr(nil, k, 2)
     if s and s:find(EmptyTruncPat) then
       EditorDelStr()
       q = q + 1
-    else break end
+    else
+      break
+    end
   end
   --logShow({ l, keep, q }, "TruncateFile")
 
@@ -153,7 +170,10 @@ end ----
 local TruncateFile = Truncate.File
 
 -- Truncate empty lines in file end and spaces in text lines.
--- Усечение пустых строк в конце файла и пробелов в строках текста.
+-- Усечение пустых линий в конце файла и пробелов в линиях текста.
+--[[
+  -- @params: @see Truncate.File.
+--]]
 function Truncate.FileText (keep)
   return TruncateFile(keep), TruncateText(),
          --TruncateUpdateEnd(), editor.Redraw()
