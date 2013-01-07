@@ -83,7 +83,7 @@ function unit.getvalue (env, name) --> (value)
 end ----
 
 -- Get a global variable (with possible creation)
--- when using a "strict" mode of work (strict.lua).
+-- when using a "strict" work mode (strict.lua).
 -- Получение (с возможным созданием) глобальной переменной
 -- при использовании "строгого" режима работы (strict.lua).
 function unit.getglobal (varname, default) --> (var)
