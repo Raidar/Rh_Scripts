@@ -166,12 +166,7 @@ end -- UnquoteSelection
 local unpack = unpack
 
 local function UnquoteText (Args, Cfg)
-  --logShow(Args, "UnquoteText")
-  --if type(Args) == 'table' then
-    return UnquoteSelection(unpack(Args))
-  --else
-  --  return UnquoteSelection(Args)
-  --end
+  return UnquoteSelection(unpack(Args))
 end ----
 
 ---------------------------------------- Separator
