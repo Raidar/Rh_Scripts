@@ -1,14 +1,14 @@
 Rh_Scripts pack 3.0x
 
 [Info]
-Ver. : 3.0.4.10
-Date : 2012-12-31
+Ver. : 3.0.4.11
+Date : 2013-01-07
 Ware : Freeware
 Lic. : Lua License
-Reqs : FAR v.3.0.2574,
-       LuaFAR v.3.0.8,
-       LuaFAR for Editor v.3.0.5,
-       LuaFAR context v.3.0.4.4
+Reqs : FAR v.3.0.3064,
+       LuaFAR v.3.1.1,
+       LuaFAR for Editor v.3.1.2,
+       LuaFAR context v.3.0.4.5
 Type : Plugin for FAR Manager (Script package)
 Desc : Rh_Scripts package for LuaFAR for Editor
 
