@@ -97,10 +97,10 @@ local TruncateSpaces = Truncate.Spaces
 -- Update cursor position for line end.
 -- Обновление позиции курсора для конца линии.
 function Truncate.UpdateEnd ()
-  local p = EditorGetInfo().CurPos
+  local Info = EditorGetInfo()
+  local p = Info.CurPos
   local l = (EditorGetStr(nil, -1, 2) or ""):len()
-  if p > l then p = l end
-  EditorSetPos(nil, { CurPos = p })
+  EditorSetPos(nil, -1, p > l and l or p)
 end ----
 local TruncateUpdateEnd = Truncate.UpdateEnd
 
@@ -137,7 +137,7 @@ function Truncate.File (keep) --> (number)
   local keep = keep or 1
   local Info = EditorGetInfo()
   local l = Info.TotalLines - 1
-  EditorSetPos(nil, { CurLine = l })
+  EditorSetPos(nil, l)
 
   -- Проверка на пустоту линий:
   local q = 0

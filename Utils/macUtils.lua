@@ -109,7 +109,7 @@ local function BackChar (Info)
   if Info.CurPos == 0 then
     return true
   end
-  if not farEdit.SetPos(Info.EditorID, { CurPos = Info.CurPos - 1 }) then
+  if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
     return
   end
 
@@ -125,29 +125,23 @@ local EditorPlainActions = { -- Функции выполнения просты
   end,
 
   left  = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = max2(Info.CurPos - 1, 0) })
+    return farEdit.SetPos(Info.EditorID, -1, max2(Info.CurPos - 1, 0))
   end, --- left
   right = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = Info.CurPos + 1 })
+    return farEdit.SetPos(Info.EditorID, -1, Info.CurPos + 1)
   end, --- right
   up    = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurLine = max2(Info.CurLine - 1, 0) })
+    return farEdit.SetPos(Info.EditorID, max2(Info.CurLine - 1, 0))
   end, --- up
   down  = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurLine = Info.CurLine + 1 })
+    return farEdit.SetPos(Info.EditorID, Info.CurLine + 1)
   end, --- down
 
   home    = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = 0 })
+    return farEdit.SetPos(Info.EditorID, -1, 0)
   end, --- home
   ["end"] = function (Info)
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = farEdit.GetCurStrLen() })
+    return farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen())
   end, --- end
 
   del  = function (Info)
@@ -156,17 +150,14 @@ local EditorPlainActions = { -- Функции выполнения просты
   bs   = BackChar, -- bs
   bsln = function (Info)
     if Info.CurPos > 0 then
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurPos = Info.CurPos - 1 }) then
+      if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
         return
       end
     else
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurLine = Info.CurLine - 1 }) then
+      if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
         return
       end
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurPos = farEdit.GetCurStrLen(Info) }) then
+      if not farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen(Info)) then
         return
       end
     end
@@ -231,8 +222,7 @@ end -- DelText
 local function BackText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local Count = min2(Count, Info.CurPos)
-  if not farEdit.SetPos(Info.EditorID,
-                        { CurPos = Info.CurPos - Count }) then
+  if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - Count) then
     return
   end
 
@@ -244,17 +234,14 @@ local function BackLine (Info, Count)
   local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
     if Info.CurPos > 0 then
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurPos = Info.CurPos - 1 }) then
+      if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
         return
       end
     else
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurLine = Info.CurLine - 1 }) then
+      if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
         return
       end
-      if not farEdit.SetPos(Info.EditorID,
-                            { CurPos = farEdit.GetCurStrLen(Info) }) then
+      if not farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen(Info)) then
         return
       end
     end
@@ -271,23 +258,19 @@ local EditorCycleActions = {
 
   left  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = max2(Info.CurPos - Count, 0) })
+    return farEdit.SetPos(Info.EditorID, -1, max2(Info.CurPos - Count, 0))
   end,
   right = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID,
-                          { CurPos = Info.CurPos + Count })
+    return farEdit.SetPos(Info.EditorID, -1, Info.CurPos + Count)
   end,
   up    = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID,
-                          { CurLine = max2(Info.CurLine - Count, 0) })
+    return farEdit.SetPos(Info.EditorID, max2(Info.CurLine - Count, 0))
   end,
   down  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID,
-                          { CurLine = Info.CurLine + Count })
+    return farEdit.SetPos(Info.EditorID, Info.CurLine + Count)
   end,
 
   home    = EditorPlainActions.home,
@@ -343,16 +326,14 @@ local TEditorMacroActions = {
   bs   = function (self, Info, Count)
     if not BackText(Info, Count) then return end
     if self.MoveStop then
-      return farEdit.SetPos(Info.EditorID, {
-             CurLine = Info.CurLine, CurPos = Info.CurPos })
+      return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
     return true
   end, --- bs
   bsln = function (self, Info, Count)
     if not BackLine(Info, Count) then return end
     if self.MoveStop then
-      return farEdit.SetPos(Info.EditorID, {
-             CurLine = Info.CurLine, CurPos = Info.CurPos })
+      return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
     return true
   end, --- bsln

@@ -571,7 +571,7 @@ function TMain:ApplyTemplate ()
 
   if RunTpl then
     if not Tpl.add then -- Замена
-      EditorSetPos(nil, { CurPos = CurCfg.Frag:len() - DelLen })
+      EditorSetPos(nil, -1, CurCfg.Frag:len() - DelLen)
       --logShow({ res, CurCfg.Frag:len(), DelLen }, "RunTpl")
       if not DelChars(nil, DelLen) then return end
 

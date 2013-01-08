@@ -553,8 +553,7 @@ function farEditor.DeleteSelection (Info, Type, ToPos) --> (bool)
   if not farEditor.DelSelection(id) then return end
 
   if ToPos or ToPos == nil then
-    return farEdit.SetPos(id, { CurPos  = SelInfo.StartPos,
-                                CurLine = SelInfo.StartLine })
+    return farEdit.SetPos(id, SelInfo.StartLine, SelInfo.StartPos)
   end
 
   return true
@@ -617,15 +616,12 @@ function farEditor.PasteColumnSelection (Info, block) --> (bool)
     return farEdit.SetPos(id, Info)
   end
 
-  local Pos = {
-    CurPos  = Info.CurPos,
-    CurLine = Info.CurLine
-  } ---
+  local CurLine, CurPos = Info.CurLine, Info.CurPos
   for k = 1, #block do
     if not farEdit.InsText(id, block[k]) then return end
-    --logShow({ block[k], Pos, Info }, "PasteColumnSelection")
-    Pos.CurLine = Pos.CurLine + 1
-    if not farEdit.SetPos(id, Pos) then return end
+    --logShow({ block[k], Info }, "PasteColumnSelection")
+    CurLine = CurLine + 1
+    if not farEdit.SetPos(id, CurLine, CurPos) then return end
   end
 
   --logShow(block, "PasteColumnSelection")
