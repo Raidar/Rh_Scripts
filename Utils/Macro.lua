@@ -43,6 +43,7 @@ local min2, max2 = numbers.min2, numbers.max2
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farEdit = require "Rh_Scripts.Utils.Editor"
 
 ----------------------------------------
 --[[
@@ -80,26 +81,11 @@ local MacroActions = {
 unit.MacroActions = MacroActions
 
 ---------------------------------------- Macro actions in editor
-local farEdit = {
-  GetInfo  = editor.GetInfo,
-  GetStr   = editor.GetString,
-  SetPos   = editor.SetPosition,
-  InsText  = editor.InsertText,
-  InsStr   = editor.InsertString,
-  DelChar  = editor.DeleteChar,
-  UndoRedo = editor.UndoRedo,
-  Redraw   = editor.Redraw,
-
-  CopySel  = farUt.editor.CopySelection,
-  CutSel   = farUt.editor.CutSelection,
-  PasteSel = farUt.editor.PasteSelection,
-
-  GetCurStrLen = false,
-} ---
+local farSelect = farEdit.Selection
 
 -- Получение длины текущей строки.
-function farEdit.GetCurStrLen (Info)
-  return (farEdit.GetStr(Info.EditorID, -1, 2) or ""):len()
+local function GetCurLineLen (Info)
+  return (farEdit.GetLine(Info.EditorID, -1, 2) or ""):len()
 end ----
 
 ---------------------------------------- Plain actions
@@ -121,7 +107,7 @@ local EditorPlainActions = { -- Функции выполнения просты
     return farEdit.InsText(Info.EditorID, text)
   end,
   line = function (Info, indent)
-    return farEdit.InsStr(Info.EditorID, indent)
+    return farEdit.InsLine(Info.EditorID, indent)
   end,
 
   left  = function (Info)
@@ -141,7 +127,7 @@ local EditorPlainActions = { -- Функции выполнения просты
     return farEdit.SetPos(Info.EditorID, -1, 0)
   end, --- home
   ["end"] = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen())
+    return farEdit.SetPos(Info.EditorID, -1, GetCurLineLen())
   end, --- end
 
   del  = function (Info)
@@ -157,7 +143,7 @@ local EditorPlainActions = { -- Функции выполнения просты
       if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
         return
       end
-      if not farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen(Info)) then
+      if not farEdit.SetPos(Info.EditorID, -1, GetCurLineLen(Info)) then
         return
       end
     end
@@ -166,10 +152,10 @@ local EditorPlainActions = { -- Функции выполнения просты
   end, --- bsln
 
   enter    = function (Info)
-    return farEdit.InsStr(Info.EditorID, false) -- simple enter
+    return farEdit.InsLine(Info.EditorID, false) -- simple enter
   end,
   indenter = function (Info)
-    return farEdit.InsStr(Info.EditorID, true) -- indent enter
+    return farEdit.InsLine(Info.EditorID, true) -- indent enter
   end,
   nop = function (Info) return true end,
 
@@ -200,7 +186,7 @@ end -- InsText
 local function NewLine (Info, Count, indent)
   local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
-    if not farEdit.InsStr(Info.EditorID, indent) then return end
+    if not farEdit.InsLine(Info.EditorID, indent) then return end
   end
 
   return true
@@ -241,7 +227,7 @@ local function BackLine (Info, Count)
       if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
         return
       end
-      if not farEdit.SetPos(Info.EditorID, -1, farEdit.GetCurStrLen(Info)) then
+      if not farEdit.SetPos(Info.EditorID, -1, GetCurLineLen(Info)) then
         return
       end
     end
@@ -369,11 +355,11 @@ local TEditorMacroActions = {
   nop = function (self, Info, Count) return true end,
 
   cut = function (self, Info, Index)
-    self.Clip[Index] = farEdit.CutSel(Info, "stream") or ""
+    self.Clip[Index] = farSelect.Cut(Info, "stream") or ""
     return true
   end, --- copy
   paste = function (self, Info, Index)
-    farEdit.PasteSel(Info, self.Clip[Index] or "", "stream")
+    farSelect.Paste(Info, self.Clip[Index] or "", "stream")
     return true
   end, --- paste
 } ---

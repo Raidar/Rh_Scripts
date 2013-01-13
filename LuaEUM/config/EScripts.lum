@@ -14,6 +14,7 @@ local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farEdit = require "Rh_Scripts.Utils.Editor"
 
 local RedrawAll = farUt.RedrawAll
 
@@ -38,14 +39,7 @@ if L == nil then
 end
 
 ---------------------------------------- local
-local farEditor = farUt.editor
-
-local farEdit = {
-  GetInfo  = editor.GetInfo,
-  --GetStr   = editor.GetString,
-  SetPos   = editor.SetPosition,
-  InsText  = editor.InsertText,
-} ---
+local farSelect = farEdit.selection
 
 -- Quote text considering selected block.
 -- Закавычивание текста с учётом выделенного блока.
@@ -67,10 +61,10 @@ local function QuoteSelection (left, right) --> (macro)
     return true
   end
 
-  local SelInfo = editor.GetSelection()
+  local SelInfo = farSelect.Get()
   if SelInfo == nil then return end -- Нет блока?
 
-  local block = farEditor.CutSelection(Info, SelType)
+  local block = farSelect.Cut(Info, SelType)
   if not block then return end
 
   if     SelType == "stream" then
@@ -91,7 +85,7 @@ local function QuoteSelection (left, right) --> (macro)
     end
 
   end
-  if not farEditor.PasteSelection(Info, block, SelType) then return end
+  if not farSelect.Paste(Info, block, SelType) then return end
 
   return true
 end -- QuoteSelection
@@ -104,7 +98,7 @@ end -- QuoteSelection
   right (s|n|nil) - right "quote" or its length: @default = left.
 --]]
 local function UnquoteSelection (left, right) --> (macro)
-  local SelInfo = farEditor.GetSelection()
+  local SelInfo = farSelect.Get()
   if SelInfo == nil then return end -- Нет блока?
 
   -- Define params:
@@ -119,8 +113,8 @@ local function UnquoteSelection (left, right) --> (macro)
     right = right:len()
   end
 
-  local SelType = farUt.BlockTypes[SelInfo.BlockType]
-  local block = farEditor.CutSelection(farEdit.GetInfo(), SelType)
+  local SelType = farSelect.Types[SelInfo.BlockType]
+  local block = farSelect.Cut(farEdit.GetInfo(), SelType)
   if not block then return end
 
   --logShow({ left, right, block }, SelType)
@@ -156,7 +150,7 @@ local function UnquoteSelection (left, right) --> (macro)
 
   end -- if
 
-  if not farEditor.PasteSelection(farEdit.GetInfo(), block, SelType) then
+  if not farSelect.Paste(farEdit.GetInfo(), block, SelType) then
     return
   end
 
