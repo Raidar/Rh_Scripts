@@ -139,11 +139,15 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     --logShow(LineInfo, "LineInfo")
     local s = LineInfo.StringText
     if s == nil then return end
-    if LineInfo.SelEnd < 0 then
-      return s:sub(LineInfo.SelStart + 1, -1).."\r"
+
+    if LineInfo.SelEnd > 0 then
+      return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
     end
 
-    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
+    return {
+      s:sub(LineInfo.SelStart + 1, -1), -- line
+      "" -- with last EOL
+    } ----
   end
 
   -- Несколько выделенных cтрок
