@@ -184,7 +184,7 @@ end ----
 local STANDARD_KEY_EVENT = F.KEY_EVENT
 local FARMACRO_KEY_EVENT = F.FARMACRO_KEY_EVENT
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local VK_END = keyUt.VKEY_Keys.END
 local CMods = keyUt.VKEY_Mods

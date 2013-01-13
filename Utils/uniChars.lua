@@ -1,4 +1,4 @@
---[[ Unicode chars ]]--
+--[[ Characters ]]--
 
 ----------------------------------------
 --[[ description:

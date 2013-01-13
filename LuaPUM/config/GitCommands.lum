@@ -14,7 +14,7 @@ local utils = require 'context.utils.useUtils'
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
-local runUt = require "Rh_Scripts.Utils.runUtils"
+local runUt = require "Rh_Scripts.Utils.Actions"
 
 ----------------------------------------
 -- This menu is not for plugin panel items.

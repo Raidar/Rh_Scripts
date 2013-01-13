@@ -18,7 +18,7 @@
 local getFileType = context.detect.area.current
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 ----------------------------------------
 --[[
@@ -42,7 +42,7 @@ local function flsUserMenu (args)
   --logShow(Scope, "Scope")
 
   -- 2. Задание пути поиска скриптов.
-  --local luaUt = require "Rh_Scripts.Utils.luaUtils"
+  --local luaUt = require "Rh_Scripts.Utils.LuaUtils"
   --luaUt.AddLibPath("", os.getenv("LUA_CPATH") or "")
 
   -- 3. Вызов пользовательского меню.

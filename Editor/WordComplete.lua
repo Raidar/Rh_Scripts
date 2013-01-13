@@ -59,16 +59,16 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local macUt = require "Rh_Scripts.Utils.macUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
+local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
+local macUt = require "Rh_Scripts.Utils.Macro"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
 --local fkeys = require "far2.keynames"
 --local InputRecordToName = fkeys.InputRecordToName
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local isVKeyChar = keyUt.isVKeyChar
 local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
@@ -389,7 +389,7 @@ end -- CreateMain
 ---------------------------------------- Dialog
 do
   local dialog = require "far2.dialog"
-  local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+  local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
   local DI = dlgUt.DlgItemType
   local DIF = dlgUt.DlgItemFlag

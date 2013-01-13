@@ -42,7 +42,7 @@ local hex = numbers.hex8
 ----------------------------------------
 local fkeys = require "far2.keynames"
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 ----------------------------------------
 --[[
@@ -56,8 +56,8 @@ local logShow = log.Show
 local dialog = require "far2.dialog"
 
 local DI_DBox, DI_Text = F.DI_DOUBLEBOX, F.DI_TEXT
-local DIF_Ampersand =  F.DIF_SHOWAMPERSAND
-local DIF_HelpText =  F.DIF_SHOWAMPERSAND + F.DIF_CENTERGROUP
+local DIF_Ampersand    = F.DIF_SHOWAMPERSAND
+local DIF_HelpText     = F.DIF_SHOWAMPERSAND + F.DIF_CENTERGROUP
 
 -- Форма окна диалога нажатия клавиши.
 local function KeyPress_Dlg()

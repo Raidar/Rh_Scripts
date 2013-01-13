@@ -33,14 +33,14 @@ local max2, min2 = numbers.max2, numbers.min2
 --local divf = numbers.divf
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 local far_Text = far.Text
 --local far_Text, farVText = far.Text, farUt.VText
 
 ----------------------------------------
-local menUt = require "Rh_Scripts.Utils.menUtils"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 local checkedChar = menUt.checkedChar
 

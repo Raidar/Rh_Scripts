@@ -37,16 +37,16 @@ local setmetatable = setmetatable
 local tables = require 'context.utils.useTables'
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+--local farUt = require "Rh_Scripts.Utils.FarUtils"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
 local fkeys = require "far2.keynames"
 
 local InputRecordToName = fkeys.InputRecordToName
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local isVKeyChar = keyUt.isVKeyChar
 local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift

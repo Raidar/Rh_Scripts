@@ -41,8 +41,8 @@ local locale = require 'context.utils.useLocale'
 local isFlag = utils.isFlag
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+--local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 ----------------------------------------
 --[[
@@ -412,7 +412,7 @@ local L -- Класс сообщений локализации
 
 ---------------------------------------- Dialog
 local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 local DI = dlgUt.DlgItemType
 local DIF = dlgUt.DlgItemFlag

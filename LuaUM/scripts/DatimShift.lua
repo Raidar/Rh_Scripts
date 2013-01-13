@@ -119,7 +119,7 @@ end -- Configure
 local farColors = far.Colors
 
 local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 local dlg_NewDialog = dialog.NewDialog
 

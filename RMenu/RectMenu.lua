@@ -38,7 +38,7 @@ local bshl, bshr = bit.lshift, bit.rshift
 local win, far = win, far
 local F = far.Flags
 
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 local HText, VText = far.Text, farUt.VText
 
@@ -62,18 +62,18 @@ local torange = numbers.torange
 local inrange, outrange = numbers.inrange, numbers.outrange
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 ----------------------------------------
 local fkeys = require "far2.keynames"
 
 local InputRecordToName = fkeys.InputRecordToName
 
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 ----------------------------------------
-local menUt = require "Rh_Scripts.Utils.menUtils"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 local MenuBasicColors = menUt.MenuColors()
 local FixedBG = colors.BaseColors.gray

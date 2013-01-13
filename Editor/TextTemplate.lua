@@ -59,9 +59,9 @@ local isFlag = utils.isFlag
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
---local farUt = require "Rh_Scripts.Utils.farUtils"
-local macUt = require "Rh_Scripts.Utils.macUtils"
+local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+--local farUt = require "Rh_Scripts.Utils.FarUtils"
+local macUt = require "Rh_Scripts.Utils.Macro"
 
 ----------------------------------------
 --[[
@@ -195,7 +195,7 @@ end -- CreateMain
 ---------------------------------------- Dialog
 do
   local dialog = require "far2.dialog"
-  local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+  local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
   local DI = dlgUt.DlgItemType
   local DIF = dlgUt.DlgItemFlag

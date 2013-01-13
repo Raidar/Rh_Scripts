@@ -34,12 +34,12 @@ local u_byte = strings.u8byte
 --local u_char, u_byte = strings.u8char, strings.u8byte
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
+local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 
 local length = luaUt.length
 
 ----------------------------------------
-local keyUt = require "Rh_Scripts.Utils.keyUtils"
+local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local uNames = require "Rh_Scripts.Utils.uniNames"
 local CharNames = uNames.Names

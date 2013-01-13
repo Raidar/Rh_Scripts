@@ -14,7 +14,7 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local typUtils = require "Rh_Scripts.Utils.typUtils"
+local Types = require "Rh_Scripts.Utils.Types"
 
 ----------------------------------------
 --[[
@@ -23,7 +23,7 @@ local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
-local class = typUtils.class
+local class = Types.class
 
 local myClass = class:new(12, 45)
 myClass.i = 1

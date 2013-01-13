@@ -18,23 +18,23 @@ $ #Utility scripts#
 
 @Utl_ScriptFiles
 $ #Script files#: Utility scripts
-    \37luaUtils.lua\-   — ¦Extended Lua functions.
-    \37farUtils.lua\-   — ¦Additional LuaFAR functions.
-    \37runUtils.lua\-   — ¦Action run functions.
-    \37keyUtils.lua\-   — ¦Working with keys.
+    \37luaUtils.lua\-   — ¦Lua functions.
+    \37FarUtils.lua\-   — ¦LuaFAR functions.
+    \37Actions.lua\-    — ¦Run actions.
+    \37Keys.lua\-       — ¦Processing keys.
 
     \37Binding.lua\-    — ¦Working with binds.
-    \37dlgUtils.lua\-   — ¦Handling dialogs.
+    \37Dialog.lua\-     — ¦Handling dialogs.
     \37IniFile.lua\-    — ¦Working with ini/lua-files.
-    \37macUtils.lua\-   — ¦Working with ~macro-templates~@Macros@.
-    \37menUtils.lua\-   — ¦Working with menus and menu items.
+    \37Macro.lua\-      — ¦Working with ~macro-templates~@Macros@.
+    \37Menu.lua\-       — ¦Working with menus and menu items.
     \37uniChars.lua\-   — ¦Some Unicode characters.
     \37uniNames.lua\-   — ¦Unicode characters' names.
 
  ~Contents~@Contents@
 
 @Macros
-$ #Macro-template# (macUtils)
+$ #Macro-template# (Macro.lua)
   Macro-template is used for #editor# only.
   It is similar to macro used in "true macro processor" plugin.
 An \37@@\- character (aka masyamba) is a key character of macro by default,

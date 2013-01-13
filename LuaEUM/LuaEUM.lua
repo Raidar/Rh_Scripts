@@ -16,7 +16,7 @@
 local getFileType = context.detect.area.editor
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 ----------------------------------------
 --[[

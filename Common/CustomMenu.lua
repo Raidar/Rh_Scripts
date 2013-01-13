@@ -29,9 +29,9 @@ local tables = require 'context.utils.useTables'
 --local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
+local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
 -- [[
@@ -264,8 +264,6 @@ local ItemKinds = { -- Виды пунктов меню:
   Function  = "Script",   -- Функция Lua
   Error     = "Error",    -- Ошибочный пункт
 } --- ItemKinds
-local QuotedSeq = '"Sequence"'
-ItemKinds[QuotedSeq] = ItemKinds.Sequence
 
 -- Определение вида пункта меню.
 function TMenu:DefineItemKind (Item) --| Item
@@ -293,29 +291,13 @@ end ----
 
 end -- do
 
-do
-  local rhals = require "Rh_Scripts.Utils.FarMacEx"
-
 -- Настройка пункта-макроса FAR.
 function TMenu:DefineSequence (Item) --| Item
-  -- Раскавычивание "Sequence".
-  if Item[QuotedSeq] then rhals.UnQuoteRegField(Item, QuotedSeq) end
   if not Item.Sequence then return end
 
   -- Флаги по умолчанию:
-  if not Item.Flags then
-    Item.Flags = F.KMFLAGS_DISABLEOUTPUT
-  end
-
-  -- Конкретизация псевдонимов в макросе.
-  if not Item.Aliased then
-    Item.Sequence = rhals.SpecifyAliases(Item.Sequence, self.Aliases)
-    Item.Aliased = true
-    --logShow(Item, "Menu Item")
-  end
+  if not Item.Flags then Item.Flags = F.KMFLAGS_DISABLEOUTPUT end
 end ----
-
-end -- do
 
 -- Определение полей пункта меню.
 function TMenu:DefineMenuItem (Item) --| Item
@@ -670,7 +652,7 @@ end -- do
 
 ---------------------------------------- ---- Action
 do
-  local runUt = require "Rh_Scripts.Utils.runUtils"
+  local runUt = require "Rh_Scripts.Utils.Actions"
 
 -- Определение полного имени скрипта.
 function TMenu:DefineScriptName (Item) --> (string)

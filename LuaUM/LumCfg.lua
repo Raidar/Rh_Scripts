@@ -37,7 +37,7 @@ local locale = require 'context.utils.useLocale'
 local colors = require 'context.utils.useColors'
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 ----------------------------------------
 --[[
@@ -217,7 +217,7 @@ end
 local farColors = far.Colors
 
 local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.dlgUtils"
+local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 local dlg_NewDialog = dialog.NewDialog
 

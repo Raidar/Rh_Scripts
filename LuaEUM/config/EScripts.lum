@@ -13,7 +13,7 @@
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 local RedrawAll = farUt.RedrawAll
 

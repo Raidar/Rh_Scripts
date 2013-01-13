@@ -31,9 +31,8 @@ local locale = require 'context.utils.useLocale'
 local PluginPath = utils.PluginPath
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.farUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 local bndUt = require "Rh_Scripts.Utils.Binding"
-local rhals = require "Rh_Scripts.Utils.FarMacEx"
 
 local LW = require "Rh_Scripts.LuaUM.LumWork"
 
@@ -254,15 +253,6 @@ function TMenu:Run ()
   else
     return L:et1("AliasNotFound", Scope.FileName)
   end
-
-  -- TODO: Aliases to Properties for CustomMenu.
-  self.Aliases = AliasData[AliasPart] or {} -- Таблица раздела псевдонимов
-  AliasData, AliasPart = nil, nil -- (?)
-
-  rhals.UnQuoteRegTable(self.Aliases) -- Раскавычивание псевдонимов
-  --extUt.t_gsub(self.Aliases, nil, '\n', ' ') -- Сборка в одну строку
-  rhals.SpecifyAliasesItself(self.Aliases) -- Конкретизация псевдонимов
-  --logShow(self.Aliases, "LUM Alias Menu")
 
   -- Разбор общих свойств меню.
   -- TEMP: TODO see above!!!

@@ -31,10 +31,10 @@ local strings = require 'context.utils.useStrings'
 local spaces = strings.spaces -- for text align
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
---local keyUt = require "Rh_Scripts.Utils.keyUtils"
-local menUt = require "Rh_Scripts.Utils.menUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
+--local keyUt = require "Rh_Scripts.Utils.Keys"
+local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
 --[[
