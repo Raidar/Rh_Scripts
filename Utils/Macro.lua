@@ -1,4 +1,4 @@
---[[ Macro-templates ]]--
+--[[ Macro utils ]]--
 
 ----------------------------------------
 --[[ description:
@@ -41,8 +41,8 @@ local Null = tables.Null
 local min2, max2 = numbers.min2, numbers.max2
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
-local farUt = require "Rh_Scripts.Utils.farUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.FarUtils"
 
 ----------------------------------------
 --[[

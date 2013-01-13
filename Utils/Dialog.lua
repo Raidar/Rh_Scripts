@@ -1,4 +1,4 @@
---[[ Dialogs ]]--
+--[[ Dialog utils ]]--
 
 ----------------------------------------
 --[[ description:
@@ -39,7 +39,7 @@ local Null = tables.Null
 local tfind = tables.find
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 
 ----------------------------------------
 --[[

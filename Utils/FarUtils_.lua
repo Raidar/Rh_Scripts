@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Additional LuaFAR functions.
-  -- Дополнительные LuaFAR-функции.
+  -- LuaFAR functions.
+  -- LuaFAR‑функции.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -33,7 +33,7 @@ local isFlag = utils.isFlag
 local b2n, max2 = numbers.b2n, numbers.max2
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.luaUtils"
+--local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 
 ----------------------------------------
 --[[

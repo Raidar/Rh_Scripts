@@ -1,9 +1,15 @@
---[[ Action run functions ]]--
---[[ Функции выполнения действий ]]--
+--[[ Action run utils ]]--
 
+----------------------------------------
+--[[ description:
+  -- Run actions.
+  -- Выполнение действий.
+--]]
+----------------------------------------
 --[[ uses:
-  LuaFAR.
-     group: Utils.
+  LuaFAR,
+  Rh Utils.
+  -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
 
@@ -143,7 +149,7 @@ function unit.Plain (Value, Insert, ...) --> (true | nil, error)
 end ----
 
 do
-  local macUt = require "Rh_Scripts.Utils.macUtils"
+  local macUt = require "Rh_Scripts.Utils.Macro"
 
 -- Execute: macro-template.
 -- Выполнение: макро-шаблон.
@@ -186,7 +192,7 @@ end ----
 
 ---------------------------------------- -- Lua script
 do
-  local luaUt = require "Rh_Scripts.Utils.luaUtils"
+  local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 
 -- Execute: lua function.
 -- Выполнение: lua-функция.
