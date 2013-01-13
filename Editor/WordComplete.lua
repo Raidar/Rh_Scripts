@@ -1123,7 +1123,7 @@ function TMain:CompletionText ()
 end ---- CompletionText
 do
   -- Удаление Count символов:
-  local EC_Actions = macUt.MacroActions.editor.cycle
+  local EC_Actions = macUt.Actions.editor.cycle
   local DelChars = EC_Actions.del
   local BackChars = EC_Actions.bs
 
@@ -1193,7 +1193,7 @@ do
     NumDel    = "del",
   } --- KeyActionNames
 
-  local KeyActions = macUt.MacroActions.editor.plain
+  local KeyActions = macUt.Actions.editor.plain
 
 function TMain:AssignKeyPress () --> (bool | nil)
 

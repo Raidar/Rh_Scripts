@@ -51,9 +51,47 @@ local unit = {
   UndoRedo  = editor.UndoRedo,
   Redraw    = editor.Redraw,
 
+  GetLength = false,
+  SetEnd    = false,
+  SetLeft   = false,
+
   Selection = false,
 } ---
 
+---------------------------------------- Editor
+-- Get length of line.
+-- Получение длины линии.
+function unit.GetLength (id, line)
+  return (unit.GetLine(id, line, 2) or ""):len()
+end ----
+
+-- Set position to end of line.
+-- Установка позиции в конец линии.
+function unit.SetEnd (id, line)
+  if line and line >= 0 then
+    if not unit.SetPos(id, line) then return end
+  end
+  if not unit.SetPos(id, -1, unit.GetLength(id, - 1)) then return end
+
+  return true
+end -- SetEnd
+
+-- Set position to left of current one within file.
+-- Установка позиции слева от текущей внутри файла.
+function unit.SetLeft (Info)
+  local Info = Info or unit.GetInfo()
+  if Info.CurPos > 0 then
+    if not unit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then return end
+  elseif Info.CurLine > 0 then
+    if not unit.SetEnd(Info.EditorID, Info.CurLine - 1) then return end
+  else
+    return
+  end
+
+  return true
+end -- SetLeft
+
+---------------------------------------- Selection
 local BlockTypes = farUt.BlockTypes
 
 local Selection = {
@@ -82,8 +120,6 @@ local Selection = {
   pairs = false,
 } ---
 unit.Selection = Selection
-
----------------------------------------- Selection
 
 ---------------------------------------- -- Process
 do

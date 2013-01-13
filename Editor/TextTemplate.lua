@@ -506,7 +506,7 @@ end -- FindTemplates
 
 ---------------------------------------- ---- Action
 do
-  local EC_Actions = macUt.MacroActions.editor.cycle
+  local EC_Actions = macUt.Actions.editor.cycle
   local DelChars = EC_Actions.del
   --local BackChars = EC_Actions.bs
 

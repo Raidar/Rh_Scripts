@@ -52,7 +52,13 @@ local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
-local unit = {}
+local unit = {
+  Actions = false,
+  Execute = false,
+
+  Use = false,
+  Run = false,
+} --- unit
 
 ---------------------------------------- Macro-keys
 local DefMacroKeyChar = '@' -- Masyamba
@@ -69,8 +75,9 @@ local MacroKeys = { -- Макро-ключи:
   "stop", "resume",     -- управление перемещением
   "cut", "paste",       -- работа с выделенным блоком
   "nop",                -- нет операции
+  "|",                  -- разделитель параметров
 } ---
-local MacroValues = "1234567890" -- Цифры повторения макро-ключей
+--local MacroValues = "1234567890" -- Цифры повторения макро-ключей
 
 local MacroActions = {
   editor = {}, -- Редактор
@@ -78,15 +85,10 @@ local MacroActions = {
   use = false, -- Локальные функции
   run = false, -- Основные функции
 } ---
-unit.MacroActions = MacroActions
+unit.Actions = MacroActions
 
 ---------------------------------------- Macro actions in editor
 local farSelect = farEdit.Selection
-
--- Получение длины текущей строки.
-local function GetCurLineLen (Info)
-  return (farEdit.GetLine(Info.EditorID, -1, 2) or ""):len()
-end ----
 
 ---------------------------------------- Plain actions
 
@@ -127,7 +129,7 @@ local EditorPlainActions = { -- Функции выполнения просты
     return farEdit.SetPos(Info.EditorID, -1, 0)
   end, --- home
   ["end"] = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, GetCurLineLen())
+    return farEdit.SetEnd(Info.EditorID, -1)
   end, --- end
 
   del  = function (Info)
@@ -135,19 +137,9 @@ local EditorPlainActions = { -- Функции выполнения просты
   end, -- del
   bs   = BackChar, -- bs
   bsln = function (Info)
-    if Info.CurPos > 0 then
-      if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
-        return
-      end
-    else
-      if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
-        return
-      end
-      if not farEdit.SetPos(Info.EditorID, -1, GetCurLineLen(Info)) then
-        return
-      end
+    if not farEdit.SetLeft(Info) then
+      return
     end
-
     return farEdit.DelChar(Info.EditorID)
   end, --- bsln
 
@@ -186,7 +178,9 @@ end -- InsText
 local function NewLine (Info, Count, indent)
   local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
-    if not farEdit.InsLine(Info.EditorID, indent) then return end
+    if not farEdit.InsLine(Info.EditorID, indent) then
+      return
+    end
   end
 
   return true
@@ -218,22 +212,44 @@ end -- BackText
 -- Удаление текста слева с учётом перехода строку выше.
 local function BackLine (Info, Count)
   local Info = Info or farEdit.GetInfo()
+  local k = Count
+  while k > 0 do
+    local CurPos = Info.CurPos
+    if CurPos > 0 then
+      local NewPos = CurPos - k
+      if NewPos >= 0 then
+        if not farEdit.SetPos(Info.EditorID, -1, NewPos) then
+          return
+        end
+        k = 0
+      else
+        if not farEdit.SetEnd(Info.EditorID, Info.CurLine - 1) then
+          return
+        end
+        k = k - CurPos - 1
+        Info = farEdit.GetInfo()
+      end
+
+    else--if Info.CurLine > 0 then
+      if not farEdit.SetLeft(Info) then
+        return
+      end
+      k = k - 1
+      Info = farEdit.GetInfo()
+
+    --else
+    --  return
+    end
+  end
+  --[[
   for _ = 1, Count do
-    if Info.CurPos > 0 then
-      if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
-        return
-      end
-    else
-      if not farEdit.SetPos(Info.EditorID, Info.CurLine - 1) then
-        return
-      end
-      if not farEdit.SetPos(Info.EditorID, -1, GetCurLineLen(Info)) then
-        return
-      end
+    if not farEdit.SetLeft(Info) then
+      return
     end
 
     Info = farEdit.GetInfo()
   end -- for
+  --]]
 
   return DelText(Info, Count)
 end -- BackLine
@@ -386,6 +402,7 @@ MacroActions.editor.macro = EditorMacroActions
 
 ---------------------------------------- Run
 
+-- Check to macro-key in specified position.
 -- Проверка на макро-ключ в заданной позиции.
 local function CheckMacroPos (Text, Pos) --> (string | nil)
   --assert(Text and Pos)
@@ -395,18 +412,23 @@ local function CheckMacroPos (Text, Pos) --> (string | nil)
   end
 end -- CheckMacroPos
 
+-- Check to repeat of macro-key in specified position.
 -- Проверка на повторение макро-ключа в заданной позиции.
 local function CheckMacroRep (Text, Pos) --> (string | nil)
   --assert(Text and Pos)
-  local k, s = 1, Text:sub(Pos)
+  return Text:sub(Pos, -1):match("^(%d+)")
+  --[[
+  local k, s = 1, Text:sub(Pos, -1)
   while k <= s:len() do
     local c = s:sub(k, k)
     if not MacroValues:find(c, 1, true) then break end
     k = k + 1
   end
   if k > 1 then return s:sub(1, k - 1) end
+  --]]
 end -- CheckMacroRep
 
+-- Parse macro-template.
 -- Разбор макроса-шаблона.
 local function Make (Text, MacroKeyChar) --> (table)
   --assert(Text)
@@ -446,6 +468,7 @@ local function Make (Text, MacroKeyChar) --> (table)
         end
       end
     end -- if
+
     k = k + 1
   end -- while
 
@@ -457,14 +480,16 @@ local function Make (Text, MacroKeyChar) --> (table)
   return t
 end -- Make
 
+-- Execute actions of macro-template.
 -- Выполнение действий макроса-шаблона.
 local function Play (Macro) --> (bool | nil, Action)
   local Actions = EditorMacroActions() -- Действия
   local InsText = Actions.text -- Вставка текста
 
   -- Цикл по действиям
-  for _, v in ipairs(Macro) do
-    local Info = farEdit.GetInfo()
+  local k, Count = 1, #Macro
+  while k <= Count do
+    local Info, v = farEdit.GetInfo(), Macro[k]
     local Action, Value = v.Action, v.Value or 1
     --farEdit.Redraw(); logShow(v, _..": # = "..Value)
 
@@ -472,17 +497,26 @@ local function Play (Macro) --> (bool | nil, Action)
     local isOk
     if Action == "text" then
       isOk = InsText(Actions, Info, Value, v.Text)
+    --[[
+    elseif Action == "pair" then
+      local p
+      --isOk, p = MakePair(Actions, Info, Value, Macro, k)
+      if p then k = k + p end
+    --]]
     elseif Actions[Action] then
       --farEdit.Redraw(); logShow(Info, Action..": # = "..Value)
       isOk = Actions[Action](Actions, Info, Value)
       --logShow(Info, Action)
     end
     if not isOk then return nil, Action end
+
+    k = k + 1
   end
 
   return true
 end -- Play
 
+-- Execute parsed macro-template.
 -- Выполнение разобранного макроса-шаблона.
 local function Exec (Macro) --> (bool | nil, Action)
 
@@ -508,7 +542,8 @@ local function Exec (Macro) --> (bool | nil, Action)
   return true
 end -- Exec
 
--- Выполнение макроса (с разбором)
+-- Execute Macro (with parsing).
+-- Выполнение макроса (с разбором).
 function unit.Execute (Macro) --> (bool)
   local t = Make(Macro)
   --logShow(t, Item.Macro)
@@ -516,7 +551,7 @@ function unit.Execute (Macro) --> (bool)
   return Exec(t)
 end ----
 
-MacroActions.use = {
+unit.Use = {
   BackChar = BackChar,
 
   InsText = InsText,
@@ -527,9 +562,9 @@ MacroActions.use = {
   BackLine = BackLine,
 } ---
 
-MacroActions.run = {
-  CheckMacroPos = CheckMacroPos,
-  CheckMacroRep = CheckMacroRep,
+unit.Run = {
+  CheckPos  = CheckMacroPos,
+  CheckRep  = CheckMacroRep,
 
   Make      = Make,
   Play      = Play,
