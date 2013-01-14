@@ -81,7 +81,7 @@ local MenuFixedColors = menUt.ChangeColors(nil, nil, nil, nil, FixedBG)
 local ItemTextColor = menUt.ItemTextColor
 
 ----------------------------------------
-local uChars = require "Rh_Scripts.Utils.uniChars"
+local uChars = require "Rh_Scripts.Utils.CharsSets"
 
 ----------------------------------------
 local RDraw = require "Rh_Scripts.RMenu.RectDraw"

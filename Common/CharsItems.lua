@@ -41,7 +41,7 @@ local length = luaUt.length
 ----------------------------------------
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
-local uNames = require "Rh_Scripts.Utils.uniNames"
+local uNames = require "Rh_Scripts.Utils.CharNames"
 local CharNames = uNames.Names
 
 ----------------------------------------

@@ -28,8 +28,8 @@ $ #Script files#: Utility scripts
     \37IniFile.lua\-    — ¦Working with ini/lua-files.
     \37Macro.lua\-      — ¦Working with ~macro-templates~@Macros@.
     \37Menu.lua\-       — ¦Working with menus and menu items.
-    \37uniChars.lua\-   — ¦Some Unicode characters.
-    \37uniNames.lua\-   — ¦Unicode characters' names.
+    \37CharsSets.lua\-  — ¦Some Unicode characters and character sets.
+    \37CharNames.lua\-  — ¦Unicode characters' names.
 
  ~Contents~@Contents@
 
