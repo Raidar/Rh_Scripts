@@ -526,15 +526,15 @@ do
     CharEnum (string) - Анализируемые символы слова.
     SpecEnum  (table) - Список специальных комбинаций.
     --      
-    MatchCase  (bool) - Учёт регистра символов (true).
-    UseOnes    (bool) - Подсчёт по одиночным символам (по умолчанию = true).
-    UseSeqs    (bool) - Подсчёт по последовательностям (по умолчанию = false).
-    UseMagic   (bool) - Подсчёт по "магическим" модификаторам (false).
+    MatchCase  (bool) - Учёт регистра символов (@default = true).
+    UseOnes    (bool) - Подсчёт по одиночным символам (@default = true).
+    UseSeqs    (bool) - Подсчёт по последовательностям (@default = false).
+    UseMagic   (bool) - Подсчёт по "магическим" модификаторам (@default = false).
     --
     Seq      (string) - Неанализируемое начало последовательности.
                         Длина анализируемой последовательности символов:
-    SeqMin   (number) - минимальная (1).
-    SeqMax   (number) - максимальная (1).
+    SeqMin   (number) - минимальная (@default = 1).
+    SeqMax   (number) - максимальная (@default = 1).
 --]]
 function unit.CharCounter (cfg) --> (object)
   local cfg = cfg or {}
