@@ -1,9 +1,9 @@
---[[ Characters ]]--
+--[[ Character sets ]]--
 
 ----------------------------------------
 --[[ description:
-  -- Some Unicode characters.
-  -- Некоторые Unicode-символы.
+  -- Some Unicode characters and character sets.
+  -- Некоторые Unicode‑символы и наборы символов.
 --]]
 ----------------------------------------
 --[[ uses:

@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Working with macro-templates.
-  -- Работа с макросами-шаблонами.
+  -- Working with macro‑templates.
+  -- Работа с макросами‑шаблонами.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -82,6 +82,7 @@ local MacroKeys = { -- Макро-ключи:
 local MacroActions = {
   editor = {}, -- Редактор
   panels = {}, -- Панели
+
   use = false, -- Локальные функции
   run = false, -- Основные функции
 } ---

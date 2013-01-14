@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Working with ini/lua-files.
-  -- Работа с ini/lua-файлами.
+  -- Working with ini/lua‑files.
+  -- Работа с ini/lua‑файлами.
 --]]
 ----------------------------------------
 --[[ uses:
