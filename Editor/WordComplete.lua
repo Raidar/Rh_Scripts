@@ -1124,8 +1124,8 @@ end ---- CompletionText
 do
   -- Удаление Count символов:
   local EC_Actions = macUt.Actions.editor.cycle
-  local DelChars = EC_Actions.del
-  local BackChars = EC_Actions.bs
+  local DelText  = EC_Actions.del
+  local BackText = EC_Actions.bs
 
 -- Завершение слова.
 function TMain:ApplyWordAction () --> (bool | nil)
@@ -1139,13 +1139,13 @@ function TMain:ApplyWordAction () --> (bool | nil)
   --logShow({ Complete, Word, Word:len(), Slab, SLen }, Action, 1)
 
   if self.Action == A_Replace then -- Удаление конца
-    if not DelChars(nil, Word:len() - SLen) then return end
+    if not DelText(nil, Word:len() - SLen) then return end
   end
 
   if self.CfgData.TailOnly then -- Только добавление остатка:
     if not InsText(Complete:sub(SLen + 1, -1)) then return end
   else -- Замена слова выбранным:
-    if not BackChars(nil, SLen) then return end
+    if not BackText(nil, SLen) then return end
     if not InsText(Complete) then return end
   end
 

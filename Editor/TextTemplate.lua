@@ -507,8 +507,8 @@ end -- FindTemplates
 ---------------------------------------- ---- Action
 do
   local EC_Actions = macUt.Actions.editor.cycle
-  local DelChars = EC_Actions.del
-  --local BackChars = EC_Actions.bs
+  local DelText = EC_Actions.del
+  --local BackText = EC_Actions.bs
 
   local RunMacro = macUt.Execute
 
@@ -573,11 +573,11 @@ function TMain:ApplyTemplate ()
     if not Tpl.add then -- Замена
       EditorSetPos(nil, -1, CurCfg.Frag:len() - DelLen)
       --logShow({ res, CurCfg.Frag:len(), DelLen }, "RunTpl")
-      if not DelChars(nil, DelLen) then return end
-
-      --logShow(res, "RunTpl")
-      return RunTpl(res)
+      if not DelText(nil, DelLen) then return end
     end
+
+    --logShow(res, "RunTpl")
+    return RunTpl(res)
   end
 
   return false -- Шаблон не применён
