@@ -41,8 +41,10 @@ local logShow = dbg.Show
 
 --------------------------------------------------------------------------------
 local unit = {
+  -- Editor
   GetInfo   = editor.GetInfo,
   GetLine   = editor.GetString,
+  SetLine   = editor.SetString,
   SetPos    = editor.SetPosition,
   InsText   = editor.InsertText,
   InsLine   = editor.InsertString,
@@ -52,9 +54,14 @@ local unit = {
   Redraw    = editor.Redraw,
 
   GetLength = false,
+  SetLength = false,
+
+  SetHome   = false,
   SetEnd    = false,
   SetLeft   = false,
+  SetRight  = false,
 
+  -- Selection
   Selection = false,
 } ---
 
@@ -65,31 +72,77 @@ function unit.GetLength (id, line)
   return (unit.GetLine(id, line, 2) or ""):len()
 end ----
 
+-- Set length of line.
+-- Установка длины линии.
+function unit.SetLength (id, line, len, fill)
+  if type(len) ~= 'number' or len < 0 then exit end
+
+  local s = unit.GetLine(id, line, 2) or ""
+  local l = s:len()
+  if l = len then return true end
+
+  if l < len then
+    s = s..(fill or " "):rep(len - l)
+  else
+    s = s:sub(1, len)
+  end
+
+  return unit.SetLine(id, line, s)
+end ---- SetLength
+
 -- Set position to end of line.
 -- Установка позиции в конец линии.
 function unit.SetEnd (id, line)
   if line and line >= 0 then
     if not unit.SetPos(id, line) then return end
   end
-  if not unit.SetPos(id, -1, unit.GetLength(id, - 1)) then return end
+  if not unit.SetPos(id, -1, unit.GetLength(id, -1)) then return end
 
   return true
 end -- SetEnd
+
+-- Set position to home of line.
+-- Установка позиции в начало линии.
+function unit.SetHome (id, line)
+  if line and line >= 0 then
+    if not unit.SetPos(id, line) then return end
+  end
+  if not unit.SetPos(id, -1, 0) then return end
+
+  return true
+end -- SetHome
 
 -- Set position to left of current one within file.
 -- Установка позиции слева от текущей внутри файла.
 function unit.SetLeft (Info)
   local Info = Info or unit.GetInfo()
+  local id = Info.EditorID
   if Info.CurPos > 0 then
-    if not unit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then return end
+    if not unit.SetPos(id, -1, Info.CurPos - 1) then return end
   elseif Info.CurLine > 0 then
-    if not unit.SetEnd(Info.EditorID, Info.CurLine - 1) then return end
+    if not unit.SetEnd(id, Info.CurLine - 1) then return end
   else
     return
   end
 
   return true
 end -- SetLeft
+
+-- Set position to right of current one within file.
+-- Установка позиции справа от текущей внутри файла.
+function unit.SetRight (Info)
+  local Info = Info or unit.GetInfo()
+  local id = Info.EditorID
+  if Info.CurPos < unit.GetLength(id, -1) then
+    if not unit.SetPos(id, -1, Info.CurPos + 1) then return end
+  elseif Info.CurLine < Info.TotalLines - 1 then
+    if not unit.SetHome(Info.EditorID, Info.CurLine + 1) then return end
+  else
+    return
+  end
+
+  return true
+end -- SetRight
 
 ---------------------------------------- Selection
 local BlockTypes = farUt.BlockTypes
