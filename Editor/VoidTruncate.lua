@@ -46,10 +46,10 @@ local far = far
 local F = far.Flags
 
 local EditorGetInfo = editor.GetInfo
+local EditorGetLine = editor.GetString
+local EditorSetLine = editor.SetString
 local EditorSetPos  = editor.SetPosition
-local EditorGetStr  = editor.GetString
-local EditorSetStr  = editor.SetString
-local EditorDelStr  = editor.DeleteString
+local EditorDelLine = editor.DeleteString
 local EditorSelect  = editor.Select
 
 ----------------------------------------
@@ -86,9 +86,9 @@ local SpaceTruncPat, EmptyTruncPat, TruncSub = "%s+$", "^%s-$", ""
 -- Усечение пробелов в заданной линии.
 function Truncate.Spaces (n) --> (number)
   --n = n or -1
-  local s, q = EditorGetStr(nil, n, 2)
+  local s, q = EditorGetLine(nil, n, 2)
   s, q = s:gsub(SpaceTruncPat, TruncSub)
-  if q > 0 then EditorSetStr(nil, n, s) end
+  if q > 0 then EditorSetLine(nil, n, s) end
 
   return q
 end ----
@@ -99,7 +99,7 @@ local TruncateSpaces = Truncate.Spaces
 function Truncate.UpdateEnd ()
   local Info = EditorGetInfo()
   local p = Info.CurPos
-  local l = (EditorGetStr(nil, -1, 2) or ""):len()
+  local l = (EditorGetLine(nil, -1, 2) or ""):len()
   EditorSetPos(nil, -1, p > l and l or p)
 end ----
 local TruncateUpdateEnd = Truncate.UpdateEnd
@@ -142,7 +142,7 @@ function Truncate.File (keep) --> (number)
   -- Проверка на пустоту линий:
   local q = 0
   for k = l, l - keep + 1, -1 do
-    local s = EditorGetStr(nil, k, 2)
+    local s = EditorGetLine(nil, k, 2)
     if s and not s:find(EmptyTruncPat) then
       EditorSetPos(nil, Info)
       return -q
@@ -154,9 +154,9 @@ function Truncate.File (keep) --> (number)
   -- Отсечение пустых линий:
   q = 0
   for k = l - keep, 0, -1 do
-    local s = EditorGetStr(nil, k, 2)
+    local s = EditorGetLine(nil, k, 2)
     if s and s:find(EmptyTruncPat) then
-      EditorDelStr()
+      EditorDelLine()
       q = q + 1
     else
       break
@@ -219,7 +219,7 @@ function ProcessEditorInput (rec) --> (bool)
         EditorSelect(nil,
                      band(CState, ALT) ~= 0 and BT_Column or BT_Stream,
                      Info.CurLine, Info.CurPos,
-                     (EditorGetStr(nil, -1, 2) or ""):len() - Info.CurPos,
+                     (EditorGetLine(nil, -1, 2) or ""):len() - Info.CurPos,
                      Info.TotalLines - Info.CurLine)
       end
     else -- End of line
