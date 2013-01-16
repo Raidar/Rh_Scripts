@@ -26,6 +26,9 @@ local ipairs = ipairs
 local tonumber = tonumber
 local setmetatable = setmetatable
 
+local math = math
+local min, max = math.min, math.max
+
 ----------------------------------------
 local far, editor = far, editor
 local F = far.Flags
@@ -34,11 +37,9 @@ local F = far.Flags
 --local context = context
 
 local tables = require 'context.utils.useTables'
-local numbers = require 'context.utils.useNumbers'
+--local numbers = require 'context.utils.useNumbers'
 
 local Null = tables.Null
-
-local min2, max2 = numbers.min2, numbers.max2
 
 ----------------------------------------
 --local luaUt = require "Rh_Scripts.Utils.LuaUtils"
@@ -69,13 +70,14 @@ local MacroKeys = { -- Макро-ключи:
   "left", "right", "up", "down", "home", "end",
   --"return", "indret",
   "enter", "indenter",  -- новая строка
-  -- bsln must be before bs!
-  "del", "bsln", "bs",  -- удаление текста
+  -- bsln/deln must be before bs/del!
+  "bsln", "bs",         -- удаление текста слева
+  "deln", "del",        -- удаление текста справа
   "here", "back",       -- управление закладками
   "stop", "resume",     -- управление перемещением
   "cut", "paste",       -- работа с выделенным блоком
   "nop",                -- нет операции
-  "|",                  -- разделитель параметров
+  --"|",                  -- разделитель параметров
 } ---
 --local MacroValues = "1234567890" -- Цифры повторения макро-ключей
 
@@ -93,18 +95,6 @@ local farSelect = farEdit.Selection
 
 ---------------------------------------- Plain actions
 
--- Удаление символа слева.
-local function BackChar (Info)
-  if Info.CurPos == 0 then
-    return true
-  end
-  if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - 1) then
-    return
-  end
-
-  return farEdit.DelChar(Info.EditorID)
-end -- BackChar
-
 local EditorPlainActions = { -- Функции выполнения простых действий:
   text = function (Info, text)
     return farEdit.InsText(Info.EditorID, text)
@@ -114,35 +104,29 @@ local EditorPlainActions = { -- Функции выполнения просты
   end,
 
   left  = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, max2(Info.CurPos - 1, 0))
+    return farEdit.SetPos(Info.EditorID, -1, max(Info.CurPos - 1, 0))
   end, --- left
   right = function (Info)
     return farEdit.SetPos(Info.EditorID, -1, Info.CurPos + 1)
   end, --- right
   up    = function (Info)
-    return farEdit.SetPos(Info.EditorID, max2(Info.CurLine - 1, 0))
+    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - 1, 0))
   end, --- up
   down  = function (Info)
     return farEdit.SetPos(Info.EditorID, Info.CurLine + 1)
   end, --- down
 
   home    = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, 0)
+    return farEdit.LineHome(Info.EditorID, -1)
   end, --- home
   ["end"] = function (Info)
-    return farEdit.SetEnd(Info.EditorID, -1)
+    return farEdit.LineEnd(Info.EditorID, -1)
   end, --- end
 
-  del  = function (Info)
-    return farEdit.DelChar(Info.EditorID)
-  end, -- del
-  bs   = BackChar, -- bs
-  bsln = function (Info)
-    if not farEdit.SetLeft(Info) then
-      return
-    end
-    return farEdit.DelChar(Info.EditorID)
-  end, --- bsln
+  del  = farEdit.DelPos,
+  deln = farEdit.DelChar,
+  bs   = farEdit.BackPos,
+  bsln = farEdit.BackChar,
 
   enter    = function (Info)
     return farEdit.InsLine(Info.EditorID, false) -- simple enter
@@ -187,31 +171,46 @@ local function NewLine (Info, Count, indent)
   return true
 end -- NewLine
 
--- Удаление текста справа (посимвольно).
-local function DelText (Info, Count)
+-- Удаление текста справа до конца строки (посимвольно).
+local function DelLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
-  for _ = 1, Count do
-    if not farEdit.DelChar(Info.EditorID) then
-      return
-    end
+  local id = Info.EditorID
+  local Len = farEdit.GetLength(id, -1)
+
+  for _ = 1, min(Count, Len - Info.CurPos) do
+    if not farEdit.Del(id) then return end
   end
 
   return true
-end -- DelText
+end -- DelLineText
+
+-- Удаление текста справа с учётом включения строки ниже (посимвольно).
+local function DelCharText (Info, Count)
+  local Info = Info or farEdit.GetInfo()
+  local id = Info.EditorID
+
+  for _ = 1, Count do
+    if not farEdit.Del(id) then return end
+  end
+
+  return true
+end -- DelCharText
 
 -- Удаление текста слева (до начала строки).
-local function BackText (Info, Count)
+local function BackLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
-  local Count = min2(Count, Info.CurPos)
-  if not farEdit.SetPos(Info.EditorID, -1, Info.CurPos - Count) then
+  local id = Info.EditorID
+  local Len = farEdit.GetLength(id, -1)
+  local Count = min(Count, Len, Info.CurPos)
+  if not farEdit.SetPos(id, -1, Info.CurPos - Count) then
     return
   end
 
-  return DelText(Info, Count)
-end -- BackText
+  return DelCharText(Info, Count)
+end -- BackLineText
 
--- Удаление текста слева с учётом перехода строку выше.
-local function BackLine (Info, Count)
+-- Удаление текста слева с учётом перехода на строку выше.
+local function BackCharText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local k = Count
   while k > 0 do
@@ -224,7 +223,7 @@ local function BackLine (Info, Count)
         end
         k = 0
       else
-        if not farEdit.SetEnd(Info.EditorID, Info.CurLine - 1) then
+        if not farEdit.LineEnd(Info.EditorID, Info.CurLine - 1) then
           return
         end
         k = k - CurPos - 1
@@ -232,7 +231,7 @@ local function BackLine (Info, Count)
       end
 
     else--if Info.CurLine > 0 then
-      if not farEdit.SetLeft(Info) then
+      if not farEdit.CharLeft(Info) then
         return
       end
       k = k - 1
@@ -244,7 +243,7 @@ local function BackLine (Info, Count)
   end
   --[[
   for _ = 1, Count do
-    if not farEdit.SetLeft(Info) then
+    if not farEdit.CharLeft(Info) then
       return
     end
 
@@ -252,8 +251,8 @@ local function BackLine (Info, Count)
   end -- for
   --]]
 
-  return DelText(Info, Count)
-end -- BackLine
+  return DelCharText(Info, Count)
+end -- BackCharText
 
 local EditorCycleActions = {
   text = InsText, -- text
@@ -261,7 +260,7 @@ local EditorCycleActions = {
 
   left  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID, -1, max2(Info.CurPos - Count, 0))
+    return farEdit.SetPos(Info.EditorID, -1, max(Info.CurPos - Count, 0))
   end,
   right = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
@@ -269,7 +268,7 @@ local EditorCycleActions = {
   end,
   up    = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID, max2(Info.CurLine - Count, 0))
+    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - Count, 0))
   end,
   down  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
@@ -279,9 +278,10 @@ local EditorCycleActions = {
   home    = EditorPlainActions.home,
   ["end"] = EditorPlainActions["end"],
 
-  del  = DelText,  -- del
-  bs   = BackText, -- bs
-  bsln = BackLine, -- bsln
+  del  = DelLineText,
+  deln = DelCharText,
+  bs   = BackLineText,
+  bsln = BackCharText,
 
   enter    = function (Info, Count)
     return NewLine(Info, Count, false)
@@ -327,14 +327,14 @@ local TEditorMacroActions = {
 
   del  = function (self, ...) return EditorCycleActions.del(...) end, -- del
   bs   = function (self, Info, Count)
-    if not BackText(Info, Count) then return end
+    if not BackLineText(Info, Count) then return end
     if self.MoveStop then
       return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
     return true
   end, --- bs
   bsln = function (self, Info, Count)
-    if not BackLine(Info, Count) then return end
+    if not BackCharText(Info, Count) then return end
     if self.MoveStop then
       return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
@@ -553,14 +553,13 @@ function unit.Execute (Macro) --> (bool)
 end ----
 
 unit.Use = {
-  BackChar = BackChar,
-
   InsText = InsText,
   NewLine = NewLine,
-  DelText = DelText,
 
-  BackText = BackText,
-  BackLine = BackLine,
+  DelLineText = DelLineText,
+  DelCharText = DelCharText,
+  BackLineText = BackLineText,
+  BackCharText = BackCharText,
 } ---
 
 unit.Run = {

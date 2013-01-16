@@ -47,9 +47,10 @@ it must be specified action key (macro-key) after this character.
    · \37home\-/\37end\-   — ¦to begin/end of file line;
   — other actions:
    · \37nop\-  — ¦no action.
-   · \37del\-  — ¦deletes a character (in cursor position),
    · \37bs\-   — ¦deletes a character leftward (of cursor position),
    · \37bsln\- — ¦as \37bs\-, but with backspace to previous line,
+   · \37del\-  — ¦deletes a character rightward (in cursor position),
+   · \37deln\- — ¦as \37del\-, but with delete an end of current line,
    · \37enter\-=\37return\-    — ¦inserts a new line without indent,
    · \37indenter\-=\37indret\- — ¦inserts a new line using indent,
    · \37stop\-/\37resume\- — ¦stops/resumes cursor moving,

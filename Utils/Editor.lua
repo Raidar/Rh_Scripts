@@ -48,18 +48,24 @@ local unit = {
   SetPos    = editor.SetPosition,
   InsText   = editor.InsertText,
   InsLine   = editor.InsertString,
-  DelChar   = editor.DeleteChar,
+
+  Del       = editor.DeleteChar,
 
   UndoRedo  = editor.UndoRedo,
   Redraw    = editor.Redraw,
 
   GetLength = false,
   SetLength = false,
-
-  SetHome   = false,
-  SetEnd    = false,
-  SetLeft   = false,
-  SetRight  = false,
+  -- Move
+  LineHome  = false,
+  LineEnd   = false,
+  CharLeft  = false,
+  CharRight = false,
+  -- Delete
+  DelPos    = false,
+  BackPos   = false,
+  DelChar   = false,
+  BackChar  = false,
 
   -- Selection
   Selection = false,
@@ -90,59 +96,95 @@ function unit.SetLength (id, line, len, fill)
   return unit.SetLine(id, line, s)
 end ---- SetLength
 
+---------------------------------------- -- Move
 -- Set position to end of line.
 -- Установка позиции в конец линии.
-function unit.SetEnd (id, line)
+function unit.LineEnd (id, line)
   if line and line >= 0 then
     if not unit.SetPos(id, line) then return end
   end
-  if not unit.SetPos(id, -1, unit.GetLength(id, -1)) then return end
-
-  return true
-end -- SetEnd
+  return unit.SetPos(id, -1, unit.GetLength(id, -1))
+end -- LineEnd
 
 -- Set position to home of line.
 -- Установка позиции в начало линии.
-function unit.SetHome (id, line)
+function unit.LineHome (id, line)
   if line and line >= 0 then
     if not unit.SetPos(id, line) then return end
   end
-  if not unit.SetPos(id, -1, 0) then return end
-
-  return true
-end -- SetHome
+  return unit.SetPos(id, -1, 0)
+end -- LineHome
 
 -- Set position to left of current one within file.
 -- Установка позиции слева от текущей внутри файла.
-function unit.SetLeft (Info)
+function unit.CharLeft (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
-  if Info.CurPos > 0 then
-    if not unit.SetPos(id, -1, Info.CurPos - 1) then return end
-  elseif Info.CurLine > 0 then
-    if not unit.SetEnd(id, Info.CurLine - 1) then return end
-  else
-    return
-  end
 
-  return true
-end -- SetLeft
+  if Info.CurPos > 0 then
+    return unit.SetPos(id, -1, Info.CurPos - 1)
+  elseif Info.CurLine > 0 then
+    return unit.LineEnd(id, Info.CurLine - 1)
+  end
+end -- CharLeft
 
 -- Set position to right of current one within file.
 -- Установка позиции справа от текущей внутри файла.
-function unit.SetRight (Info)
+function unit.CharRight (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
+
   if Info.CurPos < unit.GetLength(id, -1) then
-    if not unit.SetPos(id, -1, Info.CurPos + 1) then return end
+    return unit.SetPos(id, -1, Info.CurPos + 1)
   elseif Info.CurLine < Info.TotalLines - 1 then
-    if not unit.SetHome(Info.EditorID, Info.CurLine + 1) then return end
-  else
+    return unit.LineHome(Info.EditorID, Info.CurLine + 1)
+  end
+end -- CharRight
+
+---------------------------------------- -- Delete
+-- Delete character rightward.
+-- Удаление символа справа.
+function unit.DelPos (Info)
+  local Info = Info or unit.GetInfo()
+  local id = Info.EditorID
+
+  if Info.CurPos >= unit.GetLength(id, -1) then return true end
+
+  return unit.Del(id)
+end -- DelPos
+
+-- Delete character leftward.
+-- Удаление символа слева.
+function unit.BackPos (Info)
+  local Info = Info or unit.GetInfo()
+  local id = Info.EditorID
+
+  if Info.CurPos == 0 then return true end
+
+  if not unit.SetPos(id, -1, Info.CurPos - 1) then
     return
   end
 
-  return true
-end -- SetRight
+  return unit.Del(id)
+end -- BackPos
+
+-- Delete character rightward within file.
+-- Удаление символа справа внутри файла.
+function unit.DelChar (Info)
+  local Info = Info or unit.GetInfo()
+
+  return unit.Del(Info.EditorID)
+end -- DelChar
+
+-- Delete character leftward within file.
+-- Удаление символа слева внутри файла.
+function unit.BackChar (Info)
+  local Info = Info or unit.GetInfo()
+
+  if not unit.CharLeft(Info) then return end
+
+  return unit.Del(Info.EditorID)
+end -- BackChar
 
 ---------------------------------------- Selection
 local BlockTypes = farUt.BlockTypes
