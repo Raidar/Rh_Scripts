@@ -75,11 +75,11 @@ end ----
 -- Set length of line.
 -- Установка длины линии.
 function unit.SetLength (id, line, len, fill)
-  if type(len) ~= 'number' or len < 0 then exit end
+  if type(len) ~= 'number' or len < 0 then return end
 
   local s = unit.GetLine(id, line, 2) or ""
   local l = s:len()
-  if l = len then return true end
+  if l == len then return true end
 
   if l < len then
     s = s..(fill or " "):rep(len - l)
