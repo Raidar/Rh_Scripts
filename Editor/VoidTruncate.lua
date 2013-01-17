@@ -213,7 +213,7 @@ function ProcessEditorInput (rec) --> (bool)
       TruncateFile(1)
       local Info = EditorGetInfo()
       --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
-      EditorSetPos(nil, { CurLine = Info.TotalLines - 1 })
+      EditorSetPos(nil, Info.TotalLines - 1)
       TruncateLine()
       if band(CState, SHIFT) ~= 0 then -- Select
         EditorSelect(nil,
