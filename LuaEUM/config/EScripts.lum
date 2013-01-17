@@ -41,180 +41,10 @@ end
 ---------------------------------------- local
 local farSelect = farEdit.Selection
 
--- Quote text considering selected block.
--- Закавычивание текста с учётом выделенного блока.
---[[
-  -- @params:
-  left  (string) - left "quote".
-  right (string) - right "quote".
---]]
-local function QuoteSelection (left, right) --> (macro)
-  local Info = farEdit.GetInfo()
-  local SelType = farSelect.Types[SelInfo.BlockType]
-
-  if SelType == "none" then -- Нет блока:
-    if not farEdit.InsText(Info.EditorID, left) then return end
-    local Info = farEdit.GetInfo()
-    if not farEdit.InsText(Info.EditorID, right) then return end
-    if not farEdit.SetPos(Info.EditorID, Info) then return end
-
-    return true
-  end
-
-  local SelInfo = farSelect.Get()
-  if SelInfo == nil then return end -- Нет блока?
-
-  local block = farSelect.Cut(Info, SelType)
-  if not block then return end
-
-  if     SelType == "stream" then
-    if type(block) == 'string' then
-      block = left..block..right
-    elseif type(block) == 'table' then
-      block[1] = left..block[1]
-      block[#block] = block[#block]..right
-    end
-
-  elseif SelType == "column" then
-    if type(block) == 'string' then
-      block = left..block..right
-    elseif type(block) == 'table' then
-      for k = 1, #block do
-        block[k] = left..block[k]..right
-      end
-    end
-
-  end
-  if not farSelect.Paste(Info, block, SelType) then return end
-
-  return true
-end -- QuoteSelection
-
--- Unquote text considering selected block.
--- Раскавычивание текста с учётом выделенного блока.
---[[
-  -- @params:
-  left  (s|n|nil) - left "quote" or its length: @default = '"'.
-  right (s|n|nil) - right "quote" or its length: @default = '"'.
---]]
-local function UnquoteSelection (left, right) --> (macro)
-  local SelInfo = farSelect.Get()
-  if SelInfo == nil then return end -- Нет блока?
-
-  -- Define params:
-  local tp = type(left)
-  local left, l_len = left or '"'
-  if tp == 'string' then
-    l_len = left:len()
-  elseif tp == 'number' then
-    left, l_len = false, left
-  end
-  tp = type(right)
-  local right, r_len = right or '"'
-  if tp == 'string' then
-    r_len = right:len()
-  elseif tp == 'number' then
-    right, r_len = false, right
-  end
-
-  local SelType = farSelect.Types[SelInfo.BlockType]
-  local block = farSelect.Cut(farEdit.GetInfo(), SelType)
-  if not block then return end
-
-  --logShow({ left, right, block }, SelType)
-
-  if     SelType == "stream" then
-    if type(block) == 'string' then
-      local s = block
-      local len = s:len()
-
-      if len <= l_len + r_len then
-        if left and s:sub(1, l_len) == left then
-          s = s:sub(l_len + 1, -1)
-        end
-        if right and s:sub(-r_len, -1) == right then
-          s = s:sub(1, -r_len - 1)
-        end
-        if not (left or right) then
-          s = ""
-        end
-
-      else
-        if not (left or right) or
-           (left  and s:sub(1, l_len) == left and
-            right and s:sub(-r_len, -1) == right) then
-          s = s:sub(l_len + 1, -r_len - 1)
-        end
-      end
-
-      block = s
-
-    elseif type(block) == 'table' then
-      local s = block[1]
-      if not left or s:sub(1, l_len) == left then
-        block[1] = s:sub(l_len + 1, -1)
-      end
-      local k = #block
-      local s = block[k]
-      if s == "" then
-        k = k - 1
-        s = block[k]
-      end
-      if not right or s:sub(-r_len, -1) == right then
-        block[k] = s:sub(1, -r_len - 1)
-      end
-    end
-
-  elseif SelType == "column" then
-    if type(block) == 'string' then
-      local s = block
-      local len = s:len()
-
-      if len <= l_len + r_len then
-        if left and s:sub(1, l_len) == left then
-          s = s:sub(l_len + 1, -1)
-        end
-        if right and s:sub(-r_len, -1) == right then
-          s = s:sub(1, -r_len -1)
-        end
-        if not (left or right) then
-          s = ""
-        end
-
-      else
-        if not (left or right) or
-           (left  and s:sub(1, l_len) == left and
-            right and s:sub(-r_len, -1) == right) then
-          s = s:sub(l_len + 1, -r_len - 1)
-        end
-      end
-
-      block = s
-
-    elseif type(block) == 'table' then
-      for k = 1, #block do
-        local s = block[k]
-        if not (left or right) or
-           (left  and s:sub(1, l_len) == left and
-            right and s:sub(-r_len, -1) == right) then
-          block[k] = s:sub(l_len + 1, -r_len - 1)
-        end
-      end
-    end
-
-  end -- if
-
-  if not farSelect.Paste(farEdit.GetInfo(), block, SelType) then
-    return
-  end
-
-  return true
-end -- UnquoteSelection
-
 local unpack = unpack
 
 local function UnquoteText (Args, Cfg)
-  return UnquoteSelection(unpack(Args))
+  return farSelect.UnquoteLines(unpack(Args))
 end ----
 
 ---------------------------------------- Separator
@@ -252,16 +82,17 @@ local mTruncate = {
 ---------------------------------------- Unpair
 local mPairUnpair = {
   text = L.LuaPairUnpair,
-  Area = "editor;selected",
+  Area = "editor",
+  --Area = "editor;selected",
 
   Items = {
     { text = L.LuaPairUnSingle,
      Function = UnquoteText,
-     Arguments = { 1, 1 },
+     Arguments = { 1, 1, true },
     },
     { text = L.LuaPairUnDouble,
      Function = UnquoteText,
-     Arguments = { 2, 2 },
+     Arguments = { 2, 2, true },
     },
   } ---
 } --- mPairUnpair

@@ -301,18 +301,14 @@ local TEditorMacroActions = {
       return
     end
     if self.MoveStop then
-      return farEdit.SetPos(Info.EditorID, {
-             CurLine = Info.CurLine, CurPos = Info.CurPos,
-             TopScreenLine = Info.TopScreenLine, LeftPos = Info.LeftPos })
+      return farEdit.Goto(Info)
     end
     return true
   end, --- text
   line = function (self, Info, Count, indent) -- Вставка строки
     if not NewLine(Info, Count, indent) then return end
     if self.MoveStop then
-      return farEdit.SetPos(Info.EditorID, {
-             CurLine = Info.CurLine, CurPos = Info.CurPos,
-             TopScreenLine = Info.TopScreenLine, LeftPos = Info.LeftPos })
+      return farEdit.Goto(Info)
     end
     return true
   end, --- line
@@ -325,7 +321,8 @@ local TEditorMacroActions = {
   home    = function (self, ...) return EditorPlainActions.home(...) end,
   ["end"] = function (self, ...) return EditorPlainActions["end"](...) end,
 
-  del  = function (self, ...) return EditorCycleActions.del(...) end, -- del
+  del  = function (self, ...) return EditorCycleActions.del(...) end,
+  deln = function (self, ...) return EditorCycleActions.deln(...) end,
   bs   = function (self, Info, Count)
     if not BackLineText(Info, Count) then return end
     if self.MoveStop then
@@ -348,10 +345,7 @@ local TEditorMacroActions = {
   back = function (self, Info, Index)
     if not self.Save[Index] then return end
     local Here = self.Save[Index]; self.Save[Index] = nil
-    return farEdit.SetPos(Info.EditorID, {
-           CurLine  = Here.CurLine,  CurPos = Here.CurPos,
-           Overtype = Here.Overtype, --CurTabPos = Here.CurTabPos,
-           TopScreenLine = Here.TopScreenLine, LeftPos = Here.LeftPos })
+    return farEdit.Goto(Here)
   end,
 
   stop   = function (self, Info, Count)

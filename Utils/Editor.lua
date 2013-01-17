@@ -45,6 +45,7 @@ local unit = {
   GetInfo   = editor.GetInfo,
   GetLine   = editor.GetString,
   SetLine   = editor.SetString,
+  GetPos    = editor.GetInfo, -- !!
   SetPos    = editor.SetPosition,
   InsText   = editor.InsertText,
   InsLine   = editor.InsertString,
@@ -57,6 +58,7 @@ local unit = {
   GetLength = false,
   SetLength = false,
   -- Move
+  Goto      = false,
   LineHome  = false,
   LineEnd   = false,
   CharLeft  = false,
@@ -97,14 +99,13 @@ function unit.SetLength (id, line, len, fill)
 end ---- SetLength
 
 ---------------------------------------- -- Move
--- Set position to end of line.
--- Установка позиции в конец линии.
-function unit.LineEnd (id, line)
-  if line and line >= 0 then
-    if not unit.SetPos(id, line) then return end
-  end
-  return unit.SetPos(id, -1, unit.GetLength(id, -1))
-end -- LineEnd
+-- Go to position by Info.
+-- Переход на позицию из Info.
+function unit.Goto (Info)
+  if type(Info) ~= 'table' then return end
+  if Info.CurPos > 0 then Info.CurTabPos = -1 end
+  return unit.SetPos(Info.EditorID, Info)
+end -- Goto
 
 -- Set position to home of line.
 -- Установка позиции в начало линии.
@@ -114,6 +115,15 @@ function unit.LineHome (id, line)
   end
   return unit.SetPos(id, -1, 0)
 end -- LineHome
+
+-- Set position to end of line.
+-- Установка позиции в конец линии.
+function unit.LineEnd (id, line)
+  if line and line >= 0 then
+    if not unit.SetPos(id, line) then return end
+  end
+  return unit.SetPos(id, -1, unit.GetLength(id, -1))
+end -- LineEnd
 
 -- Set position to left of current one within file.
 -- Установка позиции слева от текущей внутри файла.
@@ -216,7 +226,7 @@ local Selection = {
 } ---
 unit.Selection = Selection
 
----------------------------------------- -- Process
+---------------------------------------- -- Basic
 do
   local tconcat = table.concat
 
@@ -302,7 +312,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     end
   end
 
-  if ToPos or ToPos == nil then unit.SetPos(id, Info) end
+  if ToPos or ToPos == nil then unit.Goto(Info) end
 
   --logShow(tconcat(t, "\r"), "Selection.CopyStream")
 
@@ -356,7 +366,7 @@ function Selection.CopyColumn (Info) --> (nil|string|table)
               spaces[SelInfo.EndPos - s:len() + 1]
   end
 
-  if ToPos or ToPos == nil then unit.SetPos(id, Info) end
+  if ToPos or ToPos == nil then unit.Goto(Info) end
 
   --logShow(tconcat(t, "\r"), "Selection.CopyColumn")
 
@@ -486,7 +496,7 @@ function Selection.PasteColumn (Info, block) --> (bool)
 
   if type(block) == 'string' then
     if not unit.InsText(id, block) then return end
-    return unit.SetPos(id, Info)
+    return unit.Goto(Info)
   end
 
   local CurLine, CurPos = Info.CurLine, Info.CurPos
@@ -498,7 +508,7 @@ function Selection.PasteColumn (Info, block) --> (bool)
   end
 
   --logShow(block, "Selection.PasteColumn")
-  return unit.SetPos(id, Info)
+  return unit.Goto(Info)
 end ---- PasteColumn
 
 -- Paste block.
@@ -525,6 +535,203 @@ function Selection.Paste (Info, block, Type) --> (bool)
 end ---- Paste
 
 end -- do
+---------------------------------------- -- Quote
+-- Quote selected text lines.
+-- Закавычивание выделенных линий текста.
+--[[
+  -- @params:
+  left  (string) - left "quote".
+  right (string) - right "quote".
+  force   (bool) - quote even if there is no selection.
+--]]
+function Selection.QuoteLines (left, right, force) --> (macro)
+  -- Define params:
+  local left  = left or '"'
+  local right = right or '"'
+
+  local Info = unit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+
+  if force and SelType == "none" then -- Нет блока:
+    if not unit.InsText(Info.EditorID, left) then return end
+    local Info = unit.GetInfo()
+    if not unit.InsText(Info.EditorID, right) then return end
+
+    return unit.Goto(Info)
+  end
+
+  local SelInfo = Selection.Get()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = Selection.Cut(Info, SelType)
+  if not block then return end
+
+  if     SelType == "stream" then
+    if type(block) == 'string' then
+      block = left..block..right
+    elseif type(block) == 'table' then
+      block[1] = left..block[1]
+      block[#block] = block[#block]..right
+    end
+
+  elseif SelType == "column" then
+    if type(block) == 'string' then
+      block = left..block..right
+    elseif type(block) == 'table' then
+      for k = 1, #block do
+        block[k] = left..block[k]..right
+      end
+    end
+
+  end
+  if not Selection.Paste(Info, block, SelType) then return end
+
+  return true
+end -- QuoteLines
+
+-- Unquote selected text lines.
+-- Раскавычивание выделенных линий текста.
+--[[
+  -- @params:
+  left  (s|n|nil) - left "quote" or its length: @default = '"'.
+  right (s|n|nil) - right "quote" or its length: @default = '"'.
+  force    (bool) - unquote even if there is no selection.
+--]]
+function Selection.UnquoteLines (left, right, force) --> (macro)
+  -- Define params:
+  local tp = type(left)
+  local left, l_len = left or '"'
+  if tp == 'string' then
+    l_len = left:len()
+  elseif tp == 'number' then
+    left, l_len = false, left
+  end
+  tp = type(right)
+  local right, r_len = right or '"'
+  if tp == 'string' then
+    r_len = right:len()
+  elseif tp == 'number' then
+    right, r_len = false, right
+  end
+
+  local Info = unit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+
+  if force and SelType == "none" then -- Нет блока:
+    local id, Pos = Info.EditorID, Info.CurPos
+    local s = unit.GetLine(id, -1, 2) or ""
+    if Pos >= l_len then
+      if not left or s:sub(Pos - l_len + 1, Pos) == left then
+        s = (s:sub(1, Pos - l_len) or "")..(s:sub(Pos + 1, -1) or "")
+        Pos = Pos - l_len
+      end
+    end
+    local len = s:len()
+    if Pos + r_len <= len then
+      if not right or s:sub(Pos + 1, Pos + r_len) == right then
+        s = (s:sub(1, Pos) or "")..(s:sub(Pos + r_len + 1, -1) or "")
+      end
+    end
+    if not unit.SetLine(id, -1, s) then return end
+
+    return unit.SetPos(id, -1, Pos)
+  end
+
+  local SelInfo = Selection.Get()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = Selection.Cut(unit.GetInfo(), SelType)
+  if not block then return end
+
+  --logShow({ left, right, block }, SelType)
+
+  if     SelType == "stream" then
+    if type(block) == 'string' then
+      local s = block
+      local len = s:len()
+
+      if len <= l_len + r_len then
+        if left and s:sub(1, l_len) == left then
+          s = s:sub(l_len + 1, -1)
+        end
+        if right and s:sub(-r_len, -1) == right then
+          s = s:sub(1, -r_len - 1)
+        end
+        if not (left or right) then
+          s = ""
+        end
+
+      else
+        if not (left or right) or
+           (left  and s:sub(1, l_len) == left and
+            right and s:sub(-r_len, -1) == right) then
+          s = s:sub(l_len + 1, -r_len - 1)
+        end
+      end
+
+      block = s
+
+    elseif type(block) == 'table' then
+      local s = block[1]
+      if not left or s:sub(1, l_len) == left then
+        block[1] = s:sub(l_len + 1, -1)
+      end
+      local k = #block
+      local s = block[k]
+      if s == "" then
+        k = k - 1
+        s = block[k]
+      end
+      if not right or s:sub(-r_len, -1) == right then
+        block[k] = s:sub(1, -r_len - 1)
+      end
+    end
+
+  elseif SelType == "column" then
+    if type(block) == 'string' then
+      local s = block
+      local len = s:len()
+
+      if len <= l_len + r_len then
+        if left and s:sub(1, l_len) == left then
+          s = s:sub(l_len + 1, -1)
+        end
+        if right and s:sub(-r_len, -1) == right then
+          s = s:sub(1, -r_len -1)
+        end
+        if not (left or right) then
+          s = ""
+        end
+
+      else
+        if not (left or right) or
+           (left  and s:sub(1, l_len) == left and
+            right and s:sub(-r_len, -1) == right) then
+          s = s:sub(l_len + 1, -r_len - 1)
+        end
+      end
+
+      block = s
+
+    elseif type(block) == 'table' then
+      for k = 1, #block do
+        local s = block[k]
+        if not (left or right) or
+           (left  and s:sub(1, l_len) == left and
+            right and s:sub(-r_len, -1) == right) then
+          block[k] = s:sub(l_len + 1, -r_len - 1)
+        end
+      end
+    end
+
+  end -- if
+
+  if not Selection.Paste(unit.GetInfo(), block, SelType) then
+    return
+  end
+
+  return true
+end -- UnquoteLines
 ---------------------------------------- -- Iterator
 do
   local EditorGetInfo = unit.GetInfo
