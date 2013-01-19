@@ -33,8 +33,8 @@ local Data = {
       LuaEnquoteSpecials    = "Specials",
         LuaQuoteReplace     = " (replacing)",
     LuaDequote          = "&Dequote text",
-      LuaDequoteSingle      = "Dequote any &single",
-      LuaDequoteDouble      = "Dequote any &double",
+      LuaDequoteSingle      = "Any &single",
+      LuaDequoteDouble      = "Any &double",
 
   ----------------------------------------
 } --- Data
