@@ -32,6 +32,7 @@ end
 local line_len = 78
 local line_hymin = '{'..('-'):rep(line_len)..'}'
 local line_equal = '{'..('='):rep(line_len)..'}'
+local line_stars = '{'..('*'):rep(line_len)..'}'
 
 ---------------------------------------- ----
 local mInsert = {
@@ -54,17 +55,17 @@ local mInsert = {
     { text = " Alt+<a> ", Label = true },
     -- - -- ???
     { text = "-", Label = true },
-    { text = "- (sep)",
+    { text = "{----}",
       Plain = line_hymin,
       AccelStr = "-" },
-    { text = "= (sep)",
+    { text = "{====}",
       Plain = line_equal,
       AccelStr = "S+-" },
     { text = "{ block }",
       Macro = "{  }@Left@2",
       AccelStr = "C+-" },
-    { text = "{= class =}",
-      Macro = "{=  =}@Left@3",
+    { text = "{****}",
+      Plain = line_stars,
       AccelStr = "A+-" },
     -- A -- ???
     { text = "A", Label = true },
