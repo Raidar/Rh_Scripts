@@ -26,7 +26,16 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
+---------------------------------------- Lines
+--local line_class = ''
+
+local line_len = 78
+local line_hymin = '//'..('-'):rep(line_len)
+local line_equal = '//'..('='):rep(line_len)
+local line_stars = '/'..('*'):rep(line_len)..'/'
+
 ---------------------------------------- ----
+-- TODO: Add #ifdef 0 ... #endif
 local mInsert = {
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
@@ -45,6 +54,20 @@ local mInsert = {
     { text = "Shift+<a>", Label = true },
     { text = " Ctrl+<a>", Label = true },
     { text = " Alt+<a> ", Label = true },
+    -- - -- ???
+    { text = "-", Label = true },
+    { text = "//----",
+      Plain = line_hymin,
+      AccelStr = "-" },
+    { text = "//====",
+      Plain = line_equal,
+      AccelStr = "S+-" },
+    { text = "/* block */",
+      Macro = "/*  */@Left@3",
+      AccelStr = "C+-" },
+    { text = "/******/",
+      Plain = line_stars,
+      AccelStr = "A+-" },
     -- B -- block / do-while / break
     { text = "B", Label = true },
     { text = "block",
