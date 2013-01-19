@@ -124,6 +124,15 @@ local function ParamTag (tag, param, rest, block) --> (macro)
                 tag, param, rest or "", tag)
 end -- ParamTag
 
+---------------------------------------- Lines
+local format = string.format
+
+local line_len = 78
+local note_fmt = "<!--%s-->"
+local line_hymin = format(note_fmt, ('-'):rep(line_len - 5))
+local line_equal = format(note_fmt, ('='):rep(line_len - 5))
+local line_stars = format(note_fmt, ('*'):rep(line_len - 5))
+
 ---------------------------------------- ----
 local mInsert = {
   text  = L.TplInsItem,
@@ -143,6 +152,20 @@ local mInsert = {
     { text = "Shift+<a>", Label = true },
     { text = " Ctrl+<a>", Label = true },
     { text = " Alt+<a> ", Label = true },
+    -- - -- ???
+    { text = "-", Label = true },
+    { text = "<!----->",
+      Plain = line_hymin,
+      AccelStr = "-" },
+    { text = "<!--=-->",
+      Plain = line_equal,
+      AccelStr = "S+-" },
+    { text = "<!-- -->",
+      Macro = "<!--  -->@Left@4",
+      AccelStr = "C+-" },
+    { text = "<!--*-->",
+      Plain = line_stars,
+      AccelStr = "A+-" },
     -- A -- anchor
     { text = "A", Label = true },
     { text = "Anchor href",

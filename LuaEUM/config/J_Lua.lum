@@ -26,6 +26,15 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
+---------------------------------------- Lines
+local format = string.format
+
+local line_len = 78
+local note_fmt = "--%s--"
+local line_hymin = format(note_fmt, ('-'):rep(line_len - 2))
+local line_equal = format(note_fmt, ('='):rep(line_len - 2))
+local line_stars = format(note_fmt, ('*'):rep(line_len - 2))
+
 ---------------------------------------- ----
 local mInsert = {
   text  = L.TplInsItem,
@@ -45,6 +54,20 @@ local mInsert = {
     { text = "Shift+<a>", Label = true },
     { text = " Ctrl+<a>", Label = true },
     { text = " Alt+<a> ", Label = true },
+    -- - -- ???
+    { text = "-", Label = true },
+    { text = "------",
+      Plain = line_hymin,
+      AccelStr = "-" },
+    { text = "--==--",
+      Plain = line_equal,
+      AccelStr = "S+-" },
+    { text = "--[[ block ]]--",
+      Macro = "--[[  ]]--@Left@5",
+      AccelStr = "C+-" },
+    { text = "--**--",
+      Plain = line_stars,
+      AccelStr = "A+-" },
     -- A -- raw
     { text = "A", Label = true },
     { text = "rawget",

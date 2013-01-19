@@ -27,12 +27,15 @@ if L == nil then
 end
 
 ---------------------------------------- Lines
---local line_class = ''
+local format = string.format
 
 local line_len = 78
-local line_hymin = '{'..('-'):rep(line_len)..'}'
-local line_equal = '{'..('='):rep(line_len)..'}'
-local line_stars = '{'..('*'):rep(line_len)..'}'
+local note_fmt = "{%s}"
+local spec_fmt = "(%s)"
+local line_hymin = format(note_fmt, ('-'):rep(line_len))
+local line_equal = format(note_fmt, ('='):rep(line_len))
+--local line_stars = format(note_fmt, ('*'):rep(line_len))
+local line_stars = format(spec_fmt, ('*'):rep(line_len))
 
 ---------------------------------------- ----
 local mInsert = {
@@ -64,7 +67,7 @@ local mInsert = {
     { text = "{ block }",
       Macro = "{  }@Left@2",
       AccelStr = "C+-" },
-    { text = "{****}",
+    { text = "(****)",
       Plain = line_stars,
       AccelStr = "A+-" },
     -- A -- ???
