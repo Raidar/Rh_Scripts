@@ -15,6 +15,7 @@ local Data = {
   ----------------------------------------
   -- Lua scripts
   LuaScripts        = "&S - Lua scripts",
+  LuaScripting      = "Lua-scripts samples",
 
   LuaTruncateVoid   = "&Truncate void",
     LuaTruncCurLine     = "&Current line",
@@ -22,10 +23,18 @@ local Data = {
     LuaTruncEndLines    = "&Empty lines at end",
     LuaTruncFileText    = "File end and &text",
 
-  LuaPairItems      = "&P - Paired items",
-    LuaPairUnpair       = "&U - Unpair the block",
-      LuaPairUnSingle       = "&S - Unpair single",
-      LuaPairUnDouble       = "&D - Unpair double",
+  LuaQuoteText      = "&Quotes/brackets",
+    LuaEnquote          = "&Quote text",
+      LuaEnquoteQuotes      = "Quotes",
+      LuaEnquoteBrackets    = "Brackets",
+      LuaEnquoteOthers      = "Others",
+      LuaEnquoteComments    = "Comments",
+      LuaEnquoteMarkers     = "Markers",
+      LuaEnquoteSpecials    = "Specials",
+        LuaQuoteReplace     = " (replacing)",
+    LuaDequote          = "&Dequote text",
+      LuaDequoteSingle      = "Dequote any &single",
+      LuaDequoteDouble      = "Dequote any &double",
 
   ----------------------------------------
 } --- Data

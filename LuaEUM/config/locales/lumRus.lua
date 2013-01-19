@@ -16,6 +16,7 @@ local Data = {
   ----------------------------------------
   -- Lua scripts
   LuaScripts        = "&S - Lua-скрипты",
+  LuaScripting      = "Примеры Lua-скриптов",
 
   LuaTruncateVoid   = "&T - Усечение пустоты",
     LuaTruncCurLine     = "&C - Текущая строка",
@@ -23,10 +24,18 @@ local Data = {
     LuaTruncEndLines    = "&E - Пустой конец файла",
     LuaTruncFileText    = "&T - Текст и конец файла",
 
-  LuaPairItems      = "&P - Парные элементы",
-    LuaPairUnpair       = "&U - Снятие пары с блока",
-      LuaPairUnSingle       = "&S - Обычная пара",
-      LuaPairUnDouble       = "&D - Двойная пара",
+  LuaQuoteText      = "&Q - Кавычки/скобки",
+    LuaEnquote          = "&Q - Закавычивание",
+      LuaEnquoteQuotes      = "Кавычки",
+      LuaEnquoteBrackets    = "Скобки",
+      LuaEnquoteOthers      = "Другие",
+      LuaEnquoteComments    = "Комментарии",
+      LuaEnquoteMarkers     = "Маркеры",
+      LuaEnquoteSpecials    = "Специальные",
+        LuaQuoteReplace     = " (замена)",
+    LuaDequote          = "&D - Раскавычивание",
+      LuaDequoteSingle      = "&S - Любое одинарное",
+      LuaDequoteDouble      = "&D - Любое двойное",
 
   ----------------------------------------
 } --- Data

@@ -43,9 +43,39 @@ local farSelect = farEdit.Selection
 
 local unpack = unpack
 
-local function UnquoteText (Args, Cfg)
-  return farSelect.UnquoteLines(unpack(Args))
+local function EnquoteText (Args, Cfg)
+  return farSelect.Enquote(unpack(Args))
 end ----
+
+local function DequoteText (Args, Cfg)
+  return farSelect.Dequote(unpack(Args))
+end ----
+
+local farBlock = farEdit.Block
+
+local function RequoteText (Args, Cfg)
+  local Info = Info or farEdit.GetInfo()
+  local SelType = farSelect.Types[Info.BlockType]
+
+  if SelType == "none" then -- Нет блока
+    --if not farSelect.Dequote(unpack(Args.dequote)) then return end
+    return farSelect.Enquote(unpack(Args.enquote))
+  end
+
+  local SelInfo = farSelect.Get()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = farSelect.Cut(Info, SelType)
+  if not block then return end
+
+  block = farBlock.Dequote(block, unpack(Args.dequote))
+  if not block then return end
+
+  block = farBlock.Enquote(block, unpack(Args.enquote))
+  if not block then return end
+
+  return farSelect.Paste(farEdit.GetInfo(), block, SelType)
+end ---- RequoteText
 
 ---------------------------------------- Separator
 --[[
@@ -53,6 +83,201 @@ local mSep = {
   separator = true,
 } ---
 --]]
+
+---------------------------------------- Enquote
+-- Quotes:
+-- ''           Ctrl'
+-- ""           CtrlShift'
+-- ‹›           Ctrl;           guillemets or angular quote brackets
+-- «»           CtrlShift;      guillemets or angular quote brackets
+
+-- Brackets:
+-- []           Ctrl[           square brackets, closed brackets
+-- {}           CtrlShift[      braces, curly brackets
+-- ()           Ctrl]           parentheses, round brackets, curved brackets
+
+-- Others:
+-- <>           Ctrl,           inequality signs, broken brackets
+-- ⟨⟩           CtrlAlt,        chevrons, pointy brackets, angle brackets
+-- //           Ctrl/           slash brackets
+-- \\           CtrlShift/      backslash brackets
+
+-- Comments:
+-- (**)         CtrlShift]
+-- {  }         CtrlAltShift[
+-- /*  */       CtrlAltShift]
+-- --[[  ]]--
+
+-- Markers:
+-- ``           CtrlAlt`
+-- ~~           CtrlAltShift`
+-- ||           CtrlAltShift1
+-- ¤¤           CtrlAltShift2
+-- ##           CtrlAltShift3
+-- $$           CtrlAltShift4
+-- %%           CtrlAltShift5
+-- ^^           CtrlAltShift6
+-- **           CtrlAltShift8
+
+-- Specials:
+-- "" cleared   CtrlAlt'
+
+local mItems = {}
+do
+  local Separator = { separator = true }
+  local QuoteMarks = {
+    { text = L.LuaEnquoteQuotes,
+      Label = true, },
+    { hot = "'", left = "'", right = "'", },
+    { hot = '"', left = '"', right = '"', },
+    { hot = ";", left = "‹", right = "›", },
+    --{ hot = ";", left = "‹", right = "›", AccelStr = "C+;", },
+    { hot = ":", left = "«", right = "»", },
+    Separator,
+    Separator,
+    Separator,
+    Separator,
+
+    { text = L.LuaEnquoteBrackets,
+      Label = true, },
+    { hot = "[", left = "[", right = "]", },
+    { hot = "{", left = "{", right = "}", },
+    { hot = "(", left = "(", right = ")", },
+    { hot = "|", left = "|", right = "|", },
+    --Separator,
+    --Separator,
+    --Separator,
+    --Separator,
+
+    --{ text = L.LuaEnquoteOthers,
+    --  Label = true, },
+    { hot = "<", left = "<", right = ">", },
+    { hot = ">", left = "⟨", right = "⟩", },
+    { hot = "/", left = "/", right = "/", },
+    { hot ="\\", left ="\\", right ="\\", },
+    --Separator,
+    --Separator,
+    --Separator,
+    --Separator,
+
+    { text = L.LuaEnquoteComments,
+      Label = true, },
+    { hot = "data", pad = "   ", left = "{ ", right = " }", },
+    { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
+    { hot = "c++ ", pad = "  ", left = "/* ", right = " */", },
+    { hot = "html", pad = " ", left = "<!--", right = "-->", },
+    { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
+    --[=[
+    { hot = "d", left = "{ ", right = " }", note = "    (data)", },
+    { hot = "p", left = "(*", right = "*)", note = "    (pascal)", },
+    { hot = "c", left = "/* ", right = " */", note = "  (c/c++)", },
+    { hot = "h", left = "<!--", right = "-->", note = " (x/html)", },
+    { hot = "l", left = "--[[ ", right = " ]]--", note = " (lua)", },
+    --]=]
+    Separator,
+    Separator,
+    Separator,
+
+    { text = L.LuaEnquoteMarkers,
+      Label = true, },
+    { hot = "`", left = "`", right = "`", },
+    { hot = "~", left = "~", right = "~", },
+    { hot = "s", left = "¤", right = "¤", },
+    { hot = "#", left = "#", right = "#", },
+    { hot = "$", left = "$", right = "$", },
+    { hot = "%", left = "%", right = "%", },
+    { hot = "^", left = "^", right = "^", },
+    { hot = "*", left = "*", right = "*", },
+    -- [[
+    { text = L.LuaEnquoteSpecials,
+      Label = true, },
+    { hot = 'q',
+      note = L.LuaQuoteReplace,
+      Function = RequoteText,
+      dequote = { 1, 1, true },
+      enquote = { '"', '"', true },
+    },
+    --]]
+  } ---
+
+  local format = string.format
+  local QuoteTextFmt = "&%s - %s%s|%s%s"
+
+for k = 1, #QuoteMarks do
+  local v = QuoteMarks[k]
+  local t
+  if v.hot then
+    if not v.Function then
+      t = {
+        text = format(QuoteTextFmt, v.hot,
+                      v.pad or "", v.left,
+                      v.right, v.note or ""),
+        Function = EnquoteText,
+        Arguments = { v.left, v.right, true },
+      } ---
+    else
+      local w = v.enquote
+      t = {
+        text = format(QuoteTextFmt, v.hot,
+                      v.pad or "", w[1],
+                      w[2], v.note or ""),
+        Function = v.Function,
+        Arguments = v,
+      } ---
+    end
+  else
+    t = v
+  end
+  mItems[#mItems + 1] = t
+end --
+
+--logShow(mItems, "mEnquote", "", { tnaming = false, astable = true })
+
+end -- do
+
+local mEnquote = {
+  text = L.LuaEnquote,
+  -- [[
+  MenuView = "RectMenu",
+  Props = {
+    RectMenu = {
+      Rows = 9,
+      Order = "V",
+      Fixed = { HeadRows = 1, HeadCols = 0 },
+    }, -- RectMenu
+  }, -- Props
+  CfgData = { UMenu = { TextNamedKeys = false } },
+  --]]
+
+  Items = mItems,
+} --- mEnquote
+
+---------------------------------------- Dequote
+local mDequote = {
+  text = L.LuaDequote,
+
+  Items = {
+    { text = L.LuaDequoteSingle,
+      Function = DequoteText,
+      Arguments = { 1, 1, true },
+    },
+    { text = L.LuaDequoteDouble,
+      Function = DequoteText,
+      Arguments = { 2, 2, true },
+    },
+  } ---
+} --- mDequote
+
+---------------------------------------- Quote
+local mQuote = {
+  text = L.LuaQuoteText,
+  Area = "editor",
+
+  Items = {
+    mEnquote,   -- Закавычивание
+    mDequote    -- Раскавычивание
+  } ---
+} --- mQuote
 
 ---------------------------------------- Truncate
 local Truncate = (require "Rh_Scripts.Editor.VoidTruncate").Truncate
@@ -79,46 +304,21 @@ local mTruncate = {
   } ---
 } --- mTruncate
 
----------------------------------------- Unpair
-local mPairUnpair = {
-  text = L.LuaPairUnpair,
-  Area = "editor",
-  --Area = "editor;selected",
-
-  Items = {
-    { text = L.LuaPairUnSingle,
-     Function = UnquoteText,
-     Arguments = { 1, 1, true },
-    },
-    { text = L.LuaPairUnDouble,
-     Function = UnquoteText,
-     Arguments = { 2, 2, true },
-    },
-  } ---
-} --- mPairUnpair
-
----------------------------------------- Pair
-local mPairItems = { -- Paired Items
-  text = L.LuaPairItems,
-  Items = {
-    mPairUnpair -- Снятие пары
-  } ---
-} --- mPairItems
-
 ---------------------------------------- ----
-local Scripts = {
+local mScripts = {
   text = L.LuaScripts,
+  --Title = L.LuaScripting,
   Items = {
-    mTruncate,  -- Усечение
-    mPairItems, -- Парные элементы
+    mQuote,     -- Кавычки/скобки
+    mTruncate,  -- Усечение текста
   } -- Items
-} --- Scripts
+} --- mScripts
 
 ---------------------------------------- Data
 local Data = {
   Menu = {
     text = L.LuaScripts,
-    Items = { Scripts },
+    Items = { mScripts },
     --Items = { Sep, Scripts },
   },
   --["Editor Scripts"] = Scripts,
