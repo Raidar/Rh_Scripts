@@ -220,8 +220,8 @@ function TMenu:FillProperties (Props, Table) --|> (Props)
 
   -- RectMenu --
   local RM_Props = Props.RectMenu or {}
+  Props.Id = Props.Id or self.Guid
   Props.RectMenu = RM_Props
-  RM_Props.Guid = RM_Props.Guid or self.Guid
   updateFields(RM_Props, tProps.RectMenu)
   --Table.RectMenu = Table.RectMenu or {}
 

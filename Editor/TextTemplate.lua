@@ -150,7 +150,7 @@ unit.DlgTypes = { -- Типы элементов диалога:
 
 ---------------------------------------- Main class
 local TMain = {
-  Guid       = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
+  Guid       = win.Uuid("62023165-b8f6-41d6-b468-94ca21d7b34f"),
   ConfigGuid = win.Uuid("6227affb-5e24-42ce-9ec0-106868fad0ba"),
 }
 local MMain = { __index = TMain }

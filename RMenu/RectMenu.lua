@@ -280,13 +280,13 @@ local MMenu = { __index = TMenu }
 local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
   local self = {
     Menu = { Props = Properties, Items = Items,
-             BreakKeys = BreakKeys, Additions = Additions },
+             BreakKeys = BreakKeys, Additions = Additions, },
     Props = 0, RectMenu = 0, Flags = 0, Area = 0,
-    Titles = { Top = "", Bottom = "", Left = "", Right = "" },
+    Titles = { Top = "", Bottom = "", Left = "", Right = "", },
     List = tables.create(#Items),
     Data = { Count = 0, Shift = 0, checked = false,
              Shape = 0, Order = 0,
-             Rows = 0, Cols = 0, Seps = 0, RowSep = 0, ColSep = 0 },
+             Rows = 0, Cols = 0, Seps = 0, RowSep = 0, ColSep = 0, },
     HKeys = 0, AKeys = 0, BKeys = 0,
     textMax = 0, lineMax = 0, ColWidth = 0, RowHeight = 0,
     FixedRows = 0, FixedCols = 0,
@@ -297,7 +297,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
              Width = 0, Height = 0, Rows = 0, Cols = 0,
              Is_ScrollH = 0, Is_ScrollV = 0,
              BoxScrollH = 0, BoxScrollV = 0, EmbScrollH = 0, EmbScrollV = 0,
-             BoxWidth = 0, BoxHeight = 0 },
+             BoxWidth = 0, BoxHeight = 0, },
     Form = 0, DlgFlags = 0, DlgPos = 0,
   } --- self
 
@@ -342,7 +342,7 @@ end ---- DialogForm
 -- Отображение окна диалога меню.
 function TMenu:Dialog ()
   local Pos = self.DlgPos
-  local hDlg = far.DialogInit(self.RectMenu.Guid or self.Guid,
+  local hDlg = far.DialogInit(self.Props.Id or self.Guid,
                               Pos.x, Pos.y, Pos.xw, Pos.yh,
                               nil, self.Form, self.DlgFlags, self.DlgProc)
   local iDlg = far.DialogRun(hDlg)
@@ -425,6 +425,7 @@ function TMenu:DefinePropInfo () --| Props
   -- Заданные свойства меню:
   local Props = tables.copy(self.Menu.Props, true, pairs, false) -- MAYBE: true?!
   self.Props = Props -- Свойства
+
   self.RectMenu = Props.RectMenu or {}
   local RM = self.RectMenu
 

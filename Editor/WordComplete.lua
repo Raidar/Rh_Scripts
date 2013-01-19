@@ -1003,8 +1003,9 @@ function TMain:MakePopupMenu () --> (table)
   end --
 
   -- Задание параметров меню RectMenu.
-  local RM_Props = self.Props.RectMenu
-  RM_Props.Guid = RM_Props.Guid or self.PopupGuid
+  local Props = self.Props
+  Props.Id = Props.Id or self.PopupGuid
+  local RM_Props = Props.RectMenu
   --logShow(RM_Props, "RectMenu Props")
   if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
   -- Расчёт позиции и размера окна:

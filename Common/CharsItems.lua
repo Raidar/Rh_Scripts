@@ -407,10 +407,10 @@ function unit.CharsMenu (MenuConfig, Props, Data, Keys) --> (table)
   local Fixed = MenuConfig.Fixed or DefFixedBoth
 
   local Properties = {
+    Id = Guid,
     Bottom = MenuConfig.Bottom,
 
     RectMenu = {
-      Guid = Guid,
       Cols = (Props.Size or length(Props.Order)) +
              (Fixed == DefFixedBoth and 1 or 0),
       MenuAlign = DefMenuAlign,

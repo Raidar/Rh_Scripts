@@ -234,6 +234,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 --[[ 1. Конфигурирование меню ]]
   local Props = tables.copy(Properties, true, pairs, false) -- true
   --local Props = { __index = Properties }; setmetatable(Props, Props)
+  Props.Id = Props.Id or TMenu.Guid
 
   -- Управление флагами.
   Props.Flags = menUt.HighlightOff(Props.Flags)
@@ -372,7 +373,6 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   -- Назначение обработчика:
   Props.RectMenu = Props.RectMenu or {}
   local RM_Props = Props.RectMenu
-  RM_Props.Guid = RM_Props.Guid or TMenu.Guid
   RM_Props.OnKeyPress = KeyPress
 
   -- Предварительный отбор:
