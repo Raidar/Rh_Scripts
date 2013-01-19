@@ -231,10 +231,16 @@ function Block.Enquote (block, left, right) --> (block)
     block = left..block..right
 
   elseif SelType == "stream" then
-    block[1] = left..block[1]
     local k = #block
     local s = block[k]
-    if s == "" and not block.Last then
+    if block.FromStart and
+       s == "" and not block.BeyondEnd then
+      left = left.."\r"
+    end
+
+    block[1] = left..block[1]
+
+    if s == "" and block.BeyondEnd then
       k = k - 1
       s = block[k]
     end
@@ -424,23 +430,32 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     --logShow(LineInfo, "LineInfo")
     local s = LineInfo.StringText
     if s == nil then return end
+    local len = s:len()
+    local go, pos = LineInfo.SelStart, LineInfo.SelEnd
 
-    if LineInfo.SelEnd > 0 then
-      return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)
+    if pos > 0 and pos <= len then
+      return s:sub(go + 1, pos)
     end
 
     return {
       Type = "stream",
-      s:sub(LineInfo.SelStart + 1, -1), -- line
+      FromStart = (go == 0),
+      BeyondEnd = (pos > 0),
+
+      s:sub(go + 1, -1)..spaces[pos - len], -- line
       "" -- with last EOL
     } ----
   end
 
   -- Несколько выделенных cтрок
   local s = unit.GetLine(id, first, 2) or ""
+  local go = SelInfo.StartPos
   local t = {
     Type = "stream",
-    s:sub(SelInfo.StartPos + 1, -1), -- first
+    FromStart = (go == 0),
+    BeyondEnd = false,
+
+    s:sub(go + 1, -1), -- first
   } ---
 
   for line = first + 1, last - 1 do
@@ -451,16 +466,14 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   local s = LineInfo.StringText
   if s ~= nil then
     local len = s:len()
-    if LineInfo.SelEnd < 0 then
-    --if LineInfo.SelEnd < 0 or LineInfo.SelEnd > s:len() then
-      t[#t+1] = s--:sub(1, -1) -- last
-      t[#t+1] = "" -- with last EOL
-      t.Last = true
-    elseif LineInfo.SelEnd > len then
-      t[#t+1] = s..spaces[LineInfo.SelEnd - len] -- last
-      t[#t+1] = "" -- with last EOL
+    local pos = LineInfo.SelEnd
+
+    if pos > 0 and pos <= len then
+      t[#t+1] = s:sub(1, pos) -- last
     else
-      t[#t+1] = s:sub(1, SelInfo.EndPos) -- last
+      t[#t+1] = s..spaces[pos - len] -- last
+      t[#t+1] = "" -- with last EOL
+      t.BeyondEnd = (pos > 0)
     end
   end
 
@@ -497,25 +510,26 @@ function Selection.CopyColumn (Info) --> (nil|string|table)
     --logShow(LineInfo, "LineInfo")
     local s = LineInfo.StringText
     if s == nil then return end
+    local pos = LineInfo.SelEnd
     --[[
-    if LineInfo.SelEnd < 0 then
+    if pos < 0 then
       return s:sub(LineInfo.SelStart + 1, -1)
     end
     --]]
 
-    return s:sub(LineInfo.SelStart + 1, LineInfo.SelEnd)..
-           spaces[LineInfo.SelEnd - s:len()]
+    return s:sub(LineInfo.SelStart + 1, pos)..spaces[pos - s:len()]
   end
 
   -- Несколько выделенных cтрок
-  local s = unit.GetLine(id, first, 2) or ""
+  local go, pos = SelInfo.StartPos, SelInfo.EndPos
   local t = {
     Type = "column",
+    FromStart = (go == 0),
+    --BeyondEnd = nil, -- don't use
   } ---
   for line = first, last do
     local s = unit.GetLine(id, line, 2) or ""
-    t[#t+1] = s:sub(SelInfo.StartPos + 1, SelInfo.EndPos)..
-              spaces[SelInfo.EndPos - s:len()]
+    t[#t+1] = s:sub(go + 1, pos)..spaces[pos - s:len()]
   end
 
   if ToPos or ToPos == nil then unit.Goto(Info) end
@@ -540,6 +554,9 @@ end ---- CopyColumn
          (nil) - no selection block or error.
     s (string) - one line only in selection block, may be with "\r".
     t  (table) - table with lines in selection block, last line may be empty.
+      Type    (string) - type of selected block.
+      FromStart (bool) - selection start is at start of first selected line.
+      BeyondEnd (bool) - selection end is over end of last selected line.
 --]]
 function Selection.Copy (Info, Type, ToPos) --> (nil|string|table)
   local Info = Info or unit.GetInfo()
