@@ -51,7 +51,7 @@ local Data = {
   html   = { Menu = "J_Html;Characters" },
   c      = { Menu = "J_C_Cpp" },
   pascal = { Menu = "J_Pascal" },
-  lua    = { Menu = "J_Lua" },
+  lua    = { Menu = "J_Lua;Characters" },
 
   sub    = { Menu = "Subtitles;Characters" },
 } ---
