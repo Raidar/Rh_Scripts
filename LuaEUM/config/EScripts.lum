@@ -58,7 +58,7 @@ local function RequoteText (Args, Cfg)
   local SelType = farSelect.Types[Info.BlockType]
 
   if SelType == "none" then -- Нет блока
-    --if not farSelect.Dequote(unpack(Args.dequote)) then return end
+    if not farSelect.Dequote(unpack(Args.dequote)) then return end
     return farSelect.Enquote(unpack(Args.enquote))
   end
 
