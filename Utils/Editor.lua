@@ -71,6 +71,8 @@ local unit = {
   DelChar   = false,
   BackChar  = false,
 
+  -- Text only
+  Text      = false,
   -- Block
   Block     = false,
   -- Selection
@@ -200,17 +202,113 @@ function unit.BackChar (Info)
   return unit.Del(Info.EditorID)
 end -- BackChar
 
+---------------------------------------- local
+
+-- Define parameters to enquote.
+-- Определение параметров для закавычивания.
+local function DefineEnquote (left, right) --> (string, string)
+  return left or '"', right or '"'
+end -- DefineEnquote
+
+-- Define parameters to dequote.
+-- Определение параметров для раскавычивания.
+local function DefineDequote (left, right) --> (string, number, string, number)
+  local tp = type(left)
+  local left, l_len = left or '"'
+  if tp == 'string' then
+    l_len = left:len()
+  elseif tp == 'number' then
+    left, l_len = false, left
+  end
+
+  local tp = type(right)
+  local right, r_len = right or '"'
+  if tp == 'string' then
+    r_len = right:len()
+  elseif tp == 'number' then
+    right, r_len = false, right
+  end
+
+  return left, l_len, right, r_len
+end -- DefineDequote
+
+---------------------------------------- Text
+local Text = {
+  -- Quote
+  Enquote = false,
+  Dequote = false,
+} ---
+unit.Text = Text
+
+---------------------------------------- -- Quote
+-- Enquote in current position.
+-- Закавычивание в текущей позиции.
+--[[
+  -- @params: see Block.Enquote:
+  Info (nil|t) - info about editor state.
+  -- @return:
+  isOk  (bool) - operation success flag.
+--]]
+function Text.Enquote (Info, left, right) --> (bool)
+  local Info = Info or unit.GetInfo()
+  local id = Info.EditorID
+
+  local left, right = DefineEnquote(left, right)
+
+  if not unit.InsText(id, left) then return end
+  local Info = unit.GetInfo()
+  if not unit.InsText(id, right) then return end
+
+  return unit.Goto(Info)
+end -- Enquote
+
+-- Dequote in current position.
+-- Раскавычивание в текущей позиции.
+--[[
+  -- @params: see Block.Dequote:
+  Info (nil|t) - info about editor state.
+  -- @return:
+  isOk  (bool) - operation success flag.
+--]]
+function Text.Dequote (Info, left, right) --> (bool)
+  local Info = Info or unit.GetInfo()
+
+  local left, l_len, right, r_len = DefineDequote(left, right)
+
+  local id, Pos = Info.EditorID, Info.CurPos
+  local s = unit.GetLine(id, -1, 2) or ""
+  if Pos >= l_len then
+    if not left or s:sub(Pos - l_len + 1, Pos) == left then
+      s = (s:sub(1, Pos - l_len) or "")..(s:sub(Pos + 1, -1) or "")
+      Pos = Pos - l_len
+    end
+  end
+  local len = s:len()
+  if Pos + r_len <= len then
+    if not right or s:sub(Pos + 1, Pos + r_len) == right then
+      s = (s:sub(1, Pos) or "")..(s:sub(Pos + r_len + 1, -1) or "")
+    end
+  end
+  if not unit.SetLine(id, -1, s) then return end
+
+  return unit.SetPos(id, -1, Pos)
+end -- Dequote
+
 ---------------------------------------- Block
 local Block = {
   -- Quote
   Enquote = false,
   Dequote = false,
+  -- Substitute
+  SubText  = false,
+  SubLines = false,
+  SubBlock = false,
 } ---
 unit.Block = Block
 
 ---------------------------------------- -- Quote
 -- Enquote block lines.
--- Закавычивание блока текста.
+-- Закавычивание линий блока.
 --[[
   -- @params:
   block (s|t|nil) - line or block of lines.
@@ -223,9 +321,7 @@ function Block.Enquote (block, left, right) --> (block)
   if not block then return end
   local SelType = block.Type
 
-  -- Define params:
-  local left  = left or '"'
-  local right = right or '"'
+  local left, right = DefineEnquote(left, right)
 
   if type(block) == 'string' then
     block = left..block..right
@@ -254,10 +350,10 @@ function Block.Enquote (block, left, right) --> (block)
   end -- if
 
   return block
-end -- Enquote
+end ---- Enquote
 
--- Dequote selected text lines.
--- Раскавычивание выделенных линий текста.
+-- Dequote block lines.
+-- Раскавычивание линий блока.
 --[[
   -- @params:
   block (s|t|nil) - line or block of lines.
@@ -270,21 +366,7 @@ function Block.Dequote (block, left, right) --> (block)
   if not block then return end
   local SelType = block.Type
 
-  -- Define params:
-  local tp = type(left)
-  local left, l_len = left or '"'
-  if tp == 'string' then
-    l_len = left:len()
-  elseif tp == 'number' then
-    left, l_len = false, left
-  end
-  tp = type(right)
-  local right, r_len = right or '"'
-  if tp == 'string' then
-    r_len = right:len()
-  elseif tp == 'number' then
-    right, r_len = false, right
-  end
+  local left, l_len, right, r_len = DefineDequote(left, right)
 
   --logShow({ left, right, block }, SelType)
 
@@ -341,7 +423,35 @@ function Block.Dequote (block, left, right) --> (block)
   end -- if
 
   return block
-end -- Dequote
+end ---- Dequote
+
+---------------------------------------- -- Substitute
+
+-- Substitute another text for initial one in block lines.
+-- Подставить другой текст вместо исходного в линиях блока.
+--[[
+  -- @params:
+  block  (s|t|nil) - line or block of lines.
+  pattern (string) - string to find: @see string.gsub.
+  replace  (s|t|f) - string/table/function to replace: @see string.gsub.
+  -- @return:
+  block (s|t|nil) - processed line or block of lines.
+--]]
+function Block.SubText (block, pattern, replace) --> (block)
+  if not block then return end
+
+  if type(block) == 'string' then
+    block = block:gsub(pattern, replace)
+
+  else
+    for k = 1, block.Count do
+      block[k] = block[k]:gsub(pattern, replace)
+    end
+  end
+
+  return block
+end ---- SubText
+
 ---------------------------------------- Selection
 local Selection = {
   Types = BlockTypes,
@@ -439,6 +549,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
 
     return {
       Type = "stream",
+      Count = 2,
       FromStart = (go == 0),
       BeyondEnd = (pos > 0),
 
@@ -452,6 +563,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   local go = SelInfo.StartPos
   local t = {
     Type = "stream",
+    Count = last - first + 1,
     FromStart = (go == 0),
     BeyondEnd = false,
 
@@ -474,6 +586,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
       t[#t+1] = s..spaces[pos - len] -- last
       t[#t+1] = "" -- with last EOL
       t.BeyondEnd = (pos > 0)
+      t.Count = t.Count + 1
     end
   end
 
@@ -524,6 +637,7 @@ function Selection.CopyColumn (Info) --> (nil|string|table)
   local go, pos = SelInfo.StartPos, SelInfo.EndPos
   local t = {
     Type = "column",
+    Count = last - first + 1,
     FromStart = (go == 0),
     --BeyondEnd = nil, -- don't use
   } ---
@@ -555,6 +669,7 @@ end ---- CopyColumn
     s (string) - one line only in selection block, may be with "\r".
     t  (table) - table with lines in selection block, last line may be empty.
       Type    (string) - type of selected block.
+      Count   (number) - count of lines in selected block including EOL-line.
       FromStart (bool) - selection start is at start of first selected line.
       BeyondEnd (bool) - selection end is over end of last selected line.
 --]]
@@ -684,9 +799,11 @@ end ---- PasteColumn
 -- Вставка блока.
 --[[
   -- @params:
-  Info     (nil|table) - @see Selection.Copy.
-  block (string|table) - string block to insert.
-  Type    (nil|string) - @see Selection.Copy.
+  Info (nil|t) - @see Selection.Copy.
+  block  (s|t) - string block to insert.
+  Type (nil|s) - @see Selection.Copy.
+  -- @return:
+  isOk  (bool) - operation success flag.
 --]]
 function Selection.Paste (Info, block, Type) --> (bool)
 
@@ -712,21 +829,24 @@ end -- do
 --[[
   -- @params: see Block.Enquote:
   force (bool) - enquote even if there is no selection.
+  -- @return:
+  isOk  (bool) - operation success flag.
 --]]
 function Selection.Enquote (left, right, force) --> (bool)
-  -- Define params:
-  --local left  = left or '"'
-  --local right = right or '"'
-
   local Info = unit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
 
   if force and SelType == "none" then -- Нет блока:
+    return Text.Enquote(Info, left, right)
+    --[[
+    local left, right = DefineEnquote(left, right)
+
     if not unit.InsText(Info.EditorID, left) then return end
     local Info = unit.GetInfo()
     if not unit.InsText(Info.EditorID, right) then return end
 
     return unit.Goto(Info)
+    --]]
   end
 
   local SelInfo = Selection.Get()
@@ -746,27 +866,17 @@ end -- Enquote
 --[[
   -- @params: see Block.Dequote:
   force (bool) - dequote even if there is no selection.
+  -- @return:
+  isOk  (bool) - operation success flag.
 --]]
 function Selection.Dequote (left, right, force) --> (bool)
   local Info = unit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
 
   if force and SelType == "none" then -- Нет блока:
-    -- Define params:
-    local tp = type(left)
-    local left, l_len = left or '"'
-    if tp == 'string' then
-      l_len = left:len()
-    elseif tp == 'number' then
-      left, l_len = false, left
-    end
-    tp = type(right)
-    local right, r_len = right or '"'
-    if tp == 'string' then
-      r_len = right:len()
-    elseif tp == 'number' then
-      right, r_len = false, right
-    end
+    return Text.Dequote(Info, left, right)
+    --[[
+    local left, l_len, right, r_len = DefineDequote(left, right)
 
     local id, Pos = Info.EditorID, Info.CurPos
     local s = unit.GetLine(id, -1, 2) or ""
@@ -785,6 +895,7 @@ function Selection.Dequote (left, right, force) --> (bool)
     if not unit.SetLine(id, -1, s) then return end
 
     return unit.SetPos(id, -1, Pos)
+    --]]
   end
 
   local SelInfo = Selection.Get()
@@ -800,6 +911,7 @@ function Selection.Dequote (left, right, force) --> (bool)
 
   return Selection.Paste(unit.GetInfo(), block, SelType)
 end -- Dequote
+
 ---------------------------------------- -- Iterator
 do
   local EditorGetInfo = unit.GetInfo
