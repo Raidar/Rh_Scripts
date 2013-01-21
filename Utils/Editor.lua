@@ -838,15 +838,6 @@ function Selection.Enquote (left, right, force) --> (bool)
 
   if force and SelType == "none" then -- Нет блока:
     return Text.Enquote(Info, left, right)
-    --[[
-    local left, right = DefineEnquote(left, right)
-
-    if not unit.InsText(Info.EditorID, left) then return end
-    local Info = unit.GetInfo()
-    if not unit.InsText(Info.EditorID, right) then return end
-
-    return unit.Goto(Info)
-    --]]
   end
 
   local SelInfo = Selection.Get()
@@ -875,27 +866,6 @@ function Selection.Dequote (left, right, force) --> (bool)
 
   if force and SelType == "none" then -- Нет блока:
     return Text.Dequote(Info, left, right)
-    --[[
-    local left, l_len, right, r_len = DefineDequote(left, right)
-
-    local id, Pos = Info.EditorID, Info.CurPos
-    local s = unit.GetLine(id, -1, 2) or ""
-    if Pos >= l_len then
-      if not left or s:sub(Pos - l_len + 1, Pos) == left then
-        s = (s:sub(1, Pos - l_len) or "")..(s:sub(Pos + 1, -1) or "")
-        Pos = Pos - l_len
-      end
-    end
-    local len = s:len()
-    if Pos + r_len <= len then
-      if not right or s:sub(Pos + 1, Pos + r_len) == right then
-        s = (s:sub(1, Pos) or "")..(s:sub(Pos + r_len + 1, -1) or "")
-      end
-    end
-    if not unit.SetLine(id, -1, s) then return end
-
-    return unit.SetPos(id, -1, Pos)
-    --]]
   end
 
   local SelInfo = Selection.Get()
@@ -911,6 +881,36 @@ function Selection.Dequote (left, right, force) --> (bool)
 
   return Selection.Paste(unit.GetInfo(), block, SelType)
 end -- Dequote
+
+-- Process selected block.
+-- Обработка выделенного блока.
+--[[
+  -- @params:
+  Action (func) - function to process block or nil.
+  -- @return:
+  isOk   (bool) - operation success flag.
+--]]
+function Selection.Process (Action, ...) --> (bool)
+  local Info = unit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+
+  if SelType == "none" then -- Нет блока:
+    return Action(nil, ...)
+  end
+
+  local SelInfo = Selection.Get()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = Selection.Cut(unit.GetInfo(), SelType)
+  if not block then return end
+
+  --logShow({ left, right, block }, SelType)
+
+  block = Action(block, ...)
+  if not block then return end
+
+  return Selection.Paste(unit.GetInfo(), block, SelType)
+end -- Process
 
 ---------------------------------------- -- Iterator
 do
