@@ -50,6 +50,7 @@ local unit = {}
   Большинство функций не выполняют проверки значений и типов для параметров.
 --]]
 ---------------------------------------- String
+--[[
 do
   local sfind = ("").cfind or ("").find
 
@@ -66,26 +67,7 @@ function unit.findcount (s, pat, init, plain)
 end ---- findcount
 
 end -- do
-
--- Count of lines in string.
--- Количество линий в строке.
-function unit.slinecount (s) --> (number)
-  return strings.gsubcount(s, "\n") + 1
-  --return findcount(s, "\n", 1, true) + 1
-end ----
-
--- Maximal length (and line) in string.
--- Максимальная длина (и линия) в строке.
-function unit.slinemax (s) --> (number, string | 0, nil)
-  local max, x = 0, -1
-
-  for line in s:gmatch("([^\n]+)") do -- Цикл по линиям строки:
-    local len = line:len()
-    if len > max then max, x = len, line end
-  end
-
-  return max, x
-end ---- slinemax
+--]]
 
 ---------------------------------------- Table
 local function _isEqual (t, u) --> (bool)
@@ -307,11 +289,15 @@ end ----
 -- Adding a trailing slash to path.
 -- Добавление завершающего слэша к пути.
 function unit.ChangeSlash (path, slash) --> (string)
-  local path  = path or ""
+  local path  = path
   local slash = slash or '\\' -- Windows
   --slash = slash or '/' -- Unix like
-  path = path:gsub("\\", slash)
-  if path:find("[/\\]", -1) then return path else return path..slash end
+  local path = (path or ""):gsub("\\", slash)
+  if path:find("[/\\]", -1) then
+    return path
+  else
+    return path..slash
+  end
 end ---- ChangeSlash
 
 -- Разбор произвольного пути файла.

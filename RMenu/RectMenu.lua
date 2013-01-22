@@ -48,6 +48,7 @@ local context = context
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
 local colors = require 'context.utils.useColors'
 
 local newFlag, isFlag = utils.newFlag, utils.isFlag
@@ -581,8 +582,8 @@ local function ViewItemText (Text, Hot) --> (string)
   if Hot then return ClearHotText(Text, Hot) else return Text end
 end --
 
-local slinemax   = luaUt.slinemax   -- Длина строки с учётом многих линий
-local slinecount = luaUt.slinecount -- Широта строки с учётом многих линий
+local slinemax   = strings.linemax   -- Длина ячейки с учётом многих линий
+local slinecount = strings.linecount -- Высота ячейки с учётом многих линий
 
 -- Информация о пункте и разделителях пунктов меню.
 function TMenu:DefineSpotInfo () --| Zone
