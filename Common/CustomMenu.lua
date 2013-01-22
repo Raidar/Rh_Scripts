@@ -29,8 +29,7 @@ local tables = require 'context.utils.useTables'
 --local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.LuaUtils"
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
@@ -475,7 +474,7 @@ function TMenu:CheckCallItem (Item) --> (bool)
   local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
 
   -- Выполнение проверки пункта.
-  return luaUt.fcall(Item.Check, Cfg) -- MAYBE: pfcall
+  return farUt.fcall(Item.Check, Cfg) -- MAYBE: pfcall
 end ---- CheckCallItem
 
 -- Проверка пункта на включение в меню.

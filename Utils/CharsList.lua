@@ -1,9 +1,9 @@
---[[ Character names ]]--
+--[[ Characters' list ]]--
 
 ----------------------------------------
 --[[ description:
-  -- Unicode character names.
-  -- Названия Unicode‑символов.
+  -- Unicode characters' list.
+  -- Список Unicode‑символов.
 --]]
 ----------------------------------------
 --[[ uses:

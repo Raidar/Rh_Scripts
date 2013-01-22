@@ -1,9 +1,9 @@
---[[ LuaFAR utils ]]--
+--[[ Lua and LuaFAR utils ]]--
 
 ----------------------------------------
 --[[ description:
-  -- LuaFAR functions.
-  -- LuaFAR‑функции.
+  -- Lua and LuaFAR functions.
+  -- Lua‑ и LuaFAR‑функции.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -11,6 +11,16 @@
   -- group: Utils.
 --]]
 --------------------------------------------------------------------------------
+
+local type = type
+local pairs = pairs
+
+--local format = string.format
+
+----------------------------------------
+--local bit = bit64
+--local band, bor = bit.band, bit.bor
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local far = far
@@ -33,9 +43,6 @@ local isFlag = utils.isFlag
 local b2n, max2 = numbers.b2n, numbers.max2
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.LuaUtils"
-
-----------------------------------------
 --[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -43,6 +50,356 @@ local logShow = dbg.Show
 
 --------------------------------------------------------------------------------
 local unit = {}
+
+----------------------------------------
+--[[
+  The most part of functions haven't value & type checking for arguments.
+  Большинство функций не выполняют проверки значений и типов для параметров.
+--]]
+---------------------------------------- String
+--[[
+do
+  local sfind = ("").cfind or ("").find
+
+-- Count of occurrences with find.
+-- Подсчёт числа вхождений по find.
+function unit.findcount (s, pat, init, plain)
+  local count, pos = 0, init or 1
+  local fpos, fend = sfind(s, pat, pos, plain)
+  while fpos do
+    count, pos = count + 1, fend + 1
+    fpos, fend = sfind(s, pat, pos, plain)
+  end
+  return count
+end ---- findcount
+
+end -- do
+--]]
+
+---------------------------------------- Table
+local function _isEqual (t, u) --> (bool)
+  if t == nil and u == nil then return true end
+  if t == nil or u == nil then return false end
+
+  local typeT, typeU, equal = type(t), type(u)
+  if typeT ~= 'table' or typeU ~= 'table' then
+    return typeT == typeU and t == u
+  end
+
+  for k, v in pairs(t) do
+    if u[k] == nil then return false end
+    equal = _isEqual(v, u[k])
+    if not equal then return false end
+  end
+
+  for k, _ in pairs(u) do
+    if t[k] == nil then return nil end
+  end
+
+  return true
+end -- _isEqual
+unit.isEqual = _isEqual
+
+-- Выполнение gsub для значений ключей таблицы строк.
+function unit.t_gsub (t, name, pattern, replace) --> (table)
+  for k, v in pairs(t) do
+    if not name or (name and k:find(name)) then
+      t[k] = v:gsub(pattern, replace)
+    end
+  end
+
+  return t
+end ---- t_gsub
+
+-- Maximum of field values for table array-part.
+-- Максимум значений полей для части-массива таблицы.
+function unit.t_imax (t, count) --> (number)
+  local m, i = 0, 0
+
+  -- Find first value.
+  for k = 1, count or #t do
+    local v = t[k]
+    if v then
+      m, i = v, k
+      break
+    end
+  end
+  if i == 0 then return end
+
+  -- Check next values.
+  for k = i+1, count or #t do
+    local v = t[k]
+    if v and v > m then m = v end
+  end
+
+  return m
+end ---- t_imax
+
+-- Sum of field values for table array-part.
+-- Сумма значений полей для части-массива таблицы.
+function unit.t_isum (t, first, last, step) --> (number)
+  local s = 0
+
+  for k = first or 1, last or #t, step or 1 do
+    s = s + (t[k] or 0)
+  end
+
+  return s
+end ---- t_isum
+
+-- Преобразование значения в таблицу с полем [0].
+function unit.valtotab (v, key, default) --> (table)
+  if type(v) == 'table' then return v end
+
+  if key == nil then key = 0 end
+
+  if v == nil then
+    if default == nil then return end
+    v = default
+  end
+
+  return { [key] = v }
+end ---- valtotab
+
+---------------------------------------- Package
+do
+  local getevar = function (env, name) return env[name] end
+
+-- Get value of variable 'name' from env.
+-- Получение значения переменной name из env.
+function unit.getvalue (env, name) --> (value)
+  local isOk, var = pcall(getevar, env, name)
+  if isOk then return var end
+end ----
+
+-- Get a global variable (with possible creation)
+-- when using a "strict" work mode (strict.lua).
+-- Получение (с возможным созданием) глобальной переменной
+-- при использовании "строгого" режима работы (strict.lua).
+function unit.getglobal (varname, default) --> (var)
+  default = default == nil and {} or default
+  if getevar(_G, varname) == nil then
+    _G[varname] = default
+  end
+
+  return _G[varname]
+end ---- getglobal
+
+  local require = require
+  local pkg_loaded = package.loaded
+
+-- Variant of require with mandatory reloading of a chunk.
+-- Вариант require с обязательной перезагрузкой chunk'а.
+local function newrequire (modname, dorequire)
+  if pkg_loaded[modname] then
+    pkg_loaded[modname] = nil
+  end
+
+  return (dorequire or require)(modname)
+end ----
+unit.newrequire = newrequire
+
+  local pcall = pcall
+
+-- Variant of require with protected mode call.
+-- Вариант require с вызовом в защищённом режиме.
+local function prequire (modname)
+  local isOk, res = pcall(require, modname)
+  --far.Message(Result, tostring(isOk))
+  return isOk and res
+end ----
+unit.prequire = prequire
+
+-- Variant of require with mandatory reloading and protected mode call.
+-- Вариант require с обязательной перезагрузкой в защищённом режиме.
+function unit.newprequire (modname)
+  return newrequire(modname, prequire)
+end --
+
+end -- do
+
+---------------------------------------- Function
+-- Call function.
+-- Вызов функции.
+function unit.fcall (f, ...)
+  return f(...)
+end ----
+
+-- Check pcall function result.
+-- Проверка результата функции pcall.
+function unit.pcheck (isOk, ...)
+  if isOk then return ... end
+end ----
+
+do
+  local pcall = pcall
+
+-- Protected call function.
+-- Защищённый вызов функции.
+function unit.pfcall (f, ...)
+  return unit.pcheck(pcall(f, ...))
+end ----
+
+end -- do
+do
+  local getvalue = unit.getvalue
+  local sFieldNotFoundError = "No field %s\n of %s"
+
+-- Find function with compound name in environment env (and _G).
+-- Поиск функции с составным именем name в окружении env (и _G).
+function unit.ffind (env, name) --> (function | nil, error)
+  local f = getvalue(env, name)
+  if f then return f end
+
+  -- Проверка первой компоненты имени.
+  f = name:match("^[^.]+")
+  --logShow(env, f, 1)
+  --logShow(_G, f, "d3 _ns")
+  --logShow(rawget(_G, name), f, "d2 _ns")
+  --logShow(package.loaded[f], f, "d2 _ns")
+  if getvalue(env, f) then
+    f = env
+  elseif getvalue(_G, f) then
+    f = _G
+  else
+    return nil, sFieldNotFoundError:format(f, name) -- Ошибка
+  end
+
+  -- Разбор всех компонент имени.
+  for s in name:gmatch("([^.]+)") do
+    --logShow(s, Name)
+    if not getvalue(f, s) then
+      return nil, sFieldNotFoundError:format(s, name) -- Ошибка
+    end
+    f = f[s]
+    --logShow(f, s)
+  end
+  --logShow(f, name)
+
+  return f
+end ---- ffind
+
+end -- do
+
+---------------------------------------- System
+
+---------------------------------------- -- Path
+-- Приведение пути к формату Windows.
+function unit.FileWPath (path) --> (string)
+  return path:gsub("/", "\\")
+end ----
+-- Приведение пути к формату Unix.
+function unit.FileUPath (path) --> (string)
+  return path:gsub("\\", "/")
+end ----
+
+-- Adding a trailing slash to path.
+-- Добавление завершающего слэша к пути.
+function unit.ChangeSlash (path, slash) --> (string)
+  local path  = path
+  local slash = slash or '\\' -- Windows
+  --slash = slash or '/' -- Unix like
+  local path = (path or ""):gsub("\\", slash)
+  if path:find("[/\\]", -1) then
+    return path
+  else
+    return path..slash
+  end
+end ---- ChangeSlash
+
+-- Разбор произвольного пути файла.
+function unit.ParseFileName (filepath) --> (path, fullname, name, ext)
+   -- Разделение полного пути на собственно путь и полное имя.
+  local path, fullname = filepath:match("^(.*[/\\])([^/\\]*)$")
+  if not path then fullname = filepath end -- Нет пути к файлу
+  -- Разделение полного имени на собственно имя и расширение.
+  if fullname == "" then fullname = nil end -- Нет полного имени
+  if not fullname then return path, nil, nil, nil end -- Только путь
+  local name, ext = fullname:match("^(.*)%.([^%.]*)$")
+  if not name and not ext then name = fullname end -- Только имя
+  if ext == "" then ext = nil end -- Нет расширения файла
+  -- Путь к файлу, Имя с расширением, Имя файла, Расширение файла.
+  return path, fullname, name, ext
+end ---- ParseFileName
+
+-- Разбор полного пути файла: с наличием пути и файла с расширением.
+function unit.ParseFullName (fullpath) --> (path, fullname, name, ext)
+  -- Путь к файлу, Имя с расширением, Имя файла, Расширение файла.
+  return fullpath:match("^(.-[/\\])(([^/\\]*)%.([^/\\%.]*))$")
+end ---- ParseFullName
+
+-- Adding a path of modules to EnvPath.
+-- Добавление пути к модулям в EnvPath.
+function unit.AddEnvPath (BasePath, ModulePath, ModuleName, EnvPath) --> (string)
+  for CurPath in ModulePath:gmatch("([^;]+)") do
+    local Path = unit.ChangeSlash(BasePath..CurPath)..ModuleName -- Полный путь.
+    -- Настройка путей для поиска модулей.
+    if not EnvPath:find(Path, 1, true) then EnvPath = Path..';'..EnvPath end
+  end -- for
+  return EnvPath
+end ---- AddEnvPath
+
+local package = package
+
+-- Adding a path of used lua-modules.
+-- Добавление пути к используемым lua-модулям.
+function unit.AddLuaPath (BasePath, ModulePath) --> (bool)
+  package.path = unit.AddEnvPath(BasePath, ModulePath, "?.lua", package.path)
+end
+-- Adding a path of used dll-modules.
+-- Добавление пути к используемым dll-модулям.
+function unit.AddLibPath (BasePath, ModulePath) --> (bool)
+  package.cpath = unit.AddEnvPath(BasePath, ModulePath, "?.dll", package.cpath)
+end
+
+---------------------------------------- -- File
+do
+  local ssub = string.sub -- Byte cut! for check CP
+
+-- Проверка строки файла на признаки Unicode.
+function unit.CheckLineCP (s) --> (string)
+  if #s < 2 then return "OEM" end
+  local s = ssub(s, 1, 3)
+  if s == '\239\187\191' then return "UTF-8" end -- EF BB BF
+  s = ssub(s, 1, 2)
+
+  return s == '\255\254' and "UTF-16 BE" or -- FF FE
+         s == '\254\255' and "UTF-16 LE" or -- FE FF
+         "OEM" -- by default
+end ---- CheckLineCP
+
+end -- do
+
+do
+  local io_open = io.open
+
+-- Проверка файла на признаки Unicode.
+function unit.CheckFileCP (filename) --> (string)
+  local f = io_open(filename, 'r')
+  if not f then return nil end
+  local s = f:read('*l')
+  f:close()
+
+  return unit.CheckLineCP(s)
+end ---- CheckFileCP
+
+end -- do
+
+---------------------------------------- Common
+do
+  local type = type
+
+-- Value length.
+-- Длина значения.
+function unit.length (v) --> (number)
+  local tp = type(v)
+  if tp == 'string' then return v:len() end
+  if tp == 'table' then return #v end
+
+  return v ~= nil and 1 or 0
+end ---- length
+
+end -- do
 
 ---------------------------------------- FAR API
 -- Version of FAR.

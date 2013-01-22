@@ -33,8 +33,7 @@ local max2, min2 = numbers.max2, numbers.min2
 --local divf = numbers.divf
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.LuaUtils"
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
 local far_Text = far.Text
 --local far_Text, farVText = far.Text, farUt.VText

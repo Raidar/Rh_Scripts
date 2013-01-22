@@ -59,8 +59,7 @@ local isFlag = utils.isFlag
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.LuaUtils"
---local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
 
 ----------------------------------------
@@ -322,7 +321,9 @@ end --
 ---------------------------------------- ---- KitSuit
 unit.KitSuit = {} -- Комплект наборов шаблонов
 
-local CharControl = luaUt.CharControl
+local chrUt = require "Rh_Scripts.Utils.Character"
+
+local CharControl = chrUt.CharControl
 
 -- -- Get kit templates for type tp.
 -- -- Получение шаблонов набора для типа tp.
@@ -354,7 +355,7 @@ end -- TypeKit
 
 do
   local format = string.format
-  local prequire, newprequire = luaUt.prequire, luaUt.newprequire
+  local prequire, newprequire = farUt.prequire, farUt.newprequire
 
 -- -- Make templates kit.
 -- -- Формирование набора шаблонов.

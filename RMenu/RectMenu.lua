@@ -38,7 +38,7 @@ local bshl, bshr = bit.lshift, bit.rshift
 local win, far = win, far
 local F = far.Flags
 
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
 local HText, VText = far.Text, farUt.VText
 
@@ -63,7 +63,6 @@ local torange = numbers.torange
 local inrange, outrange = numbers.inrange, numbers.outrange
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.LuaUtils"
 local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 ----------------------------------------
@@ -220,14 +219,14 @@ function VisCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
   until k > Count or L > T -- end
 
   k = k - 1
-  --local sum = luaUt.t_isum(Len, Fixes.Min, k) + Fixes.Length
+  --local sum = farUt.t_isum(Len, Fixes.Min, k) + Fixes.Length
   --logShow({ k, Total, Sep, L, T, Len, Base, sum, Fixes }, "Base", 2)
 
   local odd = (L <= T) -- Поправка:
   L = L - Sep - (odd and 0 or Len[k]) + Fixes.Length
   k = k - Base + 1 - (odd and 0 or 1) + Fixes.Count
 
-  --local sum = luaUt.t_isum(Len, Fixes.Min, k - Fixes.Count) + Fixes.Length
+  --local sum = farUt.t_isum(Len, Fixes.Min, k - Fixes.Count) + Fixes.Length
   --logShow({ k, Total, Sep, L, sum, Fixes }, "Base", 2)
 
   if k < 1 then k = 1; L = Total end -- One cat must be show!
@@ -256,14 +255,14 @@ function VisCount.Pale (Len, Sep, Total, Pale, Fixes) --> (number, number)
   until k < Count or L > T -- end
 
   k = k + 1
-  --local sum = luaUt.t_isum(Len, k, Fixes.Max) + Fixes.Length
+  --local sum = farUt.t_isum(Len, k, Fixes.Max) + Fixes.Length
   --logShow({ k, Total, Sep, L, T, Len, Pale, sum, Fixes }, "Pale", 2)
 
   local odd = (L <= T) -- Поправка:
   L = L - Sep - (odd and 0 or Len[k]) + Fixes.Length
   k = Pale - k + 1 - (odd and 0 or 1) + Fixes.Count
 
-  --local sum = luaUt.t_isum(Len, k - Fixes.Count, Fixes.Max) + Fixes.Length
+  --local sum = farUt.t_isum(Len, k - Fixes.Count, Fixes.Max) + Fixes.Length
   --logShow({ k, Total, Sep, L, sum, Fixes }, "Pale", 2)
 
   if k < 1 then k = 1; L = Total end -- One cat must be show!
@@ -593,8 +592,8 @@ function TMenu:DefineSpotInfo () --| Zone
   local MultiLine = RM.MultiLine -- Многострочность текста пункта
 
   -- Используемые размеры пункта меню.
-  local textMax = luaUt.valtotab(RM.textMax)
-  local lineMax = luaUt.valtotab(RM.lineMax)
+  local textMax = farUt.valtotab(RM.textMax)
+  local lineMax = farUt.valtotab(RM.lineMax)
 
   local Count, ColCount, RowCount = Data.Count, Data.Cols, Data.Rows
   local Hot = not isFlag(self.Flags, F.FMENU_SHOWAMPERSAND) and '&'
@@ -625,7 +624,7 @@ function TMenu:DefineSpotInfo () --| Zone
     --logShow(textMax, "textMax")
   end
   if not textMax[0] or textMax[0] == 0 then
-    textMax[0] = luaUt.t_imax(textMax) or 0
+    textMax[0] = farUt.t_imax(textMax) or 0
   end
   --logShow(textMax, "textMax")
 
@@ -657,7 +656,7 @@ function TMenu:DefineSpotInfo () --| Zone
       --logShow(lineMax, "lineMax")
     end
     if not lineMax[0] or lineMax[0] == 0 then
-      lineMax[0] = luaUt.t_imax(lineMax) or 0
+      lineMax[0] = farUt.t_imax(lineMax) or 0
     end
   end -- MultiLine
   --logShow(lineMax, "lineMax")
@@ -900,7 +899,7 @@ function TMenu:UpdateAll (hDlg, Flags, Table) --| (self)
   local newR = self.DlgPos
   if isRedraw == nil then
     --logShow({ oldR, newR }, "UpdateAll", 2)
-    isRedraw = not luaUt.isEqual(oldR, newR) and (
+    isRedraw = not farUt.isEqual(oldR, newR) and (
                newR.w < oldR.w - oldR.sx or -- Уменьшение ширины окна
                newR.h < oldR.h - oldR.sy or -- Уменьшение высоты окна
                -- Сдвиг окна по горизонтали:

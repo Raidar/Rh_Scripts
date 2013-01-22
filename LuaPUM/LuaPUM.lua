@@ -16,7 +16,7 @@
 local getFileType = context.detect.area.panels
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
 ----------------------------------------
 --[[

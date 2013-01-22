@@ -20,7 +20,7 @@ local F = far.Flags
 --local context = context
 
 ----------------------------------------
---local farUt = require "Rh_Scripts.Utils.FarUtils"
+--local farUt = require "Rh_Scripts.Utils.Utils"
 
 ----------------------------------------
 -- [[

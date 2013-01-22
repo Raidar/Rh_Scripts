@@ -38,8 +38,8 @@ local serial = require 'context.utils.useSerial'
 local addNewData = tables.extend
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.LuaUtils"
---local farUt = require "Rh_Scripts.Utils.FarUtils"
+--local farUt = require "Rh_Scripts.Utils.Utils"
+--local chrUt = require "Rh_Scripts.Utils.Character"
 
 ----------------------------------------
 --[[

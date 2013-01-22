@@ -30,8 +30,8 @@ local strings = require 'context.utils.useStrings'
 --local b2n, max2 = numbers.b2n, numbers.max2
 
 ----------------------------------------
---local luaUt = require "Rh_Scripts.Utils.LuaUtils"
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
+--local chrUt = require "Rh_Scripts.Utils.Character"
 
 local BlockTypes = farUt.BlockTypes
 

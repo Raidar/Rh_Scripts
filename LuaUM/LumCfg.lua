@@ -37,7 +37,7 @@ local locale = require 'context.utils.useLocale'
 local colors = require 'context.utils.useColors'
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
 ----------------------------------------
 --[[

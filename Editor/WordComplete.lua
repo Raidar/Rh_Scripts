@@ -59,8 +59,7 @@ local min2, max2 = numbers.min2, numbers.max2
 local addNewData = tables.extend
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.LuaUtils"
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
@@ -1038,7 +1037,9 @@ end -- MakePopupMenu
 end -- do
 
 do
-  local CharControl = luaUt.CharControl
+  local chrUt = require "Rh_Scripts.Utils.Character"
+
+  local CharControl = chrUt.CharControl
 
 -- Формирование списка-меню слов.
 function TMain:MakeWordsList () --> (table)

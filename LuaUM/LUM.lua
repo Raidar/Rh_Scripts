@@ -31,7 +31,7 @@ local locale = require 'context.utils.useLocale'
 local PluginPath = utils.PluginPath
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.FarUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 local bndUt = require "Rh_Scripts.Utils.Binding"
 
 local LW = require "Rh_Scripts.LuaUM.LumWork"

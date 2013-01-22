@@ -34,21 +34,21 @@ local u_byte = strings.u8byte
 --local u_char, u_byte = strings.u8char, strings.u8byte
 
 ----------------------------------------
-local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
-local length = luaUt.length
+local length = farUt.length
 
 ----------------------------------------
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
-local uNames = require "Rh_Scripts.Utils.CharNames"
-local CharNames = uNames.Names
+local uList = require "Rh_Scripts.Utils.CharsList"
+local CharNames = uList.Names
 
 ----------------------------------------
 --[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
---logShow(uNames.Names, "CharNames", 2, "#fq")
+--logShow(uList.Names, "Characters' names", 2, "#fq")
 --]]
 
 --------------------------------------------------------------------------------

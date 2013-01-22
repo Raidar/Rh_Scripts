@@ -2,7 +2,7 @@
 
 ----------------------------------------
 --[[ description:
-  -- Run actions.
+  -- Running actions.
   -- Выполнение действий.
 --]]
 ----------------------------------------
@@ -192,14 +192,14 @@ end ----
 
 ---------------------------------------- -- Lua script
 do
-  local luaUt = require "Rh_Scripts.Utils.LuaUtils"
+  local farUt = require "Rh_Scripts.Utils.Utils"
 
 -- Execute: lua function.
 -- Выполнение: lua-функция.
 function unit.Function (Value, Args, ...) --> (res [, error])
   if type(Value) ~= 'function' then return end
 
-  return luaUt.fcall(Value, Args, ...) -- MAYBE: pfcall
+  return farUt.fcall(Value, Args, ...) -- MAYBE: pfcall
 end ---- Function
 
 -- Execute: lua script (chunk/function).
@@ -228,7 +228,7 @@ function unit.Script (Chunk, Function, ChunkArgs, Args, ...) --> (res [, error])
   end
 
   -- Получение функции скрипта.
-  f, SError = luaUt.ffind(Env, Function)
+  f, SError = farUt.ffind(Env, Function)
   --logShow(Function, f)
   if not f then return nil, SError end
 
