@@ -886,16 +886,17 @@ end -- Dequote
 -- Обработка выделенного блока.
 --[[
   -- @params:
-  Action (func) - function to process block or nil.
+  force  (bool) - call action even if there is no selection.
+  action (func) - function to process selected block (or nil).
   -- @return:
   isOk   (bool) - operation success flag.
 --]]
-function Selection.Process (Action, ...) --> (bool)
+function Selection.Process (force, action, ...) --> (bool)
   local Info = unit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
 
-  if SelType == "none" then -- Нет блока:
-    return Action(nil, ...)
+  if force and SelType == "none" then -- Нет блока:
+    return action(nil, ...)
   end
 
   local SelInfo = Selection.Get()
@@ -906,7 +907,7 @@ function Selection.Process (Action, ...) --> (bool)
 
   --logShow({ left, right, block }, SelType)
 
-  block = Action(block, ...)
+  block = action(block, ...)
   if not block then return end
 
   return Selection.Paste(unit.GetInfo(), block, SelType)
