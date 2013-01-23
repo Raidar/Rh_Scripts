@@ -2018,7 +2018,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   -- Обработчик нажатия клавиши:
   local function DlgCtrlEvent (hDlg, ProcItem, Input) --> (bool)
     local VirKey = far.ParseInput(Input) -- FAR23
-    if not VirKey then
+    if not VirKey or VirKey.EventType == F.MOUSE_EVENT then
       return DlgMouseClick(hDlg, ProcItem, Input)
     end
     --logShow(_Menu, "_Menu", "d1 bns")
