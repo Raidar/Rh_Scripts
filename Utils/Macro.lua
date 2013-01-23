@@ -535,40 +535,11 @@ function Run.Play (Macro) --> (bool | nil, Action)
   return true
 end ---- Play
 
-do
-  local Begin_UndoRedo = F.EUR_BEGIN
-  local End_UndoRedo   = F.EUR_END
-  local Undo_UndoRedo  = F.EUR_UNDO
-
 -- Execute parsed macro-template.
 -- Выполнение разобранного макроса-шаблона.
 function Run.Exec (Macro) --> (bool | nil, Action)
-  local Info = farEdit.GetInfo()
-  local id = Info.EditorID
-
-  if not farEdit.UndoRedo(id, Begin_UndoRedo) then
-    return nil, "Begin UndoRedo"
-  end
-
-  local isOk, Action = Run.Play(Macro)
-
-  if isOk then
-    if not farEdit.UndoRedo(id, End_UndoRedo) then
-      return nil, "End UndoRedo"
-    end
-  else
-    if not farEdit.UndoRedo(id, Undo_UndoRedo) then
-      return nil, "Undo UndoRedo"
-    end
-    return nil, Action
-  end
-
-  farEdit.Redraw()
-
-  return true
+  return farEdit.Execute(Run.Play, Macro)
 end ---- Exec
-
-end -- do
 
 -- Execute Macro (with parsing).
 -- Выполнение макроса (с разбором).

@@ -43,7 +43,7 @@ local logShow = dbg.Show
 
 --------------------------------------------------------------------------------
 local unit = {
-  -- Editor
+-- Default fields:
   GetInfo   = editor.GetInfo,
   GetLine   = editor.GetString,
   SetLine   = editor.SetString,
@@ -51,12 +51,14 @@ local unit = {
   SetPos    = editor.SetPosition,
   InsText   = editor.InsertText,
   InsLine   = editor.InsertString,
-
   Del       = editor.DeleteChar,
-
   UndoRedo  = editor.UndoRedo,
   Redraw    = editor.Redraw,
 
+-- Custom fields:
+  -- Action
+  Execute   = false,
+  -- Editor
   GetLength = false,
   SetLength = false,
   -- Move
@@ -78,6 +80,43 @@ local unit = {
   -- Selection
   Selection = false,
 } ---
+
+---------------------------------------- Action
+do
+  local UndoRedo = unit.UndoRedo
+  local Begin_UndoRedo = F.EUR_BEGIN
+  local End_UndoRedo   = F.EUR_END
+  local Undo_UndoRedo  = F.EUR_UNDO
+
+-- Execute an action as single action.
+-- Выполнение действия как одиночного действия.
+function unit.Execute (action, ...)
+  local Info = unit.GetInfo()
+  local id = Info.EditorID
+
+  if not UndoRedo(id, Begin_UndoRedo) then
+    return nil, "Begin UndoRedo"
+  end
+
+  local isOk, SError = action(...)
+
+  if isOk then
+    if not UndoRedo(id, End_UndoRedo) then
+      return nil, "End UndoRedo"
+    end
+  else
+    if not UndoRedo(id, Undo_UndoRedo) then
+      return nil, "Undo UndoRedo"
+    end
+    return nil, SError
+  end
+
+  unit.Redraw()
+
+  return true
+end ---- Execute
+
+end -- do
 
 ---------------------------------------- Editor
 -- Get length of line.
@@ -303,6 +342,7 @@ local Block = {
   SubText  = false,
   SubLines = false,
   SubBlock = false,
+  DelLines = false,
 } ---
 unit.Block = Block
 
@@ -437,7 +477,7 @@ end ---- Dequote
   -- @return:
   block (s|t|nil) - processed line or block of lines.
 --]]
-function Block.SubText (block, pattern, replace) --> (block)
+function Block.SubLines (block, pattern, replace) --> (block)
   if not block then return end
 
   if type(block) == 'string' then
@@ -450,13 +490,38 @@ function Block.SubText (block, pattern, replace) --> (block)
   end
 
   return block
-end ---- SubText
+end ---- SubLines
+
+-- Delete block lines that is (not) matched a pattern.
+-- Удалить линии блока, (не) соответствующие шаблону.
+--[[
+  -- @params:
+  block  (s|t|nil) - line or block of lines.
+  pattern (string) - string to find: @see string.gsub.
+  exclude   (bool) - exclude pattern: @default = false.
+  -- @return:
+  block (s|t|nil) - processed line or block of lines.
+--]]
+function Block.DelLines (block, pattern, exclude) --> (block)
+  if not block then return end
+
+  if type(block) == 'string' then
+
+  else
+  end
+
+  return block
+end ---- DelLines
 
 ---------------------------------------- Selection
 local Selection = {
   Types = BlockTypes,
 
-  -- Process
+  -- Action
+  Process = false,
+  Execute = false,
+
+  -- Basic
   Get = editor.GetSelection,
   Set = false,
   Del = editor.DeleteBlock,
@@ -483,6 +548,44 @@ local Selection = {
   pairs = false,
 } ---
 unit.Selection = Selection
+
+---------------------------------------- Action
+-- Process selected block.
+-- Обработка выделенного блока.
+--[[
+  -- @params:
+  force  (bool) - call action even if there is no selection.
+  action (func) - function to process selected block (or nil).
+  -- @return:
+  isOk   (bool) - operation success flag.
+--]]
+function Selection.Process (force, action, ...) --> (bool)
+  local Info = unit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+
+  if force and SelType == "none" then -- Нет блока:
+    return action(nil, ...)
+  end
+
+  local SelInfo = Selection.Get()
+  if SelInfo == nil then return end -- Нет блока?
+
+  local block = Selection.Cut(unit.GetInfo(), SelType)
+  if not block then return end
+
+  --logShow({ left, right, block }, SelType)
+
+  block = action(block, ...)
+  if not block then return end
+
+  return Selection.Paste(unit.GetInfo(), block, SelType)
+end -- Process
+
+-- Execute for selected block.
+-- Выполнение для выделенного блока.
+function Selection.Execute (...)
+  return unit.Execute(Selection.Process, ...)
+end ----
 
 ---------------------------------------- -- Basic
 do
@@ -784,7 +887,7 @@ function Selection.PasteColumn (Info, block) --> (bool)
   end
 
   local CurLine, CurPos = Info.CurLine, Info.CurPos
-  for k = 1, #block do
+  for k = 1, block.Count or #block do
     if not unit.InsText(id, block[k]) then return end
     --logShow({ block[k], Info }, "Selection.PasteColumn")
     CurLine = CurLine + 1
@@ -881,37 +984,6 @@ function Selection.Dequote (left, right, force) --> (bool)
 
   return Selection.Paste(unit.GetInfo(), block, SelType)
 end -- Dequote
-
--- Process selected block.
--- Обработка выделенного блока.
---[[
-  -- @params:
-  force  (bool) - call action even if there is no selection.
-  action (func) - function to process selected block (or nil).
-  -- @return:
-  isOk   (bool) - operation success flag.
---]]
-function Selection.Process (force, action, ...) --> (bool)
-  local Info = unit.GetInfo()
-  local SelType = BlockTypes[Info.BlockType]
-
-  if force and SelType == "none" then -- Нет блока:
-    return action(nil, ...)
-  end
-
-  local SelInfo = Selection.Get()
-  if SelInfo == nil then return end -- Нет блока?
-
-  local block = Selection.Cut(unit.GetInfo(), SelType)
-  if not block then return end
-
-  --logShow({ left, right, block }, SelType)
-
-  block = action(block, ...)
-  if not block then return end
-
-  return Selection.Paste(unit.GetInfo(), block, SelType)
-end -- Process
 
 ---------------------------------------- -- Iterator
 do
