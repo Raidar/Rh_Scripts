@@ -395,6 +395,7 @@ end -- EditorMacroActions
 MacroActions.editor.macro = EditorMacroActions
 
 ---------------------------------------- Run
+do
 
 -- Check to macro-key in specified position.
 -- Проверка на макро-ключ в заданной позиции.
@@ -510,22 +511,28 @@ local function Play (Macro) --> (bool | nil, Action)
   return true
 end -- Play
 
+  local Begin_UndoRedo = F.EUR_BEGIN
+  local End_UndoRedo   = F.EUR_END
+  local Undo_UndoRedo  = F.EUR_UNDO
+
 -- Execute parsed macro-template.
 -- Выполнение разобранного макроса-шаблона.
 local function Exec (Macro) --> (bool | nil, Action)
+  local Info = farEdit.GetInfo()
+  local id = Info.EditorID
 
-  if not farEdit.UndoRedo(nil, F.EUR_BEGIN) then
+  if not farEdit.UndoRedo(id, Begin_UndoRedo) then
     return nil, "Begin UndoRedo"
   end
 
   local isOk, Action = Play(Macro)
 
-  if not farEdit.UndoRedo(nil, F.EUR_END) then
-    return nil, "End UndoRedo"
-  end
-
-  if not isOk then
-    if not farEdit.UndoRedo(nil, F.EUR_UNDO) then
+  if isOk then
+    if not farEdit.UndoRedo(id, End_UndoRedo) then
+      return nil, "End UndoRedo"
+    end
+  else
+    if not farEdit.UndoRedo(id, Undo_UndoRedo) then
       return nil, "Undo UndoRedo"
     end
     return nil, Action
@@ -565,6 +572,7 @@ unit.Run = {
   Macro     = unit.Execute,
 } ---
 
+end -- do
 --------------------------------------------------------------------------------
 return unit
 --------------------------------------------------------------------------------
