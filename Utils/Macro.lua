@@ -46,7 +46,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -54,10 +54,11 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {
   Actions = false,
-  Execute = false,
 
   Use = false,
   Run = false,
+
+  Execute = false,
 } --- unit
 
 ---------------------------------------- Macro-keys
@@ -84,8 +85,8 @@ local MacroActions = {
   editor = {}, -- Редактор
   panels = {}, -- Панели
 
-  use = false, -- Локальные функции
-  run = false, -- Основные функции
+  --use = false, -- Локальные функции
+  --run = false, -- Основные функции
 } ---
 unit.Actions = MacroActions
 
@@ -147,19 +148,31 @@ local EditorPlainActions = { -- Функции выполнения просты
 MacroActions.editor.plain = EditorPlainActions
 
 ---------------------------------------- Cycle actions
+local Use = {
+  InsText = false,
+  NewLine = false,
+
+  DelLineText = false,
+  DelCharText = false,
+  BackLineText = false,
+  BackCharText = false,
+} ---
+unit.Use = Use
+
+----------------------------------------
 
 -- Вставка текста.
-local function InsText (Info, Count, text)
+function Use.InsText (Info, Count, text)
   local Info = Info or farEdit.GetInfo()
   if Count > 1 then
     text = text:rep(Count)
   end
 
   return farEdit.InsText(Info.EditorID, text)
-end -- InsText
+end ---- InsText
 
 -- Вставка новой строки (построчно).
-local function NewLine (Info, Count, indent)
+function Use.NewLine (Info, Count, indent)
   local Info = Info or farEdit.GetInfo()
   for _ = 1, Count do
     if not farEdit.InsLine(Info.EditorID, indent) then
@@ -168,10 +181,10 @@ local function NewLine (Info, Count, indent)
   end
 
   return true
-end -- NewLine
+end ---- NewLine
 
 -- Удаление текста справа до конца строки (посимвольно).
-local function DelLineText (Info, Count)
+function Use.DelLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local id = Info.EditorID
   local Len = farEdit.GetLength(id, -1)
@@ -181,10 +194,10 @@ local function DelLineText (Info, Count)
   end
 
   return true
-end -- DelLineText
+end ---- DelLineText
 
 -- Удаление текста справа с учётом включения строки ниже (посимвольно).
-local function DelCharText (Info, Count)
+function Use.DelCharText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local id = Info.EditorID
 
@@ -193,10 +206,10 @@ local function DelCharText (Info, Count)
   end
 
   return true
-end -- DelCharText
+end ---- DelCharText
 
 -- Удаление текста слева (до начала строки).
-local function BackLineText (Info, Count)
+function Use.BackLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local id = Info.EditorID
   local Len = farEdit.GetLength(id, -1)
@@ -205,11 +218,11 @@ local function BackLineText (Info, Count)
     return
   end
 
-  return DelCharText(Info, Count)
-end -- BackLineText
+  return Use.DelCharText(Info, Count)
+end ---- BackLineText
 
 -- Удаление текста слева с учётом перехода на строку выше.
-local function BackCharText (Info, Count)
+function Use.BackCharText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local k = Count
   while k > 0 do
@@ -250,12 +263,12 @@ local function BackCharText (Info, Count)
   end -- for
   --]]
 
-  return DelCharText(Info, Count)
-end -- BackCharText
+  return Use.DelCharText(Info, Count)
+end ---- BackCharText
 
 local EditorCycleActions = {
-  text = InsText, -- text
-  line = NewLine, -- line
+  text = Use.InsText,
+  line = Use.NewLine,
 
   left  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
@@ -277,16 +290,16 @@ local EditorCycleActions = {
   home    = EditorPlainActions.home,
   ["end"] = EditorPlainActions["end"],
 
-  del  = DelLineText,
-  deln = DelCharText,
-  bs   = BackLineText,
-  bsln = BackCharText,
+  del  = Use.DelLineText,
+  deln = Use.DelCharText,
+  bs   = Use.BackLineText,
+  bsln = Use.BackCharText,
 
   enter    = function (Info, Count)
-    return NewLine(Info, Count, false)
+    return Use.NewLine(Info, Count, false)
   end,
   indenter = function (Info, Count)
-    return NewLine(Info, Count, true)
+    return Use.NewLine(Info, Count, true)
   end,
   nop = function (Info, Count) return true end,
 } --- EditorCycleActions
@@ -296,7 +309,7 @@ MacroActions.editor.cycle = EditorCycleActions
 local TEditorMacroActions = {
 
   text = function (self, Info, Count, text) -- Вставка текста
-    if not InsText(Info, Count, text) then
+    if not Use.InsText(Info, Count, text) then
       return
     end
     if self.MoveStop then
@@ -305,7 +318,7 @@ local TEditorMacroActions = {
     return true
   end, --- text
   line = function (self, Info, Count, indent) -- Вставка строки
-    if not NewLine(Info, Count, indent) then return end
+    if not Use.NewLine(Info, Count, indent) then return end
     if self.MoveStop then
       return farEdit.Goto(Info)
     end
@@ -323,14 +336,14 @@ local TEditorMacroActions = {
   del  = function (self, ...) return EditorCycleActions.del(...) end,
   deln = function (self, ...) return EditorCycleActions.deln(...) end,
   bs   = function (self, Info, Count)
-    if not BackLineText(Info, Count) then return end
+    if not Use.BackLineText(Info, Count) then return end
     if self.MoveStop then
       return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
     return true
   end, --- bs
   bsln = function (self, Info, Count)
-    if not BackCharText(Info, Count) then return end
+    if not Use.BackCharText(Info, Count) then return end
     if self.MoveStop then
       return farEdit.SetPos(Info.EditorID, Info.CurLine, Info.CurPos)
     end
@@ -395,21 +408,31 @@ end -- EditorMacroActions
 MacroActions.editor.macro = EditorMacroActions
 
 ---------------------------------------- Run
-do
+local Run = {
+  CheckPos  = false,
+  CheckRep  = false,
 
+  Make      = false,
+  Play      = false,
+  Exec      = false,
+  Macro     = false,
+} ---
+unit.Run = Run
+
+----------------------------------------
 -- Check to macro-key in specified position.
 -- Проверка на макро-ключ в заданной позиции.
-local function CheckMacroPos (Text, Pos) --> (string | nil)
+function Run.CheckMacroPos (Text, Pos) --> (string | nil)
   --assert(Text and Pos)
   local s = Text:sub(Pos, -1):lower()
   for _, v in ipairs(MacroKeys) do
     if (s:find(v, 1, true) or 0) == 1 then return v end
   end
-end -- CheckMacroPos
+end ---- CheckMacroPos
 
 -- Check to repeat of macro-key in specified position.
 -- Проверка на повторение макро-ключа в заданной позиции.
-local function CheckMacroRep (Text, Pos) --> (string | nil)
+function Run.CheckMacroRep (Text, Pos) --> (string | nil)
   --assert(Text and Pos)
   return Text:sub(Pos, -1):match("^(%d+)")
   --[[
@@ -421,11 +444,11 @@ local function CheckMacroRep (Text, Pos) --> (string | nil)
   end
   if k > 1 then return s:sub(1, k - 1) end
   --]]
-end -- CheckMacroRep
+end ---- CheckMacroRep
 
 -- Parse macro-template.
 -- Разбор макроса-шаблона.
-local function Make (Text, MacroKeyChar) --> (table)
+function Run.Make (Text, MacroKeyChar) --> (table)
   --assert(Text)
   local MacroKeyChar = MacroKeyChar or DefMacroKeyChar
 
@@ -444,7 +467,7 @@ local function Make (Text, MacroKeyChar) --> (table)
       s = s..MacroKeyChar -- MacroKeyChar as simple char
 
     else -- Action key:
-      local key = CheckMacroPos(Text, k)
+      local key = Run.CheckMacroPos(Text, k)
       if s ~= "" then
         t[#t+1], s = { Action = "text", Text = s }, ""
       end
@@ -454,7 +477,7 @@ local function Make (Text, MacroKeyChar) --> (table)
         k = k + key:len() - 1
 
       else -- Action value:
-        local value = CheckMacroRep(Text, k)
+        local value = Run.CheckMacroRep(Text, k)
         if value then
           t[#t].Value = tonumber(value)
           k = k + value:len() - 1
@@ -473,11 +496,11 @@ local function Make (Text, MacroKeyChar) --> (table)
   --logShow(t, Text)
 
   return t
-end -- Make
+end ---- Make
 
 -- Execute actions of macro-template.
 -- Выполнение действий макроса-шаблона.
-local function Play (Macro) --> (bool | nil, Action)
+function Run.Play (Macro) --> (bool | nil, Action)
   local Actions = EditorMacroActions() -- Действия
   local InsText = Actions.text -- Вставка текста
 
@@ -491,6 +514,7 @@ local function Play (Macro) --> (bool | nil, Action)
     -- Выполнение действия макроса:
     local isOk
     if Action == "text" then
+      --logShow(v, "InsText")
       isOk = InsText(Actions, Info, Value, v.Text)
     --[[
     elseif Action == "pair" then
@@ -509,15 +533,16 @@ local function Play (Macro) --> (bool | nil, Action)
   end
 
   return true
-end -- Play
+end ---- Play
 
+do
   local Begin_UndoRedo = F.EUR_BEGIN
   local End_UndoRedo   = F.EUR_END
   local Undo_UndoRedo  = F.EUR_UNDO
 
 -- Execute parsed macro-template.
 -- Выполнение разобранного макроса-шаблона.
-local function Exec (Macro) --> (bool | nil, Action)
+function Run.Exec (Macro) --> (bool | nil, Action)
   local Info = farEdit.GetInfo()
   local id = Info.EditorID
 
@@ -525,7 +550,7 @@ local function Exec (Macro) --> (bool | nil, Action)
     return nil, "Begin UndoRedo"
   end
 
-  local isOk, Action = Play(Macro)
+  local isOk, Action = Run.Play(Macro)
 
   if isOk then
     if not farEdit.UndoRedo(id, End_UndoRedo) then
@@ -541,38 +566,21 @@ local function Exec (Macro) --> (bool | nil, Action)
   farEdit.Redraw()
 
   return true
-end -- Exec
+end ---- Exec
+
+end -- do
 
 -- Execute Macro (with parsing).
 -- Выполнение макроса (с разбором).
-function unit.Execute (Macro) --> (bool)
-  local t = Make(Macro)
+function Run.Macro (Macro) --> (bool)
+  local t = Run.Make(Macro)
   --logShow(t, Item.Macro)
 
-  return Exec(t)
+  return Run.Exec(t)
 end ----
 
-unit.Use = {
-  InsText = InsText,
-  NewLine = NewLine,
+unit.Execute = Run.Macro
 
-  DelLineText = DelLineText,
-  DelCharText = DelCharText,
-  BackLineText = BackLineText,
-  BackCharText = BackCharText,
-} ---
-
-unit.Run = {
-  CheckPos  = CheckMacroPos,
-  CheckRep  = CheckMacroRep,
-
-  Make      = Make,
-  Play      = Play,
-  Exec      = Exec,
-  Macro     = unit.Execute,
-} ---
-
-end -- do
 --------------------------------------------------------------------------------
 return unit
 --------------------------------------------------------------------------------
