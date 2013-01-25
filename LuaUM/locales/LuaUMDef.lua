@@ -15,7 +15,6 @@ local Data = {
   Msgs_File  = "LuaUserMenu messages",
   StrucBind  = "Common bind of structures",
   BindsFile  = "Binds to LUM-menu files",
-  AliasFile  = "Aliases for FAR macros",
   UMenuFile  = "LuaUserMenu user menu",
 
   -- Error messages.
@@ -23,7 +22,6 @@ local Data = {
   FileDataError  = "Error getting data from file of kind:\n%s. Error description:\n%s",
   IniSecNotFound = "[%s] section not found\nin file %s",
   IniKeyNotFound = "\"%s\" key not found\nin [%s] section\nof file %s",
-  AliasNotFound  = "Aliases not found\nin file %s",
   MnuSecNotFound = "Menu section not found:\n%s",
   MnuWrongItem   = "Menu item type is wrong:\n'%s' for %s[%d]",
   UnknownCfgGroup = "Unknown group of LUM config:\n%s from %s.\n%s: %s",
@@ -63,7 +61,6 @@ local Data = {
   cfg_DefUMPath = "Base &script path",      -- s
   cfg_UMenuFile = "&Menu file name",        -- m
   cfg_BindsFile = "&Binds file name",       -- b
-  cfg_AliasFile = "&Alias file name",       -- a
 
      -- LUM_FilesDlg:
   cfg_MenusFile = "Menu b&inds file",       -- i

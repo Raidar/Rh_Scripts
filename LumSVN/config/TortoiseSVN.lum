@@ -1,4 +1,4 @@
---[[ LuaPUM ]]--
+--[[ LumSVN ]]--
 
 ----------------------------------------
 --[[ description:
@@ -93,7 +93,7 @@ local addNewData = tables.extend
 local DefCustom = {
   label = "tSVN",
   name = "TortoiseSVN",
-  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
+  path = "scripts\\Rh_Scripts\\LumSVN\\config\\",
   locale = { kind = 'load' },
 } --- DefCustom
 

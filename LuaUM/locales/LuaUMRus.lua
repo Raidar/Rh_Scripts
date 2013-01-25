@@ -13,7 +13,6 @@ local Data = {
   UMenuItem  = "Пункт меню %s",
   StrucBind  = "Общая привязка структур",
   BindsFile  = "Привязки к файлам меню LUM",
-  AliasFile  = "Псевдонимы для макросов FAR",
   UMenuFile  = "Пользовательское меню LuaUserMenu",
 
   -- Сообщения об ошибках.
@@ -21,7 +20,6 @@ local Data = {
   FileDataError  = "Ошибка получения данных из файла вида:\n%s. Описание ошибки:\n%s",
   IniSecNotFound = "Раздел [%s] не найден\nв файле %s",
   IniKeyNotFound = "Ключ \"%s\" не найден\nв разделе [%s]\nфайла %s",
-  AliasNotFound  = "Псевдонимы не найдены\nв файле %s",
   MnuSecNotFound = "Раздел меню не найден:\n%s",
   MnuWrongItem   = "Тип пункта меню не верен:\n'%s' для %s[%d]",
   UnknownCfgGroup = "Неизвестная группа конфигурации LUM:\n%s из %s.\n%s: %s",
@@ -61,7 +59,6 @@ local Data = {
   cfg_DefUMPath = "Путь к базовому &скрипту",   -- с
   cfg_UMenuFile = "Имя файла с &меню",          -- м
   cfg_BindsFile = "Имя файла при&вязок",        -- в
-  cfg_AliasFile = "Имя файла псевдо&нимов",     -- н
 
      -- LUM_FilesDlg:
   cfg_MenusFile = "Файл при&вязок к меню",      -- в

@@ -44,6 +44,7 @@ local Data = {
   cfg_LuaEUM_Insert = "├ Вставка шаблона",
   cfg_LuaEUM_ChsKit = "└ Набор символов",
   cfg_LuaPUM = "LUM для  &Панелей",
+  cfg_LumSVN = "LUM для  &SVN",
   cfg_flsLUM = "LUM дл&я fl scripts",
   cfg_Scripts   = "Скрипты:", -- Scripts:
   cfg_VoidTruncate  = "Усекатель пустоты",

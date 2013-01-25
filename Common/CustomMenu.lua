@@ -100,7 +100,6 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
     Menus = Menus,
     Config = Config,
     Scope  = Scope,
-    Aliases = Properties.FarMacroAliases or {},
 
     -- Локализация.
     -- TODO: Выделить из LUM в CustomMenu его сообщения!

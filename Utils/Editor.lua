@@ -12,6 +12,8 @@
 --]]
 --------------------------------------------------------------------------------
 
+local tconcat = table.concat
+
 ----------------------------------------
 local far = far
 local F = far.Flags
@@ -117,7 +119,6 @@ function unit.Execute (action, ...)
 end ---- Execute
 
 end -- do
-
 ---------------------------------------- Editor
 -- Get length of line.
 -- Получение длины линии.
@@ -335,16 +336,102 @@ end -- Dequote
 
 ---------------------------------------- Block
 local Block = {
+  -- Basic
+  Params    = false,
+  Concat    = false,
+  Split     = false,
   -- Quote
-  Enquote = false,
-  Dequote = false,
+  Enquote   = false,
+  Dequote   = false,
   -- Substitute
-  SubText  = false,
-  SubLines = false,
-  SubBlock = false,
-  DelLines = false,
+  SubText   = false,
+  SubLines  = false,
+  SubBlock  = false,
+  DelLines  = false,
 } ---
 unit.Block = Block
+
+---------------------------------------- -- Basic
+do
+  --local floor = math.floor
+  --local tables = require 'context.utils.useTables'
+  --local hpairs = tables.hpairs
+
+-- Fill table with block params.
+-- Заполнение таблицы параметрами блока.
+--[[
+  -- @params:
+  block (table) - line or block of lines.
+  t (nil|table) - table for block parameters.
+  -- @return:
+  t (nil|table) - filled table as empty block.
+--]]
+function Block.Params (block, t) --> (block)
+  local t = t or {}
+  if type(block) ~= 'table' then return t end
+
+  for k, v in pairs(block) do
+    if type(k) ~= 'number' --[[or
+       k ~= floor(k) or
+       k > (block.Count or #block)]] then
+      t[k] = v
+    end
+  end
+  --for k, v in hpairs(block) do t[k] = v end
+
+  t.Count = #t
+  return t
+end ---- Params
+
+end -- do
+
+-- Concatenate block lines into one string.
+-- Объединение линий блока в одну строку.
+--[[
+  -- @params:
+  block (s|t|nil) - line or block of lines.
+  sep    (string) - separator to concat.
+  -- @return:
+  s  (nil|string) - concatenated string.
+--]]
+function Block.Concat (block, sep) --> (string)
+  if not block then return end
+
+  if type(block) == 'string' then return block end
+
+  return tconcat(block, sep or "\n")
+end ---- Concat
+
+-- Split string to block lines.
+-- Разбиение строки на линии блока.
+--[[
+  -- @params:
+  s (nil|string) - splited string.
+  pat   (string) - pattern to match.
+  sep   (string) - separator to split.
+  -- @return:
+  block (s|t|nil) - block of lines or line.
+--]]
+function Block.Split (s, pat, sep) --> (block)
+  if not s then return end
+  local pat = pat or "([^\n]-)"
+  local sep = sep or "\n"
+
+  local t = {}
+  for line in s:gmatch(pat..sep) do
+    t[#t+1] = line -- all but last
+  end
+
+  local line = s:match(sep..pat.."$") -- last
+  if line then
+    t[#t+1] = line
+  end
+
+  if #t == 1 then return t[1] end
+  t.Count = #t
+
+  return t
+end ---- Split
 
 ---------------------------------------- -- Quote
 -- Enquote block lines.
@@ -467,6 +554,32 @@ end ---- Dequote
 
 ---------------------------------------- -- Substitute
 
+-- Substitute another text for initial one in block text.
+-- Подставить другой текст вместо исходного в тексте блока.
+--[[
+  -- @params:
+  block  (s|t|nil) - line or block of lines.
+  pattern (string) - string to find: @see string.gsub.
+  replace  (s|t|f) - string/table/function to replace: @see string.gsub.
+  -- @return:
+  block (s|t|nil) - processed line or block of lines.
+--]]
+function Block.SubText (block, pattern, replace) --> (block)
+  if not block then return end
+
+  if type(block) == 'string' then
+    return block:gsub(pattern, replace)
+  end
+
+  local s = Block.Concat(block)
+  s = s:gsub(pattern, replace)
+
+  local t = Block.Split(s)
+  if type(t) ~= 'table' then return t end
+
+  return Block.Params(block, t)
+end ---- SubText
+
 -- Substitute another text for initial one in block lines.
 -- Подставить другой текст вместо исходного в линиях блока.
 --[[
@@ -481,12 +594,11 @@ function Block.SubLines (block, pattern, replace) --> (block)
   if not block then return end
 
   if type(block) == 'string' then
-    block = block:gsub(pattern, replace)
+    return block:gsub(pattern, replace)
+  end
 
-  else
-    for k = 1, block.Count do
-      block[k] = block[k]:gsub(pattern, replace)
-    end
+  for k = 1, block.Count or #block do
+    block[k] = block[k]:gsub(pattern, replace)
   end
 
   return block
@@ -498,19 +610,29 @@ end ---- SubLines
   -- @params:
   block  (s|t|nil) - line or block of lines.
   pattern (string) - string to find: @see string.gsub.
-  exclude   (bool) - exclude pattern: @default = false.
+  include   (bool) - include pattern: @default = false.
   -- @return:
   block (s|t|nil) - processed line or block of lines.
 --]]
-function Block.DelLines (block, pattern, exclude) --> (block)
+function Block.DelLines (block, pattern, include) --> (block)
   if not block then return end
+  local f = include and true or false
 
   if type(block) == 'string' then
-
-  else
+    local is = block:find(pattern) and true or false
+    return (f == is) and block or nil
   end
 
-  return block
+  local t = { Count = 0 }
+  for k = 1, block.Count or #block do
+    local s = block[k]
+    local is = s:find(pattern) and true or false
+    if f == is then
+      t[#t+1] = s
+    end
+  end
+
+  return Block.Params(block, t)
 end ---- DelLines
 
 ---------------------------------------- Selection
@@ -589,7 +711,6 @@ end ----
 
 ---------------------------------------- -- Basic
 do
-  local tconcat = table.concat
 
 -- Select block in editor.
 -- Выделение блока в редакторе.
@@ -767,7 +888,7 @@ end ---- CopyColumn
                       "column" - as column block.
   ToPos  (nil|bool) - flag to restore position after action.
   -- @return:
-  @first:
+  @1:
          (nil) - no selection block or error.
     s (string) - one line only in selection block, may be with "\r".
     t  (table) - table with lines in selection block, last line may be empty.

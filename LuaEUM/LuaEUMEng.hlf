@@ -6,7 +6,7 @@
 
 @Contents
 $ #Lua User Menu for Editor# (~LuaEUM~)
-  LuaEUM is a variant of LUM utility, used for work in FAR editor.
+  LuaEUM is a variant of LUM utility, used to work in FAR editor.
 
     ~Menu items~@LUM_Items@
     ~Files of utility~@LUM_Files@
@@ -28,8 +28,8 @@ $ #Menu items#: LuaEUM
 @LUM_Files
 $ #Files of utility#: LuaEUM
   Files:
-    \37LuaEUM.lua\-     — LuaEUM menu: Implementation.
-    \37LuaEUMer.lua\-   — LuaEUM settings: Configurator.
+    \37LuaEUM.lua\-     — ¦LuaEUM menu: Implementation.
+    \37LuaEUMer.lua\-   — ¦LuaEUM settings: Configurator.
 
  ~Contents~@Contents@
 
@@ -37,11 +37,12 @@ $ #Files of utility#: LuaEUM
 $ #Template insert#: LuaEUM
   A "Template insert" menu allows to insert standard templates of text.
 
-  A recommended scheme of binding tempates to keys is:
+  A recommended scheme for binding templates to keys is:
 
  \37─\-─┬───────────────┬───────────────┬───────────────┬───────────────┬─
  \37╲ │     <a>       │   Shift+<a>   │   Ctrl+<a>    │   Alt+<a>     │\-
  \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
+ \37-\- │ --comment--   │ ==comment==   │ block comment │ **comment**   │
  \37A\- │ ?             │ ?             │ ?             │ ?             │
  \37B\- │ block         │ full block    │ repeat-until  │ break         │
  \37 \- │               │               │ do-while      │               │

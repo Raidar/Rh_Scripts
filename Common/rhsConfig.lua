@@ -64,6 +64,7 @@ local CfgDataOrder = {
   "mLuaEUM_Insert",
   "mLuaEUM_ChsKit",
   "mLuaPUM",
+  "mLumSVN",
   "mflsLUM",
   "sScripts", -- Скрипты:
   "mVoidTruncate",
@@ -163,6 +164,21 @@ local DefCfgData = {
       Param1 = "Config",
     },
     Comment = "-- Lua User Menu for Panels.",
+  },
+  mLumSVN = {
+    Area = "pc",
+    enabled = true,
+    Name = "LumSVN",
+    Title = "LUM for &SVN",
+    --HotKey = "Ctrl+Alt+Shift+F2",
+    BasePath = "ScriptsPath",
+    FilePath = [[LumSVN\\LumSVN]],
+    config = {
+      enabled = true,
+      Title = "LUM for &SVN",
+      Param1 = "Config",
+    },
+    Comment = "-- Lua User Menu for SVN.",
   },
   mflsLUM = {
     Area = "evpdc",

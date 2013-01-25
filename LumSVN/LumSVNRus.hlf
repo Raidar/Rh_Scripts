@@ -1,0 +1,26 @@
+﻿.Language=Russian,Russian (Русский)
+.PluginContents=Lua User Menu для SVN
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Пользовательское меню Lua для SVN (~LumSVN~)
+  LumSVN — вариант утилиты LUM, предназначенный для работы на панелях FAR.
+
+    ~Файлы утилиты~@LUM_Files@
+
+  Ссылки:
+    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Пользовательское меню Lua~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~LumSVN~@Contents@
+
+@LUM_Files
+$ #Файлы утилиты#: LumSVN
+  Файлы:
+    \37LumSVN.lua\-     — ¦Меню LumSVN: Реализация.
+    \37LumSVNer.lua\-   — ¦Настройка LumSVN: Конфигуратор.
+
+ ~Содержание~@Contents@

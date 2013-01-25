@@ -19,7 +19,6 @@ $ #Lua User Menu# (~LUM~)
 
     ~Menu formation~@LUM_Formation@
       ~Binding type to menu~@LUM_MenuBinds@
-      ~Aliases for FAR macros~@LUM_MenuAlias@
       ~Menu file content~@LUM_MenuConts@
       ~Menu‑table items~@LUM_MenuItems@
 
@@ -74,7 +73,6 @@ $ #Menu features#: LUM
  #Menu items#:
   · ¦Kinds: submenus, macros, templates, scripts, and commands.
   · ¦An assignment of key combos to menu items by various ways.
-  · ¦Using of aliases (with parameters) in FAR macro sequences.
  #Settings#:
   · ¦Viewing of LUM default parameters.
   · ¦Settings of pathes and names for base files of LUM.
@@ -152,7 +150,6 @@ $ #Menu formation#: LUM
   Menu formation is processed with following files:
 
   — ¦~A file for bind of filetype to menu~@LUM_MenuBinds@
-  — ¦~A file with aliases for FAR macros~@LUM_MenuAlias@
 
   — ¦~Files with menu for filetypes~@LUM_MenuConts@
   — ¦~Menu items and menu‑table fields~@LUM_MenuItems@
@@ -168,9 +165,8 @@ $ #Binding type to menu#: LUM
  (lui is an abbreviation of Lua User Ini.)
   Several bind files may be determined in utility settings.
 
-  A type name is used for section name. The section contains two keys:
-  — #Menu#  — ¦with enumeration of ~menu~@LUM_MenuConts@ files,
-  — #Alias# — ¦with enumeration of files with ~aliases for FAR macros~@LUM_MenuAlias@.
+  A type name is used for section name. The section contains following key:
+  — #Menu#  — ¦with enumeration of ~menu~@LUM_MenuConts@ files.
 
     \1FExample\-:
   \3FDefault\37 = \3F{ \3ACaption\37 = "LUM for Editor"\3F,\-
@@ -186,22 +182,9 @@ $ #Binding type to menu#: LUM
   \37UMConfig\- — ¦menu file for configuration of LuaEUM settings.
 
   No file extensions may be specified in them,
-default extension for menu is \37.lum\-, and for aliases it is \37.lui\-.
+default extension for menu is \37.lum\-.
   A '#=#' section is served for using menu existent type as replacement
 for required group (for example, in case of menu identity for this types).
-
- ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
-
-@LUM_MenuAlias
-$ #Aliases for FAR macros#: LUM
-  Aliases for FAR macros are enumerated in \37LumAlias.lui\- file.
- Default directory for file is \37<Pack directory>\<LuaUM directory>\config\-.
-
-  Aliases allows to simplify creating of similar or complicated FAR macros.
-Aliases are in fact a convenient labeling of FAR macro part. Aliases may use
-parameters (see \37UM_Html.lum\- file for example).
-  The file with aliases must contain #Aliases# (or #@@#) section,
-where necessary aliases are enumerated (see \37LumAlias.lui\- file for example).
 
  ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
 

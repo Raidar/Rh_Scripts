@@ -70,7 +70,6 @@ local DefCfgData = {
     --LUM_Title = "Lua User Menu" -- Заголовок для окон диалогов.
     DefUMPath = ScriptPath,       -- Путь к файлам по умолчанию.
     BindsFile = "LumBinds.lua", -- Название файла привязок к меню (по умолчанию).
-    AliasFile = "LumAlias.lui", -- Название файла псевдонимов (по умолчанию).
     UMenuFile = "U_NoMenu.lum", -- Название файла с меню LUM (по умолчанию).
     CfgUMPath = ScriptPath.."config\\", -- Путь к основным файлам (по умолчанию).
   }, -- Basic
@@ -99,7 +98,6 @@ local DlgTypes = {
   Basic = {
     DefUMPath = "edt",
     BindsFile = "edt",
-    AliasFile = "edt",
     UMenuFile = "edt",
     LuaUMPath = "edt",
   }, -- Basic
@@ -252,8 +250,6 @@ function Dlg.Basic (Config, Derived) --> (dialog)
   D.edtUMenuFile     = {DI.Edit,  M+1,  6, W-2,  0, 0, 0, 0, DIF.ReadOnly, ""}
   D.txtBindsFile     = {DI.Text,  I+2,  7, M-1,  0, 0, 0, 0, 0, L:config"BindsFile"}
   D.edtBindsFile     = {DI.Edit,  I+2,  8, M-1,  0, 0, 0, 0, DIF.ReadOnly, ""}
-  D.txtAliasFile     = {DI.Text,  M+1,  7, W-2,  0, 0, 0, 0, 0, L:config"AliasFile"}
-  D.edtAliasFile     = {DI.Edit,  M+1,  8, W-2,  0, 0, 0, 0, DIF.ReadOnly, ""}
   D.sep              = {DI.Text,    0,  H-2, 0,  0, 0, 0, 0, DIF.SeparLine, ""}
   --D.btnOk            = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
   D.btnCancel        = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Close"}
@@ -346,8 +342,6 @@ local ROnly_Items = {
   --edtUMenuFile = true,
   txtBindsFile = true,
   --edtBindsFile = true,
-  txtAliasFile = true,
-  --edtAliasFile = true,
   -- UMenu:
   sepMenuCaptions = true,
   sepMenuItemText = true,

@@ -43,6 +43,7 @@ local Data = {
   cfg_LuaEUM_Insert = "├ Template Insert",
   cfg_LuaEUM_ChsKit = "└ Characters Kit",
   cfg_LuaPUM = "LUM for &Panels",
+  cfg_LumSVN = "LUM for &SVN",
   cfg_flsLUM = "&fl scripts LUM",
   cfg_Scripts   = "Scripts:", -- Scripts:
   cfg_VoidTruncate  = "Void Truncater",

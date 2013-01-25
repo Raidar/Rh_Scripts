@@ -91,7 +91,7 @@ local DrawClearItemText = RDraw.DrawClearItemText
 local DrawSeparItemText = RDraw.DrawSeparItemText
 
 ----------------------------------------
---[[
+-- [[
 local hex = numbers.hex8
 local tostring = tostring
 local dbg = require "context.utils.useDebugs"
@@ -1504,6 +1504,7 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
     local AKey = VirKey.KeyName
     AKey = keyUt.SKEY_NumpadNavs[AKey] or
            keyUt.SKEY_MSWheelNavs[AKey] or AKey
+    --logShow(VirKey, AKey, "d1 x8")
     local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
     --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
 
@@ -1999,28 +2000,8 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   --local NoDlgClose -- Нет выбора пункта меню для спец. действий.
 
-  -- [[
-  local function DlgMouseClick (hDlg, ProcItem, MouseRec) --> (bool)
-    local Zone = _Menu.Zone
-    local X, Y = MouseRec.dwMousePositionX, MouseRec.dwMousePositionY
-    -- TODO: Обработка выбором мышью.
-    --logShow(MouseRec, ProcItem, 2)
-    if Zone.Is_ScrollH and Y == Zone.Height then
-      return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + X)
-    elseif Zone.Is_ScrollV and X == Zone.Width then
-      return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + Y)
-    end
-
-    return false
-  end -- DlgMouseClick
-  --]]
-
-  -- Обработчик нажатия клавиши:
-  local function DlgCtrlEvent (hDlg, ProcItem, Input) --> (bool)
-    local VirKey = far.ParseInput(Input) -- FAR23
-    if not VirKey or VirKey.EventType == F.MOUSE_EVENT then
-      return DlgMouseClick(hDlg, ProcItem, Input)
-    end
+  -- Обработчик нажатия клавиши клавиатуры:
+  local function DlgKeyEvent (hDlg, ProcItem, VirKey) --> (bool)
     --logShow(_Menu, "_Menu", "d1 bns")
 
     local StrKey = InputRecordToName(VirKey) or ""
@@ -2045,8 +2026,26 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     -- 2. Обработка обычных нажатий.
     return _Menu:DoKeyPress(hDlg, VirKey)
-  end -- DlgCtrlEvent
+  end -- DlgKeyEvent
 
+  -- [[
+  -- Обработчик обработки нажатия кнопки мыши.
+  local function DlgMouseClick (hDlg, ProcItem, MouseRec) --> (bool)
+    local Zone = _Menu.Zone
+    local X, Y = MouseRec.dwMousePositionX, MouseRec.dwMousePositionY
+    -- TODO: Обработка выбором мышью.
+    --logShow(MouseRec, ProcItem, 2)
+    if Zone.Is_ScrollH and Y == Zone.Height then
+      return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + X)
+    elseif Zone.Is_ScrollV and X == Zone.Width then
+      return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + Y)
+    end
+
+    return false
+  end -- DlgMouseClick
+  --]]
+
+  -- Обработчик предобработки нажатия кнопки мыши.
   local function DlgInputEvent (hDlg, ProcItem, MouseRec) --> (bool)
     far.RepairInput(MouseRec)
     --local Zone = _Menu.Zone
@@ -2057,6 +2056,25 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     return true
   end -- DlgInputEvent
+
+  -- Обработчик нажатия клавиши / кнопки:
+  local function DlgCtrlEvent (hDlg, ProcItem, Input) --> (bool)
+    local VirKey = far.ParseInput(Input) -- FAR23
+    --logShow({ VirKey, Input }, "Ctrl", "d1 x8")
+    if not VirKey then return false end
+
+    local EventType = VirKey.EventType
+
+    if EventType == F.MOUSE_EVENT then
+      return DlgMouseClick(hDlg, ProcItem, Input)
+
+    elseif EventType == F.KEY_EVENT or
+           EventType == F.FARMACRO_KEY_EVENT then
+      return DlgKeyEvent(hDlg, ProcItem, VirKey)
+    end
+
+    return false
+  end -- DlgCtrlEvent
 
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
     if not _Menu.RectMenu.NoMouseEvent then -- TODO: --> doc!

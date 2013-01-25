@@ -188,7 +188,7 @@ function TMenu:Run ()
                     Scope.FileType ~= "none" and
                     asBindsType(Scope.FileType, BindsData, '=') or "none"
 
-  -- TODO: Use all features: inherit + Default -- for full Menu, Aliases, Props etc!!! -|v
+  -- TODO: Use all features: inherit + Default -- for full Menu, Props etc!!! -|v
   --Make concat order!
   --logShow(BindsData, Scope.FileType)
   --LUM_Binds = GetBindsTypeData(Scope.BindsType, BindsData) --- !?
@@ -228,37 +228,10 @@ function TMenu:Run ()
   end
   --logShow(self.Menus, "self.Menus", 0)
 
-  -- Перечисление файлов псевдонимов:
-  local AliasEnum = LUM_Binds.Alias or ""
-  if isDefault and Scope.DefMenu.Alias then
-    AliasEnum = ("%s;%s"):format(AliasEnum, Scope.DefMenu.Alias)
-  end
-  -- Считывание и разбор файлов псевдонимов.
-  local AliasData
-  Args = { Base = PluginPath,
-           DefExt = ".lui",
-           Enum = AliasEnum,
-           Path = Cfg_Files.FilesPath,
-           DefEnum = Cfg_Basic.AliasFile,
-           DefPath = Cfg_Basic.CfgUMPath }
-  AliasData, SError = LW.GetFileEnumData(Args)
-  if not AliasData then
-    return L:et2("FileDataError", "AliasFile", SError)
-  end
-  --logShow(AliasData, "AliasData")
-
-  local AliasPart -- Раздел с псевдонимами
-  if AliasData.Aliases then AliasPart = "Aliases"
-  elseif AliasData[Nameless] then AliasPart = Nameless
-  else
-    return L:et1("AliasNotFound", Scope.FileName)
-  end
-
   -- Разбор общих свойств меню.
   -- TEMP: TODO see above!!!
   self.Props = LUM_Binds.Properties or Scope.DefMenu.Properties or {}
   if not self.Props.MenuView then self.Props.MenuView = Scope.MenuView end
-  self.Props.FarMacroAliases = self.Aliases
   --logShow(self.Props, "Properties", 2)
 
   BindsData, LUM_Binds = nil, nil -- (?)

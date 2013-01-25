@@ -6,7 +6,7 @@
 
 @Contents
 $ #Lua User Menu for Panels# (~LuaPUM~)
-  LuaPUM is a variant of LUM utility, used for work in FAR panels.
+  LuaPUM is a variant of LUM utility, used to work in FAR panels.
 
     ~Files of utility~@LUM_Files@
 
@@ -20,7 +20,7 @@ $ #Lua User Menu for Panels# (~LuaPUM~)
 @LUM_Files
 $ #Files of utility#: LuaPUM
   Files:
-    LuaPUM.lua    — LuaPUM menu: Implementation.
-    LuaPUMer.lua  — LuaPUM settings: Configurator.
+    \37LuaPUM.lua\-     — ¦LuaPUM menu: Implementation.
+    \37LuaPUMer.lua\-   — ¦LuaPUM settings: Configurator.
 
  ~Contents~@Contents@
