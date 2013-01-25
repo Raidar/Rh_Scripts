@@ -1,0 +1,45 @@
+REGEDIT4
+
+; LuaFAR for Editor
+
+; Choose used plugin filename for LuaFAR for Editor!!!
+
+[HKEY_CURRENT_USER\Software\Far2\PluginHotkeys]
+
+; Embed version
+[HKEY_CURRENT_USER\Software\Far2\PluginHotkeys\Plugins/LF4Ed/lf4ed.dll]
+; Noembed version
+;[HKEY_CURRENT_USER\Software\Far2\PluginHotkeys\Plugins/LF4Ed/luaplug.dll]
+"Hotkey"="L"
+"ConfHotkey"="L"
+
+[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Editor]
+
+[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Editor\AltShiftF2]
+"Sequence"="F11 L M"
+"DisableOutput"=dword:00000001
+"Description"="Lum : LUM for Editor"
+
+[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Shell\AltShiftF2]
+"Sequence"="F11 L M"
+"DisableOutput"=dword:00000001
+"Description"="Lum : LUM for Panels"
+
+; Template Insert
+
+[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Editor\CtrlJ]
+"Sequence"="F11 L M J $If(Menu) Esc $End"
+"DisableOutput"=dword:00000001
+"Description"="Lum : Template Insert"
+
+; Template Insert Sample for "A"
+
+;[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Editor\CtrlAltA]
+;"Sequence"="F11 L M J $If(Menu) Esc $Else a $End"
+;"DisableOutput"=dword:00000001
+;"Description"="Lum : Template: a"
+;
+;[HKEY_CURRENT_USER\Software\Far2\KeyMacros\Editor\CtrlAltShiftA]
+;"Sequence"="F11 L M J $If(Menu) Esc $Else A $End"
+;"DisableOutput"=dword:00000001
+;"Description"="Lum : Template: A"
