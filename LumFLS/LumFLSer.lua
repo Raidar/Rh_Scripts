@@ -1,16 +1,16 @@
---[[ flsLUM settings ]]--
+--[[ LumFLS settings ]]--
 
 ----------------------------------------
 --[[ description:
-  -- flsLUM settings.
-  -- Настройка flsLUM.
+  -- LumFLS settings.
+  -- Настройка LumFLS.
 --]]
 --------------------------------------------------------------------------------
-local LUM_Path = "scripts\\Rh_Scripts\\flsLUM\\"
+local LUM_Path = "scripts\\Rh_Scripts\\LumFLS\\"
 
 local ArgData = {
   Basic = {
-    LuaUMName = "flsLUM",
+    LuaUMName = "LumFLS",
     LuaUMPath = LUM_Path,
   }, -- Basic
   Files = {

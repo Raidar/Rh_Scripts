@@ -47,7 +47,7 @@ local function flsUserMenu (args)
 
   -- 3. Вызов пользовательского меню.
   local LUM = require "Rh_Scripts.LuaUM.LUM"
-  local Config = require "Rh_Scripts.flsLUM.flsLUMer"
+  local Config = require "Rh_Scripts.LumFLS.LumFLSer"
   Config.Scope = Scope
 
   return LUM(Config)

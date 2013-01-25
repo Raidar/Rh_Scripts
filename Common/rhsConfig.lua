@@ -65,7 +65,7 @@ local CfgDataOrder = {
   "mLuaEUM_ChsKit",
   "mLuaPUM",
   "mLumSVN",
-  "mflsLUM",
+  "mLumFLS",
   "sScripts", -- Скрипты:
   "mVoidTruncate",
   "mWordComplete", "mAutoComplete",
@@ -116,7 +116,7 @@ local DefCfgData = {
       Title = "LUM for &Editor",
       Param1 = "Config",
     },
-    Comment = "-- Lua User Menu for Editor.",
+    Comment = "-- LUM for Editor.",
   },
   mLuaEUM_Insert = {
     Area = "e",
@@ -163,7 +163,7 @@ local DefCfgData = {
       Title = "LUM for &Panels",
       Param1 = "Config",
     },
-    Comment = "-- Lua User Menu for Panels.",
+    Comment = "-- LUM for Panels.",
   },
   mLumSVN = {
     Area = "pc",
@@ -178,22 +178,22 @@ local DefCfgData = {
       Title = "LUM for &SVN",
       Param1 = "Config",
     },
-    Comment = "-- Lua User Menu for SVN.",
+    Comment = "-- LUM for SVN.",
   },
-  mflsLUM = {
+  mLumFLS = {
     Area = "evpdc",
     enabled = true,
-    Name = "flsLUM",
+    Name = "LumFLS",
     Title = "&fl scripts LUM",
     --HotKey = "Alt+Shift+F2",
     BasePath = "ScriptsPath",
-    FilePath = [[flsLUM\\flsLUM]],
+    FilePath = [[LumFLS\\LumFLS]],
     config = {
       enabled = true,
       Title = "&fl scripts LUM",
       Param1 = "Config",
     },
-    Comment = "-- farlua scripts User Menu.",
+    Comment = "-- LUM for farlua scripts.",
   },
   ----------------------------------------
   sScripts = { -- Скрипты:

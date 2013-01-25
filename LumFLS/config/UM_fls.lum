@@ -13,7 +13,7 @@ local locale = require 'context.utils.useLocale'
 local Custom = {
   label = "fls",
   name = "lum",
-  path = "Rh_Scripts.flsLUM.config.",
+  path = "Rh_Scripts.LumFLS.config.",
   locale = { kind = 'require' },
 } ---
 local L, e1, e2 = locale.localize(Custom)

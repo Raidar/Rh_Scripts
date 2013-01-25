@@ -1,9 +1,9 @@
---[[ flsLUM: English ]]--
+--[[ LumFLS: English ]]--
 
 --------------------------------------------------------------------------------
 local Data = {
   -- Информационные сообщения.
-  UMenuName  = "flsLUM",
+  UMenuName  = "LumFLS",
 } -- Data
 
 return Data

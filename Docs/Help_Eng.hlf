@@ -64,7 +64,7 @@ $ #Menu items# in LuaFAR for Editor: Rh_Scripts pack
   ―― User Menus ――                          All areas          ――Separator――
   LUM for \3AE\-ditor        \37Alt+Shift+F2\-   Editor, Configuration   LuaEUM menu
   LUM for \3AP\-anels        \37Alt+Shift+F2\-   Panels, Configuration   LuaPUM menu
-  \3Af\-l scripts LUM                            All areas          flsLUM menu
+  \3Af\-l scripts LUM                            All areas          LumFLS menu
   (Template insert)           \37Ctrl+J\-   Editor                  LuaEUM submenu
  ───────────────────────────────────────────────────────────────────────────────────
   ――― Scripts ―――                           All areas          ――Separator――

@@ -30,19 +30,19 @@ local EditorHandActions = EditorPath.."HandActions"..ext
 AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig"..ext)
 
 AddToMenu("evpc", ":sep:User Menus")
--- Lua User Menu for Editor.
+-- LUM for Editor.
 AddToMenu("e", "LU&M for Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext)
 AddToMenu("c", "LUM for &Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Config")
   -- Template insert assigned to key.
 AddToMenu("e", nil, "Ctrl+J", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Insert")
   -- Characters kit assigned to key.
 AddToMenu("e", nil, "Ctrl+Shift+H", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Characters")
--- Lua User Menu for Panels.
+-- LUM for Panels.
 AddToMenu("p", "LU&M for Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext)
 AddToMenu("c", "LUM for &Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext, "Config")
--- farlua scripts User Menu.
-AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."flsLUM\\flsLUM"..ext)
-AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."flsLUM\\flsLUM"..ext, "Config")
+-- LUM for farlua scripts.
+AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS"..ext)
+AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS"..ext, "Config")
 
 AddToMenu("evpc", ":sep:User Scripts")
   -- Void Truncater.

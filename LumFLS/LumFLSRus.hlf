@@ -5,8 +5,8 @@
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Пользовательское меню Lua для работы с fl_scripts# (~flsLUM~)
-  flsLUM — вариант утилиты LUM, предназначенный для работы
+$ #Пользовательское меню Lua для работы с fl_scripts# (~LumFLS~)
+  LumFLS — вариант утилиты LUM, предназначенный для работы
 с набором скриптов #farlua scripts# (fl_scripts) от maxfl.
 
     ~Файлы утилиты~@LUM_Files@
@@ -16,12 +16,12 @@ $ #Пользовательское меню Lua для работы с fl_scr
     ~Пользовательское меню Lua (LUM)~@<..\LuaUM\>Contents@
 
 @Help
- ~flsLUM~@Contents@
+ ~LumFLS~@Contents@
 
 @LUM_Files
-$ #Файлы утилиты#: flsLUM
+$ #Файлы утилиты#: LumFLS
   Файлы:
-    \37flsLUM.lua\-     — ¦Меню flsLUM: Реализация.
-    \37flsLUMer.lua\-   — ¦Настройка flsLUM: Конфигуратор.
+    \37LumFLS.lua\-     — ¦Меню LumFLS: Реализация.
+    \37LumFLSer.lua\-   — ¦Настройка LumFLS: Конфигуратор.
 
  ~Содержание~@Contents@

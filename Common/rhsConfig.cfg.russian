@@ -28,9 +28,9 @@ do local t = {}; Data = t
   do local t = {}; Data["sLUMs"] = t
     t["Title"] = "Меню UM"
   end
-  do local t = {}; Data["mflsLUM"] = t
+  do local t = {}; Data["mLumFLS"] = t
     t["Title"] = "LUM дл&я fl скриптов"
-    do local t = {}; Data["mflsLUM"]["config"] = t
+    do local t = {}; Data["mLumFLS"]["config"] = t
       t["Title"] = "LUM дл&я fl скриптов"
     end
   end

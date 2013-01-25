@@ -97,7 +97,8 @@ member of which is a current file of active panel.
 
     ~LUM for  Editor ~@<..\LuaEUM\>Contents@ (LuaEUM)
     ~LUM for  Panels ~@<..\LuaPUM\>Contents@ (LuaPUM)
-    ~LUM for fl_scripts~@<..\flsLUM\>Contents@ (flsLUM)
+    ~LUM for  SVN ~@<..\LumSVN\>Contents@ (LumSVN)
+    ~LUM for fl_scripts~@<..\LumFLS\>Contents@ (LumFLS)
 
   See also ~Own menus~@LUM_OwnMenus@.
 

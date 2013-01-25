@@ -1,4 +1,4 @@
---[[ flsLUM ]]--
+--[[ LumFLS ]]--
 
 ----------------------------------------
 --[[ description:
@@ -18,7 +18,7 @@ local locale = require 'context.utils.useLocale'
 local Custom = {
   label = "LumBinds",
   name = "lum",
-  path = "Rh_Scripts.flsLUM.config.",
+  path = "Rh_Scripts.LumFLS.config.",
   locale = { kind = 'require' },
 } ---
 local L, e1, e2 = locale.localize(Custom)
@@ -32,7 +32,7 @@ local Data = {
   ["@"] = { -- Информация
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "flsLUM"
+    text = "LumFLS"
   },
 
   Default = { Caption = L.MainMenu,

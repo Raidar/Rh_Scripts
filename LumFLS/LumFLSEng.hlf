@@ -5,8 +5,8 @@
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Lua User Menu for work with fl_scripts# (~flsLUM~)
-  flsLUM is a variant of LUM utility, used to work
+$ #Lua User Menu for work with fl_scripts# (~LumFLS~)
+  LumFLS is a variant of LUM utility, used to work
 with set of scripts #farlua scripts# (fl_scripts) of maxfl.
 
     ~Files of utility~@LUM_Files@
@@ -16,12 +16,12 @@ with set of scripts #farlua scripts# (fl_scripts) of maxfl.
     ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
 
 @Help
- ~flsLUM~@Contents@
+ ~LumFLS~@Contents@
 
 @LUM_Files
-$ #Files of utility#: flsLUM
+$ #Files of utility#: LumFLS
   Files:
-    \37flsLUM.lua\-     — ¦flsLUM menu: Implementation.
-    \37flsLUMer.lua\-   — ¦flsLUM settings: Configurator.
+    \37LumFLS.lua\-     — ¦LumFLS menu: Implementation.
+    \37LumFLSer.lua\-   — ¦LumFLS settings: Configurator.
 
  ~Contents~@Contents@
