@@ -54,7 +54,7 @@ end ----
 local farBlock = farEdit.Block
 
 local function RequoteText (Args, Cfg)
-  local Info = Info or farEdit.GetInfo()
+  local Info = farEdit.GetInfo()
   local SelType = farSelect.Types[Info.BlockType]
 
   if SelType == "none" then -- Нет блока
@@ -86,41 +86,56 @@ local mSep = {
 
 ---------------------------------------- Enquote
 -- Quotes:
--- ''           Ctrl'
--- ""           CtrlShift'
--- ‹›           Ctrl;           guillemets or angular quote brackets
--- «»           CtrlShift;      guillemets or angular quote brackets
+-- '|'          Ctrl'
+-- "|"          CtrlShift'
+-- ‹|›          Ctrl;           guillemets or angular quote brackets
+-- «|»          CtrlShift;      guillemets or angular quote brackets
+-- --
+-- ‘|’
+-- “|”
+-- „|“
 
 -- Brackets:
--- []           Ctrl[           square brackets, closed brackets
--- {}           CtrlShift[      braces, curly brackets
--- ()           Ctrl]           parentheses, round brackets, curved brackets
-
--- Others:
--- <>           Ctrl,           inequality signs, broken brackets
--- ⟨⟩           CtrlAlt,        chevrons, pointy brackets, angle brackets
--- //           Ctrl/           slash brackets
--- \\           CtrlShift/      backslash brackets
+-- [|]          Ctrl[           square brackets, closed brackets
+-- {|}          CtrlShift[      braces, curly brackets
+-- (|)          Ctrl]           parentheses, round brackets, curved brackets
+-- --
+-- <|>          Ctrl,           inequality signs, broken brackets
+-- ⟨|⟩          CtrlAlt,        chevrons, pointy brackets, angle brackets
+-- /|/          Ctrl/           slash brackets
+-- \|\          CtrlShift/      backslash brackets
 
 -- Comments:
--- (**)         CtrlShift]
--- {  }         CtrlAltShift[
--- /*  */       CtrlAltShift]
--- --[[  ]]--
+-- { | }        CtrlAltShift[
+-- (*|*)        CtrlShift]
+-- /* | */      CtrlAltShift]
+-- --
+-- <!-- | -->
+-- --[[ | ]]--
+-- --
+-- --
 
 -- Markers:
--- ``           CtrlAlt`
--- ~~           CtrlAltShift`
--- ||           CtrlAltShift1
--- ¤¤           CtrlAltShift2
--- ##           CtrlAltShift3
--- $$           CtrlAltShift4
--- %%           CtrlAltShift5
--- ^^           CtrlAltShift6
--- **           CtrlAltShift8
+-- |||          CtrlAltShift1
+-- --
+-- #|#          CtrlAltShift3
+-- $|$          CtrlAltShift4
+-- %|%          CtrlAltShift5
+-- ^|^          CtrlAltShift6
+-- --
+-- *|*          CtrlAltShift8
+
+-- `|`          CtrlAlt`
+-- ~|~          CtrlAltShift`
+-- -|-
+-- _|_
+-- +|+
+-- ‾|‾
+-- --
+-- ¤|¤          CtrlAltShift0
 
 -- Specials:
--- "" cleared   CtrlAlt'
+-- "|" cleared  CtrlAlt'
 
 local mItems = {}
 do
@@ -136,13 +151,15 @@ do
     { hot = "1", left = "‘", right = "’", },
     { hot = "2", left = "“", right = "”", },
     { hot = "3", left = "„", right = "“", },
+    --Separator,
 
     { text = L.LuaEnquoteBrackets,
       Label = true, },
     { hot = "[", left = "[", right = "]", },
     { hot = "{", left = "{", right = "}", },
     { hot = "(", left = "(", right = ")", },
-    { hot = "|", left = "|", right = "|", },
+    Separator,
+    --Separator,
     --Separator,
     --Separator,
     --Separator,
@@ -164,6 +181,7 @@ do
     { hot = "data", pad = "   ", left = "{ ", right = " }", },
     { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
     { hot = "c++ ", pad = "  ", left = "/* ", right = " */", },
+    Separator,
     { hot = "html", pad = " ", left = "<!--", right = "-->", },
     { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
     --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
@@ -176,18 +194,31 @@ do
     --]=]
     Separator,
     Separator,
+    --Separator,
+
+    { text = L.LuaEnquoteMarkers,
+      Label = true, },
+    { hot = "|", left = "|", right = "|", },
     Separator,
+    { hot = "#", left = "#", right = "#", },
+    { hot = "$", left = "$", right = "$", },
+    { hot = "%", left = "%", right = "%", },
+    { hot = "^", left = "^", right = "^", },
+    Separator,
+    { hot = "*", left = "*", right = "*", },
+    --Separator,
 
     { text = L.LuaEnquoteMarkers,
       Label = true, },
     { hot = "`", left = "`", right = "`", },
     { hot = "~", left = "~", right = "~", },
+    --Separator,
+    { hot = "-", left = "-", right = "-", },
+    { hot = "_", left = "_", right = "_", },
+    { hot = "=", left = "+", right = "+", },
+    { hot = "+", left = "‾", right = "‾", },
+    Separator,
     { hot = "o", left = "¤", right = "¤", },
-    { hot = "#", left = "#", right = "#", },
-    { hot = "$", left = "$", right = "$", },
-    { hot = "%", left = "%", right = "%", },
-    { hot = "^", left = "^", right = "^", },
-    { hot = "*", left = "*", right = "*", },
     -- [[
     { text = L.LuaEnquoteSpecials,
       Label = true, },
@@ -309,7 +340,9 @@ local mScripts = {
   text = L.LuaScripts,
   --Title = L.LuaScripting,
   Items = {
-    mQuote,     -- Кавычки/скобки
+    --mQuote,     -- Кавычки/скобки
+    mEnquote,   -- Закавычивание
+    mDequote,   -- Раскавычивание
     mTruncate,  -- Усечение текста
   } -- Items
 } --- mScripts
