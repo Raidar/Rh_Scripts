@@ -41,9 +41,9 @@ local Data = {
   },
   --]]
   Default = { Caption = L.MainMenu,
-              Before = "TortoiseSVN;UMConfig" },
+              Before = "TortoiseSVN;U_DefSep;UMConfig" },
 
-  --back   = { Menu = "TortoiseSVN;UMConfig", noDefault = true },
+  --back   = { Menu = "TortoiseSVN;U_DefSep;UMConfig", noDefault = true },
 
   --dir    = { Menu = "TortoiseSVN" },
 
