@@ -71,12 +71,24 @@ function Clear.SqueezeSpaceChars ()
   return farSelect.Process(false, DeleteAllSpaces)
 end ---- SqueezeSpaceChars
 
+  local BlockTypes = farSelect.Types
+
 -- Delete all (empty or spaced only) lines in selected block.
 -- Удаление всех (пустых или с только пробелами) строк в выделенном блоке.
 function Clear.DeleteAllEmptys ()
+  local Info = farEdit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+  if SelType ~= "stream" then return end
 
   local function DeleteAllEmptys (block) --> (block)
-    return farBlock.DelLines(block, "^[ ]-$", false)
+    local t = farBlock.DelLines(block, "^[ ]-$", false)
+    if not t then return end
+    if block[#block] == "" and t[#t] ~= "" then
+      t[#t+1] = ""
+      t.Count = #t
+    end
+
+    return t
   end --
 
   return farSelect.Process(false, DeleteAllEmptys)
@@ -85,11 +97,16 @@ end ---- DeleteAllEmptys
 -- Squeeze (empty or with space chars only) lines in selected block.
 -- Сжатие (пустых или с только пробельными символовами) в выделенном блоке.
 function Clear.SqueezeEmptyLines ()
+  local Info = farEdit.GetInfo()
+  local SelType = BlockTypes[Info.BlockType]
+  if SelType ~= "stream" then return end
 
   local function SqueezeEmptyLines (block) --> (block)
     -- Очистка строк только с пробельными символами
-    local block = farBlock.SubLines(block, "^\s-$", "")
-    return farBlock.SubText(block, "(\n)\n+", "%1")
+    local t = farBlock.SubLines(block, "^\s-$", "")
+    if not t then return end
+
+    return farBlock.SubText(t, "(\n\n)\n+", "%1")
   end --
 
   return farSelect.Process(false, SqueezeEmptyLines)
