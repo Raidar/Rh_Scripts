@@ -52,20 +52,26 @@ function unit.GetFileName (Name, Args) --> (string | nil, error)
   if fexists(FullName) then return FullName end
   FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
-  FullExtName = FullName..Args.LuaExt
-  if fexists(FullExtName) then return FullExtName end
+  if Args.LuaExt ~= Args.DefExt then
+    FullExtName = FullName..Args.LuaExt
+    if fexists(FullExtName) then return FullExtName end
+  end
+
   FullName = FullNameFmt:format(Args.Base, Args.DefPath, Name)
   if fexists(FullName) then return FullName end
   FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
-  FullExtName = FullName..Args.LuaExt
-  if fexists(FullExtName) then return FullExtName end
+
+  if Args.LuaExt ~= Args.DefExt then
+    FullExtName = FullName..Args.LuaExt
+    if fexists(FullExtName) then return FullExtName end
+  end
 end ---- GetFileName
 
 end -- do
 
 ---------------------------------------- File join
--- Чтение данных из перечня ini/lua-файлов в таблицу.
+-- Чтение данных из перечня lua-файлов в таблицу.
 --[[
   -- @params:
   Args (table):
@@ -98,40 +104,44 @@ function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
   t.Menu = { Title = Args.Title or "Main Menu", Items = {} }
   local Items = t.Menu.Items
   --local Items, SubKey = t.Menu.Items, Props.SubKey or "^UM%_([^%.]+)$"
-  local u -- Временная таблица для данных
+
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
     -- Чтение данных (во временную таблицу).
     FullName = GetFileName(Name, Args)
     --if not FullName then return nil, Msgs.FileNotFound:format(Name) end
     if FullName then
-      u, SError = GetFileData(FullName, nil, Props)
+      local u, SError = GetFileData(FullName, nil, Props)
       --if not u then return nil, SError end
       if not isItem and u then isItem = true end
       for k, v in pairs(u.Menu) do u[k] = v end
       Items[#Items+1] = u
     end -- if
   end -- for
-  if not isItem then return nil, Msgs.EnumNotFound:format(Args.CurEnum) end
+
   --logShow(t, "Table", 3)
-  return t
+  if isItem then return t end
+
+  return nil, Msgs.EnumNotFound:format(Args.CurEnum)
 end ---- GetFileOuterJoin
 
 -- Чтение с учётом внутреннего объединения:
 function unit.GetFileInnerJoin (Args, Props) --> (table | nil, error)
   local t, SError, FullName, isItem = {}
-  local u -- Временная таблица для данных
+
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
     FullName = GetFileName(Name, Args)
     --if not FullName then return nil, Msgs.FileNotFound:format(Name) end
     if FullName then
-      u, SError = GetFileData(FullName, nil, Props)
+      local u, SError = GetFileData(FullName, nil, Props)
       --if not u then return nil, SError end
       if not isItem and u then isItem = true end
       MergeTable(t, u, Props)
     end -- if
   end -- for Name
-  if not isItem then return nil, Msgs.EnumNotFound:format(Args.CurEnum) end
-  return t
+
+  if isItem then return t end
+
+  return nil, Msgs.EnumNotFound:format(Args.CurEnum)
 end ---- GetFileInnerJoin
 
 end -- do
@@ -139,7 +149,7 @@ end -- do
 -- Чтение с учётом внутреннего и внешнего объединения:
 function unit.GetFileJoinEnumData (Args, Props) --> (table | nil, error)
   local t, SError
-  Args.DefExt = Args.DefExt or ".ini"
+  Args.DefExt = Args.DefExt or ".lum"
   Args.LuaExt = ".lua"
   Props = Props or {}
 
