@@ -1,0 +1,75 @@
+[EScripts]
+
+[QuoteMarks]
+
+[|— Quotes]
+
+— прямые "кавычки"
+  (neutral/vertical/straight/typewriter quotes):
+  — '|' — одиночные (single)
+  — "|" — двойные (double)
+
+— французские "ёлочки"
+  (guillemets or angular quote brackets):
+  — ‹|› — одиночные (single)
+  — «|» — двойные (double)
+
+— английские кавычки:
+  — ‘|’ — одиночные (single)
+  — “|” — двойные (double)
+
+— немецкие "лапки":
+  — ‚|‘ — одиночные (single)
+  — „|“ — двойные (double)
+
+[|— Brackets]
+
+— [|]   — квадратные скобки
+          (brackets, square/closed/hard brackets)
+— {|}   — фигурные скобки
+          (braces, curly/swirly/definite brackets)
+— (|)   — круглые скобки
+          (parentheses/parens, round/curved/oval/soft brackets)
+
+— <|>   — угловые/ломаные скобки
+          (brokets, broken/pointy/angle brackets, inequality signs)
+— ⟨|⟩   — угловые скобки / "шевроны"
+          (chevrons/tuples, pointy/angle/triangular/diamond brackets)
+— /|/   — косые скобки (slash brackets)
+— \|\   — обратные косые скобки (backslash brackets)
+
+[|— Comments]
+
+— data      : { | }
+— pascal    : (*|*)
+— c/c++     : /* | */
+— html      : <!-- | -->
+— lua       : --[[ | ]]--
+
+[|— Markers]
+
+— |||   — прямые скобки /
+          рубленый (sanserif)
+—  |    — ?
+— #|#   — моноширинный (fixed width)
+— $|$   — TeX‑формула (TeX formula)
+— %|%   — уплотнённый (condensed)
+— ^|^   — разреженный (expanded)
+— &|&   — цветной (colored)
+— *|*   — полужирный (bold)
+
+— `|`
+— ~|~   — курсив (italic)
+— -|-   — перечёркнутый (strike)
+— _|_   — подчёркнутый (underline)
+— +|+   — капитель (capital)
+— ‾|‾   — надчёркнутый (overline)
+
+[|— Specials]
+
+— ⌊|⌋   — "пол" = "наибольшее целое, меньшее числа" (floor brackets)
+— ⌈|⌉   — "потолок" = "наименьшее целое, большее числа" (ceiling brackets)
+— ⟦|⟧   — двойные квадратные скобки
+          (double (square) brackets)
+
+――――――――

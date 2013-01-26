@@ -7,6 +7,8 @@
 --]]
 --------------------------------------------------------------------------------
 
+local unpack = unpack
+
 ----------------------------------------
 --local context = context
 
@@ -15,6 +17,9 @@ local locale = require 'context.utils.useLocale'
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
+
+local farBlock = farEdit.Block
+local farSelect = farEdit.Selection
 
 local RedrawAll = farUt.RedrawAll
 
@@ -39,10 +44,6 @@ if L == nil then
 end
 
 ---------------------------------------- local
-local farSelect = farEdit.Selection
-
-local unpack = unpack
-
 local function EnquoteText (Args, Cfg)
   return farSelect.Enquote(unpack(Args))
 end ----
@@ -50,8 +51,6 @@ end ----
 local function DequoteText (Args, Cfg)
   return farSelect.Dequote(unpack(Args))
 end ----
-
-local farBlock = farEdit.Block
 
 local function RequoteText (Args, Cfg)
 
@@ -69,6 +68,7 @@ local function RequoteText (Args, Cfg)
 
   return farSelect.Process(true, Requote)
 end ---- RequoteText
+
 ---------------------------------------- Separator
 --[[
 local mSep = {
@@ -77,59 +77,6 @@ local mSep = {
 --]]
 
 ---------------------------------------- Enquote
--- Quotes:
--- '|'          Ctrl'
--- "|"          CtrlShift'
--- ‹|›          Ctrl;           guillemets or angular quote brackets
--- «|»          CtrlShift;      guillemets or angular quote brackets
--- --
--- ‘|’
--- “|”
--- „|“
-
--- Brackets:
--- [|]          Ctrl[           square brackets, closed brackets
--- {|}          CtrlShift[      braces, curly brackets
--- (|)          Ctrl]           parentheses, round brackets, curved brackets
--- --
--- <|>          Ctrl,           inequality signs, broken brackets
--- ⟨|⟩          CtrlAlt,        chevrons, pointy brackets, angle brackets
--- /|/          Ctrl/           slash brackets
--- \|\          CtrlShift/      backslash brackets
-
--- Comments:
--- { | }        CtrlAltShift[
--- (*|*)        CtrlShift]
--- /* | */      CtrlAltShift]
--- --
--- <!-- | -->
--- --[[ | ]]--
--- --
--- --
-
--- Markers:
--- |||          CtrlAltShift1
--- --
--- #|#          CtrlAltShift3
--- $|$          CtrlAltShift4
--- %|%          CtrlAltShift5
--- ^|^          CtrlAltShift6
--- --
--- *|*          CtrlAltShift8
-
--- `|`          CtrlAlt`
--- ~|~          CtrlAltShift`
--- -|-
--- _|_
--- +|+
--- ‾|‾
--- --
--- ¤|¤          CtrlAltShift0
-
--- Specials:
--- "|" cleared  CtrlAlt'
--- «|» cleared  CtrlAlt;
-
 local mItems = {}
 do
   local Separator = { separator = true }
@@ -140,11 +87,11 @@ do
     { hot = '"', left = '"', right = '"', },
     { hot = ";", left = "‹", right = "›", },
     { hot = ":", left = "«", right = "»", },
-    Separator,
+    --Separator,
     { hot = "1", left = "‘", right = "’", },
     { hot = "2", left = "“", right = "”", },
-    { hot = "3", left = "„", right = "“", },
-    --Separator,
+    { hot = "3", left = "‚", right = "‘", },
+    { hot = "4", left = "„", right = "“", },
 
     { text = L.LuaEnquoteBrackets,
       Label = true, },
@@ -173,7 +120,7 @@ do
       Label = true, },
     { hot = "data", pad = "   ", left = "{ ", right = " }", },
     { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
-    { hot = "c++ ", pad = "  ", left = "/* ", right = " */", },
+    { hot = "c/c⧺", pad = "  ", left = "/* ", right = " */", },
     Separator,
     { hot = "html", pad = " ", left = "<!--", right = "-->", },
     { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
@@ -197,7 +144,7 @@ do
     { hot = "$", left = "$", right = "$", },
     { hot = "%", left = "%", right = "%", },
     { hot = "^", left = "^", right = "^", },
-    Separator,
+    { hot ="&&", left = "&", right = "&", },
     { hot = "*", left = "*", right = "*", },
     --Separator,
 
@@ -211,10 +158,14 @@ do
     { hot = "=", left = "+", right = "+", },
     { hot = "+", left = "‾", right = "‾", },
     Separator,
-    { hot = "o", left = "¤", right = "¤", },
+    Separator,
     -- [[
     { text = L.LuaEnquoteSpecials,
       Label = true, },
+    { hot = " ", left = "⌊", right = "⌋", },
+    { hot = " ", left = "⌈", right = "⌉", },
+    { hot = " ", left = "⟦", right = "⟧", },
+    Separator,
     { hot = "q",
       note = L.LuaQuoteReplace,
       Function = RequoteText,
@@ -228,7 +179,7 @@ do
       enquote = { '«', '»', true },
     },
     --]]
-  } ---
+  } --- QuoteMarks
 
   local format = string.format
   local QuoteTextFmt = "&%s - %s%s|%s%s"
