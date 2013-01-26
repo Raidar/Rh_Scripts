@@ -54,29 +54,21 @@ end ----
 local farBlock = farEdit.Block
 
 local function RequoteText (Args, Cfg)
-  local Info = farEdit.GetInfo()
-  local SelType = farSelect.Types[Info.BlockType]
 
-  if SelType == "none" then -- Нет блока
-    if not farSelect.Dequote(unpack(Args.dequote)) then return end
-    return farSelect.Enquote(unpack(Args.enquote))
-  end
+  local function Requote (block)
+    if block == nil then
+      if not farSelect.Dequote(unpack(Args.dequote)) then return end
+      return farSelect.Enquote(unpack(Args.enquote))
+    end
 
-  local SelInfo = farSelect.Get()
-  if SelInfo == nil then return end -- Нет блока?
+    local block = farBlock.Dequote(block, unpack(Args.dequote))
+    if not block then return end
 
-  local block = farSelect.Cut(Info, SelType)
-  if not block then return end
+    return farBlock.Enquote(block, unpack(Args.enquote))
+  end --
 
-  block = farBlock.Dequote(block, unpack(Args.dequote))
-  if not block then return end
-
-  block = farBlock.Enquote(block, unpack(Args.enquote))
-  if not block then return end
-
-  return farSelect.Paste(farEdit.GetInfo(), block, SelType)
+  return farSelect.Process(true, Requote)
 end ---- RequoteText
-
 ---------------------------------------- Separator
 --[[
 local mSep = {
@@ -136,6 +128,7 @@ local mSep = {
 
 -- Specials:
 -- "|" cleared  CtrlAlt'
+-- «|» cleared  CtrlAlt;
 
 local mItems = {}
 do
@@ -222,11 +215,17 @@ do
     -- [[
     { text = L.LuaEnquoteSpecials,
       Label = true, },
-    { hot = 'q',
+    { hot = "q",
       note = L.LuaQuoteReplace,
       Function = RequoteText,
       dequote = { 1, 1, true },
       enquote = { '"', '"', true },
+    },
+    { hot = "w",
+      note = L.LuaQuoteReplace,
+      Function = RequoteText,
+      dequote = { 1, 1, true },
+      enquote = { '«', '»', true },
     },
     --]]
   } ---
