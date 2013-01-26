@@ -76,7 +76,9 @@ local DefScope = {
 } --- DefScope
 
 ---------------------------------------- Menu class
-local TMenu = {}
+local TMenu = {
+  Guid = win.Uuid("00b06fba-0bb7-4333-8025-ba48b6077435"),
+}
 local MMenu = { __index = TMenu }
 
 -- Создание объекта класса меню.
@@ -88,6 +90,7 @@ local function CreateMenu (Config)
     Config.__index = (require "Rh_Scripts.LuaUM.LumCfg").GetDefConfig()
     setmetatable(Config, Config)
   end
+  Config.Id = Config.Id or TMenu.Guid
 
   -- "Охват" LUM (область действия):
   local Scope = Config.Scope or {}; Config.Scope = Scope
@@ -150,28 +153,28 @@ function TMenu:Run ()
 
 --[[ 1. Конфигурирование меню ]]
   local Scope  = self.Scope
-  local Config = self.Config
-  local DefCfg = self.DefConfig
+  --local Config = self.Config
+  --local DefCfg = self.DefConfig
 
 --[[ 1.1. Управление настройками ]]
 
   -- Определение основных файлов и папок.
-  local Cfg_Data = Config.CfgData
+  local Cfg_Data = self.Config.CfgData
   --logShow(Cfg_Data, "Cfg_Data", 2)
   local Cfg_Files = Cfg_Data.Files
   local Cfg_Basic = Cfg_Data.Basic
 
   local L = self:Localize() -- Локализация.
 
-  Scope.HlpLink = Config.Custom.help.tlink or
-                  DefCfg.Custom.help.tlink -- Файл помощи
+  Scope.HlpLink = self.Config.Custom.help.tlink or
+                  self.DefCfg.Custom.help.tlink -- Файл помощи
 
 --[[ 1.2. Выбор файла с меню ]]
   local Args, Props
 
   -- Считывание привязок типов к меню.
   Args = { Base = PluginPath,
-           DefExt = ".lui",
+           DefExt = ".lua",
            Enum = Cfg_Files.MenusFile,
            Path = Cfg_Files.FilesPath,
            DefEnum = Cfg_Basic.BindsFile,
@@ -231,7 +234,10 @@ function TMenu:Run ()
   -- Разбор общих свойств меню.
   -- TEMP: TODO see above!!!
   self.Props = LUM_Binds.Properties or Scope.DefMenu.Properties or {}
-  if not self.Props.MenuView then self.Props.MenuView = Scope.MenuView end
+  self.Props.Id = self.Props.Id or self.Config.Id
+  if not self.Props.MenuView then
+    self.Props.MenuView = Scope.MenuView
+  end
   --logShow(self.Props, "Properties", 2)
 
   BindsData, LUM_Binds = nil, nil -- (?)
