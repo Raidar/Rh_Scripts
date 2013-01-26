@@ -27,13 +27,11 @@ if L == nil then
 end
 
 ---------------------------------------- Separator
---[[
-local mSep = {
+local mSeparator = {
   separator = true,
 } ---
---]]
 
----------------------------------------- ----
+---------------------------------------- Items/Menu
 local mCommands = {
   text = L.CommandSamples,
 

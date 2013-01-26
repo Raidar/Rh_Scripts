@@ -66,7 +66,7 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
----------------------------------------- Items
+---------------------------------------- local
 local function FillCmdLine (Command)
   return panel.SetCmdLine(-1, Command)
 end --
@@ -77,10 +77,12 @@ local function FillCmdLineWithBack (Command)
   end
 end --
 
-local mSep = {
+---------------------------------------- Separator
+local mSeparator = {
   separator = true,
-} --- mSep
+} ---
 
+---------------------------------------- Items
 local dLogGraphFormat =
   '%C(blue bold)%h%Creset %C(green bold)%ad%Creset | '..
   '%C(white)%s%Creset%C(yellow bold)%d%Creset [%C(white bold)%an%Creset]'
@@ -100,7 +102,7 @@ local mItems = {
   { text = "P&ush to origin…",
     Function = FillCmdLine,
     Arguments = "git push origin master" },
-  mSep,
+  mSeparator,
   { text = "&Diff w/previous",
     CmdLine = "edit:<git diff HEAD" },
   { text = "Diff w&/commited",
@@ -156,7 +158,7 @@ local mItems = {
     CmdLine = "edit:<git show" },
   { text = "Log &graph",
     CmdLine = "gitk" },
-  mSep,
+  mSeparator,
   { text = "Amend…",
     Hint = "Fix last commit",
     Function = FillCmdLineWithBack,
@@ -179,7 +181,7 @@ local mItems = {
   { text = "&Pull from origin…",
     Function = FillCmdLine,
     Arguments = "git pull origin master" },
-  mSep,
+  mSeparator,
   { text = "Delete…",
     Function = FillCmdLine,
     Arguments = "git rm " },
@@ -192,7 +194,7 @@ local mItems = {
   { text = "Revert…",
     Function = FillCmdLine,
     Arguments = "git revert " },
-  mSep,
+  mSeparator,
   { text = "&Tag…",
     Function = FillCmdLine,
     Arguments = "git tag -f " },
@@ -215,7 +217,7 @@ local mItems = {
   { text = "Merge fetched…",
     Function = FillCmdLineWithBack,
     Arguments = 'git merge origin/master -m ""' },
-  mSep,
+  mSeparator,
   { text = "Rebase…",
     Function = FillCmdLine,
     Arguments = "git rebase -i " },
@@ -228,7 +230,7 @@ local mItems = {
   { text = "Merge commit to…",
     Function = FillCmdLine,
     Arguments = "git cherry-pick " },
-  mSep,
+  mSeparator,
   { text = "Init git here",
     CmdLine = "git init" },
   { text = "&Blame…",
@@ -243,7 +245,7 @@ local mItems = {
   { text = "Remote add…",
     Function = FillCmdLine,
     Arguments = "git remote add " },
-  mSep,
+  mSeparator,
   { text = "&Help",
     Function = FillCmdLine,
     Arguments = "git help " },
@@ -254,7 +256,7 @@ local mItems = {
   { text = "About        &?",
     CmdLine = "git --version" },
     --CmdLine = "git gui version" },
-  mSep,
+  mSeparator,
   { text = "Status       &1",
     CmdLine = "git status" },
 } --- mItems

@@ -17,12 +17,6 @@ local Data = {
   LuaScripts        = "&S - Lua scripts",
   LuaScripting      = "Lua-scripts samples",
 
-  LuaTruncateVoid   = "&Truncate void",
-    LuaTruncCurLine     = "&Current line",
-    LuaTruncAllLines    = "&All text lines",
-    LuaTruncEndLines    = "&Empty lines at end",
-    LuaTruncFileText    = "File end and &text",
-
   LuaQuoteText      = "&Quotes/brackets",
     LuaEnquote          = "&Quote text",
       LuaEnquoteQuotes      = "Quotes",
@@ -35,6 +29,18 @@ local Data = {
     LuaDequote          = "&Dequote text",
       LuaDequoteSingle      = "Any &single",
       LuaDequoteDouble      = "Any &double",
+
+  LuaClearText      = "&Clear text",
+      LuaClearDeleteAllSpaces       = "Delete a&ll spaces",
+      LuaClearSqueezeSpaceChars     = "S&queeze space chars",
+      LuaClearDeleteAllEmptys       = "Delete all &empties",
+      LuaClearSqueezeEmptyLines     = "Squee&ze empty lines",
+
+  LuaTruncateVoid   = "&Truncate void",
+    LuaTruncCurLine     = "&Current line",
+    LuaTruncAllLines    = "&All text lines",
+    LuaTruncEndLines    = "&Empty lines at end",
+    LuaTruncFileText    = "File end and &text",
 
   ----------------------------------------
 } --- Data

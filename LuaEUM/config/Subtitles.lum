@@ -50,13 +50,11 @@ end
 end -- do
 
 ---------------------------------------- Separator
--- [[
 local mSeparator = {
   separator = true,
 } ---
---]]
 
----------------------------------------- Items
+---------------------------------------- Current clause
 local mCurrentClause = {
   text = L.CurrentClause,
   Items = {
@@ -68,8 +66,8 @@ local mCurrentClause = {
   } ---
 } --- mCurrentClause
 
----------------------------------------- ----
-local Scripts = {
+---------------------------------------- Items/Menu
+local mSubtitles = {
   text = L.Subtitles,
   Items = {
     mCurrentClause,
@@ -79,15 +77,15 @@ local Scripts = {
     { text = L.itm_CurClauseData,
       Function = subs.CurClauseData },
   } -- Items
-} --- Scripts
+} --- mSubtitles
 
 ---------------------------------------- Data
 local Data = {
   Menu = {
     text = L.Subtitles,
-    Items = { Scripts },
+    Items = { mSubtitles },
   },
-  --["Subtitles Scripts"] = Scripts,
+  ["Subtitles"] = mSubtitles,
 } ---
 
 return Data

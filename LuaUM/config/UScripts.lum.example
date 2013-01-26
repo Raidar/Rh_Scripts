@@ -22,7 +22,7 @@ if L == nil then
 end
 
 ---------------------------------------- Separator
-local mSep = {
+local mSeparator = {
   separator = true,
 } ---
 
@@ -86,7 +86,7 @@ local mLFcontext = {
       Script = "LumContext.lua",
       Function = "typesInfo",
       Relative = "default" },
-    mSep,
+    mSeparator,
     -- Testing detect type --
     { text = L.OthLFcTestDetType,
       Script = "LumContext.lua",
@@ -113,15 +113,13 @@ local mHelloWorld = {
   } ---
 } --- mHelloWorld
 
---------------------------------------------------------------------------------
-
----------------------------------------- ----
+---------------------------------------- ---- Items/Menu
 local mScripts = {
   text = L.OtherScripts,
   Items = {
     mQuickInfo,  -- Information
     mLFcontext,  -- LuaFAR context
-    mSep,
+    mSeparator,
     mHelloWorld, -- Hello, world!
   } ---
 } --- mScripts

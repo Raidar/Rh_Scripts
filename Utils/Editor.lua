@@ -417,6 +417,7 @@ function Block.Split (s, pat, sep) --> (block)
   local pat = pat or "([^\n]-)"
   local sep = sep or "\n"
 
+  --logShow(s, pattern)
   local t = {}
   for line in s:gmatch(pat..sep) do
     t[#t+1] = line -- all but last
@@ -427,6 +428,7 @@ function Block.Split (s, pat, sep) --> (block)
     t[#t+1] = line
   end
 
+  if #t == 0 then return s end
   if #t == 1 then return t[1] end
   t.Count = #t
 
@@ -573,9 +575,14 @@ function Block.SubText (block, pattern, replace) --> (block)
 
   local s = Block.Concat(block)
   s = s:gsub(pattern, replace)
+  --logShow(s, pattern)
 
   local t = Block.Split(s)
-  if type(t) ~= 'table' then return t end
+  if not t then return end
+
+  if type(t) == 'string' then
+    t = { t, "", Count = 2 }
+  end
 
   return Block.Params(block, t)
 end ---- SubText
@@ -603,6 +610,35 @@ function Block.SubLines (block, pattern, replace) --> (block)
 
   return block
 end ---- SubLines
+
+-- Substitute another text for initial one in block.
+-- Подставить другой текст вместо исходного в блоке.
+--[[
+  -- @params:
+  block  (s|t|nil) - line or block of lines.
+  start   (string) - string to find an start of text.
+  stop    (string) - string to find an end of text.
+  pattern (string) - string to find in found block: @see string.gsub.
+  replace  (s|t|f) - string/table/function to replace: @see string.gsub.
+  -- @return:
+  block (s|t|nil) - processed line or block of lines.
+--]]
+function Block.SubBlock (block, pattern, replace) --> (block)
+  if not block then return end
+
+  --[[
+  -- TODO: Реализовать!!!
+  if type(block) == 'string' then
+    return block:gsub(pattern, replace)
+  end
+
+  for k = 1, block.Count or #block do
+    block[k] = block[k]:gsub(pattern, replace)
+  end
+  --]]
+
+  return block
+end ---- SubBlock
 
 -- Delete block lines that is (not) matched a pattern.
 -- Удалить линии блока, (не) соответствующие шаблону.

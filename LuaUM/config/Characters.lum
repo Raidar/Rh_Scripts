@@ -164,7 +164,7 @@ end ----
 --[===[
 -- Sample characters:
 
--- Customary chars:
+-- Custom chars:
 --Datas = "_a_b_A_B"
 --Datas = "_a_b_c_A_B_C"
 Datas = "_a_b_c_d_A_B_C_D"
@@ -180,7 +180,7 @@ Props = {
 } ---
 
 List.Chars_Custom = { -- Characters
-  text = "&_ - Customary Chars",
+  text = "&_ - Custom Chars",
   MenuView = "RectMenu",
 
   Props = {

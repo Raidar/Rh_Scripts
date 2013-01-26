@@ -44,221 +44,73 @@ if L == nil then
 end
 
 ---------------------------------------- local
-local function EnquoteText (Args, Cfg)
-  return farSelect.Enquote(unpack(Args))
-end ----
+local Clear = {
+  DeleteAllSpaces = false,
+} ---
 
-local function DequoteText (Args, Cfg)
-  return farSelect.Dequote(unpack(Args))
-end ----
+-- Delete all spaces in selected block.
+-- Удаление всех пробелов в выделенном блоке.
+function Clear.DeleteAllSpaces ()
 
-local function RequoteText (Args, Cfg)
-
-  local function Requote (block)
-    if block == nil then
-      if not farSelect.Dequote(unpack(Args.dequote)) then return end
-      return farSelect.Enquote(unpack(Args.enquote))
-    end
-
-    local block = farBlock.Dequote(block, unpack(Args.dequote))
-    if not block then return end
-
-    return farBlock.Enquote(block, unpack(Args.enquote))
+  local function DeleteAllSpaces (block) --> (block)
+    return farBlock.SubLines(block, "[ ]+", "")
+    --return farBlock.SubText(block, "%s+", "") -- DEBUG only
   end --
 
-  return farSelect.Process(true, Requote)
-end ---- RequoteText
+  return farSelect.Process(false, DeleteAllSpaces)
+end ---- DeleteAllSpaces
 
----------------------------------------- Separator
---[[
-local mSep = {
-  separator = true,
-} ---
---]]
+-- Squeeze space chars in selected block.
+-- Сжатие пробельных символов в выделенном блоке.
+function Clear.SqueezeSpaceChars ()
 
----------------------------------------- Enquote
-local mItems = {}
-do
-  local Separator = { separator = true }
-  local QuoteMarks = {
-    { text = L.LuaEnquoteQuotes,
-      Label = true, },
-    { hot = "'", left = "'", right = "'", },
-    { hot = '"', left = '"', right = '"', },
-    { hot = ";", left = "‹", right = "›", },
-    { hot = ":", left = "«", right = "»", },
-    --Separator,
-    { hot = "1", left = "‘", right = "’", },
-    { hot = "2", left = "“", right = "”", },
-    { hot = "3", left = "‚", right = "‘", },
-    { hot = "4", left = "„", right = "“", },
+  local function DeleteAllSpaces (block) --> (block)
+    return farBlock.SubLines(block, "(%s)%s+", "%1")
+  end --
 
-    { text = L.LuaEnquoteBrackets,
-      Label = true, },
-    { hot = "[", left = "[", right = "]", },
-    { hot = "{", left = "{", right = "}", },
-    { hot = "(", left = "(", right = ")", },
-    Separator,
-    --Separator,
-    --Separator,
-    --Separator,
-    --Separator,
-    --Separator,
+  return farSelect.Process(false, DeleteAllSpaces)
+end ---- SqueezeSpaceChars
 
-    --{ text = L.LuaEnquoteOthers,
-    --  Label = true, },
-    { hot = "<", left = "<", right = ">", },
-    { hot = ">", left = "⟨", right = "⟩", },
-    { hot = "/", left = "/", right = "/", },
-    { hot ="\\", left ="\\", right ="\\", },
-    --Separator,
-    --Separator,
-    --Separator,
-    --Separator,
+-- Delete all (empty or spaced only) lines in selected block.
+-- Удаление всех (пустых или с только пробелами) строк в выделенном блоке.
+function Clear.DeleteAllEmptys ()
 
-    { text = L.LuaEnquoteComments,
-      Label = true, },
-    { hot = "data", pad = "   ", left = "{ ", right = " }", },
-    { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
-    { hot = "c/c⧺", pad = "  ", left = "/* ", right = " */", },
-    Separator,
-    { hot = "html", pad = " ", left = "<!--", right = "-->", },
-    { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
-    --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
-    --[=[
-    { hot = "d", left = "{ ", right = " }", note = "    (data)", },
-    { hot = "p", left = "(*", right = "*)", note = "    (pascal)", },
-    { hot = "c", left = "/* ", right = " */", note = "  (c/c++)", },
-    { hot = "h", left = "<!--", right = "-->", note = " (x/html)", },
-    { hot = "l", left = "--[[ ", right = " ]]--", note = " (lua)", },
-    --]=]
-    Separator,
-    Separator,
-    --Separator,
+  local function DeleteAllEmptys (block) --> (block)
+    return farBlock.DelLines(block, "^[ ]-$", false)
+  end --
 
-    { text = L.LuaEnquoteMarkers,
-      Label = true, },
-    { hot = "|", left = "|", right = "|", },
-    Separator,
-    { hot = "#", left = "#", right = "#", },
-    { hot = "$", left = "$", right = "$", },
-    { hot = "%", left = "%", right = "%", },
-    { hot = "^", left = "^", right = "^", },
-    { hot ="&&", left = "&", right = "&", },
-    { hot = "*", left = "*", right = "*", },
-    --Separator,
+  return farSelect.Process(false, DeleteAllEmptys)
+end ---- DeleteAllEmptys
 
-    { text = L.LuaEnquoteMarkers,
-      Label = true, },
-    { hot = "`", left = "`", right = "`", },
-    { hot = "~", left = "~", right = "~", },
-    --Separator,
-    { hot = "-", left = "-", right = "-", },
-    { hot = "_", left = "_", right = "_", },
-    { hot = "=", left = "+", right = "+", },
-    { hot = "+", left = "‾", right = "‾", },
-    Separator,
-    Separator,
-    -- [[
-    { text = L.LuaEnquoteSpecials,
-      Label = true, },
-    { hot = " ", left = "⌊", right = "⌋", },
-    { hot = " ", left = "⌈", right = "⌉", },
-    { hot = " ", left = "⟦", right = "⟧", },
-    Separator,
-    { hot = "q",
-      note = L.LuaQuoteReplace,
-      Function = RequoteText,
-      dequote = { 1, 1, true },
-      enquote = { '"', '"', true },
-    },
-    { hot = "w",
-      note = L.LuaQuoteReplace,
-      Function = RequoteText,
-      dequote = { 1, 1, true },
-      enquote = { '«', '»', true },
-    },
-    --]]
-  } --- QuoteMarks
+-- Squeeze (empty or with space chars only) lines in selected block.
+-- Сжатие (пустых или с только пробельными символовами) в выделенном блоке.
+function Clear.SqueezeEmptyLines ()
 
-  local format = string.format
-  local QuoteTextFmt = "&%s - %s%s|%s%s"
+  local function SqueezeEmptyLines (block) --> (block)
+    -- Очистка строк только с пробельными символами
+    local block = farBlock.SubLines(block, "^\s-$", "")
+    return farBlock.SubText(block, "(\n)\n+", "%1")
+  end --
 
-for k = 1, #QuoteMarks do
-  local v = QuoteMarks[k]
-  local t
-  if v.hot then
-    if not v.Function then
-      t = {
-        text = format(QuoteTextFmt, v.hot,
-                      v.pad or "", v.left,
-                      v.right, v.note or ""),
-        Function = EnquoteText,
-        Arguments = { v.left, v.right, true },
-      } ---
-    else
-      local w = v.enquote
-      t = {
-        text = format(QuoteTextFmt, v.hot,
-                      v.pad or "", w[1],
-                      w[2], v.note or ""),
-        Function = v.Function,
-        Arguments = v,
-      } ---
-    end
-  else
-    t = v
-  end
-  mItems[#mItems + 1] = t
-end --
+  return farSelect.Process(false, SqueezeEmptyLines)
+end ---- SqueezeEmptyLines
 
---logShow(mItems, "mEnquote", "", { tnaming = false, astable = true })
-
-end -- do
-
-local mEnquote = {
-  text = L.LuaEnquote,
-  -- [[
-  MenuView = "RectMenu",
-  Props = {
-    RectMenu = {
-      Rows = 9,
-      Order = "V",
-      Fixed = { HeadRows = 1, HeadCols = 0 },
-    }, -- RectMenu
-  }, -- Props
-  CfgData = { UMenu = { TextNamedKeys = false } },
-  --]]
-
-  Items = mItems,
-} --- mEnquote
-
----------------------------------------- Dequote
-local mDequote = {
-  text = L.LuaDequote,
-
-  Items = {
-    { text = L.LuaDequoteSingle,
-      Function = DequoteText,
-      Arguments = { 1, 1, true },
-    },
-    { text = L.LuaDequoteDouble,
-      Function = DequoteText,
-      Arguments = { 2, 2, true },
-    },
-  } ---
-} --- mDequote
-
----------------------------------------- Quote
-local mQuote = {
-  text = L.LuaQuoteText,
+---------------------------------------- Clear
+local mClear = {
+  text = L.LuaClearText,
   Area = "editor",
 
   Items = {
-    mEnquote,   -- Закавычивание
-    mDequote    -- Раскавычивание
+    { text = L.LuaClearDeleteAllSpaces,
+      Function = Clear.DeleteAllSpaces, },
+    { text = L.LuaClearSqueezeSpaceChars,
+      Function = Clear.SqueezeSpaceChars, },
+    { text = L.LuaClearDeleteAllEmptys,
+      Function = Clear.DeleteAllEmptys, },
+    { text = L.LuaClearSqueezeEmptyLines,
+      Function = Clear.SqueezeEmptyLines, },
   } ---
-} --- mQuote
+} --- mClear
 
 ---------------------------------------- Truncate
 local Truncate = (require "Rh_Scripts.Editor.VoidTruncate").Truncate
@@ -275,13 +127,13 @@ local mTruncate = {
   text = L.LuaTruncateVoid,
   Items = {
     { text = L.LuaTruncCurLine,
-      Function = DoTrunc.Line },
+      Function = DoTrunc.Line, },
     { text = L.LuaTruncAllLines,
-      Function = DoTrunc.Text },
+      Function = DoTrunc.Text, },
     { text = L.LuaTruncEndLines,
-      Function = DoTrunc.File },
+      Function = DoTrunc.File, },
     { text = L.LuaTruncFileText,
-      Function = Truncate.FileText },
+      Function = Truncate.FileText, },
   } ---
 } --- mTruncate
 
@@ -290,9 +142,7 @@ local mScripts = {
   text = L.LuaScripts,
   --Title = L.LuaScripting,
   Items = {
-    --mQuote,     -- Кавычки/скобки
-    mEnquote,   -- Закавычивание
-    mDequote,   -- Раскавычивание
+    mClear,     -- Чистка текста
     mTruncate,  -- Усечение текста
   } -- Items
 } --- mScripts
@@ -304,7 +154,7 @@ local Data = {
     Items = { mScripts },
     --Items = { Sep, Scripts },
   },
-  --["Editor Scripts"] = Scripts,
+  --["Editor Scripts"] = mScripts,
 } ---
 
 return Data

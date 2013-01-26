@@ -27,7 +27,7 @@ if L == nil then
 end
 
 ---------------------------------------- Separator
-local mSep = {
+local mSeparator = {
   separator = true,
 } ---
 
@@ -91,7 +91,7 @@ local mLFcontext = {
       Script = "LumContext.lua",
       Function = "typesInfo",
       Relative = "default" },
-    mSep,
+    mSeparator,
     -- Testing detect type --
     { text = L.OthLFcTestDetType,
       Script = "LumContext.lua",
@@ -115,7 +115,7 @@ local mFuncScripts = {
       Script = "LumScripts.lua",
       Function = "FunctionEnvironment",
       Relative = "default" },
-    mSep,
+    mSeparator,
     -- Default arguments of function --
     { text = "&Default args of func",
       Script = "LumScripts.lua",
@@ -161,16 +161,14 @@ local mHelloWorld = {
   } ---
 } --- mHelloWorld
 
---------------------------------------------------------------------------------
-
----------------------------------------- ----
+---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts
   text = L.OtherScripts,
   Items = {
     mQuickInfo,     -- Quick Information
     mLFcontext,     -- LuaFAR context
     mFuncScripts,   -- Environment and functions call
-    mSep,
+    mSeparator,
     mHelloWorld,    -- Hello, world! sample
     --[[
     -- Own LUM display --
@@ -187,7 +185,7 @@ local Data = {
   Menu = {
     text = L.OtherScripts,
     Items = { mScripts },
-    --Items = { mSep, mScripts },
+    --Items = { mSeparator, mScripts },
   },
 
   --["Other Scripts"] = mScripts,

@@ -1,0 +1,276 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Quotes and brackets.
+  -- Кавычки и скобки.
+--]]
+--------------------------------------------------------------------------------
+
+local unpack = unpack
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.Utils"
+local farEdit = require "Rh_Scripts.Utils.Editor"
+
+local farBlock = farEdit.Block
+local farSelect = farEdit.Selection
+
+local RedrawAll = farUt.RedrawAll
+
+----------------------------------------
+--[[
+local dbg = require "context.utils.useDebugs"
+local logShow = dbg.Show
+--]]
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "Quoting",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- local
+local Text = {
+  Enquote = false,
+  Dequote = false,
+  Requote = false,
+} ---
+
+function Text.Enquote (Args, Cfg)
+  return farSelect.Enquote(unpack(Args))
+end ----
+
+function TextDequote (Args, Cfg)
+  return farSelect.Dequote(unpack(Args))
+end ----
+
+function Text.Requote (Args, Cfg)
+
+  local function Requote (block) --> (block)
+    if block == nil then
+      if not farSelect.Dequote(unpack(Args.dequote)) then return end
+      return farSelect.Enquote(unpack(Args.enquote))
+    end
+
+    local block = farBlock.Dequote(block, unpack(Args.dequote))
+    if not block then return end
+
+    return farBlock.Enquote(block, unpack(Args.enquote))
+  end --
+
+  return farSelect.Process(true, Requote)
+end ---- Requote
+
+---------------------------------------- Separator
+local mSeparator = {
+  separator = true,
+} ---
+
+---------------------------------------- Enquote
+local mItems = {}
+do
+  local mQuoteMarks = {
+    { text = L.LuaEnquoteQuotes,
+      Label = true, },
+    { hot = "'", left = "'", right = "'", },
+    { hot = '"', left = '"', right = '"', },
+    { hot = ";", left = "‹", right = "›", },
+    { hot = ":", left = "«", right = "»", },
+    --mSeparator,
+    { hot = "1", left = "‘", right = "’", },
+    { hot = "2", left = "“", right = "”", },
+    { hot = "3", left = "‚", right = "‘", },
+    { hot = "4", left = "„", right = "“", },
+
+    { text = L.LuaEnquoteBrackets,
+      Label = true, },
+    { hot = "[", left = "[", right = "]", },
+    { hot = "{", left = "{", right = "}", },
+    { hot = "(", left = "(", right = ")", },
+    mSeparator,
+    --mSeparator,
+    --mSeparator,
+    --mSeparator,
+    --mSeparator,
+    --mSeparator,
+
+    --{ text = L.LuaEnquoteOthers,
+    --  Label = true, },
+    { hot = "<", left = "<", right = ">", },
+    { hot = ">", left = "⟨", right = "⟩", },
+    { hot = "/", left = "/", right = "/", },
+    { hot ="\\", left ="\\", right ="\\", },
+    --mSeparator,
+    --mSeparator,
+    --mSeparator,
+    --mSeparator,
+
+    { text = L.LuaEnquoteComments,
+      Label = true, },
+    { hot = "data", pad = "   ", left = "{ ", right = " }", },
+    { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
+    { hot = "c/c⧺", pad = "  ", left = "/* ", right = " */", },
+    mSeparator,
+    { hot = "html", pad = " ", left = "<!--", right = "-->", },
+    { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
+    --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
+    --[=[
+    { hot = "d", left = "{ ", right = " }", note = "    (data)", },
+    { hot = "p", left = "(*", right = "*)", note = "    (pascal)", },
+    { hot = "c", left = "/* ", right = " */", note = "  (c/c++)", },
+    { hot = "h", left = "<!--", right = "-->", note = " (x/html)", },
+    { hot = "l", left = "--[[ ", right = " ]]--", note = " (lua)", },
+    --]=]
+    mSeparator,
+    mSeparator,
+    --mSeparator,
+
+    { text = L.LuaEnquoteMarkers,
+      Label = true, },
+    { hot = "|", left = "|", right = "|", },
+    mSeparator,
+    { hot = "#", left = "#", right = "#", },
+    { hot = "$", left = "$", right = "$", },
+    { hot = "%", left = "%", right = "%", },
+    { hot = "^", left = "^", right = "^", },
+    { hot ="&&", left = "&", right = "&", },
+    { hot = "*", left = "*", right = "*", },
+    --mSeparator,
+
+    { text = L.LuaEnquoteMarkers,
+      Label = true, },
+    { hot = "`", left = "`", right = "`", },
+    { hot = "~", left = "~", right = "~", },
+    --mSeparator,
+    { hot = "-", left = "-", right = "-", },
+    { hot = "_", left = "_", right = "_", },
+    { hot = "=", left = "+", right = "+", },
+    { hot = "+", left = "‾", right = "‾", },
+    mSeparator,
+    mSeparator,
+    -- [[
+    { text = L.LuaEnquoteSpecials,
+      Label = true, },
+    { hot = " ", left = "⌊", right = "⌋", },
+    { hot = " ", left = "⌈", right = "⌉", },
+    { hot = " ", left = "⟦", right = "⟧", },
+    mSeparator,
+    { hot = "q",
+      note = L.LuaQuoteReplace,
+      Function = Text.Requote,
+      dequote = { 1, 1, true },
+      enquote = { '"', '"', true },
+    },
+    { hot = "w",
+      note = L.LuaQuoteReplace,
+      Function = Text.Requote,
+      dequote = { 1, 1, true },
+      enquote = { '«', '»', true },
+    },
+    --]]
+  } --- mQuoteMarks
+
+  local format = string.format
+  local QuoteTextFmt = "&%s - %s%s|%s%s"
+
+for k = 1, #mQuoteMarks do
+  local v = mQuoteMarks[k]
+  local t
+  if v.hot then
+    if not v.Function then
+      t = {
+        text = format(QuoteTextFmt, v.hot,
+                      v.pad or "", v.left,
+                      v.right, v.note or ""),
+        Function = Text.Enquote,
+        Arguments = { v.left, v.right, true },
+      } ---
+    else
+      local w = v.enquote
+      t = {
+        text = format(QuoteTextFmt, v.hot,
+                      v.pad or "", w[1],
+                      w[2], v.note or ""),
+        Function = v.Function,
+        Arguments = v,
+      } ---
+    end
+  else
+    t = v
+  end
+  mItems[#mItems + 1] = t
+end --
+
+--logShow(mItems, "mEnquote", "", { tnaming = false, astable = true })
+
+end -- do
+
+local mEnquote = {
+  text = L.LuaEnquote,
+  -- [[
+  MenuView = "RectMenu",
+  Props = {
+    RectMenu = {
+      Rows = 9,
+      Order = "V",
+      Fixed = { HeadRows = 1, HeadCols = 0, },
+    }, -- RectMenu
+  }, -- Props
+  CfgData = { UMenu = { TextNamedKeys = false, }, },
+  --]]
+
+  Items = mItems,
+} --- mEnquote
+
+---------------------------------------- Dequote
+local mDequote = {
+  text = L.LuaDequote,
+
+  Items = {
+    { text = L.LuaDequoteSingle,
+      Function = Text.Dequote,
+      Arguments = { 1, 1, true },
+    },
+    { text = L.LuaDequoteDouble,
+      Function = Text.Dequote,
+      Arguments = { 2, 2, true },
+    },
+  } ---
+} --- mDequote
+
+---------------------------------------- Items/Menu
+local mQuoting = {
+  text = L.LuaQuoteText,
+  Area = "editor",
+
+  Items = {
+    mEnquote,   -- Закавычивание
+    mDequote,   -- Раскавычивание
+  } ---
+} --- mQuoting
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.LuaScripts,
+    Items = { mQuoting },
+  },
+  ["Quoting"] = mQuoting,
+} ---
+
+return Data
+--------------------------------------------------------------------------------
