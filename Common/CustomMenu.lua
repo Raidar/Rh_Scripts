@@ -630,7 +630,7 @@ do
 function TMenu:MakeBreakKeys (Menu, DefKeys) --> (table)
   local t = {}
   for k = 1, #DefKeys do t[k] = DefKeys[k] end -- Копия
-  --logShow(Default, "Default")
+  --logShow(DefKeys, "Default")
   --logShow(t, "Current")
 
   -- Объединение всех BreakKey
