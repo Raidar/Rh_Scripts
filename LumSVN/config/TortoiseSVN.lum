@@ -146,7 +146,7 @@ local Formats = { -- SVN
 } --- Formats
 
 do
-  local exec = runUt.runProcess
+  local exec = runUt.Run.Process
   --[[
   -- Execute program and return its output.
   -- Выполняет программу и возвращает его вывод.
@@ -249,7 +249,7 @@ function Svn.Run (Args, Cfg) --> (bool)
     return
   end
 
-  return runUt.runCmdLine(CmdLine)
+  return runUt.Run.CmdLine(CmdLine)
 end ---- Run
 
 -- Показ статуса SVN.

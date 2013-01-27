@@ -73,7 +73,11 @@ end --
 
 local function FillCmdLineWithBack (Command)
   if panel.SetCmdLine(-1, Command) then
-    return runUt.runSequence("Left")
+    if context.use.LFVer >= 3 then -- FAR23
+    return runUt.Run.Sequence("Keys'Left'")
+    else
+    return runUt.Run.Sequence("Left")
+    end
   end
 end --
 

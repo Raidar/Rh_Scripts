@@ -24,15 +24,26 @@ local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
-local unit = {}
+local unit = {
+  Run = false,
+  Lua = false,
+} ---
 
----------------------------------------- run
+---------------------------------------- Run
+local Run = {
+  Process   = false,
+  Sequence  = false,
+  Command   = false,
+  CmdLine   = false,
+} ---
+unit.Run = Run
+
 do
   local popen = io.popen
 
 -- Execute program and return its output.
 -- Выполнение программы и возвращение его вывода.
-function unit.runProcess (program) --> (string)
+function Run.Process (program) --> (string)
   local h = popen(program)
   if not h then return end
   local out = h:read("*a")
@@ -48,7 +59,7 @@ do
 
 -- Run FAR macrosequence.
 -- Запуск макропоследовательности FAR.
-function unit.runSequence (Sequence, Flags, AKey) --> (bool)
+function Run.Sequence (Sequence, Flags, AKey) --> (bool)
   return MacroPost(Sequence, Flags, AKey)
 end ----
 
@@ -59,7 +70,7 @@ do
 
 -- Run command from OS shell.
 -- Запуск команды из оболочки ОС.
-function unit.runCommand (Command) --> (ErrorLevel)
+function Run.Command (Command) --> (ErrorLevel)
   return execute(Command)
 end ----
 
@@ -71,15 +82,25 @@ do
 
 -- Run command from FAR command line.
 -- Запуск команды из командной строки FAR.
-function unit.runCmdLine (Command) --> (integer)
+function Run.CmdLine (Command) --> (integer)
   if panel.SetCmdLine(-1, Command) then
-    return unit.runSequence("Enter", CmdFlags)
+    if context.use.LFVer >= 3 then -- FAR23
+    return Run.Sequence("Keys'Enter'", CmdFlags)
+    else
+    return Run.Sequence("Enter", CmdFlags)
+    end
   end
 end ----
 
 end -- do
 
----------------------------------------- lua
+---------------------------------------- Lua
+local Lua = {
+  Split     = false,
+  GetArgs   = false,
+} ---
+unit.Lua = Lua
+
 -- Split to name and arguments.
 -- Разбиение на имя и аргументы.
 --[[
@@ -89,7 +110,7 @@ end -- do
   -- @notes: Пример значения Name:
   "TableName.FunctionName(Arg1, 'Arg2', { Arg3_1, Arg3_2 })"
 --]]
-function unit.splitNameArgs (Name, DefArgs) --> (string, string, boolean)
+function Lua.Split (Name, DefArgs) --> (string, string, boolean)
   if type(Name) == 'string' and
      Name:find("(", 1, true) and Name:sub(-1) == ")" then
     return Name:match("^([^%(]+)%((.+)%)$")
@@ -97,7 +118,7 @@ function unit.splitNameArgs (Name, DefArgs) --> (string, string, boolean)
   end
 
   return Name, DefArgs, true
-end ---- splitNameArgs
+end ---- Split
 
 do
   local loadstring = loadstring
@@ -106,7 +127,7 @@ do
 
 -- Getting arguments.
 -- Получение аргументов.
-function unit.getArguments (Args) --> (table | Args)
+function Lua.GetArgs (Args) --> (table | Args)
   if type(Args) ~= 'string' then return Args end
 
   -- Загрузка строки как порции.
@@ -118,11 +139,11 @@ function unit.getArguments (Args) --> (table | Args)
   if not Args then return nil, SError end
 
   return Args
-end ---- getArguments
+end ---- GetArgs
 
 end -- do
 
----------------------------------------- actions:
+---------------------------------------- Actions:
 
 ---------------------------------------- -- Text/Macro
 -- Execute: label action.
@@ -135,7 +156,7 @@ end ----
 -- Выполнение: макропоследовательность FAR.
 function unit.FarSeq (Value, Flags) --> (true | nil, error)
   -- WARN: Use Result for future run changes.
-  local Result = unit.runSequence(Value, Flags)
+  local Result = Run.Sequence(Value, Flags)
   if Result == 0 then return nil, "" end
   return true
 end ----
@@ -166,7 +187,7 @@ end -- do
 -- Execute: program as process.
 -- Выполнение: программа как процесс.
 function unit.Program (Value) --> (string | nil, error)
-  local Result = unit.runProcess(Value)
+  local Result = Run.Process(Value)
   if Result == nil then return nil, "" end
 
   return Result
@@ -175,7 +196,7 @@ end ----
 -- Execute: command from OS shell.
 -- Выполнение: команда из оболочки ОС.
 function unit.Command (Value, Format) --> (true | nil, error)
-  local Result = unit.runCommand(Value)
+  local Result = Run.Command(Value)
   if Result ~= 0 then return nil, Format:format(Result) end
 
   return true
@@ -184,7 +205,7 @@ end ----
 -- Execute: command from command line.
 -- Выполнение: команда из командной строки.
 function unit.CmdLine (Value, Error) --> (integer | nil, error)
-  local Result = unit.runCmdLine(Value)
+  local Result = Run.CmdLine(Value)
   if Result == nil then return nil, Error end
 
   return Result

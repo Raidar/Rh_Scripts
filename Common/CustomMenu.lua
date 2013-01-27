@@ -690,7 +690,7 @@ function TMenu:RunScript (Item)
   local Args, ChunkArgs, SError
   -- Обработка имени скрипта.
   Item.Script, Item.ChunkArgs, ChunkArgs =
-      runUt.splitNameArgs(Item.Script, Item.ChunkArgs)
+      runUt.Lua.Split(Item.Script, Item.ChunkArgs)
   --logShow(Item, tostring(Item.Script))
   -- Определение полного имени скрипта.
   local ChunkName
@@ -701,20 +701,20 @@ function TMenu:RunScript (Item)
   if ChunkArgs then
     ChunkArgs, SError = Item.Script and Item.ChunkArgs, false
   else
-    ChunkArgs, SError = runUt.getArguments(Item.ChunkArgs)
+    ChunkArgs, SError = runUt.Lua.GetArgs(Item.ChunkArgs)
   end
   if not ChunkArgs and SError then return nil, SError end
 
   -- Обработка имени функции скрипта.
   -- TODO: Убрать аргументы в названии скрипта!?
   Item.Function, Item.Arguments, Args =
-      runUt.splitNameArgs(Item.Function, Item.Arguments)
+      runUt.Lua.Split(Item.Function, Item.Arguments)
   --logShow(Item, tostring(Item.Function))
   -- Формирование аргументов функции скрипта.
   if Args then
     Args, SError = Item.Function and Item.Arguments, false
   else
-    Args, SError = runUt.getArguments(Item.Arguments)
+    Args, SError = runUt.Lua.GetArgs(Item.Arguments)
   end
   if not Args and SError then return nil, SError end
 
