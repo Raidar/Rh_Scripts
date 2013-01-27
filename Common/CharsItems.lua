@@ -45,17 +45,22 @@ local uList = require "Rh_Scripts.Utils.CharsList"
 local CharNames = uList.Names
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --logShow(uList.Names, "Characters' names", 2, "#fq")
 --]]
 
 --------------------------------------------------------------------------------
-local sKeys = {}
-local sItem = {}
-local sList = {}
-local unit = { Keys = sKeys, Item = sItem, List = sList }
+local mKeys = {}
+local mItem = {}
+local mList = {}
+
+local unit = {
+  Keys = mKeys,
+  Item = mItem,
+  List = mList,
+} ---
 
 ---------------------------------------- Symbol keys
 local SKEY_SymNames = keyUt.SKEY_SymNames
@@ -66,7 +71,7 @@ local function SVKeyValue (s) --> (string)
   --return s:upper()
   return SKEY_SymNames[s] or s:upper()
 end --
-sKeys.SVKeyValue = SVKeyValue
+mKeys.SVKeyValue = SVKeyValue
 
 ---------------------------------------- Combo-keys
 -- Комбинации модификаторов:
@@ -79,11 +84,11 @@ local UsedModifs = { 'Shift', 'Ctrl', 'CtrlShift',
 local function SModifKey (s, m, f) --> (string)
   return SModKeyPat:format(m, f(s))
 end --
---sKeys.SModifKey = SModifKey
+--mKeys.SModifKey = SModifKey
 
 -- Комбинации для VK_.
 local SVKeyFuncs = { S = 0, C = 0, A = 0, CS = 0, AS = 0, CA = 0, CAS = 0 }
-sKeys.SVKeyFuncs = SVKeyFuncs
+mKeys.SVKeyFuncs = SVKeyFuncs
 
 for k, m in ipairs(SKeyModifs) do
   SVKeyFuncs[m] = function (s)
@@ -93,7 +98,7 @@ end
 
 ---------------------------------------- Action keys
 -- Вид клавиш обработки:
-sKeys.DefActionKeys = {
+mKeys.DefActionKeys = {
   Kind = "AccelKey";
   SVKeyValue,    SVKeyFuncs.S,
   SVKeyFuncs.C,  SVKeyFuncs.CS,
@@ -102,7 +107,7 @@ sKeys.DefActionKeys = {
 } --- DefActionKeys
 
 local DefKeyOrder = { [0] = ""; "" }
-sKeys.DefKeyOrder = DefKeyOrder
+mKeys.DefKeyOrder = DefKeyOrder
 for _, m in ipairs(SKeyModifs) do
   DefKeyOrder[#DefKeyOrder+1] = m..'+'
 end
@@ -110,26 +115,30 @@ end
 -- Получение функции для комбинации.
 local function GetKeyFunc (m) --> (func|nil)
   local m = m or ""
-  if m == "" then return sKeys.SVKeyValue end
+  if m == "" then return mKeys.SVKeyValue end
   if m:sub(-1, -1) == '+' then m = m:sub(1, -2) end
   return SVKeyFuncs[m]
 end --
---sKeys.GetKeyFunc = GetKeyFunc
+--mKeys.GetKeyFunc = GetKeyFunc
 
 ---------------------------------------- Character item
 
-sItem.DefItemOrder = [[abcdefghijklmnopqrstuvwxyz`1234567890-=[]\;',./]]
+mItem.DefItemOrder = [[abcdefghijklmnopqrstuvwxyz`1234567890-=[]\;',./]]
 
 -- Make menu head.
 -- Формирование пункта-заголовка меню.
-function sItem.MakeHead (s) --> (table)
-  local t = { text = type(s) ~= 'table' and s or s[1], Label = true }
+function mItem.MakeHead (s) --> (table)
+  local t = {
+    Label = true,
+    text = type(s) ~= 'table' and s or s[1],
+  } ---
+
   return t
 end --
 
 --[[
 -- Make menu item text and "Plain" action.
-function sItem.MakeText (s) --> (text, Plain)
+function mItem.MakeText (s) --> (text, Plain)
   if type(s) ~= 'table' then return s, s end
   return s[2], s[1]
 end ----
@@ -137,7 +146,7 @@ end ----
 
 -- Make handle key for item.
 -- Формирование клавиши обработки для пункта.
-function sItem.MakeKey (item, Keys, key, char)
+function mItem.MakeKey (item, Keys, key, char)
   if Keys[key] then item.AccelKey = Keys[key](char) end
 end ----
 
@@ -154,7 +163,7 @@ do
 
 -- Make menu item.
 -- Формирование пункта меню.
-function sItem.MakeItem (text, Keys, key, char, hint) --> (table)
+function mItem.MakeItem (text, Keys, key, char, hint) --> (table)
   local text = text
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
@@ -171,10 +180,10 @@ function sItem.MakeItem (text, Keys, key, char, hint) --> (table)
   if hint then t.Hint = hint end
 
   x = type(char) ~= 'table'
-  sItem.MakeKey(t, Keys.Kind and Keys or Keys[1], key, x and char or char[2])
+  mItem.MakeKey(t, Keys.Kind and Keys or Keys[1], key, x and char or char[2])
   char = x and char or char[3]
   if char and char ~= "" and not Keys.Kind then
-    sItem.MakeKey(t, Keys[2], key, char)
+    mItem.MakeKey(t, Keys[2], key, char)
   end
 
   return t
@@ -207,12 +216,12 @@ end -- do
               (bool) - = "AccelKey" с использованием порядка KeyOrder.
                        (KeyOrder должен быть стандартного вида.)
 --]]
-function sList.CharsItems (Properties, Data, Keys) --> (table)
+function mList.CharsItems (Properties, Data, Keys) --> (table)
   -- Настройка параметров:
   local tp = type(Data)
   assert(tp == 'string' or tp == 'table')
 
-  local Order = Properties.Order or sItem.DefItemOrder
+  local Order = Properties.Order or mItem.DefItemOrder
   local iLen = Properties.Length or 1
   if tp == 'table' then iLen = 1 end
 
@@ -244,7 +253,7 @@ function sList.CharsItems (Properties, Data, Keys) --> (table)
     end
     --logShow({ tp, Keys }, "Used Keys", "#qd1")
   elseif kk == 'string' then
-    Keys = sKeys.DefActionKeys
+    Keys = mKeys.DefActionKeys
   end -- if
 
   -- Функция извлечения текста из Order
@@ -257,41 +266,43 @@ function sList.CharsItems (Properties, Data, Keys) --> (table)
                function (k) return Data:sub(k, k + iLen - 1) end
 
   -- Формирование пунктов:
-  local t, s, d = {} -- result, item text, caption text
-  local i, j, k -- loop indexes: by item length, by 1, on key order
+  local t = {} -- result
+  --local s, d -- result, item text, caption text
+  --local i, j, k -- loop indexes: by item length, by 1, on key order
 
   if Heading == "Both" then
-    t[#t+1] = sItem.MakeHead(KeyOrder[0]) -- Angle Head
+    t[#t+1] = mItem.MakeHead(KeyOrder[0]) -- Angle Head
   end
 
   if Serial then -- Последовательная выборка
 
     if Heading ~= "Keys" then
-      i, j = 1, 1
+      local i, j = 1, 1
       while j <= Size and i <= dLen do
         --logShow({ i, j }, "Head Loop", "#qd1")
-        s = text(i)
+        local s = text(i)
         if s ~= "" then
-          t[#t+1] = sItem.MakeHead(capt(j)) -- Head
+          t[#t+1] = mItem.MakeHead(capt(j)) -- Head
         end
         --logShow({ Order:sub(j, j), MakeHead(Order:sub(j, j)) }, "Head Loop", "#qd1")
         i, j = i + iLen, j + 1
       end
     end
 
-    i, k = 1, 1 -- Body
+    local i, k = 1, 1 -- Body
     while k <= Count and i <= dLen do
       --logShow(KeyOrder[k] or "", "MakeHead")
       if Heading ~= "Order" then
-        t[#t+1] = sItem.MakeHead(KeyOrder[k] or "") -- SubHead
+        t[#t+1] = mItem.MakeHead(KeyOrder[k] or "") -- SubHead
       end
-      j = 1
+
+      local j = 1
       while j <= Size and i <= dLen do
         --logShow({ i, j, k }, "Char Loop", "#qd1")
         --logShow({ text(i), Order:sub(j, j) }, "Char Loop", "#qd1")
-        s = text(i)
+        local s = text(i)
         if s ~= "" then
-          t[#t+1] = sItem.MakeItem(s, Keys, k, capt(j), Hint)
+          t[#t+1] = mItem.MakeItem(s, Keys, k, capt(j), Hint)
         end
         i, j = i + iLen, j + 1
       end
@@ -301,32 +312,33 @@ function sList.CharsItems (Properties, Data, Keys) --> (table)
   else -- Across -- Пересекающая выборка
 
     if Heading ~= "Order" then
-      i, k = 1, 1
+      local i, k = 1, 1
       while k <= Count and i <= dLen do
         --logShow({ i, j, k }, "Head Loop", "#qd1")
-        s = text(i)
+        local s = text(i)
         if s ~= "" then
-          t[#t+1] = sItem.MakeHead(KeyOrder[k] or "") -- Head
+          t[#t+1] = mItem.MakeHead(KeyOrder[k] or "") -- Head
         end
         --logShow({ capt(j) }, "Head Loop", "#qd1")
         i, k = i + iLen, k + 1
       end
     end
 
-    i, j = 1, 1 -- Body
+    local i, j = 1, 1 -- Body
     while j <= Size and i <= dLen do
-      d = capt(j)
+      local d = capt(j)
       --logShow(KeyOrder[k] or "", "MakeHead")
       if Heading ~= "Keys" then
-        t[#t+1] = sItem.MakeHead(d) -- SubHead
+        t[#t+1] = mItem.MakeHead(d) -- SubHead
       end
-      k = 1
+
+      local k = 1
       while k <= Count and i <= dLen do
         --logShow({ i, j, k }, "Char Loop", "#qd1")
-        s = text(i)
+        local s = text(i)
         --logShow({ s, d }, "Char Loop", "#qd1")
         if s ~= "" then
-          t[#t+1] = sItem.MakeItem(s, Keys, k, d, Hint)
+          t[#t+1] = mItem.MakeItem(s, Keys, k, d, Hint)
         end
         i, k = i + iLen, k + 1
       end
@@ -346,7 +358,7 @@ end ---- CharsItems
   Text  (string) - текст пункта-метки.
   Value (string) - новый текст пункта-метки.
 --]]
-function sList.SetLabelItemsText (Items, Text, Value) --|> Items
+function mList.SetLabelItemsText (Items, Text, Value) --|> Items
   assert(type(Items) == 'table')
 
   local Text  = Text or " "
@@ -369,7 +381,7 @@ end ----
   Field   (string) - изменяемое поле пункта.
   Value   (string) - новое значение поля пункта.
 --]]
-function sList.SetKeyItemsField (Items, Pattern, Field, Value) --|> Items
+function mList.SetKeyItemsField (Items, Pattern, Field, Value) --|> Items
   assert(type(Items) == 'table')
 
   local Pattern = Pattern or "Space$"
@@ -402,9 +414,30 @@ do
 
 local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 
+local InsText = editor.InsertText
+local Redraw  = farUt.RedrawAll
+
 function unit.CharsMenu (MenuConfig, Props, Data, Keys) --> (table)
   local MenuConfig = MenuConfig or {}
   local Fixed = MenuConfig.Fixed or DefFixedBoth
+
+  local mItems = mList.CharsItems(Props, Data, Keys)
+
+  local Area = farUt.GetAreaType()
+
+  local function DoChooseItem (Kind, Index)
+    --logShow({ Index = Index, SelIndex = SelIndex }, Kind)
+    --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
+    if Kind ~= "AKey" then return true end
+
+    local ActItem = mItems[Index]
+    if not ActItem or not ActItem.Plain then return true end
+
+    --if not InsText(nil, ActItem.Plain) then return true end
+    if not farUt.InsertText(Area, ActItem.Plain, {}) then return true end
+
+    return not Redraw()
+  end --
 
   local Properties = {
     Id = Guid,
@@ -416,6 +449,8 @@ function unit.CharsMenu (MenuConfig, Props, Data, Keys) --> (table)
       MenuAlign = DefMenuAlign,
       MenuEdge = 2,
       Fixed = Fixed,
+
+      OnChooseItem = DoChooseItem,
     }, --
   } ---
 
@@ -447,7 +482,7 @@ function unit.CharsMenu (MenuConfig, Props, Data, Keys) --> (table)
 
     CfgData = CfgData,
 
-    Items = sList.CharsItems(Props, Data, Keys),
+    Items = mList.CharsItems(Props, Data, Keys),
   } ----
 end ---- CharsMenu
 

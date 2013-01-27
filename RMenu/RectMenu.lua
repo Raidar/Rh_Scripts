@@ -851,9 +851,16 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
                   { FDLG_SMALLDIALOG = 1, FDLG_NODRAWSHADOW = 1 } or
                   RM.NoShadow and { FDLG_NODRAWSHADOW = 1 } or {}
   local Pos = RM.Position or {} -- Позиция вывода окна:
-  Pos = { x = Pos.x or -1, y = Pos.y or -1,
-          w = Zone.BoxWidth, h = Zone.BoxHeight, xw = 0, yh = 0,
-          sx = Zone.HomeX, sy = Zone.HomeY, } -- Отступ = позиция зоны меню
+  Pos = {
+    x = Pos.x or -1,
+    y = Pos.y or -1,
+    w = Zone.BoxWidth,
+    h = Zone.BoxHeight,
+    xw = 0, yh = 0,
+    -- Отступ = позиция зоны меню -- !?
+    sx = Zone.HomeX,
+    sy = Zone.HomeY,
+  } ---
   self.DlgPos = Pos
 
   if Pos.x < 0 then Pos.x = bshr(self.Area.Width  - Pos.w, 1) end
@@ -890,8 +897,10 @@ function TMenu:UpdateAll (hDlg, Flags, Table) --| (self)
 
   --self = 0 -- TODO: Exclude all fields for right new info!?
   self.Menu = {
-    Props = Table[1], Items = Table[2],
-    BreakKeys = Table[3], Additions = self.Menu.Additions,
+    Props = Table[1],
+    Items = Table[2],
+    BreakKeys = Table[3],
+    Additions = self.Menu.Additions,
   } -- Menu
   self:DefineAll() -- Определение вида меню
   if Flags.isUpdate == false then return end
@@ -1402,12 +1411,30 @@ end ---- ArrowKeyPress
 function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
   self.ChooseKind = Kind
   local OnChooseItem = self.RectMenu.OnChooseItem
-  if not OnChooseItem then return CloseDialog(hDlg) end
+  if not OnChooseItem then
+    return CloseDialog(hDlg)
+  end
 
-  local isClose = OnChooseItem(Kind, Index, self:GetSelectIndex())
-  --logShow({ Result, Table, Flags }, "OnKeyPress", 2)
+  -- Обычно self:GetSelectIndex() == Index, т.е. Index не нужен!
+  local isClose = OnChooseItem(Kind, self:GetSelectIndex())
+  --local isClose = OnChooseItem(Kind, Index, self:GetSelectIndex())
+  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
 
-  if isClose then return CloseDialog(hDlg) end
+  if isClose then
+    return CloseDialog(hDlg)
+  end
+
+  --[[
+  -- Обычно self:GetSelectIndex() == Index, т.е. Index не нужен!
+  local Flags = OnChooseItem(Kind, self:GetSelectIndex())
+  --local Flags = OnChooseItem(Kind, Index, self:GetSelectIndex())
+  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
+  Flags = Flags or Null -- or {}
+
+  if Flags.isClose then
+    return CloseDialog(hDlg)
+  end
+  --]]
 
   return true
 end ---- ChooseItem

@@ -53,16 +53,16 @@ local Groups = {
 } ---
 
 local Texts = {
-  CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0 },
-  CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0 },
-  MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0 }, -- TODO
-  MathsScripts = { Group = "Maths", Hot = "X", text = 0, Title = 0 },
-  MathsIndexes = { Group = "Maths", Hot = "O", text = 0, Title = 0 },
-  PunctSymbols = { Group = "Punct", Hot = "`", text = 0, Title = 0 },
-  PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0 },
-  Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0 }, -- TODO
-  Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0 }, -- TODO
-} ---
+  CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
+  CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
+  MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
+  MathsScripts = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
+  MathsIndexes = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
+  PunctSymbols = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
+  PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
+  Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
+  Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
+} --- Texts
 
 do
   local pairs = pairs
