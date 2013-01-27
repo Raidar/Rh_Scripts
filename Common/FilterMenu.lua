@@ -341,11 +341,19 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   -- 2.2. Обработка нажатия клавиши.
       -- Предварительный анализ клавиши.
     local VMod, VKey = VirKey.ControlKeyState, VirKey.VirtualKeyCode
-    if VMod ~= 0 and not IsModShift(VMod) and not IsModAlt(VMod) then return end
+    if VMod ~= 0 and
+       not IsModShift(VMod) and
+       not IsModAlt(VMod) then
+      return
+    end
 
     local SKey = VirKey.Name or InputRecordToName(VirKey)
     local SpecKeyChar = SpecKeyChars[SKey]
-    if SKey ~= "BS" and not SpecKeyChar and not isVKeyChar(VKey) then return end
+    if SKey ~= "BS" and
+       not SpecKeyChar and
+       not isVKeyChar(VKey) then
+      return
+    end
 
       -- Формирование паттерна.
     if SKey == "BS" then

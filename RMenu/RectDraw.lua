@@ -44,7 +44,7 @@ local menUt = require "Rh_Scripts.Utils.Menu"
 local checkedChar = menUt.checkedChar
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -90,10 +90,15 @@ function unit.DrawSeparItemText (Rect, Color, Text)
   -- TODO: MultiLine with text & line alignment.
   if Text and Text ~= "" then
     local Len = Text:len() -- Разделитель с текстом:
-    local SepLen = bshr(Width - Len, 1)
-    --local SepLen = divf(Width - Len, 2)
-    LineText(Rect, Color, Separ:sub(1, SepLen)..Text..
-                          Separ:sub(1, Width - SepLen - Len))
+    if Width > Len then
+      local SepLen = bshr(Width - Len, 1)
+      --local SepLen = divf(Width - Len, 2)
+      --logShow(Rect, Len, 2)
+      LineText(Rect, Color, Separ:sub(1, SepLen)..Text..
+                            Separ:sub(1, Width - SepLen - Len))
+    else
+      LineText(Rect, Color, Text) -- Без разделителя?!
+    end
   else
     LineText(Rect, Color, Separ) -- Разделитель обычный
   end

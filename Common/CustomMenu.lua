@@ -815,8 +815,10 @@ end -- do
 
 ---------------------------------------- ---- Show
 do
+  -- TODO: Дляar.Menu делать замену клавиш на VK'шные!
   local DefBreakKeys = { --  BreakKeys по умолчанию:
     { BreakKey = "BS",      Action = "Back" },      -- Возврат в надменю
+    { BreakKey = "BACK",    Action = "Back" },      -- Возврат в надменю
     { BreakKey = "ShiftF1", Action = "Item Info" }, -- Сведения о пункте меню
     { BreakKey = "CtrlF1",  Action = "Menu Info" }, -- Сведения о меню в целом
   } --- DefBreakKeys

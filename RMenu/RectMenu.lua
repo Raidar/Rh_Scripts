@@ -204,7 +204,7 @@ local VisCount = { Base = 0, Pale = 0 }
   -- @params:
   Len    (table) - таблица длин рядов.
   Sep   (number) - длина разделителя рядов.
-  Total (number) - имеющая общая длина для рядов.
+  Total (number) - имеющаяся общая длина для рядов.
   Base  (number) - номер ряда-базы для отсчёта с начала.
   Fixes  (table) - данные о фиксированных рядах.
 --]]
@@ -239,7 +239,7 @@ end ---- VisCount.Base
   -- @params:
   Len    (table) - таблица длин рядов.
   Sep   (number) - длина разделителя рядов.
-  Total (number) - имеющая общая длина для рядов.
+  Total (number) - имеющаяся общая длина для рядов.
   Pale  (number) - номер ряда-предела для отсчёта с конца.
   Fixes  (table) - данные о фиксированных рядах.
 --]]
@@ -1146,10 +1146,11 @@ end ---- WrapCell
   isNew -- вид позиции aCell: nil/false -- текущая, true -- желаемая.
 --]]
 function TMenu:GotoCell (aCell, dCell, isNew) --> (SelIndex, Cell)
-  -- Выбор начального нового пункта меню.
-  local dR, dC = dCell.Row, dCell.Col
   --logShow({ aCell, dCell, isNew }, "GotoCell")
+
+  -- Выбор начального нового пункта меню.
   local R, C =  aCell.Row, aCell.Col
+  local dR, dC = dCell.Row, dCell.Col
 
   if isNew then
     dR, dC = -dR, -dC
@@ -1278,7 +1279,7 @@ local Shifts = {
   2. Абсолютная величина отсчёта обычного перемещения.
   3. Абсолютная величина отсчёта "прыжкового" перемещения.
 --]]
-function TMenu:GetArrowCell (oCell, aKey) --> (values)
+function TMenu:ArrowKeyToCell (oCell, aKey) --> (values)
   local Data, Zone = self.Data, self.Zone
   local Base = self.Zone.Base
   local rMin, rMax = self.FixedRows.Min, self.FixedRows.Max
@@ -1371,7 +1372,7 @@ function TMenu:GetArrowCell (oCell, aKey) --> (values)
   } --- KeydCell
 
   return KeydCell[aKey]()
-end ---- GetArrowCell
+end ---- ArrowKeyToCell
 
 -- Проверка на используемость клавиш-стрелок.
 function TMenu:CheckArrowUse (AKey)
@@ -1386,11 +1387,11 @@ end ---- CheckArrowUse
 
 -- Обработка клавиш курсора в меню.
 function TMenu:ArrowKeyPress (hDlg, AKey, VMod) --> (bool)
-  local dCell, bCell, vCell
+  --local dCell, bCell, vCell
 
   -- Переход на новую ячейку по нажатию клавиши.
   local function KeyPressCell (OldCell) --> (table, number, table)
-    dCell, bCell, vCell = self:GetArrowCell(OldCell, AKey)
+    local dCell, bCell, vCell = self:ArrowKeyToCell(OldCell, AKey)
 
     if IsModCtrl(VMod) then -- CTRL:
       if not vCell then return false end
@@ -1401,11 +1402,30 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod) --> (bool)
     -- Без модификаторов:
     if not bCell then return false end
     --logShow({ bCell, dCell }, "Cells (No mods)")
+
     return dCell, self:GotoCell(bCell, dCell, dCell.isNew)
   end --
 
   return self:MoveToCell(hDlg, KeyPressCell)
 end ---- ArrowKeyPress
+
+-- Обработка левой кнопки мыши в меню.
+function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
+  -- TODO: Преобразование x, y в желаемую ячейку
+
+  -- Переход на новую ячейку по нажатию кнопки мыши.
+  local function MouseClickCell (OldCell) --> (table, number, table)
+    local bCell = {
+      Row = OldCell.Row,
+      Col = MousePosToCat(Bar.Length, pos, self.FixedCols, Bar),
+    } ---
+    --local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.L or Shifts.R
+
+    return dCell, self:GotoCell(bCell, dCell, true)
+  end --
+
+  return self:MoveToCell(hDlg, MouseClickCell)
+end ---- MouseBtnClick
 
 -- Пользовательская обработка выбора пункта/клавиши.
 function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
@@ -1552,18 +1572,18 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
   return false
 end ---- DoKeyPress
 
+do
 -- Получение номера ряда по позиции прокрутки.
-local function PosToCat (ALen, Pos, Cats, Scroll) --> (number)
-  --logShow({ Len, Cats }, Pos, 2)
+local function ScrollPosToCat (ALen, Pos, Cats, Scroll) --> (number)
+  --logShow({ ALen, Cats }, Pos, 2)
   if ALen == 1 then return 1 end
   --Pos = max2(Pos - max2(bshr(Scroll.Len, 1), 1), 0)
-  --return min2(divr(Pos * (Cats.Alter - 1),
-  --                 ALen - 1) + Cats.Min, Cats.Max)
+  --return min2(divr(Pos * (Cats.Alter - 1), ALen - 1) +
+  --            Cats.Min, Cats.Max)
 
-  return min2(divr((Pos - 1) * (Cats.Alter - 1),
-                   ALen - 1) +
+  return min2(divr((Pos - 1) * (Cats.Alter - 1), ALen - 1) +
               Cats.Min, Cats.Max)
-end --
+end -- ScrollPosToCat
 
 -- Обработка горизонтальной прокрутки.
 function TMenu:ScrollHClick (hDlg, pos)
@@ -1579,14 +1599,19 @@ function TMenu:ScrollHClick (hDlg, pos)
   pos = pos - Bar.X1
 
   local function ScrollHCell (OldCell) --> (table, number, table)
-    local bCell = { Row = OldCell.Row,
-                    Col = PosToCat(Bar.Length, pos, self.FixedCols, Bar) }
+    local bCell = {
+      Row = OldCell.Row,
+      Col = ScrollPosToCat(Bar.Length, pos, self.FixedCols, Bar),
+    } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.L or Shifts.R
+
     return dCell, self:GotoCell(bCell, dCell, true)
   end --
 
   return self:MoveToCell(hDlg, ScrollHCell)
 end ---- ScrollHClick
+
+end -- do
 
 -- Обработка вертикальной прокрутки.
 function TMenu:ScrollVClick (hDlg, pos)
@@ -1601,10 +1626,13 @@ function TMenu:ScrollVClick (hDlg, pos)
   pos = pos - Bar.Y1
 
   local function ScrollVCell (OldCell) --> (table, number, table)
-    local bCell = { Row = PosToCat(Bar.Length, pos, self.FixedRows, Bar),
-                    Col = OldCell.Col }
+    local bCell = {
+      Col = OldCell.Col,
+      Row = ScrollPosToCat(Bar.Length, pos, self.FixedRows, Bar),
+    } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.U or Shifts.D
     --logShow({ OldCell, bCell, dCell, Bar, FixRows }, pos)
+
     return dCell, self:GotoCell(bCell, dCell, true)
   end --
 
@@ -1893,6 +1921,8 @@ local BlackShapes = uChars.GeometricShapes.Black
 
 local Strap  = BoxDrawings.ShadeL:rep(255) -- Линия: полоса прокрутки
 local Caret  = BoxDrawings.ShadeD:rep(255) -- Линия: каретка прокрутки
+--local Strap  = BlackShapes.Square:rep(255) -- Линия: полоса прокрутки
+--local Caret  = BlackShapes.SquareN:rep(255) -- Линия: каретка прокрутки
 local ArrowL = BlackShapes.Tri_L -- Стрелки: влево
 local ArrowR = BlackShapes.Tri_R -- Стрелки: вправо
 local ArrowU = BlackShapes.Tri_U -- Стрелки: вверх
@@ -2059,16 +2089,17 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   -- Обработчик обработки нажатия кнопки мыши.
   local function DlgMouseClick (hDlg, ProcItem, MouseRec) --> (bool)
     local Zone = _Menu.Zone
-    local X, Y = MouseRec.dwMousePositionX, MouseRec.dwMousePositionY
+    local x, y = MouseRec.MousePositionX, MouseRec.MousePositionY
     -- TODO: Обработка выбором мышью.
-    --logShow(MouseRec, ProcItem, 2)
-    if Zone.Is_ScrollH and Y == Zone.Height then
-      return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + X)
-    elseif Zone.Is_ScrollV and X == Zone.Width then
-      return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + Y)
+    --logShow({ X, Y, Zone = Zone, MouseRec = MouseRec, }, ProcItem, 3)
+    if Zone.Is_ScrollH and y == Zone.Height then
+      return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + x)
+    elseif Zone.Is_ScrollV and x == Zone.Width then
+      return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + y)
     end
 
-    return false
+    return true
+    --return false
   end -- DlgMouseClick
   --]]
 
@@ -2086,25 +2117,23 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработчик нажатия клавиши / кнопки:
   local function DlgCtrlEvent (hDlg, ProcItem, Input) --> (bool)
-    local VirKey = far.ParseInput(Input) -- FAR23
-    --logShow({ VirKey, Input }, "Ctrl", "d1 x8")
-    if not VirKey then return false end
+    local Input = far.ParseInput(Input) -- FAR23
+    --logShow(Input, "Event", "d1 x8")
 
-    local EventType = VirKey.EventType
+    local EventType = Input.EventType
 
     if EventType == F.MOUSE_EVENT then
       return DlgMouseClick(hDlg, ProcItem, Input)
-
     elseif EventType == F.KEY_EVENT or
            EventType == F.FARMACRO_KEY_EVENT then
-      return DlgKeyEvent(hDlg, ProcItem, VirKey)
+      return DlgKeyEvent(hDlg, ProcItem, Input)
     end
 
     return false
   end -- DlgCtrlEvent
 
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
-    if not _Menu.RectMenu.NoMouseEvent then -- TODO: --> doc!
+    if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
       SendDlgMessage(hDlg, F.DM_SETMOUSEEVENTNOTIFY, 1, 0)
     end
 
@@ -2128,6 +2157,9 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     [F.DN_INITDIALOG] = DlgInit,
     --[F.DN_CLOSE] = DlgClose,
   } --- Procs
+    if LFVer < 3 then
+      Procs[F.DN_MOUSECLICK] = DlgCtrlEvent
+    end
 
   -- Обработчик событий диалога.
   local function DlgProc (hDlg, msg, param1, param2)

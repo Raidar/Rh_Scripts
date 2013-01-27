@@ -160,8 +160,14 @@ local function KeyPress_Run ()
     if msg == F.DN_CONTROLINPUT then
       --logShow{ "VirKey", param2 }
       local VirKey = far.ParseInput(param2) -- FAR23
-      if not VirKey then return end 
+      if type(VirKey) ~= 'table' then return end 
       --logShow{ "VirKey", VirKey }
+
+      local EventType = VirKey.EventType
+      if EventType ~= F.KEY_EVENT and
+         EventType ~= F.FARMACRO_KEY_EVENT then
+        return
+      end
 
       local StrKey = far.InputRecordToName(VirKey) or ""
       --logShow{ "VirKey", StrKey, VirKey }
