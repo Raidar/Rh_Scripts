@@ -425,10 +425,16 @@ function unit.CharsMenu (MenuConfig, Props, Data, Keys) --> (table)
 
   local Area = farUt.GetAreaType()
 
+  local mChooseKinds = {
+    AKey     = true,
+    Enter    = true,
+    DblClick = true,
+  } --- mChooseKinds
+
   local function DoChooseItem (Kind, Index)
     --logShow({ Index = Index, SelIndex = SelIndex }, Kind)
     --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
-    if Kind ~= "AKey" then return true end
+    if not mChooseKinds[Kind or ""] then return true end
 
     local ActItem = mItems[Index]
     if not ActItem or not ActItem.Plain then return true end
