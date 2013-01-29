@@ -482,7 +482,7 @@ local mTortoiseSVN = { -- Tortoise SVN
       Separators = IsMoreCols and "V" or "",
       --BoxKind = "R",
       MenuAlign = "CM",
-      NocheckChar = " ",
+      UncheckedChar = " ",
     }, -- RectMenu
   }, -- Props
 

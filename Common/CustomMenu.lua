@@ -211,21 +211,21 @@ end ---- Finish
 
 -- Заполнение свойств для меню/пункта.
 function TMenu:FillProperties (Props, Table) --|> (Props)
-  local tProps = (Table or tables.Null).Props or tables.Null
+  local TableProps = (Table or tables.Null).Props or tables.Null
 
   -- Common --
-  updateFields(Props, tProps)
+  updateFields(Props, TableProps)
 
   -- RectMenu --
   local RM_Props = Props.RectMenu or {}
   Props.Id = Props.Id or self.Guid
   Props.RectMenu = RM_Props
-  updateFields(RM_Props, tProps.RectMenu)
+  updateFields(RM_Props, TableProps.RectMenu)
   --Table.RectMenu = Table.RectMenu or {}
 
   -- FilterMenu --
   Props.Filter = Props.Filter or {}
-  updateFields(Props.Filter, tProps.Filter)
+  updateFields(Props.Filter, TableProps.Filter)
 
   return Props
 end ----
@@ -452,13 +452,13 @@ function TMenu:CheckAreaItem (Item) --> (bool)
      CurArea == ScopeArea then return true end
 
   -- Проверка на выделение:
-  local Checked = true
+  local Selected = true
   if Item.Area:find(";selected", 1, true) then
-    Checked = isSelection(ScopeArea)
+    Selected = isSelection(ScopeArea)
   end
   if CurArea == "" or
      CurArea:find(ScopeArea, 1, true) then
-    return Checked
+    return Selected
   end
   --logShow({ CurArea, Checked }, Item.Area)
   return false

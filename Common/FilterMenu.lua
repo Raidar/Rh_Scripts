@@ -378,8 +378,8 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   end -- KeyPress
 
   -- Назначение обработчика:
-  Props.RectMenu = Props.RectMenu or {}
-  local RM_Props = Props.RectMenu
+  local RM_Props = Props.RectMenu or {}
+  Props.RectMenu = RM_Props
   RM_Props.OnKeyPress = KeyPress
 
   -- Предварительный отбор:

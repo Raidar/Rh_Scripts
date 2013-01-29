@@ -596,9 +596,11 @@ do
   local HighlightOff = menUt.HighlightOff
 
   -- Названия элементов для изменения цвета.
-  local Col_MenuSelText = "COL_MENUSELECTEDTEXT"
-  local Col_MenuSelMark = "COL_MENUSELECTEDMARKTEXT"
-  local Col_MenuSelHigh = "COL_MENUSELECTEDHIGHLIGHT"
+  local SelText = "COL_MENUSELECTEDTEXT"
+  local SelMark = "COL_MENUSELECTEDMARKTEXT"
+  local SelHigh = "COL_MENUSELECTEDHIGHLIGHT"
+  --local DefText = "COL_MENUTEXT"
+  local MenuBox = "COL_MENUBOX"
 
 function TMain:MakeProps ()
 
@@ -620,13 +622,21 @@ function TMain:MakeProps ()
   Props.RectMenu = RM_Props
   RM_Props.Cols = 1
   RM_Props.BoxKind = "S"
-  RM_Props.NoShadow = true
+  RM_Props.Shadowed = false
   --RM_Props.MenuOnly = true
+
+  local AngleColor = Colors.COL_MENUGRAYTEXT
   RM_Props.Colors = {
-    [Col_MenuSelText] = setBG(Colors[Col_MenuSelText], 0x1),
-    [Col_MenuSelMark] = setBG(Colors[Col_MenuSelMark], 0x1),
-    [Col_MenuSelHigh] = setBG(Colors[Col_MenuSelHigh], 0x1),
+    COL_MENUSELECTEDTEXT      = setBG(Colors.COL_MENUSELECTEDTEXT, 0x1),
+    COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, 0x1),
+    COL_MENUSELECTEDHIGHLIGHT = setBG(Colors.COL_MENUSELECTEDHIGHLIGHT, 0x1),
+    --[[
+    BorderAngle = colors.make(colors.getBG(AngleColor),
+                              colors.getFG(AngleColor),
+                              type(AngleColor) ),
+    --]]
   } --
+
   RM_Props.MenuEdge = 0 --1
   RM_Props.AltHotOnly = true
 
@@ -1017,12 +1027,28 @@ function TMain:MakePopupMenu () --> (table)
   local Pos = {
     x = Info.CurPos  - Info.LeftPos       + Popup.PosX,
     y = Info.CurLine - Info.TopScreenLine + Popup.PosY,
+    angle = "",
   } ---
   --logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
-  Pos.y = Pos.y <= Height and Pos.y + 1 or Pos.y - Height
-  Pos.x = Pos.x + Width + 1 < Info.WindowSizeX and Pos.x or Pos.x - Width - 1
+  if Pos.y <= Height then
+    Pos.y = Pos.y + 1
+    Pos.angle = "T"
+  else
+    Pos.y = Pos.y - Height
+    Pos.angle = "B"
+  end
+  if Pos.x + Width + 1 < Info.WindowSizeX then
+    --Pos.x = Pos.x 
+    Pos.angle = Pos.angle.."L"
+  else
+    Pos.x = Pos.x - Width - 1
+    Pos.angle = Pos.angle.."R"
+  end
   -- Warning: "<" & "+1" instead of "<=" because editor may have scroll bar.
   RM_Props.Position = Pos
+
+  local Colors = RM_Props.Colors
+  Colors.Borders = { [Pos.angle] = Colors.BorderAngle, } --
   --[[
   local Rect, Pos = farUt.GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
   logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
@@ -1188,11 +1214,17 @@ do
   local KeyActionNames = {
     Del       = "del",
     BS        = "bs",
+    -- Arrows:
     Left      = "left",
     Right     = "right",
     Up        = "up",
     Down      = "down",
+    -- Numpad:
     NumDel    = "del",
+    Num4      = "left",
+    Num6      = "right",
+    Num8      = "up",
+    Num2      = "down",
   } --- KeyActionNames
 
   local KeyActions = macUt.Actions.editor.plain

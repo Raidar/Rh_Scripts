@@ -75,7 +75,7 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 ----------------------------------------
 local menUt = require "Rh_Scripts.Utils.Menu"
 
-local MenuBasicColors = menUt.MenuColors()
+local MenuUsualColors = menUt.MenuColors()
 local FixedBG = colors.BaseColors.gray
 local MenuFixedColors = menUt.ChangeColors(nil, nil, nil, nil, FixedBG)
 local ItemTextColor = menUt.ItemTextColor
@@ -446,20 +446,18 @@ function TMenu:DefinePropInfo () --| Props
   self.RectMenu = Props.RectMenu or {}
   local RM = self.RectMenu
 
-  local MenuOnly = RM.MenuOnly -- Только меню:
-  if MenuOnly == true then RM.MenuOnly = 0 end
-  --if MenuOnly ~= nil and type(MenuOnly) == 'boolean' then
-  --  RM.MenuOnly = b2n(MenuOnly) end -- if
+  --local MenuOnly = RM.MenuOnly -- Только меню
 
   -- Ширина края меню:
-  RM.MenuEdge = RM.MenuEdge or RM.MenuOnly or 2
-  if RM.MenuEdge < 0 then RM.MenuEdge = 0 end
+  local MenuEdge = RM.MenuOnly and 0 or RM.MenuEdge or 2
+  if MenuEdge < 0 then MenuEdge = 0 end
+  RM.MenuEdge = MenuEdge
 
-  if RM.NocheckChar then -- Символ не-метки пункта меню:    -- First call!
-    RM.NocheckChar = menUt.checkedChar(RM.NocheckChar, " ", nil)
+  if RM.UncheckedChar then  -- Символ не-метки пункта меню: -- First call!
+    RM.UncheckedChar = menUt.checkedChar(RM.UncheckedChar, " ", nil)
   end
-  if RM.CheckedChar then -- Символ метки пункта меню:       -- Second call!
-    RM.CheckedChar = menUt.checkedChar(RM.CheckedChar, nil, RM.NocheckChar)
+  if RM.CheckedChar then    -- Символ метки пункта меню:    -- Second call!
+    RM.CheckedChar = menUt.checkedChar(RM.CheckedChar, nil, RM.UncheckedChar)
   end
 
   -- Оформление меню:
@@ -482,24 +480,24 @@ function TMenu:DefinePropInfo () --| Props
   --logShow(self.Props, "self.Props")
 
   -- Цвета меню:
-  local BasicColors = RM.Colors or {}
-  BasicColors.__index = MenuBasicColors
-  setmetatable(BasicColors, BasicColors)
+  local UsualColors = RM.Colors or {}
+  UsualColors.__index = MenuUsualColors
+  setmetatable(UsualColors, UsualColors)
   local FixedColors = RM.FixedColors or {}
   FixedColors.__index = MenuFixedColors
   setmetatable(FixedColors, FixedColors)
   self.Colors = {
-    Usual = BasicColors,
+    Usual = UsualColors,
     Fixed = FixedColors,
-    Col_MenuText      = BasicColors.COL_MENUTEXT,
-    Col_MenuScrollBar = BasicColors.COL_MENUSCROLLBAR,
-    Col_MenuStatusBar = BasicColors.COL_MENUSTATUSBAR,
-    Col_MenuBorder    = BasicColors.COL_MENUBOX,
-    DlgBoxColor = dlgUt.ItemColor(
-        -- Text + Select + Box:
-        BasicColors.COL_MENUTEXT,
-        BasicColors.COL_MENUHIGHLIGHT,
-        BasicColors.COL_MENUBOX),
+    Text      = UsualColors.COL_MENUTEXT,
+    ScrollBar = UsualColors.COL_MENUSCROLLBAR,
+    StatusBar = UsualColors.COL_MENUSTATUSBAR,
+    Border    = UsualColors.COL_MENUBOX,
+    Borders   = UsualColors.Borders or Null,
+    DlgBox    = dlgUt.ItemColor(-- Text + Select + Box:
+                                UsualColors.COL_MENUTEXT,
+                                UsualColors.COL_MENUHIGHLIGHT,
+                                UsualColors.COL_MENUBOX),
   } -- Colors
   --logShow(self.Colors, "self.Colors", "d2 x2")
 end ---- DefinePropInfo
@@ -877,7 +875,7 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   local RM = self.RectMenu
   self.DlgFlags = RM.MenuOnly and
                   { FDLG_SMALLDIALOG = 1, FDLG_NODRAWSHADOW = 1 } or
-                  RM.NoShadow and { FDLG_NODRAWSHADOW = 1 } or {}
+                  RM.Shadowed == false and { FDLG_NODRAWSHADOW = 1 } or {}
   local Pos = RM.Position or {} -- Позиция вывода окна:
   Pos = {
     x = Pos.x or -1,
@@ -2003,8 +2001,8 @@ local SymsBoxChars = uChars.BoxChars
 -- Рисование рамки вокруг меню.
 function TMenu:DrawBorderLine () -- --| Border
   if self.RectMenu.BoxKind == "" then return end
-  --local Color = self.Colors.DlgBoxColor
-  local Color = self.Colors.Col_MenuBorder
+  --local Color = self.Colors.DlgBox
+  local Color, Colors = self.Colors.Border, self.Colors.Borders
   local BoxChars = SymsBoxChars[self.RectMenu.BoxKind]
   local Zone, Rect, Titles = self.Zone, self.DlgRect, self.Titles
   local X1 = Rect.Left + Zone.HomeX - 1
@@ -2015,17 +2013,21 @@ function TMenu:DrawBorderLine () -- --| Border
   --logShow({ X1, Y1, X2, Y2, W, H }, "DrawBorderLine")
   local LineH = BoxChars.H:rep(W)
   local LineV = BoxChars.V:rep(H)
-  HText(X1, Y1, Color, BoxChars.TL)
-  DrawTitleLine(X1 + 1, Y1, Color, Titles.Top,  Color, LineH, HText)
-  HText(X2, Y1, Color, BoxChars.TR)
-  DrawTitleLine(Y1 + 1, X1, Color, Titles.Left, Color, LineV, YText)
-  HText(X1, Y2, Color, BoxChars.BL)
+  HText(X1, Y1, Colors.TL or Color, BoxChars.TL)
+  DrawTitleLine(X1 + 1, Y1, Colors.Top or Color, Titles.Top,
+                            Colors.Top or Color, LineH, HText)
+  HText(X2, Y1, Colors.TR or Color, BoxChars.TR)
+  DrawTitleLine(Y1 + 1, X1, Colors.Left or Color, Titles.Left,
+                            Colors.Left or Color, LineV, YText)
+  HText(X1, Y2, Colors.BL or Color, BoxChars.BL)
   if not Zone.BoxScrollV then
-    DrawTitleLine(Y1 + 1, X2, Color, Titles.Right,  Color, LineV, YText)
+    DrawTitleLine(Y1 + 1, X2, Colors.Right or Color, Titles.Right,
+                              Colors.Right or Color, LineV, YText)
   end
-  HText(X2, Y2, Color, BoxChars.BR)
+  HText(X2, Y2, Colors.BR or Color, BoxChars.BR)
   if not Zone.BoxScrollH then
-    DrawTitleLine(X1 + 1, Y2, Color, Titles.Bottom, Color, LineH, HText)
+    DrawTitleLine(X1 + 1, Y2, Colors.Bottom or Color, Titles.Bottom,
+                              Colors.Bottom or Color, LineH, HText)
   end
 end ---- DrawBorderLine
 
@@ -2102,10 +2104,11 @@ function TMenu:DrawScrollBars ()
   self:CalcScrollBars()
   --logShow(self.ScrollBars, "self.ScrollBars")
 
+  local Bars, Color = self.ScrollBars, self.Colors.ScrollBar
+
   -- Вывод горизонтальной прокрутки:
-  local Bars, Color, Scroll = self.ScrollBars, self.Colors.Col_MenuScrollBar
   if Zone.Is_ScrollH then
-    Scroll = Bars.ScrollH
+    local Scroll = Bars.ScrollH
     -- Позиция и длина каретки.
     Scroll.Pos, Scroll.Len, Scroll.End = ScrollCaret(
     Scroll.Length, Cell.Col - self.FixedCols.Head, self.FixedCols.Alter)
@@ -2115,7 +2118,7 @@ function TMenu:DrawScrollBars ()
 
   -- Вывод вертикальной прокрутки:
   if Zone.Is_ScrollV then
-    Scroll = Bars.ScrollV
+    local Scroll = Bars.ScrollV
     -- Позиция и длина каретки.
     Scroll.Pos, Scroll.Len, Scroll.End = ScrollCaret(
     Scroll.Length, Cell.Row - self.FixedRows.Head, self.FixedRows.Alter)
@@ -2148,7 +2151,7 @@ function TMenu:DrawStatusBar ()
     w = Zone.Width,
   }
 
-  LineFill(Rect, self.Colors.Col_MenuStatusBar, Hint, { Filler = Spaces })
+  LineFill(Rect, self.Colors.StatusBar, Hint, { Filler = Spaces })
 end ---- DrawStatusBar
 
 -- Обработчик рисования меню.
@@ -2188,10 +2191,10 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   -- ОБРАБОТЧИКИ УСТАНОВКИ ЦВЕТОВ:
   -- Установка цветов как у меню.
   local function DlgGetCtlColor (hDlg) --> (Color)
-    return _Menu.Colors.Col_MenuText -- Цвет окна
+    return _Menu.Colors.Text -- Цвет окна
   end
   local function DlgGetBoxColor (hDlg) --> (Color)
-    return _Menu.Colors.DlgBoxColor -- Цвет рамки и текста на рамке
+    return _Menu.Colors.DlgBox -- Цвет рамки и текста на рамке
   end
 
 --[[ 2.1. Рисование меню в диалоге ]]
@@ -2209,7 +2212,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   --local NoDlgClose -- Нет выбора пункта меню для спец. действий.
 
   -- Обработчик нажатия клавиши клавиатуры:
-  local function DlgKeyEvent (hDlg, ProcItem, VirKey) --> (bool)
+  local function DlgKeyInput (hDlg, ProcItem, VirKey) --> (bool)
     --logShow(_Menu, "_Menu", "d1 bns")
 
     local StrKey = InputRecordToName(VirKey) or ""
@@ -2228,14 +2231,14 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     -- 2. Обработка обычных нажатий.
     return _Menu:DoKeyPress(hDlg, VirKey)
-  end -- DlgKeyEvent
+  end -- DlgKeyInput
 
   -- [[
   local MouseLeftBtn    = F.FROM_LEFT_1ST_BUTTON_PRESSED
   local MouseDblClick   = F.DOUBLE_CLICK
 
   -- Обработчик обработки нажатия кнопки мыши.
-  local function DlgMouseClick (hDlg, ProcItem, MouseRec) --> (bool)
+  local function DlgMouseInput (hDlg, ProcItem, MouseRec) --> (bool)
     --logShow(MouseRec, ProcItem, 3)
     if ProcItem == -1 then return false end
 
@@ -2258,11 +2261,28 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     end
 
     return false
-  end -- DlgMouseClick
+  end -- DlgMouseInput
   --]]
 
+  -- Обработчик нажатия клавиши / кнопки:
+  local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
+    local Input = far.ParseInput(Input) -- FAR23
+    --logShow(Input, "Event", "d1 x8")
+
+    local EventType = Input.EventType
+
+    if EventType == F.MOUSE_EVENT then
+      return DlgMouseInput(hDlg, ProcItem, Input)
+    elseif EventType == F.KEY_EVENT or
+           EventType == F.FARMACRO_KEY_EVENT then
+      return DlgKeyInput(hDlg, ProcItem, Input)
+    end
+
+    return false
+  end -- DlgCtrlInput
+
   -- Обработчик предобработки нажатия кнопки мыши.
-  local function DlgInputEvent (hDlg, ProcItem, MouseRec) --> (bool)
+  local function DlgPredInput (hDlg, ProcItem, MouseRec) --> (bool)
     far.RepairInput(MouseRec)
     --local Zone = _Menu.Zone
     --local X, Y = MouseRec.MousePositionX, MouseRec.MousePositionY
@@ -2271,24 +2291,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --logShow({ MouseRec }, ProcItem, 2)
 
     return true
-  end -- DlgInputEvent
-
-  -- Обработчик нажатия клавиши / кнопки:
-  local function DlgCtrlEvent (hDlg, ProcItem, Input) --> (bool)
-    local Input = far.ParseInput(Input) -- FAR23
-    --logShow(Input, "Event", "d1 x8")
-
-    local EventType = Input.EventType
-
-    if EventType == F.MOUSE_EVENT then
-      return DlgMouseClick(hDlg, ProcItem, Input)
-    elseif EventType == F.KEY_EVENT or
-           EventType == F.FARMACRO_KEY_EVENT then
-      return DlgKeyEvent(hDlg, ProcItem, Input)
-    end
-
-    return false
-  end -- DlgCtrlEvent
+  end -- DlgPredInput
 
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
     if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
@@ -2307,8 +2310,8 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Ссылки на обработчики событий:
   local Procs = {
-    [F.DN_CONTROLINPUT] = DlgCtrlEvent,
-    [F.DN_INPUT]        = DlgInputEvent,
+    [F.DN_CONTROLINPUT] = DlgCtrlInput,
+    [F.DN_INPUT]        = DlgPredInput,
     [F.DN_CTLCOLORDIALOG]  = DlgGetCtlColor,
     [F.DN_CTLCOLORDLGITEM] = DlgGetBoxColor,
     [F.DN_DRAWDLGITEM] = DlgItemDraw,
@@ -2316,7 +2319,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --[F.DN_CLOSE] = DlgClose,
   } --- Procs
     if LFVer < 3 then
-      Procs[F.DN_MOUSECLICK] = DlgCtrlEvent
+      Procs[F.DN_MOUSECLICK] = DlgCtrlInput
     end
 
   -- Обработчик событий диалога.

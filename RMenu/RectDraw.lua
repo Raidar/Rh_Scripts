@@ -247,7 +247,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   Parse.m, Parse.n = 1, #Parse + 1
   TextB = Most
   if Options.checked then
-    TextB = checkedChar(Item.checked, RM.CheckedChar, RM.NocheckChar)..TextB
+    TextB = checkedChar(Item.checked, RM.CheckedChar, RM.UncheckedChar)..TextB
   end
   Parse[1] = { text = TextB, color = Color.normal, }
   Parse[Parse.n] = { text = Clear..Most, color = Color.normal, }

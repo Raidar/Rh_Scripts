@@ -154,7 +154,7 @@ end ----
 function unit.CompactMenu (Name) --| List[Name].Props.RectMenu
   local RectMenu = List[Name].Props.RectMenu
   --RectMenu.BoxKind = ""
-  --RectMenu.NoShadow = true
+  --RectMenu.Shadowed = false
   --RectMenu.MenuEdgeH = 0
   RectMenu.CompactText = true
   RectMenu.Separators = "V"

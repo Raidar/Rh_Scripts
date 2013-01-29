@@ -145,25 +145,26 @@ $ #Menu window properties#: RectMenu
   #FixedColors# (table) — Table of menu colors for fixed items.
     ¦They allow to specify colors used for RectMenu output.
 
-  #NoShadow# (bool) — Output of shadow for menu window.
-    ¦It controls a display of shadow for menu window.
-
-  #MenuOnly# (bool|number) — Output of menu only: without box and titles.
+  #MenuOnly# (bool) — Output of menu only: without box, indent and titles.
   — ¦It allows to use RectMenu for creating a simple list of items.
-  — ¦A number value specifies #MenuEdge# when this field is absent.
 
-  #MenuEdge# (bool) — Indent for menu from window edge.
+  #Shadowed# (bool) — Output of shadow for menu window.
+  — ¦It controls a display of shadow for menu window.
+  — ¦Default value is \37true\-.
+  — ¦If #MenuOnly# \37== true\- it is equal to\37false\-.
+
+  #MenuEdge# (number) — Indent for menu from window edge.
   — ¦It specifies an empty space between menu and window.
   — ¦It defines a value of horizontal indent without a menu box side.
   — ¦A value of vertical indent is about half this value.
-  — ¦If #MenuOnly# \37== nil\- it is equal to \372\-,
-    otherwise it is equal to #MenuOnly# \37or 0\-.
+  — ¦Default value is \372\-.
+  — ¦If #MenuOnly# \37== true\- it is equal to \370\-.
 
   #MenuAlign# (string) — Menu alignment within window:
-  — Default value is \37"LT"\-.
-  — Values for horizontal (according to priority):
+  — ¦Default value is \37"LT"\-.
+  — ¦Values for horizontal (according to priority):
     \37"L"\- — left, \37"R"\- — right, \37"C"\- — center.
-  — Values for vertical (according to priority):
+  — ¦Values for vertical (according to priority):
     \37"T"\- — top, \37"B"\- — bottom, \37"M"\- — middle.
 
   #BoxKind# (string) — Kind of box around menu:
@@ -202,7 +203,7 @@ $ #Menu items properties#: RectMenu
   #CheckedChar# (string) — Character used for checked items.
     ¦It allows to specify common character for all checked items.
 
-  #NocheckChar# (string) — Character used for unchecked items.
+  #UncheckedChar# (string) — Character used for unchecked items.
     ¦It allows to specify common character for all unchecked items.
 
   #CompactText# (bool) — Compact outpout of text.
