@@ -10,7 +10,11 @@
 
 2013-01-29, v.3.0.4.19
 ―――――――
+  Editor:
+[+] WordComplete.lua: Свойства SelBGColor и AngleColor.
+  RectMenu:
 [+] RectMenu.lua: Поддержка мыши.
+[*] RectMenu.lua: Рефакторинг кода + Изменение названий и логики свойств.
 
 2013-01-27, v.3.0.4.18
 ―――――――
