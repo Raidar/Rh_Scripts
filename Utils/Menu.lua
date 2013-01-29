@@ -338,7 +338,7 @@ do
   local IndexColor = farUt.IndexColor
   local basics = colors.BaseColors
   local make = colors.make
-  local getFG, getBG = colors.getFG,  colors.getBG
+  local getFG, getBG = colors.getFG, colors.getBG
   local setFG, setBG = colors.setFG, colors.setBG
 
 -- Получение всех возможных цветов меню.

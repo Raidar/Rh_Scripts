@@ -63,6 +63,8 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
+local Colors = menUt.MenuColors()
+
 ----------------------------------------
 --local fkeys = require "far2.keynames"
 --local InputRecordToName = fkeys.InputRecordToName
@@ -124,6 +126,11 @@ unit.DefCustom = {
 } --- DefCustom
 
 ---------------------------------------- ---- Config
+local SelBGColor = colors.Colors.navy
+local AngleColor = colors.make(colors.getFG(Colors.COL_MENUTEXT),
+                               colors.getFG(Colors.COL_MENUDISABLEDTEXT),
+                               type(Colors.COL_MENUTEXT) )
+
 unit.DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
   -- Свойства набранного слова:
@@ -157,6 +164,8 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
   ActionAlt = true,  -- Использование Alt для дополнительных действий.
   EmptyList  = false, -- Возможность пустого списка.
   EmptyStart = false, -- Возможность пустого начального списка.
+  SelBGColor = SelBGColor, -- Цвет фона выделенного элемента списка.
+  AngleColor = AngleColor, -- Цвет угла списка у позиции курсора.
   -- Свойства завершения слова:
   Trailers = ",:;.?!",-- Символы-завершители.
   UndueOut = false,   -- Отмена завершения при неверных клавишах.
@@ -201,6 +210,8 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   ActionAlt = false,
   EmptyList  = false,
   EmptyStart = false,
+  SelBGColor = SelBGColor,
+  AngleColor = AngleColor,
   -- Свойства завершения слова:
   Trailers = "",
   UndueOut = true,
@@ -249,6 +260,8 @@ unit.CodeCfgData = { -- Конфигурация для кодо-режима:
   ActionAlt = false,
   EmptyList  = false,
   EmptyStart = false,
+  SelBGColor = SelBGColor,
+  AngleColor = AngleColor,
   -- Свойства завершения слова:
   Trailers = "",
   UndueOut = true,
@@ -591,16 +604,9 @@ end -- do
 
 ---------------------------------------- ---- Prepare
 do
-  local Colors = menUt.MenuColors()
+  --local Colors = menUt.MenuColors()
   local setBG = colors.setBG
   local HighlightOff = menUt.HighlightOff
-
-  -- Названия элементов для изменения цвета.
-  local SelText = "COL_MENUSELECTEDTEXT"
-  local SelMark = "COL_MENUSELECTEDMARKTEXT"
-  local SelHigh = "COL_MENUSELECTEDHIGHLIGHT"
-  --local DefText = "COL_MENUTEXT"
-  local MenuBox = "COL_MENUBOX"
 
 function TMain:MakeProps ()
 
@@ -625,16 +631,13 @@ function TMain:MakeProps ()
   RM_Props.Shadowed = false
   --RM_Props.MenuOnly = true
 
+  local SelBGColor = Cfg.SelBGColor
   local AngleColor = Colors.COL_MENUGRAYTEXT
   RM_Props.Colors = {
-    COL_MENUSELECTEDTEXT      = setBG(Colors.COL_MENUSELECTEDTEXT, 0x1),
-    COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, 0x1),
-    COL_MENUSELECTEDHIGHLIGHT = setBG(Colors.COL_MENUSELECTEDHIGHLIGHT, 0x1),
-    --[[
-    BorderAngle = colors.make(colors.getBG(AngleColor),
-                              colors.getFG(AngleColor),
-                              type(AngleColor) ),
-    --]]
+    COL_MENUSELECTEDTEXT      = setBG(Colors.COL_MENUSELECTEDTEXT, SelBGColor),
+    COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, SelBGColor),
+    COL_MENUSELECTEDHIGHLIGHT = setBG(Colors.COL_MENUSELECTEDHIGHLIGHT, SelBGColor),
+    BorderAngle = Cfg.AngleColor or nil,
   } --
 
   RM_Props.MenuEdge = 0 --1
@@ -1048,7 +1051,9 @@ function TMain:MakePopupMenu () --> (table)
   RM_Props.Position = Pos
 
   local Colors = RM_Props.Colors
-  Colors.Borders = { [Pos.angle] = Colors.BorderAngle, } --
+  if Colors.BorderAngle then
+    Colors.Borders = { [Pos.angle] = Colors.BorderAngle, }
+  end
   --[[
   local Rect, Pos = farUt.GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
   logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
