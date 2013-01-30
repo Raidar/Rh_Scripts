@@ -18,11 +18,12 @@ $ #Common scripts#
 
 @Cmn_ScriptFiles
 $ #Script files#: Common scripts
-    \37CharsItems.lua\-     — ¦Menu of characters output items@CharsItems@.
     \37CustomMenu.lua\-     — ¦~Custom menu~@CustomMenu@.
     \37FilterMenu.lua\-     — ¦~Filtration menu~@FilterMenu@
     \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
     \37MenuTexter.lua\-     — ¦~Text-maker for menu~@MenuTexter@
+
+    \37CharsMenu.lua\-      — ¦Menu of characters output items@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
 

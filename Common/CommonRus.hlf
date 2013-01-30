@@ -18,11 +18,12 @@ $ #Общие скрипты#
 
 @Cmn_ScriptFiles
 $ #Файлы скриптов#: Общие скрипты
-    \37CharsItems.lua\-     — ¦Меню из пунктов вывода символов@CharsItems@.
     \37CustomMenu.lua\-     — ¦~Настраиваемое меню~@CustomMenu@.
     \37FilterMenu.lua\-     — ¦~Фильтрационное меню~@FilterMenu@.
     \37MenuCaller.lua\-     — ¦~Вызыватель меню~@MenuCaller@ выбранного вида.
     \37MenuTexter.lua\-     — ¦~Формирователь текста~@MenuTexter@ для пунктов меню.
+
+    \37CharsMenu.lua\-      — ¦Меню из пунктов вывода символов@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦~Конфигуратор~@rhsConfig@ пакета Rh_Scripts.
 

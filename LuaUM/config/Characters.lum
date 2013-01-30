@@ -13,9 +13,9 @@
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
-local ChItems = require "Rh_Scripts.Common.CharsItems"
+local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
-local ChKeys  = ChItems.Keys
+local ChKeys = CharsMenu.Keys
 
 ----------------------------------------
 --[[
@@ -39,7 +39,7 @@ if L == nil then
 end
 
 ---------------------------------------- Items
-local List = {}
+local Menus = {}
 
 local Order, Datas, Props
 local Keys = "AccelKey"
@@ -131,7 +131,7 @@ end -- do
 
 do
   local MenuCfg = unit.MenuConfig
-  local ChsMenu = ChItems.CharsMenu
+  local MakeMenu = CharsMenu.Menu
 
 -- Сформировать меню из набора символов.
 function unit.Menu (Cfg, Props, Datas, Keys)
@@ -139,20 +139,20 @@ function unit.Menu (Cfg, Props, Datas, Keys)
   local Keys = Keys or "AccelKey"
   local Name = IsCfg and Cfg.Name or Cfg
 
-  List[Name] = ChsMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
+  Menus[Name] = MakeMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
 end ----
 
 end -- do
 
 -- Использовать пробелы как обычные символы.
-function unit.UseSpace (Name) --| List[Name].Items
-  ChItems.List.SetLabelItemsText(List[Name].Items, " ", "_")
-  ChItems.List.SetKeyItemsField(List[Name].Items, "Space$", false)
+function unit.UseSpace (Name) --| Menus[Name].Items
+  CharsMenu.List.SetLabelItemsText(Menus[Name].Items, " ", "_")
+  CharsMenu.List.SetKeyItemsField(Menus[Name].Items, "Space$", false)
 end ----
 
 -- Использовать компактное меню для умещения на экране.
-function unit.CompactMenu (Name) --| List[Name].Props.RectMenu
-  local RectMenu = List[Name].Props.RectMenu
+function unit.CompactMenu (Name) --| Menus[Name].Props.RectMenu
+  local RectMenu = Menus[Name].Props.RectMenu
   --RectMenu.BoxKind = ""
   --RectMenu.Shadowed = false
   --RectMenu.MenuEdgeH = 0
@@ -179,7 +179,7 @@ Props = {
   Heading = "Both",
 } ---
 
-List.Chars_Custom = { -- Characters
+Menus.Chars_Custom = { -- Characters
   text = "&_ - Custom Chars",
   MenuView = "RectMenu",
 
@@ -193,7 +193,7 @@ List.Chars_Custom = { -- Characters
 
   CfgData = { UMenu = DefUMenu },
 
-  Items = ChItems.CharsItems(Props, Datas, "AccelKey"),
+  Items = CharsMenu.Items(Props, Datas, "AccelKey"),
 } ---
 
 -- Alternate chars:
@@ -208,7 +208,7 @@ Props = {
   Heading = "Both",
 } ---
 
-List.Chars_Alters = { -- Characters
+Menus.Chars_Alters = { -- Characters
   text = "&+ - Alternate Chars",
   MenuView = "RectMenu",
 
@@ -222,7 +222,7 @@ List.Chars_Alters = { -- Characters
 
   CfgData = { UMenu = DefUMenu },
 
-  Items = ChItems.CharsItems(Props, Datas, "AccelKey"),
+  Items = CharsMenu.Items(Props, Datas, "AccelKey"),
 } --- Chars_Alters
 --]===]
 
@@ -250,7 +250,7 @@ unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
 unit.UseSpace('CharsGreekEx')
 unit.CompactMenu('CharsGreekEx')
 
---logShow(List.CharsGreekEx, "unit.Menu", 3)
+--logShow(Menus.CharsGreekEx, "unit.Menu", 3)
 
 ---------------------------------------- Cyrillic slavic
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
@@ -274,7 +274,7 @@ Props = {
 } ---
 
 unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
---logShow(List.CharsCyrSlav, "unit.Menu", 2)
+--logShow(Menus.CharsCyrSlav, "unit.Menu", 2)
 unit.UseSpace('CharsCyrSlav')
 unit.CompactMenu('CharsCyrSlav')
 
@@ -308,7 +308,7 @@ Keys = {
 unit.Menu('MathsScripts', Props, Datas, Keys)
 unit.UseSpace('MathsScripts')
 
---logShow(List.MathsScripts, "MathsScripts", 3)
+--logShow(Menus.MathsScripts, "MathsScripts", 3)
 
 ---------------------------------------- Other indexes
 Order = "aijklmnprstuvxy"
@@ -403,7 +403,7 @@ Props = {
 
 unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
 
---logShow(List.PunctSpaHyps.CfgData, "unit.Menu", 3)
+--logShow(Menus.PunctSpaHyps.CfgData, "unit.Menu", 3)
 
 --------------------------------------------------------------------------------
 
@@ -414,16 +414,16 @@ local mCharacters = {
 
   --Inherit = false,
 
-  --Items = { List.Chars_Custom, List.Chars_Alters, List.CharsGreekEx },
+  --Items = { Menus.Chars_Custom, Menus.Chars_Alters, Menus.CharsGreekEx },
   Items = {
     --{ text = Groups.Chars, separator = true, },
-    List.CharsGreekEx, List.CharsCyrSlav,
+    Menus.CharsGreekEx, Menus.CharsCyrSlav,
     { text = Groups.Maths, separator = true, },
-    List.MathsScripts, List.MathsIndexes,
+    Menus.MathsScripts, Menus.MathsIndexes,
     --{ text = Groups.Techs, separator = true, },
-    --List.Techs_Arrows,
+    --Menus.Techs_Arrows,
     { text = Groups.Punct, separator = true, },
-    List.PunctSymbols, List.PunctSpaHyps,
+    Menus.PunctSymbols, Menus.PunctSpaHyps,
   },
 } --- mCharacters
 

@@ -100,7 +100,7 @@ local mLFcontext = {
   } ---
 } --- mLFcontext
 
--- [[
+--[[
 ---------------------------------------- Scripts checking
 local mFuncScripts = {
   text = "Calls of &functions",
@@ -167,7 +167,7 @@ local mScripts = { -- Other scripts
   Items = {
     mQuickInfo,     -- Quick Information
     mLFcontext,     -- LuaFAR context
-    mFuncScripts,   -- Environment and functions call
+    --mFuncScripts,   -- Environment and functions call
     mSeparator,
     mHelloWorld,    -- Hello, world! sample
     --[[
