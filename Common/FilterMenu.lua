@@ -230,7 +230,6 @@ do
 
 function unit.Menu (Properties, Items, BreakKeys) --| (menu)
 
---[[ 1. Конфигурирование меню ]]
   local Props = tables.copy(Properties, true, pairs, false) -- true
   --local Props = { __index = Properties }; setmetatable(Props, Props)
   Props.Id = Props.Id or TMenu.Guid
@@ -385,7 +384,6 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   -- Предварительный отбор:
   ApplyFilter() -- для отображения надписей!
 
---[[ 2. Управление меню ]]
   return RunMenu(Props, MapItems, BreakKeys)
 end -- Menu
 

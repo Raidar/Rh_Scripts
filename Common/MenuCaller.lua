@@ -73,18 +73,16 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
                     --| (Menu) and/or --> (Menu|Items)
   if not Items or not Items[1] then return end
 
---[[ 1. Конфигурирование меню ]]
   local _Menu = CreateMenu(Properties)--, Items)
 
   _Menu:DefineKind()
   --logShow(_Menu, "MenuCaller", 1)
 
---[[ 2. Управление меню ]]
-
   -- Вывод меню / Возврат самого меню
   if not _Menu.MenuCall then
     return _Menu.Run(Properties, Items, BreakKeys, ShowMenu)
   end
+
   return _Menu.Call(_Menu.Run, Properties, Items, BreakKeys, ShowMenu)
 end -- Menu
 

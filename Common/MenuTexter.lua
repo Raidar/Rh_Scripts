@@ -251,13 +251,10 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
                           --| (Menu) and/or --> (Menu|Items)
   if not Items then return end
 
---[[ 1. Конфигурирование меню ]]
   local _Menu = CreateMenu(Properties, Items)
 
   _Menu:DefineCaption()
   _Menu:DefineText()
-
---[[ 2. Управление меню ]]
 
   local ShowMenu = ShowMenu == nil and far.Menu or ShowMenu
 

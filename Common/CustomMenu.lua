@@ -933,7 +933,7 @@ end -- do
 
 ---------------------------------------- ---- Run
 do
-  local NoRetKinds = {
+  local NoReturnKinds = {
     Sequence  = true,
     CmdLine   = true,
   } ---
@@ -954,7 +954,7 @@ function TMenu:Run ()
     --logShow({ isOk = isOk, error = SError }, self.ActItem.Kind)
     if isOk == nil then return nil, SError, self.ActItem end
 
-    if NoRetKinds[self.ActItem.Kind] or
+    if NoReturnKinds[self.ActItem.Kind] or
        not self.CurData.UMenu.ReturnToUMenu then 
        --not self.Config.CfgData.UMenu.ReturnToUMenu then 
       return true
@@ -976,13 +976,10 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
                        --| (Menu) and/or --> (Menu|Items)
   if not Menus then return end
 
---[[ 1. Конфигурирование меню ]]
   local _Menu = CreateMenu(Properties, Menus, Config)
 
   local isOk, SError = _Menu:Prepare()
   if not isOk then return nil, SError end
-
---[[ 2. Управление меню ]]
 
   if ShowMenu == 'self' then return _Menu end
   --logShow(Properties.Flags, "Flags")
