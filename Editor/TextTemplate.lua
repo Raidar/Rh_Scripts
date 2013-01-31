@@ -290,7 +290,7 @@ function unit.ConfigDlg (Data)
 end ---- ConfigDlg
 
 end -- do
----------------------------------------- Main making
+---------------------------------------- Main make
 
 ---------------------------------------- ---- Regex
 local far_find, far_gsub = regex.find, regex.gsub

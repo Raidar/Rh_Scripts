@@ -553,7 +553,7 @@ function unit.ConfigDlg (Data)
 end ---- ConfigDlg
 
 end -- do
----------------------------------------- Main making
+---------------------------------------- Main make
 
 ---------------------------------------- ---- KitSuit
 do
@@ -1143,7 +1143,7 @@ local function InsText (text)
   return EditorInsText(nil, text)
 end --
 
----------------------------------------- ----- Action
+---------------------------------------- ---- Action
 -- Текст для завершения.
 function TMain:CompletionText ()
   local Complete = self.ActItem.Word
@@ -1189,7 +1189,7 @@ end -- ApplyWordAction
 
 end -- do
 
----------------------------------------- ----- Show
+---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
   return usercall(nil, unit.RunMenu,
@@ -1399,7 +1399,7 @@ end -- ShowLoop
 
 end -- do
 
----------------------------------------- ----- Run
+---------------------------------------- ---- Run
 function TMain:Run () --> (bool | nil)
 
   self:AssignKeyPress()
