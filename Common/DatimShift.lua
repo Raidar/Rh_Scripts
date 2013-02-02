@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Edit of date/time shift for subtitles.
-  -- Правка сдвига даты/времени для субтитров.
+  -- Dialog to edit of date/time shift for subtitles.
+  -- Диалог для правки сдвига даты/времени для субтитров.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -73,19 +73,19 @@ local DlgTypes = {
 } --- DlgTypes
 
 ---------------------------------------- Configure
-local FileName   = "DateTime"
-local ScriptName = "DatimShift"
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
+unit.FileName   = "DateTime"
+unit.ScriptName = "DatimShift"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 
 local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
 
   --label = "DtmSh",
-  file = FileName,
+  file = unit.FileName,
 
-  help   = { topic = ScriptName },
-  locale = { kind = 'load' },
+  help   = { topic = unit.ScriptName, },
+  locale = { kind = 'load', file = unit.FileName, },
 } --- DefCustom
 
 -- Обработка конфигурации.
@@ -128,7 +128,7 @@ local DIF = dlgUt.DlgItemFlag
 local ListItems = dlgUt.ListItems
 
 -- Диалог.
-local function Dlg (Config) --> (dialog)
+local function TimeDlg (Config) --> (dialog)
   local DBox = Config.DBox
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
 
@@ -221,7 +221,7 @@ local function Dlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end -- Dlg
+end -- TimeDlg
 
 local ConfigGuid = win.Uuid("") -- TODO: Задать GUID
 
@@ -251,7 +251,7 @@ function unit.TimeShiftDlg (Data)
   end
 
   -- Настройка:
-  local D = Dlg(Config)
+  local D = TimeDlg(Config)
   local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
   if D.btnOk and iDlg == D.btnOk.id then

@@ -1,13 +1,18 @@
---[[ Date+Time: English ]]--
+--[[ Date+Time: Russian ]]--
+--[[ Дата+Время: русский ]]--
 
 --------------------------------------------------------------------------------
 local Data = {
   -- Dialog items texts.
-  btn_Ok     = "Ok",
-  btn_Close  = "Close",
-  btn_Cancel = "Cancel",
+  btn_Ok     = "Ок",
+  btn_Close  = "Закрыть",
+  btn_Cancel = "Отмена",
 
   ----------------------------------------
+
+  --
+  Date              = "Дата",
+  Time              = "Время",
 } --- Data
 
 return Data

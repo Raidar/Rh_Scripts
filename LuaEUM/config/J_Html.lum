@@ -160,7 +160,7 @@ local mInsert = {
     { text = "<!--=-->",
       Plain = line_equal,
       AccelStr = "S+-" },
-    { text = "<!-- -->",
+    { text = "<!--  -->",
       Macro = "<!--  -->@Left@4",
       AccelStr = "C+-" },
     { text = "<!--*-->",
