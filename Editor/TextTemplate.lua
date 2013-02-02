@@ -376,7 +376,7 @@ function TMain:MakeKit ()
       _require_ = dorequire,
       _FullDir_ = FullDir,
       _KitCfg_  = KitCfg,
-    }
+    } --
     unit.KitSuit[self.Options.SuitName] = Kits
   end
   --logShow(Kits, "Kits", 2)
@@ -398,6 +398,7 @@ function TMain:MakeProps ()
                  --| Тип текущего файла, открытого в редакторе:
   self.Current = { FileType = Cfg.FileType or curFileType() }
 
+  return true
 end -- MakeProps
 
 end -- do
@@ -646,6 +647,7 @@ end -- Run
 function unit.Execute (Data) --> (bool | nil)
 
   local _Main = CreateMain(Data)
+  if not _Main then return end
 
   --logShow(Data, "Data", 2)
   --logShow(_Main, "Config", "_d2")
@@ -654,6 +656,7 @@ function unit.Execute (Data) --> (bool | nil)
   if not _Main.CfgData.Enabled then return end
 
   _Main:Prepare()
+  if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
 end ---- Execute

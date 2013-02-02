@@ -181,13 +181,14 @@ function TMenu:Prepare () --> (bool | nil, error)
 
   self.BaseMenu = self.Menus[self.BaseName]
   if not self.BaseMenu then
-    return nil, self.BaseName -- Нет главного меню
+    self.Error = self.BaseName
+    return -- Нет главного меню
   end
   --logShow(self.BaseMenu, "BaseName: "..self.BaseName, 1)
 
   -- Настройка базового меню:
   self.BaseMenu.Name = self.BaseName -- Имя
-  self.BaseMenu.Back = { Menu = nil } -- Нет надменю
+  self.BaseMenu.Back = { Menu = nil, } -- Нет надменю
   -- MAYBE: tables.extend?!
   self.BaseMenu.Props = self.BaseMenu.Props or self.Props or {}
   self:SetBaseTitle(self.BaseMenu)
@@ -703,7 +704,9 @@ function TMenu:RunScript (Item)
   else
     ChunkArgs, SError = runUt.Lua.GetArgs(Item.ChunkArgs)
   end
-  if not ChunkArgs and SError then return nil, SError end
+  if not ChunkArgs and SError then
+    return nil, SError
+  end
 
   -- Обработка имени функции скрипта.
   -- TODO: Убрать аргументы в названии скрипта!?
@@ -716,7 +719,9 @@ function TMenu:RunScript (Item)
   else
     Args, SError = runUt.Lua.GetArgs(Item.Arguments)
   end
-  if not Args and SError then return nil, SError end
+  if not Args and SError then
+    return nil, SError
+  end
 
   local DefCfg = { Config = Config, Item = Item }
   local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
@@ -827,7 +832,7 @@ do
 
 -- Показ меню заданного вида.
 function TMenu:ShowMenu (Properties, Items) --> (item, pos)
-  if not (Items and Items[1]) then return nil, nil end
+  if not (Items and Items[1]) then return end
   -- Объединение всех BreakKey.
   local BreakKeys = self:MakeBreakKeys(Items, DefBreakKeys)
   --logShow(BreakKeys, "BreakKeys")
@@ -979,8 +984,8 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
   local _Menu = CreateMenu(Properties, Menus, Config)
   if not _Menu then return end
 
-  local isOk, SError = _Menu:Prepare()
-  if not isOk then return nil, SError or _Menu.Error end
+  _Menu:Prepare()
+  if _Menu.Error then return nil, _Menu.Error end
 
   if ShowMenu == 'self' then return _Menu end
   --logShow(Properties.Flags, "Flags")

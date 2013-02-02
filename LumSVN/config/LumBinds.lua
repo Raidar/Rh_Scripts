@@ -14,15 +14,17 @@ local locale = require 'context.utils.useLocale'
 
 --------------------------------------------------------------------------------
 
----------------------------------------- Locale
+---------------------------------------- Custom
 local Custom = {
   label = "LumBinds",
   name = "lum",
   path = "Rh_Scripts.LumSVN.config.",
-  locale = { kind = 'require' },
+  locale = { kind = 'require', },
   --path = "scripts\\Rh_Scripts\\LumSVN\\config\\",
-  --locale = { kind = 'load' },
+  --locale = { kind = 'load', },
 } ---
+
+---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)

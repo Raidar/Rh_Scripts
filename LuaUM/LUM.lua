@@ -155,9 +155,10 @@ end ---- Localize
 -- Preparing.
 function TMenu:Prepare ()
 
-  local Scope  = self.Scope
-  --local Config = self.Config
-  --local DefCfg = self.DefConfig
+  self:Localize() -- Локализация.
+
+  local Scope = self.Scope
+  local L = Scope.Locale
 
   --[[ Управление настройками ]]--
 
@@ -166,8 +167,6 @@ function TMenu:Prepare ()
   --logShow(Cfg_Data, "Cfg_Data", 2)
   local Cfg_Files = Cfg_Data.Files
   local Cfg_Basic = Cfg_Data.Basic
-
-  local L = self:Localize() -- Локализация.
 
   Scope.HlpLink = self.Config.Custom.help.tlink or
                   self.DefCfg.Custom.help.tlink -- Файл помощи
@@ -253,14 +252,18 @@ end -- Prepare
 ---------------------------------------- ---- Show
 
 ---------------------------------------- ---- Run
+local UMenu = require "Rh_Scripts.Common.CustomMenu"
+
 function TMenu:Run ()
 
-  local UMenu = require "Rh_Scripts.Common.CustomMenu"
+  local Cfg_Data = self.Config.CfgData
+
   local isOk, SError, ActItem = UMenu(self.Props, self.Menus, self.Config)
 
   --logShow({ isOk, SError }, ActItem.Kind)
   -- TODO: В CustomMenu.lua!?
   if isOk == nil and Cfg_Data.UMenu.ShowErrorMsgs then
+    local L = self.Scope.Locale
     if ActItem then
       return L:et1(KindErrors[ActItem.Kind] or KindErrors.Unknown,
                    L.MenuItem, ActItem.Name, SError or "")
@@ -278,8 +281,8 @@ function unit.Execute (Config, ShowMenu)
   local _Menu = CreateMenu(Config)
   if not _Menu then return end
 
-  local isOk, SError = _Menu:Prepare()
-  if not isOk then return nil, SError or _Menu.Error end
+  _Menu:Prepare()
+  if _Menu.Error then return nil, _Menu.Error end
 
   if ShowMenu == 'self' then return _Menu end
   --logShow(Properties.Flags, "Flags")

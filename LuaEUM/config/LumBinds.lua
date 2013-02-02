@@ -14,13 +14,15 @@ local locale = require 'context.utils.useLocale'
 
 --------------------------------------------------------------------------------
 
----------------------------------------- Locale
+---------------------------------------- Custom
 local Custom = {
   label = "LumBinds",
   name = "lum",
   path = "Rh_Scripts.LuaEUM.config.",
-  locale = { kind = 'require' },
+  locale = { kind = 'require', },
 } ---
+
+---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
@@ -54,7 +56,7 @@ local Data = {
   pascal = { Menu = "J_Pascal" },
   lua    = { Menu = "J_Lua;Characters" },
 
-  sub    = { Menu = "Subtitles;Characters" },
+  sub    = { Menu = "Subtitles;J_None;Characters" },
 } ---
 
 return Data

@@ -580,8 +580,8 @@ function TMain:MakeKit ()
       isAuto = Custom.isAuto,
       --isSmall = false,
       name = Custom.name,
-      help   = { topic = TextTemplate.ScriptName },
-      locale = { kind = 'load', file = TextTemplate.ScriptName },
+      help   = { topic = TextTemplate.ScriptName, },
+      locale = { kind = 'load', file = TextTemplate.ScriptName, },
     }, --
     --[[
     Options = { -- TODO: использовать unit.DefOptions
@@ -1415,6 +1415,7 @@ end -- Run
 function unit.Execute (Data) --> (bool | nil)
 
   local _Main = CreateMain(Data)
+  if not _Main then return end
 
   --logShow(Data, "Data", 2)
   --logShow(_Main, "Config", "_d2")
@@ -1422,6 +1423,7 @@ function unit.Execute (Data) --> (bool | nil)
   if not _Main.CfgData.Enabled then return end
 
   _Main:Prepare()
+  if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
 end ---- Execute
