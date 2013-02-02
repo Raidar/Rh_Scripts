@@ -108,7 +108,7 @@ local function CreateMenu (Config)
   return setmetatable(self, MMenu)
 end -- CreateMenu
 
----------------------------------------- Menu control
+---------------------------------------- Menu locale
 -- Локализация меню.
 function TMenu:Localize ()
   local Config, Scope = self.Config, self.Scope
@@ -149,14 +149,17 @@ function TMenu:Localize ()
 end ---- Localize
 
 ---------------------------------------- Menu making
-function TMenu:Run ()
 
---[[ 1. Конфигурирование меню ]]
+---------------------------------------- ---- Prepare
+-- Подготовка.
+-- Preparing.
+function TMenu:Prepare ()
+
   local Scope  = self.Scope
   --local Config = self.Config
   --local DefCfg = self.DefConfig
 
---[[ 1.1. Управление настройками ]]
+  --[[ Управление настройками ]]--
 
   -- Определение основных файлов и папок.
   local Cfg_Data = self.Config.CfgData
@@ -169,7 +172,7 @@ function TMenu:Run ()
   Scope.HlpLink = self.Config.Custom.help.tlink or
                   self.DefCfg.Custom.help.tlink -- Файл помощи
 
---[[ 1.2. Выбор файла с меню ]]
+  --[[ Выбор файла с меню ]]--
   local Args, Props
 
   -- Считывание привязок типов к меню.
@@ -182,7 +185,8 @@ function TMenu:Run ()
   --Props = { IlkSep = ';' }
   local BindsData, SError = LW.GetFileEnumData(Args, Props)
   if not BindsData then
-    return L:et2("FileDataError", "BindsFile", SError)
+    self.Error = L:et2("FileDataError", "BindsFile", SError)
+    return
   end
   --logShow(BindsData, "BindsData")
 
@@ -197,14 +201,16 @@ function TMenu:Run ()
   --LUM_Binds = GetBindsTypeData(Scope.BindsType, BindsData) --- !?
   local LUM_Binds = BindsData[Scope.BindsType] or {} -- Таблица раздела типа
   --if not LUM_Binds then
-  --  return L:et1("IniSecNotFound", Scope.BindsType, Cfg_Files.MenusFile)
+  --  self.Error = L:et1("IniSecNotFound", Scope.BindsType, Cfg_Files.MenusFile)
+  --  return
   --end
   --if not LUM_Binds.Menu then
-  --  return L:et1("IniKeyNotFound", "Menu", Scope.BindsType, Cfg_Files.MenusFile)
+  --  self.Error = L:et1("IniKeyNotFound", "Menu", Scope.BindsType, Cfg_Files.MenusFile)
+  --  return
   --end
   --logShow(LUM_Binds, "LUM Binds Menu")
 
---[[ 1.3. Формирование меню ]]
+  --[[ Формирование меню ]]--
 
   -- TODO: Сделать как отдельный раздел по умолчанию для меню? свойств и т.д.!!! -|^
   Scope.DefMenu = BindsData.Default or {} -- Раздел по умолчанию
@@ -227,7 +233,8 @@ function TMenu:Run ()
   --Props = { Join = Scope.JoinUMenu or false, IlkSep = ';' }
   self.Menus, SError = LW.GetFileEnumData(Args, Props)
   if not self.Menus then
-    return L:et2("FileDataError", "UMenuFile", SError)
+    self.Error = L:et2("FileDataError", "UMenuFile", SError)
+    return
   end
   --logShow(self.Menus, "self.Menus", 0)
 
@@ -240,15 +247,19 @@ function TMenu:Run ()
   end
   --logShow(self.Props, "Properties", 2)
 
-  BindsData, LUM_Binds = nil, nil -- (?)
+  return true
+end -- Prepare
 
---[[ 2. Управление меню ]]-- TODO: В CustomMenu.lua!!
+---------------------------------------- ---- Show
+
+---------------------------------------- ---- Run
+function TMenu:Run ()
 
   local UMenu = require "Rh_Scripts.Common.CustomMenu"
-
   local isOk, SError, ActItem = UMenu(self.Props, self.Menus, self.Config)
 
   --logShow({ isOk, SError }, ActItem.Kind)
+  -- TODO: В CustomMenu.lua!?
   if isOk == nil and Cfg_Data.UMenu.ShowErrorMsgs then
     if ActItem then
       return L:et1(KindErrors[ActItem.Kind] or KindErrors.Unknown,
@@ -263,12 +274,19 @@ end ---- Run
 
 ---------------------------------------- main
 
-function unit.LuaUserMenu (Config)
+function unit.Execute (Config, ShowMenu)
   local _Menu = CreateMenu(Config)
+  if not _Menu then return end
+
+  local isOk, SError = _Menu:Prepare()
+  if not isOk then return nil, SError or _Menu.Error end
+
+  if ShowMenu == 'self' then return _Menu end
+  --logShow(Properties.Flags, "Flags")
 
   return _Menu:Run()
 end --
 
 --------------------------------------------------------------------------------
-return unit.LuaUserMenu
+return unit.Execute
 --------------------------------------------------------------------------------

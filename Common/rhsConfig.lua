@@ -56,7 +56,21 @@ local unit = {}
 local ext = ""
 if context.use.LFVer < 3 then ext = ".lua" end
 
----------------------------------------- Config
+---------------------------------------- Main data
+unit.ScriptName = "rhsConfig"
+unit.PluginPath = utils.PluginPath
+unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
+--local umFilePath = "scripts\\Rh_Scripts\\"
+
+---------------------------------------- ---- Custom
+local DefCustom = {
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
+
+  locale = { kind = 'load', },
+} --- DefCustom
+
+---------------------------------------- ---- Config
 local CfgDataOrder = {
   -- AddToMenu function lines:
   "sLUMs", -- Меню LUM:
@@ -325,7 +339,7 @@ local DefCfgData = {
   },
 } --- DefCfgData
 
----------------------------------------- Types
+---------------------------------------- ---- Types
 -- Fill DlgTypes table.
 local function MakeDlgTypes (cData, aData)
   local DlgTypes = {}
@@ -375,19 +389,7 @@ local function MakeDlgTypes (cData, aData)
 end -- MakeDlgTypes
 
 ---------------------------------------- Configure
-local ScriptName = "rhsConfig"
-local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\Common\\"
---local umFilePath = "scripts\\Rh_Scripts\\"
-
 local addNewData = tables.extend
-
-local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
-
-  locale = { kind = 'load' },
-} --- DefCustom
 
 -- Обработка конфигурации.
 local function Configure (ArgData)
@@ -713,7 +715,7 @@ _UM.rhsConfig = [==[
 AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig"..ext)
 ]==]--_UM.rhsConfig
 
----------------------------------------- Create
+---------------------------------------- Main make
 -- Quote string.
 local function q (s) --> (string)
   return (s and s ~= " ") and ('%q'):format(s) or "nil"
@@ -797,7 +799,7 @@ end ---- GenerateFile
 -- Создание файла в соответствии с пользовательскими настройками.
 function unit.CreateFile (Data)
   local um = Data.um
-  local umFullName = PluginPath..um.FilePath..um.FileName
+  local umFullName = unit.PluginPath..um.FilePath..um.FileName
 
   local f = io.open(umFullName, 'r')
   if f then

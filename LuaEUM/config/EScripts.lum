@@ -43,7 +43,7 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
----------------------------------------- local
+---------------------------------------- Internal
 local Clear = {
   DeleteAllSpaces = false,
 } ---
@@ -154,7 +154,7 @@ local mTruncate = {
   } ---
 } --- mTruncate
 
----------------------------------------- ----
+---------------------------------------- Items/Menu
 local mScripts = {
   text = L.LuaScripts,
   --Title = L.LuaScripting,

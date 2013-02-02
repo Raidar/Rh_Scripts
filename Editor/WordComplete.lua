@@ -91,29 +91,6 @@ unit.ScriptAutoName = "AutoComplete"
 unit.ScriptCodeName = "CodeComplete"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Editor\\"
 
-local usercall = farUt.usercall
---local unit.RunMenu = require "Rh_Scripts.RMenu.RectMenu"
-unit.RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
-
----------------------------------------- ---- Keys
--- Названия действий.
-local A_Cancel  = "Cancel"
-local A_Replace = "Replace"
-local A_Insert  = "Insert"
-local E_Shared  = "Shared"
-
-unit.CompleteKeys = { -- Клавиши завершения слова:
-  { BreakKey = "Tab",           Action = A_Replace },
-  { BreakKey = "ShiftTab",      Action = A_Insert  },
-  { BreakKey = "ShiftEnter",    Action = A_Insert  },
-  { BreakKey = "ShiftNumEnter", Action = A_Insert  },
-} --- CompleteKeys
-
-unit.LocalUseKeys = { -- Клавиши локального использования:
-  { BreakKey = "CtrlEnter",       Action = A_Replace, Effect = E_Shared },
-  { BreakKey = "CtrlShiftEnter",  Action = A_Insert,  Effect = E_Shared },
-} --- LocalUseKeys
-
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
   name = unit.ScriptName,
@@ -121,9 +98,18 @@ unit.DefCustom = {
 
   label = "WC",
 
-  help   = { topic = unit.ScriptName },
-  locale = { kind = 'load' },
+  help   = { topic = unit.ScriptName, },
+  locale = { kind = 'load', },
 } --- DefCustom
+
+----------------------------------------
+unit.DefOptions = {
+  useSuit  = false,
+  SuitName = unit.ScriptName,
+  BaseDir  = "Rh_Scripts.Editor",
+  WorkDir  = unit.ScriptName,
+  FileName = "kit_config",
+} ---
 
 ---------------------------------------- ---- Config
 local SelBGColor = colors.Colors.navy
@@ -174,15 +160,6 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 } -- DefCfgData
 
 ----------------------------------------
-unit.DefOptions = {
-  useSuit  = false,
-  SuitName = unit.ScriptName,
-  BaseDir  = "Rh_Scripts.Editor",
-  WorkDir  = unit.ScriptName,
-  FileName = "kit_config",
-} ---
-
-----------------------------------------
 unit.AutoCfgData = { -- Конфигурация для авто-режима:
   Enabled = true,
   -- Свойства набранного слова:
@@ -222,8 +199,8 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
     isAuto = true,
     --isSmall = false,
     name = unit.ScriptAutoName,
-    --help   = { topic = unit.ScriptName },
-    locale = { kind = 'load', file = unit.ScriptName },
+    --help   = { topic = unit.ScriptName, },
+    locale = { kind = 'load', file = unit.ScriptName, },
   }, --
   --[[
   Options = {
@@ -326,6 +303,30 @@ unit.DlgTypes = { -- Типы элементов диалога:
   LoneAuto = "chk",
   TailOnly = "chk",
 } -- DlgTypes
+
+---------------------------------------- ---- Popup
+local usercall = farUt.usercall
+--local unit.RunMenu = require "Rh_Scripts.RMenu.RectMenu"
+unit.RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
+
+---------------------------------------- ---- Keys
+-- Названия действий.
+local A_Cancel  = "Cancel"
+local A_Replace = "Replace"
+local A_Insert  = "Insert"
+local E_Shared  = "Shared"
+
+unit.CompleteKeys = { -- Клавиши завершения слова:
+  { BreakKey = "Tab",           Action = A_Replace, },
+  { BreakKey = "ShiftTab",      Action = A_Insert,  },
+  { BreakKey = "ShiftEnter",    Action = A_Insert,  },
+  { BreakKey = "ShiftNumEnter", Action = A_Insert,  },
+} --- CompleteKeys
+
+unit.LocalUseKeys = { -- Клавиши локального использования:
+  { BreakKey = "CtrlEnter",       Action = A_Replace, Effect = E_Shared, },
+  { BreakKey = "CtrlShiftEnter",  Action = A_Insert,  Effect = E_Shared, },
+} --- LocalUseKeys
 
 ---------------------------------------- Main class
 local TMain = {
@@ -553,7 +554,7 @@ function unit.ConfigDlg (Data)
 end ---- ConfigDlg
 
 end -- do
----------------------------------------- Main make
+---------------------------------------- Main making
 
 ---------------------------------------- ---- KitSuit
 do

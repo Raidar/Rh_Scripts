@@ -14,7 +14,7 @@ local Custom = {
   label = "Others",
   name = "lum",
   path = "Rh_Scripts.LuaUM.config.",
-  locale = { kind = 'require' },
+  locale = { kind = 'require', },
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
@@ -34,17 +34,17 @@ local mQuickInfo = {
     { text = L.OthQInfoVers,
       Script = "LumScripts.lua",
       Function = "LuaFarVersion",
-      Relative = "default" },
+      Relative = "default", },
     -- FAR Config --
     { text = L.OthQInfoFarCfg,
       Script = "LumScripts.lua",
       Function = "farConfigData",
-      Relative = "default" },
+      Relative = "default", },
     -- Global variables --
     { text = L.OthQInfoGlobal,
       Script = "LumScripts.lua",
       Function = "GlobalVarsData",
-      Relative = "default" },
+      Relative = "default", },
   } --
 } --- mQuickInfo
 
@@ -56,12 +56,12 @@ local mLFcontext = {
     { text = L.OthLFcDetectType,
       Script = "LumContext.lua",
       Function = "detType",
-      Relative = "default" },
+      Relative = "default", },
     -- Open files list --
     { text = L.OthLFcOpenFiles,
       Script = "LumContext.lua",
       Function = "OpenFilesList",
-      Relative = "default" },
+      Relative = "default", },
     -- Info --
     { text = L.OthLFcSepInfo,
       separator = true,
@@ -70,28 +70,28 @@ local mLFcontext = {
     { text = L.OthLFcBriefInfo,
       Script = "LumContext.lua",
       Function = "briefInfo",
-      Relative = "default" },
+      Relative = "default", },
     -- Information --
     { text = L.OthLFcDetailedInfo,
       Script = "LumContext.lua",
       Function = "detailedInfo",
-      Relative = "default" },
+      Relative = "default", },
     -- types table --
     { text = L.OthLFcTypesTable,
       Script = "LumContext.lua",
       Function = "typesTable",
-      Relative = "default" },
+      Relative = "default", },
     -- types info --
     { text = L.OthLFcTypesInfo,
       Script = "LumContext.lua",
       Function = "typesInfo",
-      Relative = "default" },
+      Relative = "default", },
     mSeparator,
     -- Testing detect type --
     { text = L.OthLFcTestDetType,
       Script = "LumContext.lua",
       Function = "testType",
-      Relative = "default" },
+      Relative = "default", },
   } -- Items
 } --- mLFcontext
 
@@ -104,12 +104,12 @@ local mHelloWorld = {
     { text = L.OthHelloWorldMsg,
       Script = "LumScripts.lua",
       Function = "HelloWorldMsg",
-      Relative = "default" },
+      Relative = "default", },
     -- "Hello" text insert --
     { text = L.OthHelloWorldText,
       Script = "LumScripts.lua",
       Function = "HelloWorldText",
-      Relative = "default" },
+      Relative = "default", },
   } ---
 } --- mHelloWorld
 

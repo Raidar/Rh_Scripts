@@ -977,9 +977,10 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
   if not Menus then return end
 
   local _Menu = CreateMenu(Properties, Menus, Config)
+  if not _Menu then return end
 
   local isOk, SError = _Menu:Prepare()
-  if not isOk then return nil, SError end
+  if not isOk then return nil, SError or _Menu.Error end
 
   if ShowMenu == 'self' then return _Menu end
   --logShow(Properties.Flags, "Flags")

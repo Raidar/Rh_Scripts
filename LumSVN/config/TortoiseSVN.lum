@@ -34,6 +34,42 @@ local Svn = {}
 
 --------------------------------------------------------------------------------
 
+---------------------------------------- Main data
+
+---------------------------------------- ---- Custom
+local DefCustom = {
+  label = "tSVN",
+  name = "TortoiseSVN",
+  path = "scripts\\Rh_Scripts\\LumSVN\\config\\",
+  locale = { kind = 'load', },
+} --- DefCustom
+
+---------------------------------------- ---- Config
+local DefCfgData = {
+  -- Основные параметры:
+  Path    = "",
+  --Repo    = "SVN",
+
+  File    = "TortoiseProc.exe",
+  Status  = "SubWCRev.exe",
+  Command = "repobrowser",
+
+  --RunNone = true,
+  --ShowCmd = true,
+
+  --MenuView = "far.Menu",
+  MenuView = "RectMenu",
+  ShowPath  = true,
+  IconChars = true,
+  ItemWidth = 25,
+
+  -- Дополнительные параметры:
+  onClose = "/closeonend:0",
+
+  --isWorkingCopy  = false,
+  --isSubversioned = false,
+} --- DefCfgData
+
 ---------------------------------------- Status
 local isStatus = {
   Text  = '^%s-SubWCRev%s-%:%s*(.*)',
@@ -61,41 +97,11 @@ function Svn.isSubversioned (Status) --> (bool)
               Status:find(isStatus.NoUpdate, 1, true))
 end --
 
----------------------------------------- Default
-local DefCfgData = {
-  -- Основные параметры:
-  Path    = "",
-  --Repo    = "SVN",
+--DefCfgData.isWorkingCopy  = Svn.isWorkingCopy
+--DefCfgData.isSubversioned = Svn.isSubversioned
 
-  File    = "TortoiseProc.exe",
-  Status  = "SubWCRev.exe",
-  Command = "repobrowser",
-
-  --RunNone = true,
-  --ShowCmd = true,
-
-  --MenuView = "far.Menu",
-  MenuView = "RectMenu",
-  ShowPath  = true,
-  IconChars = true,
-  ItemWidth = 25,
-
-  -- Дополнительные параметры:
-  onClose = "/closeonend:0",
-
-  isWorkingCopy  = Svn.isWorkingCopy,
-  isSubversioned = Svn.isSubversioned,
-} --- DefCfgData
-
----------------------------------------- Config
+---------------------------------------- Configure
 local addNewData = tables.extend
-
-local DefCustom = {
-  label = "tSVN",
-  name = "TortoiseSVN",
-  path = "scripts\\Rh_Scripts\\LumSVN\\config\\",
-  locale = { kind = 'load' },
-} --- DefCustom
 
 -- Обработка конфигурации.
 local function Configure (ArgData)
@@ -118,6 +124,7 @@ local function Configure (ArgData)
   return Config
 end -- Configure
 
+----------------------------------------
 local Config = Configure()
 if not Config then return end
 
@@ -463,6 +470,7 @@ do
       Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+)$")
     end
   end
+
   Svn.Item.View = View and View ~= Path and ".."..View or Path
   --logShow({ Path, Lost, View }, "Parse Path")
 end -- do

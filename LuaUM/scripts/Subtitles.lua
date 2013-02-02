@@ -32,32 +32,35 @@ local logShow, datShow = dbg.Show, dbg.ShowData
 --------------------------------------------------------------------------------
 local unit = {}
 
-----------------------------------------
+---------------------------------------- Datim
 local SubsDatim = require "Rh_Scripts.LuaUM.scripts.SubsDatim"
 local TplKit = SubsDatim.TplKit
 
 local Datim = require "Rh_Scripts.Utils.DateTime"
 local newTime = Datim.newTime
 
----------------------------------------- Configure
-local ScriptName = "Subtitles"
-local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
+---------------------------------------- Main data
+unit.ScriptName = "Subtitles"
+unit.PluginPath = utils.PluginPath
+unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
-local addNewData = tables.extend
-
+---------------------------------------- ---- Custom
 local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
-  locale = { kind = 'load' },
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
+  locale = { kind = 'load', },
 } ---
 
+---------------------------------------- ---- Locale
 local L, e1, e2 = locale.localize(DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
 end
 
 unit.Locale = L
+
+---------------------------------------- Configure
+--local addNewData = tables.extend
 
 ---------------------------------------- Show
 -- Показ типа файла субтитров.

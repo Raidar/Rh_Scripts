@@ -226,9 +226,9 @@ Menus.Chars_Alters = { -- Characters
 } --- Chars_Alters
 --]===]
 
-----------------------------------------
--- LETTERS etc.
----------------------------------------- Greek and extended
+---------------------------------------- LETTERS etc
+
+---------------------------------------- ---- Greek and extended
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
 Datas = -- Char + Shift
         [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
@@ -252,7 +252,7 @@ unit.CompactMenu('CharsGreekEx')
 
 --logShow(Menus.CharsGreekEx, "unit.Menu", 3)
 
----------------------------------------- Cyrillic slavic
+---------------------------------------- ---- Cyrillic slavic
 Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
 Datas = -- Char + Shift
         [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
@@ -278,9 +278,9 @@ unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
 unit.UseSpace('CharsCyrSlav')
 unit.CompactMenu('CharsCyrSlav')
 
-----------------------------------------
--- MATHEMATICS.
----------------------------------------- Sub-/superscripts
+---------------------------------------- MATHEMATICS
+
+---------------------------------------- ---- Sub-/superscripts
 Order = [[1234567890=-`[]ijk/\ ]]
 Datas = -- Char + Shift
         [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
@@ -310,7 +310,7 @@ unit.UseSpace('MathsScripts')
 
 --logShow(Menus.MathsScripts, "MathsScripts", 3)
 
----------------------------------------- Other indexes
+---------------------------------------- ---- Other indexes
 Order = "aijklmnprstuvxy"
 Datas = -- Char + Shift
         "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
@@ -328,13 +328,13 @@ Props = {
 
 unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
 
-----------------------------------------
--- TECHNOLOGY.
----------------------------------------- Arrows
+---------------------------------------- TECHNOLOGY
 
-----------------------------------------
--- PUNCTUATION.
----------------------------------------- Symbols
+---------------------------------------- ---- Arrows
+
+---------------------------------------- PUNCTUATION
+
+---------------------------------------- ---- Symbols
 --[[
 /   - dot/point
 a   - acute
@@ -382,7 +382,7 @@ Props = {
 unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
 unit.UseSpace('PunctSymbols')
 
----------------------------------------- Space & Hyphen
+---------------------------------------- ---- Space & Hyphen
 Order = {
   { '   " "', ' ', 'MULTIPLY' }, { ' "-"/Num-', '-', 'SUBTRACT' },
   { '   "`"', '`', 'DIVIDE'   }, { ' "="/Num+', '=', 'ADD'      },

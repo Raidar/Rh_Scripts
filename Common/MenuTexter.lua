@@ -252,6 +252,7 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   if not Items then return end
 
   local _Menu = CreateMenu(Properties, Items)
+  if not _Menu then return end
 
   _Menu:DefineCaption()
   _Menu:DefineText()

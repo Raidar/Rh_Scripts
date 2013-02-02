@@ -50,11 +50,21 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- Config
-local DefCfgData = { -- Конфигурация по умолчанию:
-  Enabled = true,
-} --- DefCfgData
-unit.DefCfgData = DefCfgData
+---------------------------------------- Main data
+unit.ScriptName = "MorfoGener"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Others\\"
+
+---------------------------------------- ---- Custom
+local DefCustom = {
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
+
+  label = "MORF",
+  file = "MorfoGen",
+
+  help   = { topic = unit.ScriptName, },
+  locale = { kind = 'load', },
+} --- DefCustom
 
 local DefOptions = {
   KitName  = "LangData",
@@ -65,25 +75,17 @@ local DefOptions = {
   FileExt = "dat",
 } ---
 
----------------------------------------- Types
+---------------------------------------- ---- Config
+local DefCfgData = { -- Конфигурация по умолчанию:
+  Enabled = true,
+} --- DefCfgData
+unit.DefCfgData = DefCfgData
+
+---------------------------------------- ---- Types
 local DlgTypes = { -- Типы элементов диалогов:
 } --- DlgTypes
 
 ---------------------------------------- Configure
-local ScriptName = "MorfoGener"
-local ScriptPath = "scripts\\Rh_Scripts\\Others\\"
-
-local DefCustom = {
-  name = ScriptName,
-  path = ScriptPath,
-
-  label = "MORF",
-  file = "MorfoGen",
-
-  help   = { topic = ScriptName },
-  locale = { kind = 'load' },
-} --- DefCustom
-
 -- Обработка конфигурации.
 local function Configure (ArgData)
   -- 1. Заполнение ArgData.
@@ -207,7 +209,7 @@ local function CreateLang (Config) --> (object)
   return setmetatable(self, MLang)
 end -- CreateLang
 
----------------------------------------- methods
+---------------------------------------- Lang making
 local tconcat = table.concat
 
 -- Формирование данных в подтаблицах таблицы Language.
@@ -256,7 +258,7 @@ function TLang:Generate ()
   -- TODO
 end ---- Generate
 
----------------------------------------- Make
+---------------------------------------- Lang load/save
 -- Загрузка.
 function TLang:Load ()
   local Options = self.Config.Custom.options

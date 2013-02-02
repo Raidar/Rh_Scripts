@@ -52,7 +52,7 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- Draw
+---------------------------------------- Draw text
 
 -- Вывод текста с ограничением по длине.
 local function LineText (Rect, Color, Text) --> (number)
@@ -104,7 +104,7 @@ function unit.DrawSeparItemText (Rect, Color, Text)
   end
 end ---- DrawSeparItemText
 
----------------------------------------- Parse
+---------------------------------------- Parse text
 
 -- Разбор текста на цветовые фрагменты с учётом маркировки.
 local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
@@ -217,7 +217,7 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
   return ARect
 end -- DrawParseText
 
----------------------------------------- Draw
+---------------------------------------- Draw item
 local ParseHotText = farUt.ParseHotText
 
 -- Рисование текста обычного пункта.

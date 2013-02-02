@@ -50,10 +50,18 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- Config
-local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
+---------------------------------------- Main data
+unit.PluginPath = utils.PluginPath
+unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
+unit.HelpTopic = "<"..unit.PluginPath..unit.ScriptPath..">Contents"
 
+---------------------------------------- ---- Custom
+local DefCustom = {
+  help   = { tlink = unit.HelpTopic, },
+  locale = { kind = 'load', },
+} --- DefCustom
+
+---------------------------------------- ---- Config
 -- Поля истории конфигурации.
 local HistoryFields = {
   Basic = true,
@@ -65,19 +73,19 @@ local HistoryFields = {
 -- Конфигурация по умолчанию.
 local DefCfgData = {
   Basic = { -- Основные параметры:
-    LuaUMName = "LuaUM",        -- Краткое имя, общее для доп. файлов утилиты.
-    LuaUMPath = ScriptPath,     -- Относит. путь к текущей утилите.
-    --LUM_Title = "Lua User Menu" -- Заголовок для окон диалогов.
-    DefUMPath = ScriptPath,       -- Путь к файлам по умолчанию.
-    BindsFile = "LumBinds.lua", -- Название файла привязок к меню (по умолчанию).
-    UMenuFile = "U_NoMenu.lum", -- Название файла с меню LUM (по умолчанию).
-    CfgUMPath = ScriptPath.."config\\", -- Путь к основным файлам (по умолчанию).
+    LuaUMName = "LuaUM",            -- Краткое имя, общее для доп. файлов утилиты.
+    LuaUMPath = unit.ScriptPath,    -- Относит. путь к текущей утилите.
+    --LUM_Title = "Lua User Menu"     -- Заголовок для окон диалогов.
+    DefUMPath = unit.ScriptPath,    -- Путь к файлам по умолчанию.
+    BindsFile = "LumBinds.lua",     -- Название файла привязок к меню (по умолчанию).
+    UMenuFile = "U_NoMenu.lum",     -- Название файла с меню LUM (по умолчанию).
+    CfgUMPath = unit.ScriptPath.."config\\",  -- Путь к основным файлам (по умолчанию).
   }, -- Basic
   Files = { -- Пути (относительно плагина) и названия файлов:
-    FilesPath = ScriptPath.."config\\", -- Путь к основным файлам.
-    MenusFile = "LumBinds.lui",         -- Название файла привязок.
-    MenusPath = ScriptPath.."config\\", -- Путь к файлам с меню.
-    LuaScPath = ScriptPath.."scripts\\",-- Путь к Lua-скриптам.
+    FilesPath = unit.ScriptPath.."config\\",  -- Путь к основным файлам.
+    MenusFile = "LumBinds.lui",               -- Название файла привязок.
+    MenusPath = unit.ScriptPath.."config\\",  -- Путь к файлам с меню.
+    LuaScPath = unit.ScriptPath.."scripts\\", -- Путь к Lua-скриптам.
   }, -- Files
   UMenu = { -- Параметры отображения пользовательского меню:
     MenuTitleBind = true, -- Имя типа привязки в заголовке главного меню.
@@ -92,7 +100,7 @@ local DefCfgData = {
   }, -- UMenu
 } --- DefCfgData
 
----------------------------------------- Types
+---------------------------------------- ---- Types
 -- Типы элементов диалогов:
 local DlgTypes = {
   Basic = {
@@ -121,14 +129,7 @@ local DlgTypes = {
 } --- DlgTypes
 
 ---------------------------------------- Configure
-local HelpTopic = "<"..PluginPath..ScriptPath..">Contents"
-
 local addNewData = tables.extend
-
-local DefCustom = {
-  help   = { tlink = HelpTopic },
-  locale = { kind = 'load' },
-} --- DefCustom
 
 -- Обработка конфигурации.
 --[[
@@ -403,7 +404,7 @@ local function ConfigDlg (Config, Kind, Derived)
     dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
     local iDlg = dlgUt.Dialog(Guid[Kind],
                               -1, -1, D._[4]+4, D._[5]+2,
-                              HelpTopic, D, nil, DlgProc)
+                              unit.HelpTopic, D, nil, DlgProc)
 
     if D.btnOk and iDlg == D.btnOk.id then
       dlgUt.SaveDlgData(cData, aData, D, Types) -- Сохранение конфигурации

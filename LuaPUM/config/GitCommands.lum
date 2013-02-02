@@ -25,7 +25,25 @@ if utils.isPluginPanel() then return end
 
 --------------------------------------------------------------------------------
 
----------------------------------------- Default
+---------------------------------------- Main data
+
+---------------------------------------- ---- Custom
+local DefCustom = {
+  label = "Git",
+  name = "lum",
+  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
+  locale = { kind = 'load' },
+  --path = "Rh_Scripts.LuaPUM.config.",
+  --locale = { kind = 'require' },
+} --- DefCustom
+
+---------------------------------------- ---- Locale
+local L, e1, e2 = locale.localize(DefCustom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- ---- Config
 local DefCfgData = {
   -- Основные параметры:
   Path    = "",
@@ -51,22 +69,7 @@ local DefCfgData = {
   --isSubversioned = Svn.isSubversioned,
 } --- DefCfgData
 
----------------------------------------- Config
-local DefCustom = {
-  label = "Git",
-  name = "lum",
-  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
-  locale = { kind = 'load' },
-  --path = "Rh_Scripts.LuaPUM.config.",
-  --locale = { kind = 'require' },
-} --- DefCustom
-
-local L, e1, e2 = locale.localize(DefCustom)
-if L == nil then
-  return locale.showError(e1, e2)
-end
-
----------------------------------------- local
+---------------------------------------- Internal
 local function FillCmdLine (Command)
   return panel.SetCmdLine(-1, Command)
 end --
@@ -266,7 +269,6 @@ local mItems = {
 } --- mItems
 
 ---------------------------------------- Menu
-
 local mGitCommands = { -- Git commands
   text = "&G - Git menu",
 

@@ -220,7 +220,7 @@ local function MappingItems (Items)
   return Map
 end -- MappingItems
 
----------------------------------------- Menu control
+---------------------------------------- Menu making
 
 ---------------------------------------- main
 do

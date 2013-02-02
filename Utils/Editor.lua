@@ -144,7 +144,7 @@ function unit.SetLength (id, line, len, fill)
   return unit.SetLine(id, line, s)
 end ---- SetLength
 
----------------------------------------- -- Move
+---------------------------------------- ---- Move
 -- Go to position by Info.
 -- Переход на позицию из Info.
 function unit.Goto (Info)
@@ -197,7 +197,7 @@ function unit.CharRight (Info)
   end
 end -- CharRight
 
----------------------------------------- -- Delete
+---------------------------------------- ---- Delete
 -- Delete character rightward.
 -- Удаление символа справа.
 function unit.DelPos (Info)
@@ -242,7 +242,7 @@ function unit.BackChar (Info)
   return unit.Del(Info.EditorID)
 end -- BackChar
 
----------------------------------------- local
+---------------------------------------- Internal
 
 -- Define parameters to enquote.
 -- Определение параметров для закавычивания.
@@ -280,7 +280,7 @@ local Text = {
 } ---
 unit.Text = Text
 
----------------------------------------- -- Quote
+---------------------------------------- ---- Quote
 -- Enquote in current position.
 -- Закавычивание в текущей позиции.
 --[[
@@ -351,7 +351,7 @@ local Block = {
 } ---
 unit.Block = Block
 
----------------------------------------- -- Basic
+---------------------------------------- ---- Basic
 do
   --local floor = math.floor
   --local tables = require 'context.utils.useTables'
@@ -435,7 +435,7 @@ function Block.Split (s, pat, sep) --> (block)
   return t
 end ---- Split
 
----------------------------------------- -- Quote
+---------------------------------------- ---- Quote
 -- Enquote block lines.
 -- Закавычивание линий блока.
 --[[
@@ -554,7 +554,7 @@ function Block.Dequote (block, left, right) --> (block)
   return block
 end ---- Dequote
 
----------------------------------------- -- Substitute
+---------------------------------------- ---- Substitute
 
 -- Substitute another text for initial one in block text.
 -- Подставить другой текст вместо исходного в тексте блока.
@@ -707,7 +707,7 @@ local Selection = {
 } ---
 unit.Selection = Selection
 
----------------------------------------- Action
+---------------------------------------- ---- Action
 -- Process selected block.
 -- Обработка выделенного блока.
 --[[
@@ -745,7 +745,7 @@ function Selection.Execute (...)
   return unit.Execute(Selection.Process, ...)
 end ----
 
----------------------------------------- -- Basic
+---------------------------------------- ---- Basic
 do
 
 -- Select block in editor.
@@ -1083,7 +1083,7 @@ function Selection.Paste (Info, block, Type) --> (bool)
 end ---- Paste
 
 end -- do
----------------------------------------- -- Quote
+---------------------------------------- ---- Quote
 -- Enquote selected text lines.
 -- Закавычивание выделенных линий текста.
 --[[
@@ -1142,7 +1142,7 @@ function Selection.Dequote (left, right, force) --> (bool)
   return Selection.Paste(unit.GetInfo(), block, SelType)
 end -- Dequote
 
----------------------------------------- -- Iterator
+---------------------------------------- ---- Iterator
 do
   local EditorGetInfo = unit.GetInfo
   local EditorGetLine = unit.GetLine

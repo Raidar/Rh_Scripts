@@ -62,7 +62,8 @@ local unit = {
   List = uList,
 } ---
 
----------------------------------------- Symbol keys
+---------------------------------------- Keys
+---------------------------------------- ---- Symbol keys
 local SKEY_SymNames = keyUt.SKEY_SymNames
 
 -- Клавиша-символ для VK_.
@@ -73,7 +74,7 @@ local function SVKeyValue (s) --> (string)
 end --
 uKeys.SVKeyValue = SVKeyValue
 
----------------------------------------- Combo-keys
+---------------------------------------- ---- Combo-keys
 -- Комбинации модификаторов:
 --local SModKeyPat = "%s+%s"
 local SModKeyPat = "%s%s"
@@ -96,7 +97,7 @@ for k, m in ipairs(SKeyModifs) do
   end
 end
 
----------------------------------------- Action keys
+---------------------------------------- ---- Action keys
 -- Вид клавиш обработки:
 uKeys.DefActionKeys = {
   Kind = "AccelKey";
@@ -121,7 +122,9 @@ local function GetKeyFunc (m) --> (func|nil)
 end --
 --uKeys.GetKeyFunc = GetKeyFunc
 
----------------------------------------- Character item
+---------------------------------------- Characters
+
+---------------------------------------- ---- Item
 
 uItem.DefItemOrder = [[abcdefghijklmnopqrstuvwxyz`1234567890-=[]\;',./]]
 
@@ -190,7 +193,7 @@ function uItem.MakeItem (text, Keys, key, char, hint) --> (table)
 end ---- MakeItem
 
 end -- do
----------------------------------------- Character items
+---------------------------------------- Items
 -- Create characters items for menu.
 -- Создание пунктов для меню. -- TODO: Convert to OOP-kind.
 --[[

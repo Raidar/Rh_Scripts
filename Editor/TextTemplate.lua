@@ -290,7 +290,7 @@ function unit.ConfigDlg (Data)
 end ---- ConfigDlg
 
 end -- do
----------------------------------------- Main make
+---------------------------------------- Main making
 
 ---------------------------------------- ---- Regex
 local far_find, far_gsub = regex.find, regex.gsub
@@ -559,6 +559,7 @@ function TMain:ApplyTemplate ()
       return
     end
     if type(res) ~= 'string' then return false end
+
     kind = Tpl.as or "macro"
   end -- if
   --logShow({ kind, Tpl, res }, "Apply", "d1 t")
@@ -659,9 +660,12 @@ end ---- Execute
 
 -- Сброс шаблонов для перезагрузки из файлов.
 function unit.Update ()
-  for k in pairs(unit.KitSuit) do unit.KitSuit[k] = false end
+  for k in pairs(unit.KitSuit) do
+    unit.KitSuit[k] = false
+  end
+
   far.Message("Templates will be reloaded!", "Update text templates")
-end ----
+end ---- Update
 
 --------------------------------------------------------------------------------
 return unit

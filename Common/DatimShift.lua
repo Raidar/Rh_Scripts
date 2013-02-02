@@ -48,35 +48,16 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- DateTime
+----------------------------------------
 local Datim = require "Rh_Scripts.Utils.DateTime"
 local newTime = Datim.newTime
 
----------------------------------------- Config
-local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
-
--- Конфигурация по умолчанию.
-local DefCfgData = {
-} --- DefCfgData
-
----------------------------------------- Locale
-local subs = require "Rh_Scripts.LuaUM.scripts.Subtitles"
-local subL = subs.Locale -- Данные локализации из subs
-
-local LocData -- Данные локализации
-local L -- Класс сообщений локализации
-
----------------------------------------- Types
--- Типы элементов диалогов:
-local DlgTypes = {
-} --- DlgTypes
-
----------------------------------------- Configure
+---------------------------------------- Main data
 unit.FileName   = "DateTime"
 unit.ScriptName = "DatimShift"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 
+---------------------------------------- ---- Custom
 local DefCustom = {
   name = unit.ScriptName,
   path = unit.ScriptPath,
@@ -87,6 +68,28 @@ local DefCustom = {
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', file = unit.FileName, },
 } --- DefCustom
+
+---------------------------------------- ---- Config
+local PluginPath = utils.PluginPath
+local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
+
+-- Конфигурация по умолчанию.
+local DefCfgData = {
+} --- DefCfgData
+
+---------------------------------------- ---- Types
+-- Типы элементов диалогов:
+local DlgTypes = {
+} --- DlgTypes
+
+---------------------------------------- ---- Locale
+--local subs = require "Rh_Scripts.LuaUM.scripts.Subtitles"
+--local subL = subs.Locale -- Данные локализации из subs
+
+local LocData -- Данные локализации
+local L -- Класс сообщений локализации
+
+---------------------------------------- Configure
 
 -- Обработка конфигурации.
 local function Configure (ArgData)

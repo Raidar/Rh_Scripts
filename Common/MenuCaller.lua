@@ -74,6 +74,7 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   if not Items or not Items[1] then return end
 
   local _Menu = CreateMenu(Properties)--, Items)
+  if not _Menu then return end
 
   _Menu:DefineKind()
   --logShow(_Menu, "MenuCaller", 1)

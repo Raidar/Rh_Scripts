@@ -145,7 +145,7 @@ end -- do
 
 ---------------------------------------- Actions:
 
----------------------------------------- -- Text/Macro
+---------------------------------------- ---- Text/Macro
 -- Execute: label action.
 -- Выполнение: действие-метка.
 function unit.Label () --> (true)
@@ -183,7 +183,7 @@ end ----
 
 end -- do
 
----------------------------------------- -- Command
+---------------------------------------- ---- Command
 -- Execute: program as process.
 -- Выполнение: программа как процесс.
 function unit.Program (Value) --> (string | nil, error)
@@ -211,7 +211,7 @@ function unit.CmdLine (Value, Error) --> (integer | nil, error)
   return Result
 end ----
 
----------------------------------------- -- Lua script
+---------------------------------------- ---- Lua script
 do
   local farUt = require "Rh_Scripts.Utils.Utils"
 

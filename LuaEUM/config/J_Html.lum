@@ -35,7 +35,7 @@ if L == nil then
   return locale.showError(e1, e2)
 end
 
----------------------------------------- local
+---------------------------------------- Internal
 local format = string.format
 
 -- Quote text considering selected block.
