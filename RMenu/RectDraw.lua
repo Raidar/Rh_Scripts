@@ -44,7 +44,7 @@ local menUt = require "Rh_Scripts.Utils.Menu"
 local checkedChar = menUt.checkedChar
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]

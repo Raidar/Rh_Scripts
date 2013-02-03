@@ -25,7 +25,7 @@ local asBindsType = context.detect.use.configType
 
 local utils = require 'context.utils.useUtils'
 --local tables = require 'context.utils.useTables'
-local datas = require 'context.utils.useDatas'
+--local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
 local PluginPath = utils.PluginPath
@@ -37,7 +37,7 @@ local bndUt = require "Rh_Scripts.Utils.Binding"
 local LW = require "Rh_Scripts.LuaUM.LumWork"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -46,7 +46,7 @@ local logShow = dbg.Show
 local unit = {}
 
 ---------------------------------------- Internal
-local Nameless = datas.Nameless -- Name for section/key without name
+--local Nameless = datas.Nameless -- Name for section/key without name
 
 -- Формат сообщения об ошибке:
 local KindErrors = {

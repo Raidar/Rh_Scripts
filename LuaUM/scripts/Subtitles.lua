@@ -20,7 +20,7 @@ local types = ctxdata.config.types
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
-local tables = require 'context.utils.useTables'
+--local tables = require 'context.utils.useTables'
 local locale = require 'context.utils.useLocale'
 
 local n2s = numbers.n2s
@@ -34,7 +34,7 @@ local unit = {}
 
 ---------------------------------------- Datim
 local SubsDatim = require "Rh_Scripts.LuaUM.scripts.SubsDatim"
-local TplKit = SubsDatim.TplKit
+--local TplKit = SubsDatim.TplKit
 
 local Datim = require "Rh_Scripts.Utils.DateTime"
 local newTime = Datim.newTime

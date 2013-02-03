@@ -99,7 +99,7 @@ do
 
 -- Чтение с учётом внешнего объединения:
 function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
-  local t, SError, FullName, isItem = {}
+  local t, isItem = {}
   -- Учёт внешнего объединения:
   t.Menu = { Title = Args.Title or "Main Menu", Items = {} }
   local Items = t.Menu.Items
@@ -107,7 +107,7 @@ function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
 
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
     -- Чтение данных (во временную таблицу).
-    FullName = GetFileName(Name, Args)
+    local FullName = GetFileName(Name, Args)
     --if not FullName then return nil, Msgs.FileNotFound:format(Name) end
     if FullName then
       local u, SError = GetFileData(FullName, nil, Props)
@@ -126,10 +126,10 @@ end ---- GetFileOuterJoin
 
 -- Чтение с учётом внутреннего объединения:
 function unit.GetFileInnerJoin (Args, Props) --> (table | nil, error)
-  local t, SError, FullName, isItem = {}
+  local t, isItem = {}
 
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
-    FullName = GetFileName(Name, Args)
+    local FullName = GetFileName(Name, Args)
     --if not FullName then return nil, Msgs.FileNotFound:format(Name) end
     if FullName then
       local u, SError = GetFileData(FullName, nil, Props)

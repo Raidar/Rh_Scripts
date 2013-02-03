@@ -31,7 +31,7 @@ local min, max = math.min, math.max
 
 ----------------------------------------
 local far, editor = far, editor
-local F = far.Flags
+--local F = far.Flags
 
 ----------------------------------------
 --local context = context
@@ -42,11 +42,11 @@ local tables = require 'context.utils.useTables'
 local Null = tables.Null
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.Utils"
+--local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]

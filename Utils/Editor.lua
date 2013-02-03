@@ -253,7 +253,9 @@ end -- DefineEnquote
 -- Define parameters to dequote.
 -- Определение параметров для раскавычивания.
 local function DefineDequote (left, right) --> (string, number, string, number)
-  local tp = type(left)
+  local tp
+
+  tp = type(left)
   local left, l_len = left or '"'
   if tp == 'string' then
     l_len = left:len()
@@ -261,7 +263,7 @@ local function DefineDequote (left, right) --> (string, number, string, number)
     left, l_len = false, left
   end
 
-  local tp = type(right)
+  tp = type(right)
   local right, r_len = right or '"'
   if tp == 'string' then
     r_len = right:len()
@@ -296,7 +298,7 @@ function Text.Enquote (Info, left, right) --> (bool)
   local left, right = DefineEnquote(left, right)
 
   if not unit.InsText(id, left) then return end
-  local Info = unit.GetInfo()
+  Info = unit.GetInfo()
   if not unit.InsText(id, right) then return end
 
   return unit.Goto(Info)
@@ -529,8 +531,9 @@ function Block.Dequote (block, left, right) --> (block)
     if not left or s:sub(1, l_len) == left then
       block[1] = s:sub(l_len + 1, -1)
     end
+
     local k = #block
-    local s = block[k]
+    s = block[k]
     if s == "" then
       k = k - 1
       s = block[k]
@@ -835,7 +838,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   end
 
   local LineInfo = unit.GetLine(id, last, 1)
-  local s = LineInfo.StringText
+  s = LineInfo.StringText
   if s ~= nil then
     local len = s:len()
     local pos = LineInfo.SelEnd
@@ -865,7 +868,7 @@ end ---- CopyStream
   -- @params: @see Selection.Copy (without Type).
   -- @return: @see Selection.Copy.
 --]]
-function Selection.CopyColumn (Info) --> (nil|string|table)
+function Selection.CopyColumn (Info, ToPos) --> (nil|string|table)
   local Info = Info or unit.GetInfo()
   if Info.BlockType == BlockTypes.None then return end
 

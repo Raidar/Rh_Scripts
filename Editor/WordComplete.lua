@@ -633,7 +633,6 @@ function TMain:MakeProps ()
   --RM_Props.MenuOnly = true
 
   local SelBGColor = Cfg.SelBGColor
-  local AngleColor = Colors.COL_MENUGRAYTEXT
   RM_Props.Colors = {
     COL_MENUSELECTEDTEXT      = setBG(Colors.COL_MENUSELECTEDTEXT, SelBGColor),
     COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, SelBGColor),
@@ -991,14 +990,15 @@ function TMain:MakePopupMenu () --> (table)
     return
   end
 
-  local Words = self.Words
+  --local Words = self.Words
   --logShow(self.Words, "Words for Items")
-  local Items = {}; self.Items = Items
+  local Items = {}
   for k = 1, Count do
     local Text
     Items[#Items+1], Text = self:MakePopupItem(k)
     Width = max2(Width, Text:len())
   end
+  self.Items = Items
   if Cfg.HotChars then Width = Width - 1 end
 
   -- Определение области маркировки.

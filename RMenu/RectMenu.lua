@@ -91,7 +91,7 @@ local DrawClearItemText = RDraw.DrawClearItemText
 local DrawSeparItemText = RDraw.DrawSeparItemText
 
 ----------------------------------------
--- [[
+--[[
 local hex = numbers.hex8
 local tostring = tostring
 local dbg = require "context.utils.useDebugs"
@@ -1504,6 +1504,7 @@ local function MousePosToCat (Len, Sep, Total, Pos, Base, Fixes) --> (number)
   return k
 end -- MousePosToCat
 
+--[[
 -- Проверка позиции курсора мыши за областью прокрутки.
 local function CheckMouseOut (Sep, Total, Pos, Fixes, Less, More) --> (string)
   if Fixes.Head > 0 and Pos <= Fixes.HeadLen then
@@ -1515,6 +1516,7 @@ local function CheckMouseOut (Sep, Total, Pos, Fixes, Less, More) --> (string)
 
   return ""
 end -- CheckMouseOut
+--]]
 
 -- Обработка обычного нажатия левой кнопки мыши в меню.
 function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
@@ -1760,8 +1762,6 @@ function TMenu:ScrollHClick (hDlg, pos)
   return self:MoveToCell(hDlg, ScrollHCell)
 end ---- ScrollHClick
 
-end -- do
-
 -- Обработка вертикальной прокрутки.
 function TMenu:ScrollVClick (hDlg, pos)
   local Bar = self.ScrollBars.ScrollV
@@ -1788,6 +1788,7 @@ function TMenu:ScrollVClick (hDlg, pos)
   return self:MoveToCell(hDlg, ScrollVCell)
 end ---- ScrollVClick
 
+end -- do
 ---------------------------------------- Menu drawing
 local Spaces = (" "):rep(255)
 --local Spaces = ("+"):rep(255) -- DEBUG only

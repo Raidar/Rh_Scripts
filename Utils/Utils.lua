@@ -36,7 +36,7 @@ local PanelsGetInfo = panel.GetPanelInfo
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
-local strings = require 'context.utils.useStrings'
+--local strings = require 'context.utils.useStrings'
 
 local isFlag = utils.isFlag
 
@@ -296,9 +296,9 @@ end ----
 -- Adding a trailing slash to path.
 -- Добавление завершающего слэша к пути.
 function unit.ChangeSlash (path, slash) --> (string)
-  local path  = path
   local slash = slash or '\\' -- Windows
-  --slash = slash or '/' -- Unix like
+  --local slash = slash or '/' -- Unix like
+
   local path = (path or ""):gsub("\\", slash)
   if path:find("[/\\]", -1) then
     return path

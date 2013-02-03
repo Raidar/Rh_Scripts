@@ -45,7 +45,7 @@ local CharsList = require "Rh_Scripts.Utils.CharsList"
 local CharNames = CharsList.Names
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --logShow(uList.Names, "Characters' names", 2, "#fq")
@@ -417,7 +417,8 @@ do
 
 local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 
-local InsText = editor.InsertText
+--local InsText = editor.InsertText
+local InsText = farUt.InsertText
 local Redraw  = farUt.RedrawAll
 
 function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
@@ -443,7 +444,7 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
     if not ActItem or not ActItem.Plain then return true end
 
     --if not InsText(nil, ActItem.Plain) then return true end
-    if not farUt.InsertText(Area, ActItem.Plain, {}) then return true end
+    if not InsText(Area, ActItem.Plain, {}) then return true end
 
     return not Redraw()
   end --

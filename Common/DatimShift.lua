@@ -14,9 +14,9 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local bit = bit64
+--local bit = bit64
 --local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local far = far
@@ -40,7 +40,7 @@ local isFlag, delFlag = utils.isFlag, utils.delFlag
 local addNewData = tables.extend
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -49,12 +49,13 @@ local logShow = dbg.Show
 local unit = {}
 
 ----------------------------------------
-local Datim = require "Rh_Scripts.Utils.DateTime"
-local newTime = Datim.newTime
+--local Datim = require "Rh_Scripts.Utils.DateTime"
+--local newTime = Datim.newTime
 
 ---------------------------------------- Main data
 unit.FileName   = "DateTime"
 unit.ScriptName = "DatimShift"
+unit.PluginPath = utils.PluginPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 
 ---------------------------------------- ---- Custom
@@ -70,9 +71,6 @@ local DefCustom = {
 } --- DefCustom
 
 ---------------------------------------- ---- Config
-local PluginPath = utils.PluginPath
-local ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
-
 -- Конфигурация по умолчанию.
 local DefCfgData = {
 } --- DefCfgData
@@ -119,16 +117,14 @@ local function Configure (ArgData)
 end -- Configure
 
 ---------------------------------------- Dialog
-local farColors = far.Colors
+--local farColors = far.Colors
 
 local dialog = require "far2.dialog"
 local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
-local dlg_NewDialog = dialog.NewDialog
-
 local DI = dlgUt.DlgItemType
 local DIF = dlgUt.DlgItemFlag
-local ListItems = dlgUt.ListItems
+--local ListItems = dlgUt.ListItems
 
 -- Диалог.
 local function TimeDlg (Config) --> (dialog)
@@ -138,14 +134,14 @@ local function TimeDlg (Config) --> (dialog)
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
   local H = DBox.Height - (isSmall and 1 or 2)
   local W = DBox.Width  - (isSmall and 0 or 2)
-  local M = bshr(W, 1) -- Medium -- Width/2
-  local Q = bshr(M, 1) -- Quarta -- Width/4
+  --local M = bshr(W, 1) -- Medium -- Width/2
+  --local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
-  local A, B = I + 2, M + 2
+  --local A, B = I + 2, M + 2
   -- Some controls' sizes:
-  local T = 12 -- Text field
-  local S = 4  -- Small numbers
-  local G = 6  -- Large numbers
+  --local T = 12 -- Text field
+  --local S = 4  -- Small numbers
+  --local G = 6  -- Large numbers
 
   local Caption = L:caption(DBox.Caption or "Dialog")
 

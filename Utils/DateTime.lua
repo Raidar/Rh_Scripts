@@ -27,7 +27,7 @@ local numbers = require 'context.utils.useNumbers'
 local round = numbers.round
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]

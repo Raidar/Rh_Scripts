@@ -119,13 +119,12 @@ local function ParamTag (tag, param, rest, block) --> (macro)
   end
 
   -- Выделенный блок есть: блок внутри тега, курсор внутри параметра тега:
-  local count = tag:len() + 3
   return format('@Cut<%s %s="@Here"%s>@Paste</%s>@Back',
                 tag, param, rest or "", tag)
 end -- ParamTag
 
 ---------------------------------------- Lines
-local format = string.format
+--local format = string.format
 
 local line_len = 78
 local note_fmt = "<!--%s-->"
