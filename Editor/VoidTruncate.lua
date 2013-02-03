@@ -15,16 +15,14 @@
 --[[ idea from:
 1. Trucer plugin.
    (trail space truncater.)
-   © 2000, Дмитрий Суходоев aka raVen.
-   Home: http://raven.elk.ru/
+   © 2000, Дмитрий Суходоев aka raVen.
 2. TruncateTXT.
-   © 1999/2001, Алексей Фирсаков.
+   © 1999/2001, Алексей Фирсаков.
    Mail: avfir@mailru.com
 ---- based on:
-*.  killSpaces.lua script
-   (Удаление лишних пробелов и пустых строк.)
-   © 2008, maxfl.
-   Mail: gmaxfl@gmail.com
+*. killSpaces.lua script
+   (Удаление лишних пробелов и пустых строк.)
+   © 2008, maxfl.
 --]]
 ----------------------------------------
 --[[ @notes:

@@ -14,9 +14,9 @@
 --]]
 ----------------------------------------
 --[[ idea from:
-  Word Completion plugin.
-  (Word completion in editor.)
-  © 1999, Andrey Tretjakov etc.
+*. Word Completion plugin.
+   (Word completion in editor.)
+   © 1999, Andrey Tretjakov etc.
 --]]
 --------------------------------------------------------------------------------
 

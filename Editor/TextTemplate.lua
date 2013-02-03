@@ -15,10 +15,9 @@
 --]]
 ----------------------------------------
 --[[ idea from:
-  truemac plugin.
-  (true macro processor.)
-  (c) 2000, raVen.
-  Home: http://raven.elk.ru/
+*. truemac plugin.
+   (true macro processor.)
+   © 2000, Дмитрий Суходоев aka raVen.
 --]]
 --------------------------------------------------------------------------------
 
