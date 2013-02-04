@@ -823,9 +823,12 @@ do
   -- TODO: Дляar.Menu делать замену клавиш на VK'шные!
   local DefBreakKeys = { --  BreakKeys по умолчанию:
     { BreakKey = "BS",      Action = "Back" },      -- Возврат в надменю
-    { BreakKey = "BACK",    Action = "Back" },      -- Возврат в надменю
     { BreakKey = "ShiftF1", Action = "Item Info" }, -- Сведения о пункте меню
     { BreakKey = "CtrlF1",  Action = "Menu Info" }, -- Сведения о меню в целом
+
+    { BreakKey = "BACK",    Action = "Back" },      -- Возврат в надменю
+    { BreakKey = "S+F1",    Action = "Item Info" }, -- Сведения о пункте меню
+    { BreakKey = "C+F1",    Action = "Menu Info" }, -- Сведения о меню в целом
   } --- DefBreakKeys
 
   local Call = require "Rh_Scripts.Common.MenuCaller"

@@ -34,7 +34,7 @@ local Data = {
   ["@"] = { -- Информация
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "LuaEUM"
+    text = "LuaEUM",
   },
 
   ["="] = { -- Замены:
@@ -44,19 +44,19 @@ local Data = {
 
   Default = { Caption = L.MainMenu,
               After = "EQuoting;EScripts;UScripts;UCommands;"..
-                      "U_DefSep;FARMacro;UMConfig" },
+                      "U_DefSep;FARMacro;UMConfig", },
 
-  back   = { Menu = "UScripts;U_DefSep;UMConfig", noDefault = true },
+  back   = { Menu = "UScripts;U_DefSep;UMConfig", noDefault = true, },
 
-  --none   = { Menu = "Characters" },
-  none   = { Menu = "J_None;Characters" },
-  --text   = { Menu = "Characters" },
-  html   = { Menu = "J_Html;Characters" },
-  c      = { Menu = "J_C_Cpp" },
-  pascal = { Menu = "J_Pascal" },
-  lua    = { Menu = "J_Lua;Characters" },
+  --none   = { Menu = "Characters", },
+  none   = { Menu = "J_None;Characters", },
+  --text   = { Menu = "Characters", },
+  html   = { Menu = "J_Html;Characters", },
+  c      = { Menu = "J_C_Cpp", },
+  pascal = { Menu = "J_Pascal", },
+  lua    = { Menu = "J_Lua;Characters", },
 
-  sub    = { Menu = "Subtitles;J_None;Characters" },
+  sub    = { Menu = "Subtitles;J_None;Characters", },
 } ---
 
 return Data

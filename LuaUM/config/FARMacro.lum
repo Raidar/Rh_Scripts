@@ -44,13 +44,15 @@ local mFarMacros = {
     -- Load --
     { text = L.FarMacros_Load,
       Script = "FarMacros.lua",
-      Function = "LoadFarMacros",
-      Relative = "default" },
+      Function = "ReloadLuaFarMacros",
+      Relative = "default", },
+    --[[
     -- Save --
     { text = L.FarMacros_Save,
       Script = "FarMacros.lua",
       Function = "SaveFarMacros",
-      Relative = "default" },
+      Relative = "default", },
+    --]]
   } ---
 } --- mFarMacros
 

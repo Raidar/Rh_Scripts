@@ -34,11 +34,11 @@ local Data = {
   ["@"] = { -- Информация
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "LumFLS"
+    text = "LumFLS",
   },
 
   Default = { Caption = L.MainMenu,
-              After = "UM_fls;U_DefSep;UMConfig" },
+              After = "UM_fls;U_DefSep;UMConfig", },
 
 } --- Data
 

@@ -92,7 +92,8 @@ local function KeyPress_Dlg()
   D.fName  = {DI_Text,    M, 5,   C, 0, 0, 0, 0, 0, "farKey Name"}
 
   -- Additional fields
-  D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
+  D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Escape' key to exit!"}
+  --D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
 
   return D
 end -- KeyPress_Dlg

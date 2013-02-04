@@ -28,9 +28,9 @@ local Data = {
 
   ----------------------------------------
   -- FAR macros
-  FarMacros         = "&` - FAR macros",
-    FarMacros_Load      = "&Load from DB",
-    FarMacros_Save      = "&Save  to  DB",
+  FarMacros         = "&` - LuaFAR macros",
+    FarMacros_Load      = "&` - Reload macros",
+    --FarMacros_Save      = "&Save  to  DB",
 
   ----------------------------------------
   -- Character kits

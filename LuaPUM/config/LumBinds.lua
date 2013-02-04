@@ -34,20 +34,20 @@ local Data = {
   ["@"] = {
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "LuaPUM"
+    text = "LuaPUM",
   },
   --[[
   ["="] = {
   },
   --]]
   Default = { Caption = L.MainMenu,
-              --After = "UScripts;UCommands;U_DefSep;FARMacro;UMConfig" },
-              After = "UScripts;UCommands;GitCommands;U_DefSep;FARMacro;UMConfig" },
-              --After = "UScripts;U_DefSep;FARMacro;UMConfig" },
+              --After = "UScripts;UCommands;U_DefSep;FARMacro;UMConfig", },
+              After = "UScripts;UCommands;GitCommands;U_DefSep;FARMacro;UMConfig", },
+              --After = "UScripts;U_DefSep;FARMacro;UMConfig", },
 
-  --back   = { Menu = "UScripts;TortoiseSVN;U_DefSep;UMConfig", noDefault = true },
+  --back   = { Menu = "UScripts;TortoiseSVN;U_DefSep;UMConfig", noDefault = true, },
 
-  --dir    = { Menu = "TortoiseSVN" },
+  --dir    = { Menu = "TortoiseSVN", },
 
 } --- Data
 

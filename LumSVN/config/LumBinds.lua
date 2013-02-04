@@ -36,18 +36,18 @@ local Data = {
   ["@"] = {
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "LumSVN"
+    text = "LumSVN",
   },
   --[[
   ["="] = {
   },
   --]]
   Default = { Caption = L.MainMenu,
-              Before = "TortoiseSVN;U_DefSep;UMConfig" },
+              Before = "TortoiseSVN;U_DefSep;UMConfig", },
 
-  --back   = { Menu = "TortoiseSVN;U_DefSep;UMConfig", noDefault = true },
+  --back   = { Menu = "TortoiseSVN;U_DefSep;UMConfig", noDefault = true, },
 
-  --dir    = { Menu = "TortoiseSVN" },
+  --dir    = { Menu = "TortoiseSVN", },
 
 } --- Data
 

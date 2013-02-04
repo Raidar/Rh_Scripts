@@ -30,8 +30,8 @@ local Data = {
   ----------------------------------------
   -- FAR macros
   FarMacros         = "&` - Макросы FAR",
-    FarMacros_Load      = "&L - Загрузить из БД",
-    FarMacros_Save      = "&S - Сохранить  в БД",
+    FarMacros_Load      = "&` - Перезагрузить",
+    --FarMacros_Save      = "&S - Сохранить  в БД",
 
   ----------------------------------------
   -- Character kits

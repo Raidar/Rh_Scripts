@@ -15,13 +15,14 @@
 local far = far
 
 ---------------------------------------- main
--- Загрузка макросов из БД.
-function LoadFarMacros ()
+-- Перезагрузка макросов.
+function ReloadLuaFarMacros ()
   return far.MacroLoadAll()
 end ----
+--[[
 -- Сохранение макросов в БД.
 function SaveFarMacros ()
   return far.MacroSaveAll()
 end ----
-
+--]]
 --------------------------------------------------------------------------------
