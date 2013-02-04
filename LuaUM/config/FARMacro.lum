@@ -31,8 +31,8 @@ if L == nil then
 end
 
 ---------------------------------------- ----
-local mFarMacros = {
-  text = L.FarMacros,
+local mLuaFarMacros = {
+  text = L.LuaFarMacros,
 
   CfgData = {
     UMenu = {
@@ -42,28 +42,26 @@ local mFarMacros = {
 
   Items = {
     -- Load --
-    { text = L.FarMacros_Load,
+    { text = L.LuaFarMacros_Load,
       Script = "FarMacros.lua",
-      Function = "ReloadLuaFarMacros",
+      Function = "LoadLuaFarMacros",
       Relative = "default", },
-    --[[
     -- Save --
-    { text = L.FarMacros_Save,
+    { text = L.LuaFarMacros_Save,
       Script = "FarMacros.lua",
-      Function = "SaveFarMacros",
+      Function = "SaveLuaFarMacros",
       Relative = "default", },
-    --]]
   } ---
-} --- mFarMacros
+} --- mLuaFarMacros
 
 ---------------------------------------- Data
 local Data = {
   Menu = {
-    text = L.FarMacros,
-    Items = { mFarMacros },
+    text = L.LuaFarMacros,
+    Items = { mLuaFarMacros },
   },
 
-  ["FarMacros"] = mFarMacros,
+  ["LuaFarMacros"] = mLuaFarMacros,
 } ---
 
 return Data

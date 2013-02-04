@@ -27,10 +27,10 @@ local Data = {
     ConfigUMenu         = "&User menu display",
 
   ----------------------------------------
-  -- FAR macros
-  FarMacros         = "&` - LuaFAR macros",
-    FarMacros_Load      = "&` - Reload macros",
-    --FarMacros_Save      = "&Save  to  DB",
+  -- LuaFAR macros
+  LuaFarMacros      = "&` - LuaFAR macros",
+    LuaFarMacros_Load   = "&` - Load macros",
+    LuaFarMacros_Save   = "&S - Save macros",
 
   ----------------------------------------
   -- Character kits

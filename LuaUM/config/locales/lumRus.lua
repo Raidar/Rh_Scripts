@@ -28,10 +28,10 @@ local Data = {
     ConfigUMenu         = "&U - Пользовательское меню",
 
   ----------------------------------------
-  -- FAR macros
-  FarMacros         = "&` - Макросы FAR",
-    FarMacros_Load      = "&` - Перезагрузить",
-    --FarMacros_Save      = "&S - Сохранить  в БД",
+  -- LuaFAR macros
+  LuaFarMacros      = "&` - Макросы LuaFAR",
+    LuaFarMacros_Load   = "&` - Загрузить макросы",
+    LuaFarMacros_Save   = "&S - Сохранить макросы",
 
   ----------------------------------------
   -- Character kits
