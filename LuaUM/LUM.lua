@@ -50,15 +50,15 @@ local unit = {}
 
 -- Формат сообщения об ошибке:
 local KindErrors = {
-  FarSeq   = "FarSeq_Error",
-  Plain    = "Plains_Error",
-  Macro    = "Macros_Error",
-  Script   = "Script_Error",
-  --Function = "LuaFuncError",
-  Command  = "OS_ExecError",
-  Program  = "ProgramError",
-  CmdLine  = "CmdLineError",
-  Unknown  = "UActionError",
+  LuaMacro = "LuaMacro_Error",
+  Plain    = "PlainText_Error",
+  Macro    = "MacroText_Error",
+  Script   = "LuaScript_Error",
+  --Function = "Function_Error",
+  Command  = "Command_Error",
+  Program  = "Program_Error",
+  CmdLine  = "CmdLine_Error",
+  Unknown  = "UAction_Error",
 } --- KindErrors
 
 ----------------------------------------

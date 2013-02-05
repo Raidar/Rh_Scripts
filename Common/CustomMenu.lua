@@ -252,7 +252,7 @@ local ItemKinds = { -- Виды пунктов меню:
   Label     = "Label",    -- Метка
   Items     = "Menu",     -- Подменю
   separator = "Separator",-- Разделитель
-  Sequence  = "FarSeq",   -- Макрос FAR
+  LuaMacro  = "LuaMacro", -- Lua-макрос
   Plain     = "Plain",    -- Обычный текст
   Macro     = "Macro",    -- Макрос-шаблон
   --Template  = "Template", -- Шаблон
@@ -290,12 +290,16 @@ end ----
 
 end -- do
 
--- Настройка пункта-макроса FAR.
-function TMenu:DefineSequence (Item) --| Item
-  if not Item.Sequence then return end
+-- Настройка пункта-lua-макроса.
+function TMenu:DefineLuaMacro (Item) --| Item
+  if not Item.LuaMacro then return end
 
   -- Флаги по умолчанию:
-  if not Item.Flags then Item.Flags = F.KMFLAGS_DISABLEOUTPUT end
+  if not Item.Flags then
+    Item.Flags = F.KMFLAGS_DISABLEOUTPUT
+  end
+
+  return true
 end ----
 
 -- Определение полей пункта меню.
@@ -312,7 +316,7 @@ function TMenu:DefineMenuItem (Item) --| Item
   --logShow({ "'"..Item.Caption.."'", "'"..Item.text.."'" }, "Item")
 
   -- Настройка пункта-макроса FAR.
-  self:DefineSequence(Item)
+  self:DefineLuaMacro(Item)
 
   -- Настройка пункта -- макроса-шаблона.
   if Item.Macro then -- Флаги по умолчанию
@@ -682,16 +686,19 @@ function TMenu:DefineScriptName (Item) --> (string)
   return Path..ScName
 end ---- DefineScriptName
 
+  local runLua = runUt.Lua
+
 -- Выполнение порции / функции скрипта.
 function TMenu:RunScript (Item)
   local Config = self.Config
   -- Исключение изменений в реальном пункте.
-  local Item = { __index = Item }; setmetatable(Item, Item)
+  local Item = { __index = Item }
+  setmetatable(Item, Item)
 
   local Args, ChunkArgs, SError
   -- Обработка имени скрипта.
   Item.Script, Item.ChunkArgs, ChunkArgs =
-      runUt.Lua.Split(Item.Script, Item.ChunkArgs)
+      runLua.Split(Item.Script, Item.ChunkArgs)
   --logShow(Item, tostring(Item.Script))
   -- Определение полного имени скрипта.
   local ChunkName
@@ -702,7 +709,7 @@ function TMenu:RunScript (Item)
   if ChunkArgs then
     ChunkArgs, SError = Item.Script and Item.ChunkArgs, false
   else
-    ChunkArgs, SError = runUt.Lua.GetArgs(Item.ChunkArgs)
+    ChunkArgs, SError = runLua.GetArgs(Item.ChunkArgs)
   end
   if not ChunkArgs and SError then
     return nil, SError
@@ -711,20 +718,22 @@ function TMenu:RunScript (Item)
   -- Обработка имени функции скрипта.
   -- TODO: Убрать аргументы в названии скрипта!?
   Item.Function, Item.Arguments, Args =
-      runUt.Lua.Split(Item.Function, Item.Arguments)
+      runLua.Split(Item.Function, Item.Arguments)
   --logShow(Item, tostring(Item.Function))
   -- Формирование аргументов функции скрипта.
   if Args then
     Args, SError = Item.Function and Item.Arguments, false
   else
-    Args, SError = runUt.Lua.GetArgs(Item.Arguments)
+    Args, SError = runLua.GetArgs(Item.Arguments)
   end
   if not Args and SError then
     return nil, SError
   end
 
   local DefCfg = { Config = Config, Item = Item }
-  local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
+  local Cfg = { __index = DefCfg }
+  setmetatable(Cfg, Cfg)
+
   --logShow(Item, ChunkName)
   -- Запуск скрипта / функции скрипта с передачей ему аргументов.
   return runUt.Script(ChunkName, Item.Function, ChunkArgs, Args, Cfg)
@@ -738,6 +747,28 @@ end ---- RunScript
     UnknownAction = "Unknown action for item kind",
   } --- Errors
 
+  -- Отмена возврата LF4Ed в главное меню.
+  local function EscapeFromMainMenu ()
+    local LF4Ed_Cfg = --rawget(_G, '_Plugin') and _G._Plugin.config() or
+                      rawget(_G, 'lf4ed') and _G.lf4ed.config()
+    --logShow(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
+    -- Учёт возврата LF4Ed в меню
+    if LF4Ed_Cfg and LF4Ed_Cfg.ReturnToMainMenu then
+      if context.use.LFVer >= 3 then -- FAR23
+      return runUt.LuaMacro("if Area.Menu then Keys'Esc' end")
+      else
+      return "$If(Menu) Esc $End "
+      end
+
+    else
+      if context.use.LFVer >= 3 then -- FAR23
+      return true
+      else
+      return ""
+      end
+    end
+  end -- EscapeFromMainMenu
+
 -- Выполнение действия выбранного пункта.
 function TMenu:MakeAction ()
   local Scope = self.Scope
@@ -748,19 +779,14 @@ function TMenu:MakeAction ()
 
     Label = runUt.Label, -- Пункт-метка
 
-    FarSeq = function () -- Выполнение макроса FAR'а
-      local LF4Ed_Cfg = rawget(_G, 'lf4ed') and _G.lf4ed.config()
-      --logShow(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
-      local Sequence = ActItem.Sequence
-      -- Учёт возврата LF4Ed в меню
-      if LF4Ed_Cfg and LF4Ed_Cfg.ReturnToMainMenu then
-        if context.use.LFVer >= 3 then -- FAR23
-        Sequence = "if Area.Menu then Keys'Esc' end\r\n"..Sequence
-        else
-        Sequence = "$If(Menu) Esc $End "..Sequence
-        end
+    LuaMacro = function () -- Выполнение макроса FAR'а
+      local Macro = ActItem.LuaMacro
+      if context.use.LFVer >= 3 then -- FAR23
+      EscapeFromMainMenu()
+      else
+      Macro = EscapeFromMainMenu()..Macro
       end
-      return runUt.FarSeq(Sequence, ActItem.Flags)
+      return runUt.LuaMacro(Macro, ActItem.Flags)
     end, --
 
     Plain = function () -- Вывод обычного текста
@@ -817,7 +843,6 @@ function TMenu:MakeAction ()
 end ---- MakeAction
 
 end -- do
-
 ---------------------------------------- ---- Show
 do
   -- TODO: Дляar.Menu делать замену клавиш на VK'шные!
@@ -942,7 +967,7 @@ end -- do
 ---------------------------------------- ---- Run
 do
   local NoReturnKinds = {
-    Sequence  = true,
+    --LuaMacro  = true,
     CmdLine   = true,
   } ---
 

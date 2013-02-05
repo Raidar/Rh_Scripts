@@ -28,15 +28,15 @@ local Data = {
   UnknownCfgField = "Unknown field of LUM config:\n%s from %s.\n%s: %s",
 
   -- Item action error messages.
-  FarSeq_Error = "Error of running FAR macro.\n%s: %s",
-  Plains_Error = "Error of plain text insert.\n%s: %s",
-  Macros_Error = "Error of macro-template insert.\n%s: %s",
-  Script_Error = "Error of lua script execution.\n%s: %s\nError text:\n%s",
-  LuaFuncError = "Error of lua function execution.\n%s: %s\nError text:\n%s",
-  OS_ExecError = "Error of OS command execution.\n%s: %s\nError code of command:%d",
-  ProgramError = "Error of program execution.\n%s: %s",
-  CmdLineError = "Error of command line execution.\n%s: %s\nError text:\n%s",
-  UActionError = "Error: Unknown item action.\n%s: %s",
+  LuaMacro_Error  = "Error of running lua-macro.\n%s: %s",
+  PlainText_Error = "Error of plain text insert.\n%s: %s",
+  MacroText_Error = "Error of macro-template insert.\n%s: %s",
+  LuaScript_Error = "Error of lua script execution.\n%s: %s\nError text:\n%s",
+  Function_Error  = "Error of lua function execution.\n%s: %s\nError text:\n%s",
+  Command_Error   = "Error of OS command execution.\n%s: %s\nError code of command:%d",
+  Program_Error   = "Error of program execution.\n%s: %s",
+  CmdLine_Error   = "Error of command line execution.\n%s: %s\nError text:\n%s",
+  UAction_Error   = "Error: Unknown item action.\n%s: %s",
 
   -- Dialog items texts.
   btn_Ok     = "Ok",        -- o

@@ -221,7 +221,7 @@ $ #Menu item kinds#: LUM
     ~Label~@LUM_Item_Label@      — ¦is a label item.
     ~Submenu~@LUM_Item_Menu@    — ¦outputs submenu.
     ~Separator~@LUM_Item_Separ@  — ¦separates menu items.
-    ~FAR macro~@LUM_Item_Seq@  — ¦runs a FAR macro.
+    ~Lua macro~@LUM_Item_Seq@  — ¦runs a Lua macro.
 
     ~Text template~@LUM_Item_Plain@  — ¦inserts a plain text.
     ~Macro-template~@LUM_Item_Macro@ — ¦inserts a macro-template.
@@ -317,11 +317,11 @@ $ A #Separator# item: LUM
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Seq
-$ A #FAR macro# item: LUM
-  An item runs a FAR macro.
+$ A #Lua macro# item: LUM
+  An item runs a lua‑macro.
 
-  Basic key is #Sequence# (string).
-  The key specifies a FAR macrosequence.
+  Basic key is #LuaMacro# (string).
+  The key specifies a text with lua macro.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 

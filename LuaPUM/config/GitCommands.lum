@@ -74,12 +74,14 @@ local function FillCmdLine (Command)
   return panel.SetCmdLine(-1, Command)
 end --
 
+local runLuaMacro = runUt.Run.LuaMacro
+
 local function FillCmdLineWithBack (Command)
   if panel.SetCmdLine(-1, Command) then
     if context.use.LFVer >= 3 then -- FAR23
-    return runUt.Run.Sequence("Keys'Left'")
+    return runLuaMacro("Keys'Left'")
     else
-    return runUt.Run.Sequence("Left")
+    return runLuaMacro("Left")
     end
   end
 end --

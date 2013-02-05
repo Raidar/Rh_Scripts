@@ -32,7 +32,7 @@ local unit = {
 ---------------------------------------- Run
 local Run = {
   Process   = false,
-  Sequence  = false,
+  LuaMacro  = false,
   Command   = false,
   CmdLine   = false,
 } ---
@@ -57,10 +57,10 @@ end -- do
 do
   local MacroPost = far.MacroPost
 
--- Run FAR macrosequence.
--- Запуск макропоследовательности FAR.
-function Run.Sequence (Sequence, Flags, AKey) --> (bool)
-  return MacroPost(Sequence, Flags, AKey)
+-- Run lua-macro.
+-- Запуск lua-макроса.
+function Run.LuaMacro (Macro, Flags, AKey) --> (bool)
+  return MacroPost(Macro, Flags, AKey)
 end ----
 
 end -- do
@@ -85,9 +85,9 @@ do
 function Run.CmdLine (Command) --> (integer)
   if panel.SetCmdLine(-1, Command) then
     if context.use.LFVer >= 3 then -- FAR23
-    return Run.Sequence("Keys'Enter'", CmdFlags)
+    return Run.LuaMacro("if Area.Menu then Keys'Esc' end\nKeys'Enter'", CmdFlags)
     else
-    return Run.Sequence("Enter", CmdFlags)
+    return Run.LuaMacro("$If(Menu) Esc $End Enter", CmdFlags)
     end
   end
 end ----
@@ -152,11 +152,11 @@ function unit.Label () --> (true)
   return true -- Nothing to do
 end ----
 
--- Execute: Far macrosequence.
--- Выполнение: макропоследовательность FAR.
-function unit.FarSeq (Value, Flags) --> (true | nil, error)
+-- Execute: lua-macro.
+-- Выполнение: lua-макрос.
+function unit.LuaMacro (Value, Flags) --> (true | nil, error)
   -- WARN: Use Result for future run changes.
-  local Result = Run.Sequence(Value, Flags)
+  local Result = Run.LuaMacro(Value, Flags)
   if Result == 0 then return nil, "" end
   return true
 end ----
