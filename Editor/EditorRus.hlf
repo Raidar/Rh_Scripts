@@ -18,12 +18,12 @@ $ #Скрипты для редактора#
 
 @Edt_ScriptFiles
 $ #Файлы скриптов#: Скрипты для редактора
-    \37AutoActions.lua\-    — ~Авто-действия~@AutoActions@
-    \37HandActions.lua\-    — ~Ручные действия~@HandActions@
+    \37AutoActions.lua\-    — ¦~Авто-действия~@AutoActions@
+    \37HandActions.lua\-    — ¦~Ручные действия~@HandActions@
 
-    \37TextTemplate.lua\-   — ~Текстовые шаблоны~@TextTemplate@
-    \37WordComplete.lua\-   — ~Завершение слов~@WordComplete@
-    \37VoidTruncate.lua\-   — ~Усекатель пустоты~@VoidTruncate@
+    \37TextTemplate.lua\-   — ¦~Текстовые шаблоны~@TextTemplate@
+    \37WordComplete.lua\-   — ¦~Завершение слов~@WordComplete@
+    \37VoidTruncate.lua\-   — ¦~Усекатель пустоты~@VoidTruncate@
 
  ~Содержание~@Contents@
 

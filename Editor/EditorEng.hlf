@@ -18,12 +18,12 @@ $ #Scripts for editor#
 
 @Edt_ScriptFiles
 $ #Script files#: Scripts for editor
-    \37AutoActions.lua\-    — ~Auto actions~@AutoActions@
-    \37HandActions.lua\-    — ~Hand actions~@HandActions@
+    \37AutoActions.lua\-    — ¦~Auto actions~@AutoActions@
+    \37HandActions.lua\-    — ¦~Hand actions~@HandActions@
 
-    \37TextTemplate.lua\-   — ~Text Templates~@TextTemplate@
-    \37WordComplete.lua\-   — ~Word Completion~@WordComplete@
-    \37VoidTruncate.lua\-   — ~Void Truncater~@VoidTruncate@
+    \37TextTemplate.lua\-   — ¦~Text Templates~@TextTemplate@
+    \37WordComplete.lua\-   — ¦~Word Completion~@WordComplete@
+    \37VoidTruncate.lua\-   — ¦~Void Truncater~@VoidTruncate@
 
  ~Contents~@Contents@
 
