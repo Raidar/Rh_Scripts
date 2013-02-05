@@ -1,8 +1,8 @@
---[[ Character utils ]]--
+--[[ Character types ]]--
 
 ----------------------------------------
 --[[ description:
-  -- Character handling.
+  -- Handling characters.
   -- Обработка символов.
 --]]
 ----------------------------------------
