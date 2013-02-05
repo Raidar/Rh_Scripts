@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Date and Time classes.
-  -- Классы даты и времени.
+  -- Handling Date and Time.
+  -- Обработка даты и времени.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -35,6 +35,7 @@ local floor = math.floor
 local numbers = require 'context.utils.useNumbers'
 
 --local divf  = numbers.divf
+local divm  = numbers.divm
 local round = numbers.round
 
 ----------------------------------------
@@ -66,7 +67,7 @@ local TConsts = {
   MonthPerQuarter =  3, -- Квартал:         1 Quarter       = 12 / 4 Monthes
 
   BaseYear      =  365, -- Обычный год:     1 Base Year     = 365 Days
-  --LeapYear      =  366, -- Високосный год:  1 Leap Year     = 365 + 1 Days
+  LeapYear      =  366, -- Високосный год:  1 Leap Year     = 365 + 1 Days
   MoonMonth     =   28, -- Лунный месяц:    1 Moon Month    = 28 Days
   MeanYear    =  365.4, -- Средний год:     1 Mean Year     ~ 365.4 Days
   MeanMonth   =  30.45, -- Средний месяц:   1 Mean Month    ~ 365.4 / 12 Days
@@ -79,27 +80,34 @@ local TConsts = {
   MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
+  --GregoreanStartYear = 1583,
+
   -- Количество дней в месяцах
   MonthDays = {
     31, 28, 31,
     30, 31, 30,
     31, 31, 30,
     31, 30, 31,
+    [0] = 0,
   }, --
   YearDays = {
      31,  59,  90,
     120, 151, 181,
     212, 243, 273,
     304, 334, 365,
+    [0] = 0,
   }, --
 
   --filled = nil,         -- Признак заполненности
 } ---
 unit.DefConsts = TConsts
 
+-- Get year days by months' days.
+-- Получение дней в году по дням в месяцах.
 function unit.getYearDays (MonthDays) --|> (YearDays)
-  local YearDays, Sum = {}, 0
   local MonthDays = MonthDays
+  local Sum = 0
+  local YearDays = { [0] = 0, }
   for k = 1, #MonthDays do
      Sum = Sum + MonthDays[k]
      YearDays[k] = Sum
@@ -107,7 +115,11 @@ function unit.getYearDays (MonthDays) --|> (YearDays)
   return YearDays
 end ---- getYearDays
 
+-- Fill derived constants.
+-- Заполнение производных констант.
 function unit.fillConsts (Consts) --|> Consts
+  if Consts.filled then return end
+
   Consts.MonthPerQuarter    = Consts.MonthPerYear / Consts.QuarterPerYear
   Consts.LeapYear           = Consts.BaseYear + 1
   Consts.MeanMonth          = Consts.MeanYear / Consts.MonthPerYear
@@ -157,7 +169,7 @@ end ----
 -- Count extra days of leap year.
 -- Количество лишних дней високосного года.
 function TConsts:getLeapDays (y) --> (bool)
-  return self:isleapyear(y) and 1 or 0
+  return self:isLeapYear(y) and 1 or 0
 end ----
 
 -- Count days in month.
@@ -169,6 +181,19 @@ function TConsts:getMonthDays (y, m) --> (number)
     return self.MonthDays[m] + self:getLeapDays(y)
   end
 end ---- getMonthDays
+
+-- Get day number of common era.
+-- Получение номера дня нашей эры.
+function TConsts:getEraDay (y, m, d) --> (number)
+
+  local P, R = divm(y - 1, 100) -- 100⋅P + R
+  local p, q = divm(P, 4)       --   4⋅p + q
+  local r, s = divm(R, 4)       --   4⋅r + s
+
+  return 146097 * p + 36524 * q +
+           1461 * r +   365 * s +
+         self:getYearDay(y, m, d)
+end ---- getEraDay
 
 -- Get day number in year.
 -- Получение номера дня в году.
@@ -182,6 +207,12 @@ function TConsts:getYearDay (y, m, d) --> (number)
   return d + self.YearDays[m] + self:getLeapDays(y)
 end ---- getYearDay
 
+-- Get week number in year.
+-- Получение номера недели в году.
+function TConsts:getYearWeek (y, m, d) --> (number)
+  return 0 -- TODO
+end ---- getYearWeek
+
 ---------------------------------------- Date class
 local TDate = {} -- Класс даты
 
@@ -189,13 +220,13 @@ do
   local MDate = { __index = TDate, }
 
 -- Создание объекта класса.
-function unit.newDate (y, m, d, c) --> (object)
+function unit.newDate (y, m, d, consts) --> (object)
   local self = {
     y = y or 0, -- Количество лет
     m = m or 0, -- Количество месяцев
     d = d or 0, -- Количество дней
 
-    c = c or unit.newConsts();
+    consts = consts or unit.newConsts();
   } --- self
 
   return setmetatable(self, MDate)
@@ -203,8 +234,8 @@ end -- newDate
 
 end -- do
 ---------------------------------------- ---- handling
-function TDate:data () --> (d, m, y, c)
-  return self.y, self.m, self.d, self.c
+function TDate:data () --> (d, m, y, consts)
+  return self.y, self.m, self.d, self.consts
 end ----
 
 function TDate:copy () --> (object)
@@ -213,7 +244,7 @@ end ----
 
 ---------------------------------------- ---- to & from
 function TDate:to_y () --> (number)
-  local c = self.c
+  local c = self.consts
   return 0 -- TODO
   --return ( (self.d / c.MSecPerSec +
   --          self.s) / c.SecPerMin +
@@ -255,14 +286,14 @@ do
   local MTime = { __index = TTime, }
 
 -- Создание объекта класса.
-function unit.newTime (h, n, s, z, c) --> (object)
+function unit.newTime (h, n, s, z, consts) --> (object)
   local self = {
     h = h or 0, -- Количество часов
     n = n or 0, -- Количество минут
     s = s or 0, -- Количество секунд
     z = z or 0, -- Количество миллисекунд
 
-    c = c or unit.newConsts();
+    consts = consts or unit.newConsts();
   } --- self
 
   return setmetatable(self, MTime)
@@ -270,8 +301,8 @@ end -- newTime
 
 end -- do
 ---------------------------------------- ---- handling
-function TTime:data () --> (h, n, s, z, c)
-  return self.h, self.n, self.s, self.z, self.c
+function TTime:data () --> (h, n, s, z, consts)
+  return self.h, self.n, self.s, self.z, self.consts
 end ----
 
 function TTime:copy () --> (object)
@@ -280,35 +311,35 @@ end ----
 
 -- Количество секунд без долей секунд.
 function TTime:hns () --> (number)
-  local c = self.c
+  local c = self.consts
   return self.s + (self.n + self.h * c.MinPerDay) * c.SecPerMin
 end ----
 
 -- Количество миллисекунд как доля секунды.
 function TTime:msec () --> (number)
-  return self.z / self.c.MSecPerSec
+  return self.z / self.consts.MSecPerSec
 end ----
 
 -- Количество десятых долей секунды в миллисекундах.
 function TTime:dz () --> (number)
-  return round(self.z / self.c.MSecPerDSec)
+  return round(self.z / self.consts.MSecPerDSec)
 end ----
 
 -- Количество сотых долей секунды в миллисекундах.
 function TTime:cz () --> (number)
-  return round(self.z / self.c.MSecPerCSec)
+  return round(self.z / self.consts.MSecPerCSec)
 end ----
 
 ---------------------------------------- ---- to & from
 function TTime:to_h () --> (number)
-  local c = self.c
+  local c = self.consts
   return ( (self.z / c.MSecPerSec +
             self.s) / c.SecPerMin +
            self.n ) / c.MinPerHour + self.h
 end ----
 
 function TTime:to_n () --> (number)
-  local c = self.c
+  local c = self.consts
   return (self.z / c.MSecPerSec +
           self.s) / c.SecPerMin +
           self.n +
@@ -316,7 +347,7 @@ function TTime:to_n () --> (number)
 end ----
 
 function TTime:to_s () --> (number)
-  local c = self.c
+  local c = self.consts
   return self.z / c.MSecPerSec +
          self.s +
          (self.n +
@@ -325,7 +356,7 @@ function TTime:to_s () --> (number)
 end ----
 
 function TTime:to_z () --> (number)
-  local c = self.c
+  local c = self.consts
   return self.z +
          ( self.s +
            (self.n +
@@ -335,7 +366,7 @@ function TTime:to_z () --> (number)
 end ----
 
 function TTime:from_h (v) --> (self)
-  local c = self.c
+  local c = self.consts
 
   self.h, v = modf(v)
   self.n, v = modf(v * c.MinPerHour)
@@ -346,7 +377,7 @@ function TTime:from_h (v) --> (self)
 end ---- from_h
 
 function TTime:from_n (v) --> (self)
-  local c = self.c
+  local c = self.consts
 
   local x = c.MinPerHour
   self.h = floor(v / x)
@@ -360,7 +391,7 @@ function TTime:from_n (v) --> (self)
 end ---- from_n
 
 function TTime:from_s (v) --> (self)
-  local c = self.c
+  local c = self.consts
 
   local x = c.SecPerHour
   self.h = floor(v / x)
@@ -377,7 +408,7 @@ function TTime:from_s (v) --> (self)
 end ---- from_s
 
 function TTime:from_z (v) --> (self)
-  local c = self.c
+  local c = self.consts
 
   local x = c.MSecPerHour
   self.h = floor(v / x)
