@@ -1,8 +1,8 @@
 Rh_Scripts pack 3.0x
 
 [Info]
-Ver. : 3.0.5.1
-Date : 2013-02-03
+Ver. : 3.0.5.2
+Date : 2013-02-06
 Ware : Freeware
 Lic. : Lua License
 Reqs : FAR v.3.0.3147,
@@ -19,8 +19,8 @@ Addr : RF, RT, Kazan
 Copy : 2009/2013+
 Mail : pmi-rai@narod.ru
 
-Home : http://pmi-rai.narod.ru/
-Link : /Programs/FarUsing.htm
+Home : http://raidar.github.com/index.htm
+Link : http://raidar.github.com/Programs/FarScripts.htm#Rh_Scripts
 
 Repo : https://github.com/Raidar/Rh_Scripts
 
