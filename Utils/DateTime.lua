@@ -34,7 +34,7 @@ local floor = math.floor
 
 local numbers = require 'context.utils.useNumbers'
 
---local divf  = numbers.divf
+local divf  = numbers.divf
 local divm  = numbers.divm
 local round = numbers.round
 
@@ -47,8 +47,12 @@ local logShow = dbg.Show
 --------------------------------------------------------------------------------
 local unit = {}
 
----------------------------------------- Constants
-local TConsts = {
+---------------------------------------- Config class
+local TConfig = {
+  Name          = "Gregorean Calendar",
+  YearMin       = 1583,
+  YearMax       = 9999,
+
   YearPerAge    =  100, -- Век:             1 Age       =  100 Years
   MonthPerYear  =   12, -- Год:             1 Year      =   12 Monthes
   DayPerWeek    =    7, -- Неделя:          1 Week      =    7 Days
@@ -80,9 +84,7 @@ local TConsts = {
   MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
-  --GregoreanStartYear = 1583,
-
-  -- Количество дней в месяцах
+  -- Количество дней в месяцах:
   MonthDays = {
     31, 28, 31,
     30, 31, 30,
@@ -90,6 +92,7 @@ local TConsts = {
     31, 30, 31,
     [0] = 0,
   }, --
+  -- Количество дней в году по месяцам:
   YearDays = {
      31,  59,  90,
     120, 151, 181,
@@ -97,14 +100,22 @@ local TConsts = {
     304, 334, 365,
     [0] = 0,
   }, --
+  -- Номера дней недели для последних дней предыдущих месяцев
+  -- (при условии, что 31 декабря предыущего года — воскресение):
+  WeekDays = {
+    0, 3, 3,
+    6, 1, 4,
+    6, 2, 5,
+    0, 3, 5,
+  }, --
 
   --filled = nil,         -- Признак заполненности
 } ---
-unit.DefConsts = TConsts
+unit.DefConfig = TConfig
 
--- Get year days by months' days.
--- Получение дней в году по дням в месяцах.
-function unit.getYearDays (MonthDays) --|> (YearDays)
+-- Find year days by months' days.
+-- Нахождение дней в году по дням в месяцах.
+function unit.findYearDays (MonthDays) --|> (YearDays)
   local MonthDays = MonthDays
   local Sum = 0
   local YearDays = { [0] = 0, }
@@ -113,68 +124,99 @@ function unit.getYearDays (MonthDays) --|> (YearDays)
      YearDays[k] = Sum
   end
   return YearDays
-end ---- getYearDays
+end ---- findYearDays
+
+-- Find week days for last days of prior months.
+-- Нахождение дней недели для последних дней предыдущих месяцев.
+function unit.findWeekDays (YearDays, DayPerWeek) --|> (YearDays)
+  local YearDays, DayPerWeek = YearDays, DayPerWeek
+  local WeekDays = {}
+  for k = 1, #YearDays do
+    WeekDays[k] = YearDays[k - 1] % DayPerWeek
+  end
+  return WeekDays
+end ---- findWeekDays
 
 -- Fill derived constants.
 -- Заполнение производных констант.
-function unit.fillConsts (Consts) --|> Consts
-  if Consts.filled then return end
+function unit.fillConfig (Config) --|> Config
+  if Config.filled then return end
 
-  Consts.MonthPerQuarter    = Consts.MonthPerYear / Consts.QuarterPerYear
-  Consts.LeapYear           = Consts.BaseYear + 1
-  Consts.MeanMonth          = Consts.MeanYear / Consts.MonthPerYear
+  Config.MonthPerQuarter    = Config.MonthPerYear / Config.QuarterPerYear
+  Config.LeapYear           = Config.BaseYear + 1
+  Config.MeanMonth          = Config.MeanYear / Config.MonthPerYear
 
-  local HourPerDay  = Consts.HourPerDay
-  local MinPerHour  = Consts.MinPerHour
-  local SecPerMin   = Consts.SecPerMin
+  local HourPerDay  = Config.HourPerDay
+  local MinPerHour  = Config.MinPerHour
+  local SecPerMin   = Config.SecPerMin
 
-  Consts.MinPerDay      =        MinPerHour  * HourPerDay
-  Consts.SecPerHour     =        SecPerMin   * MinPerHour
-  Consts.SecPerDay      = Consts.SecPerHour  * HourPerDay
-  Consts.MSecPerMin     = Consts.MSecPerSec  * SecPerMin
-  Consts.MSecPerHour    = Consts.MSecPerMin  * MinPerHour
-  Consts.MSecPerDay     = Consts.MSecPerHour * HourPerDay
+  Config.MinPerDay      =        MinPerHour  * HourPerDay
+  Config.SecPerHour     =        SecPerMin   * MinPerHour
+  Config.SecPerDay      = Config.SecPerHour  * HourPerDay
+  Config.MSecPerMin     = Config.MSecPerSec  * SecPerMin
+  Config.MSecPerHour    = Config.MSecPerMin  * MinPerHour
+  Config.MSecPerDay     = Config.MSecPerHour * HourPerDay
 
-  if not Consts.YearDays then
-    Consts.YearDays = unit.getYearDays(Consts.MonthDays)
+  if not Config.YearDays then
+    Config.YearDays = unit.findYearDays(Config.MonthDays)
   end
 
-  Consts.filled = true
+  if not Config.WeekDays then
+    Config.WeekDays = unit.findWeekDays(Config.YearDays, Config.DayPerWeek)
+  end
 
-  return Consts
-end ---- FillConsts
+  Config.filled = true
+
+  return Config
+end ---- FillConfig
 
 do
-  local MConsts = { __index = TConsts, }
+  local MConfig = { __index = TConfig, }
 
-function unit.newConsts (Consts) --|> Consts
-  local self = Consts or {}
-  self = setmetatable(self, MConsts)
+function unit.newConfig (Config) --|> Config
+  local self = Config or {}
+  self = setmetatable(self, MConfig)
 
-  if Consts then
-    return unit.fillConsts(self)
+  if Config then
+    return unit.fillConfig(self)
   end
 
   return self
-end ---- newConsts
+end ---- newConfig
 
 end -- do
 ---------------------------------------- ---- operations
 -- Check an year for leap year.
 -- Проверка на високосный год.
-function TConsts:isLeapYear (y) --> (bool)
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (bool) - true if year is a leap year otherwise - false.
+--]]
+function TConfig:isLeapYear (y) --> (bool)
   return y % 4 == 0 and (y % 100 ~= 0 or y % 400 == 0)
 end ----
 
 -- Count extra days of leap year.
 -- Количество лишних дней високосного года.
-function TConsts:getLeapDays (y) --> (bool)
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (number) - extra days in leap year.
+--]]
+function TConfig:getLeapDays (y) --> (bool)
   return self:isLeapYear(y) and 1 or 0
 end ----
 
 -- Count days in month.
 -- Количество дней в месяце.
-function TConsts:getMonthDays (y, m) --> (number)
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+---- @return:
+  result (number) - days count in month.
+--]]
+function TConfig:getMonthDays (y, m) --> (number)
   if m ~= 2 then
     return self.MonthDays[m]
   else
@@ -182,9 +224,83 @@ function TConsts:getMonthDays (y, m) --> (number)
   end
 end ---- getMonthDays
 
--- Get day number of common era.
+-- Get week day for last day of prior month.
+-- Получение дня недели для последнего дня предыдущего месяца.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+---- @return:
+  result (number) - day of week for last day of prior month.
+--]]
+function TConfig:getWeekDays (y, m) --> (number)
+  if m <= 2 then
+    return self.WeekDays[m]
+  else
+    return (self.WeekDays[m] + self:getLeapDays(y)) % self.DayPerWeek
+  end
+end ---- getWeekDays
+
+-- Get day number in year.
+-- Получение номера дня в году.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+---- @return:
+  result (number) - day of year.
+--]]
+function TConfig:getYearDay (y, m, d) --> (number)
+  if m == 1 then
+    return d
+  elseif m == 2 then
+    return d + self.YearDays[1]
+  end
+
+  return d + self.YearDays[m - 1] + self:getLeapDays(y)
+end ---- getYearDay
+
+-- Get week number in year.
+-- Получение номера недели в году.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+---- @return:
+  result (number) - week of year.
+--]]
+function TConfig:getYearWeek (y, m, d) --> (number)
+  return divf(self:getYearDay(y, m, d), self.DayPerWeek) + 1
+end ---- getYearWeek
+
+-- Get day number of the week.
+-- Получение номера дня недели.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+---- @return:
+  result (0..6) - day of week as number for Sunday..Saturday.
+--]]
+function TConfig:getWeekDay (y, m, d) --> (number)
+
+  local P, R = divm(y - 1, 100) -- 100⋅P + R
+  local p, q = divm(P, 4)       --   4⋅p + q
+  local r, s = divm(R, 4)       --   4⋅r + s
+
+  --return (5 * (q + r) + s + self:getYearDay(y, m, d)) % self.DayPerWeek
+  return (5 * (q + r) + s + self:getWeekDays(y, m) + d) % self.DayPerWeek
+end ---- getWeekDay
+
+-- Get day number of the common era.
 -- Получение номера дня нашей эры.
-function TConsts:getEraDay (y, m, d) --> (number)
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+---- @return:
+  result (number) - day of common era.
+--]]
+function TConfig:getEraDay (y, m, d) --> (number)
 
   local P, R = divm(y - 1, 100) -- 100⋅P + R
   local p, q = divm(P, 4)       --   4⋅p + q
@@ -195,24 +311,6 @@ function TConsts:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
--- Get day number in year.
--- Получение номера дня в году.
-function TConsts:getYearDay (y, m, d) --> (number)
-  if m == 1 then
-    return d
-  elseif m == 2 then
-    return d + self.YearDays[1]
-  end
-
-  return d + self.YearDays[m] + self:getLeapDays(y)
-end ---- getYearDay
-
--- Get week number in year.
--- Получение номера недели в году.
-function TConsts:getYearWeek (y, m, d) --> (number)
-  return 0 -- TODO
-end ---- getYearWeek
-
 ---------------------------------------- Date class
 local TDate = {} -- Класс даты
 
@@ -220,13 +318,13 @@ do
   local MDate = { __index = TDate, }
 
 -- Создание объекта класса.
-function unit.newDate (y, m, d, consts) --> (object)
+function unit.newDate (y, m, d, config) --> (object)
   local self = {
     y = y or 0, -- Количество лет
     m = m or 0, -- Количество месяцев
     d = d or 0, -- Количество дней
 
-    consts = consts or unit.newConsts();
+    config = config or unit.newConfig();
   } --- self
 
   return setmetatable(self, MDate)
@@ -234,8 +332,8 @@ end -- newDate
 
 end -- do
 ---------------------------------------- ---- handling
-function TDate:data () --> (d, m, y, consts)
-  return self.y, self.m, self.d, self.consts
+function TDate:data () --> (d, m, y, config)
+  return self.y, self.m, self.d, self.config
 end ----
 
 function TDate:copy () --> (object)
@@ -244,7 +342,7 @@ end ----
 
 ---------------------------------------- ---- to & from
 function TDate:to_y () --> (number)
-  local c = self.consts
+  local c = self.config
   return 0 -- TODO
   --return ( (self.d / c.MSecPerSec +
   --          self.s) / c.SecPerMin +
@@ -286,14 +384,14 @@ do
   local MTime = { __index = TTime, }
 
 -- Создание объекта класса.
-function unit.newTime (h, n, s, z, consts) --> (object)
+function unit.newTime (h, n, s, z, config) --> (object)
   local self = {
     h = h or 0, -- Количество часов
     n = n or 0, -- Количество минут
     s = s or 0, -- Количество секунд
     z = z or 0, -- Количество миллисекунд
 
-    consts = consts or unit.newConsts();
+    config = config or unit.newConfig();
   } --- self
 
   return setmetatable(self, MTime)
@@ -301,8 +399,8 @@ end -- newTime
 
 end -- do
 ---------------------------------------- ---- handling
-function TTime:data () --> (h, n, s, z, consts)
-  return self.h, self.n, self.s, self.z, self.consts
+function TTime:data () --> (h, n, s, z, config)
+  return self.h, self.n, self.s, self.z, self.config
 end ----
 
 function TTime:copy () --> (object)
@@ -311,35 +409,35 @@ end ----
 
 -- Количество секунд без долей секунд.
 function TTime:hns () --> (number)
-  local c = self.consts
+  local c = self.config
   return self.s + (self.n + self.h * c.MinPerDay) * c.SecPerMin
 end ----
 
 -- Количество миллисекунд как доля секунды.
 function TTime:msec () --> (number)
-  return self.z / self.consts.MSecPerSec
+  return self.z / self.config.MSecPerSec
 end ----
 
 -- Количество десятых долей секунды в миллисекундах.
 function TTime:dz () --> (number)
-  return round(self.z / self.consts.MSecPerDSec)
+  return round(self.z / self.config.MSecPerDSec)
 end ----
 
 -- Количество сотых долей секунды в миллисекундах.
 function TTime:cz () --> (number)
-  return round(self.z / self.consts.MSecPerCSec)
+  return round(self.z / self.config.MSecPerCSec)
 end ----
 
 ---------------------------------------- ---- to & from
 function TTime:to_h () --> (number)
-  local c = self.consts
+  local c = self.config
   return ( (self.z / c.MSecPerSec +
             self.s) / c.SecPerMin +
            self.n ) / c.MinPerHour + self.h
 end ----
 
 function TTime:to_n () --> (number)
-  local c = self.consts
+  local c = self.config
   return (self.z / c.MSecPerSec +
           self.s) / c.SecPerMin +
           self.n +
@@ -347,7 +445,7 @@ function TTime:to_n () --> (number)
 end ----
 
 function TTime:to_s () --> (number)
-  local c = self.consts
+  local c = self.config
   return self.z / c.MSecPerSec +
          self.s +
          (self.n +
@@ -356,7 +454,7 @@ function TTime:to_s () --> (number)
 end ----
 
 function TTime:to_z () --> (number)
-  local c = self.consts
+  local c = self.config
   return self.z +
          ( self.s +
            (self.n +
@@ -366,7 +464,7 @@ function TTime:to_z () --> (number)
 end ----
 
 function TTime:from_h (v) --> (self)
-  local c = self.consts
+  local c = self.config
 
   self.h, v = modf(v)
   self.n, v = modf(v * c.MinPerHour)
@@ -377,7 +475,7 @@ function TTime:from_h (v) --> (self)
 end ---- from_h
 
 function TTime:from_n (v) --> (self)
-  local c = self.consts
+  local c = self.config
 
   local x = c.MinPerHour
   self.h = floor(v / x)
@@ -391,7 +489,7 @@ function TTime:from_n (v) --> (self)
 end ---- from_n
 
 function TTime:from_s (v) --> (self)
-  local c = self.consts
+  local c = self.config
 
   local x = c.SecPerHour
   self.h = floor(v / x)
@@ -408,7 +506,7 @@ function TTime:from_s (v) --> (self)
 end ---- from_s
 
 function TTime:from_z (v) --> (self)
-  local c = self.consts
+  local c = self.config
 
   local x = c.MSecPerHour
   self.h = floor(v / x)
