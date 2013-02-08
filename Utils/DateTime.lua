@@ -276,6 +276,34 @@ function TConfig:getYearDay (y, m, d) --> (number)
   return d + self.YearDays[m - 1] + self:getLeapDays(y)
 end ---- getYearDay
 
+-- Set day number in year.
+-- Установка номера дня в году.
+--[[ @params:
+  y (number) - year.
+  r (number) - day of year.
+---- @return:
+  m (number) - month.
+  d (number) - day.
+--]]
+function TConfig:setYearDay (y, r) --> (number, number)
+  local YearDays = self.YearDays
+  if r <= YearDays[1] then
+    return 1, r
+  elseif r <= YearDays[2] then
+    return 2, r - YearDays[1]
+  end
+
+  local r = r - self:getLeapDays(y)
+  local MonthPerYear = self.MonthPerYear
+  for m = MonthPerYear - 1, 2, -1 do
+    if r > YearDays[m] then
+      return m + 1, r - YearDays[m]
+    end
+  end
+
+  return MonthPerYear, self.MonthDays[MonthPerYear]
+end ---- setYearDay
+
 -- Get week number in year.
 -- Получение номера недели в году.
 --[[ @params:
@@ -342,6 +370,34 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
+-- Set day number of the common era.
+-- Установка номера дня нашей эры.
+--[[ @params:
+  e (number) - day of common era.
+---- @return:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+--]]
+function TConfig:setEraDay (e) --> (number, number, number)
+  -- TODO: Реализовать и прроверить!
+  local e = e
+
+  local p, q
+  p, e = divm(e, 146097)
+  q, e = divm(e,  36524)
+  local P = 4 * p + q
+
+  local r, s
+  r, e = divm(e,   1461)
+  s, e = divm(e,    365)
+  local R = 4 * r + s
+
+  local y = 100 * P + R + 1
+
+  return y, self:setYearDay(y, e)
+end ---- setEraDay
+
 -- Get month number of the common era.
 -- Получение номера месяца нашей эры.
 --[[ @params:
@@ -353,6 +409,18 @@ end ---- getEraDay
 function TConfig:getEraMonth (y, m) --> (number)
   return y * self.MonthPerYear + m
 end ---- getEraMonth
+
+-- Set month number of the common era.
+-- Установка номера месяца нашей эры.
+--[[ @params:
+  r (number) - month of common era.
+---- @return:
+  y (number) - year.
+  m (number) - month.
+--]]
+function TConfig:setEraMonth (r) --> (number, number)
+  return divm(r, self.MonthPerYear)
+end ---- setEraMonth
 
 ---------------------------------------- ---- Time
 -- Count seconds without milliseconds.
@@ -397,77 +465,110 @@ function TDate:copy () --> (object)
   return unit.newDate(self:data())
 end ----
 
-function TDate:MonthDays () --> (bool)
+function TDate:getMonthDays () --> (bool)
   --local self = self
   return self.config:getMonthDays(self.y, self.m)
 end ----
 
-function TDate:YearDays () --> (bool)
+function TDate:getYearDays () --> (bool)
   --local self = self
   return self.config:getYearDays(self.y)
 end ----
 
-function TDate:YearDay () --> (bool)
+function TDate:getYearDay () --> (bool)
   local self = self
   return self.config:getYearDay(self.y, self.m, self.d)
 end ----
 
-function TDate:YearWeek () --> (number)
+function TDate:setYearDay (r) --> (number, number)
+  --local self = self
+  return self.config:setYearDay(self.y, r)
+end ----
+
+function TDate:getYearWeek () --> (number)
   local self = self
   return self.config:getYearWeek(self.y, self.m, self.d)
 end ----
 
-function TDate:WeekDay () --> (number)
+function TDate:getWeekDay () --> (number)
   local self = self
   return self.config:getWeekDay(self.y, self.m, self.d)
 end ----
 
-function TDate:EraDay () --> (number)
+function TDate:getEraDay () --> (number)
   local self = self
   return self.config:getEraDay(self.y, self.m, self.d)
 end ----
 
-function TDate:EraMonth () --> (number)
+function TDate:setEraDay (r) --> (number, number, number)
+  local self = self
+  return self.config:setEraDay(r)
+end ----
+
+function TDate:getEraMonth () --> (number)
   local self = self
   return self.config:getEraMonth(self.y, self.m)
 end ----
 
+function TDate:getEraMonth () --> (number)
+  local self = self
+  return self.config:getEraMonth(self.y, self.m)
+end ----
+
+function TDate:setEraMonth (r) --> (number, number)
+  --local self = self
+  return self.config:setEraMonth(r)
+end ----
+
 function TDate:ymd () --> (number)
-  return self:EraDay()
+  return self:getEraDay()
 end ----
 
 ---------------------------------------- ---- to & from
 function TDate:to_y () --> (number)
-  return self.y - 1 + self:YearDay() / self:YearDays()
+  return self.y - 1 + self:getYearDay() / self:getYearDays()
 end ----
 
 function TDate:to_m () --> (number)
-  return self:EraMonth() - 1 + self.d / self:MonthDays()
+  return self:getEraMonth() - 1 + self.d / self:getMonthDays()
 end ----
 
 function TDate:to_d () --> (number)
-  return self:YearDay()
+  return self:getYearDay()
 end ----
 
-function TDate:from_y (v) --> (self)
-  local c = self.config
-  -- TODO
+function TDate:from_y (v) --> (self, rest)
+  local self = self
 
-  return self
+  local w, v = modf(v)
+  self.y = w + 1
+  v = v * self:getYearDays()
+
+  self.m, v = self:setYearDay(v)
+  self.d, v = modf(v)
+
+  return self, v
 end ----
 
-function TDate:from_m (v) --> (self)
-  local c = self.config
-  -- TODO
+function TDate:from_m (v) --> (self, rest)
+  local self = self
 
-  return self
+  local w, v = modf(v)
+  self.y, self.m = self:setEraMonth(w + 1)
+  v = v * self:getMonthDays()
+
+  self.d, v = modf(v)
+
+  return self, v
 end ----
 
-function TDate:from_d (v) --> (self)
-  local c = self.config
-  -- TODO
+function TDate:from_d (v) --> (self, rest)
+  local self = self
 
-  return self
+  local w, v = modf(v)
+  self.y, self.m, self.d = self:setEraDay(w)
+
+  return self, v
 end ----
 
 ---------------------------------------- ---- operations
@@ -502,13 +603,13 @@ function TTime:copy () --> (object)
   return unit.newTime(self:data())
 end ----
 
-function TTime:DaySec () --> (number)
+function TTime:getDaySec () --> (number)
   local self = self
   return self.config:getDaySec(self.h, self.n, self.s)
 end ----
 
 function TTime:hns () --> (number)
-  return self:DaySec()
+  return self:getDaySec()
 end ----
 
 -- Get milliseconds as second fraction.
@@ -568,7 +669,7 @@ function TTime:to_z () --> (number)
 end ----
 
 function TTime:from_h (v) --> (self)
-  local c = self.config
+  local c, v = self.config, v
 
   self.h, v = modf(v)
   self.n, v = modf(v * c.MinPerHour)
@@ -579,7 +680,7 @@ function TTime:from_h (v) --> (self)
 end ---- from_h
 
 function TTime:from_n (v) --> (self)
-  local c = self.config
+  local c, v = self.config, v
 
   local x = c.MinPerHour
   self.h = floor(v / x)
@@ -593,7 +694,7 @@ function TTime:from_n (v) --> (self)
 end ---- from_n
 
 function TTime:from_s (v) --> (self)
-  local c = self.config
+  local c, v = self.config, v
 
   local x = c.SecPerHour
   self.h = floor(v / x)
@@ -610,7 +711,7 @@ function TTime:from_s (v) --> (self)
 end ---- from_s
 
 function TTime:from_z (v) --> (self)
-  local c = self.config
+  local c, v = self.config, v
 
   local x = c.MSecPerHour
   self.h = floor(v / x)
