@@ -256,7 +256,7 @@ function unit.getClauseLen (tp) --> (number | nil)
   local data = unit.getLineData(tp)
   if not data then return end
 
-  return data.stop:diff(data.start)
+  return data.stop:dif(data.start)
 end ----
 
 -- Получение длины паузы перед отрезком времени на линии файла.
@@ -269,7 +269,7 @@ function unit.getClauseGap (tp) --> (number | nil)
     return curr.start:to_z()
   end
 
-  return curr.start:diff(prev.stop)
+  return curr.start:dif(prev.stop)
 end ----
 
 --------------------------------------------------------------------------------

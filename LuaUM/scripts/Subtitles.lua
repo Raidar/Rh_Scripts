@@ -85,14 +85,14 @@ function unit.CurClauseData () --| (window)
 end ----
 
 -- Показ данных по разнице как времени.
-function unit.getClauseShowData (diff) --> (table, table)
-  local diff = diff or 0
-  local time = newTime():from_z(diff)
+function unit.getClauseShowData (dif) --> (table, table)
+  local dif = dif or 0
+  local time = newTime():from_z(dif)
 
   local show = {
     L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
     L.TimeLenDataFmt:format(time:data()),
-    L.TimeLenMsecFmt:format(n2s(diff)),
+    L.TimeLenMsecFmt:format(n2s(dif)),
     L.TimeLenTextFmt:format(time:data()),
   } ---
   local kind = {
@@ -108,9 +108,9 @@ function unit.CurClauseLen () --| (window)
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
-  local diff = SubsDatim.getClauseLen(tp)
+  local dif = SubsDatim.getClauseLen(tp)
 
-  local show, kind = unit.getClauseShowData(diff)
+  local show, kind = unit.getClauseShowData(dif)
 
   return datShow(show, L.cap_CurClauseLen, kind)
 end ----
@@ -120,9 +120,9 @@ function unit.CurClauseGap () --| (window)
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
-  local diff = SubsDatim.getClauseGap(tp)
+  local dif = SubsDatim.getClauseGap(tp)
 
-  local show, kind = unit.getClauseShowData(diff)
+  local show, kind = unit.getClauseShowData(dif)
 
   return datShow(show, L.cap_CurClauseLen, kind)
 end ----

@@ -191,7 +191,7 @@ function unit.newConfig (Config) --|> Config
 end ---- newConfig
 
 end -- do
----------------------------------------- ---- operations
+---------------------------------------- ---- Date
 -- Check an year for leap year.
 -- Проверка на високосный год.
 --[[ @params:
@@ -220,7 +220,7 @@ end ----
   y (number) - year.
   m (number) - month.
 ---- @return:
-  result (number) - days count in month.
+  result (number) - day count in month.
 --]]
 function TConfig:getMonthDays (y, m) --> (number)
   if m ~= 2 then
@@ -229,6 +229,17 @@ function TConfig:getMonthDays (y, m) --> (number)
     return self.MonthDays[m] + self:getLeapDays(y)
   end
 end ---- getMonthDays
+
+-- Count days in year.
+-- Количество дней в году.
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (number) - days count in year.
+--]]
+function TConfig:getYearDays (y) --> (number)
+  return self.BaseYear + self:getLeapDays(y)
+end ---- getYearDays
 
 -- Get week day for last day of prior month.
 -- Получение дня недели для последнего дня предыдущего месяца.
@@ -331,6 +342,32 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
+-- Get month number of the common era.
+-- Получение номера месяца нашей эры.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+---- @return:
+  result (number) - month of common era.
+--]]
+function TConfig:getEraMonth (y, m) --> (number)
+  return y * self.MonthPerYear + m
+end ---- getEraMonth
+
+---------------------------------------- ---- Time
+-- Count seconds without milliseconds.
+-- Количество секунд без долей секунд.
+--[[ @params:
+  h (number) - hour.
+  n (number) - minute.
+  s (number) - second.
+---- @return:
+  result (number) - second count in day.
+--]]
+function TConfig:getDaySec (h, n, s) --> (number)
+  return s + (n + h * self.MinPerHour) * self.SecPerMin
+end ----
+
 ---------------------------------------- Date class
 local TDate = {} -- Класс даты
 
@@ -360,36 +397,74 @@ function TDate:copy () --> (object)
   return unit.newDate(self:data())
 end ----
 
+function TDate:MonthDays () --> (bool)
+  --local self = self
+  return self.config:getMonthDays(self.y, self.m)
+end ----
+
+function TDate:YearDays () --> (bool)
+  --local self = self
+  return self.config:getYearDays(self.y)
+end ----
+
+function TDate:YearDay () --> (bool)
+  local self = self
+  return self.config:getYearDay(self.y, self.m, self.d)
+end ----
+
+function TDate:YearWeek () --> (number)
+  local self = self
+  return self.config:getYearWeek(self.y, self.m, self.d)
+end ----
+
+function TDate:WeekDay () --> (number)
+  local self = self
+  return self.config:getWeekDay(self.y, self.m, self.d)
+end ----
+
+function TDate:EraDay () --> (number)
+  local self = self
+  return self.config:getEraDay(self.y, self.m, self.d)
+end ----
+
+function TDate:EraMonth () --> (number)
+  local self = self
+  return self.config:getEraMonth(self.y, self.m)
+end ----
+
+function TDate:ymd () --> (number)
+  return self:EraDay()
+end ----
+
 ---------------------------------------- ---- to & from
 function TDate:to_y () --> (number)
-  local c = self.config
-  return 0 -- TODO
-  --return ( (self.d / c.MSecPerSec +
-  --          self.s) / c.SecPerMin +
-  --         self.n ) / c.MinPerHour + self.h
+  return self.y - 1 + self:YearDay() / self:YearDays()
 end ----
 
 function TDate:to_m () --> (number)
-  return 0 -- TODO
+  return self:EraMonth() - 1 + self.d / self:MonthDays()
 end ----
 
 function TDate:to_d () --> (number)
-  return 0 -- TODO
+  return self:YearDay()
 end ----
 
 function TDate:from_y (v) --> (self)
+  local c = self.config
   -- TODO
 
   return self
 end ----
 
 function TDate:from_m (v) --> (self)
+  local c = self.config
   -- TODO
 
   return self
 end ----
 
 function TDate:from_d (v) --> (self)
+  local c = self.config
   -- TODO
 
   return self
@@ -427,24 +502,33 @@ function TTime:copy () --> (object)
   return unit.newTime(self:data())
 end ----
 
--- Количество секунд без долей секунд.
-function TTime:hns () --> (number)
-  local c = self.config
-  return self.s + (self.n + self.h * c.MinPerDay) * c.SecPerMin
+function TTime:DaySec () --> (number)
+  local self = self
+  return self.config:getDaySec(self.h, self.n, self.s)
 end ----
 
--- Количество миллисекунд как доля секунды.
+function TTime:hns () --> (number)
+  return self:DaySec()
+end ----
+
+-- Get milliseconds as second fraction.
+-- Получение миллисекунд как доля секунды.
+--[[ @return:
+  result (number) - milliseconds as fraction of second.
+--]]
 function TTime:msec () --> (number)
   return self.z / self.config.MSecPerSec
 end ----
 
 -- Количество десятых долей секунды в миллисекундах.
 function TTime:dz () --> (number)
+  --local self = self
   return round(self.z / self.config.MSecPerDSec)
 end ----
 
 -- Количество сотых долей секунды в миллисекундах.
 function TTime:cz () --> (number)
+  --local self = self
   return round(self.z / self.config.MSecPerCSec)
 end ----
 
@@ -544,11 +628,11 @@ function TTime:from_z (v) --> (self)
 end ---- from_z
 
 ---------------------------------------- ---- operations
-function TTime:summ (time) --> (number)
+function TTime:sum (time) --> (number)
   return self:to_z() + time:to_z()
 end ----
 
-function TTime:diff (time) --> (number)
+function TTime:dif (time) --> (number)
   return self:to_z() - time:to_z()
 end ----
 
