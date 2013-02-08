@@ -84,6 +84,12 @@ local TConfig = {
   MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
+  -- TODO: Константы и функции для правильного учёта недели года и начала недели.
+  --WeekStartDay  = 2, -- Первый день недели:         понедельник
+  --YearStartWeek = 1, -- День первой недели года:    1-я января
+  --YearStartWeek = 4, -- День первой недели года:    4-я января
+  --YearStartWeek = 7, -- День первой недели года:    Первая полная неделя ??
+
   -- Количество дней в месяцах:
   MonthDays = {
     31, 28, 31,
@@ -267,9 +273,17 @@ end ---- getYearDay
   d (number) - day.
 ---- @return:
   result (number) - week of year.
+---- @notes:
+  The first week is a week with January 1.
+---- @notes:rus:
+  1-й неделей считается неделя с 1-м января.
 --]]
 function TConfig:getYearWeek (y, m, d) --> (number)
-  return divf(self:getYearDay(y, m, d), self.DayPerWeek) + 1
+  local DayPerWeek = self.DayPerWeek
+  local YearStartDay = self:getWeekDay(y, 01, 01)
+  return divf(self:getYearDay(y, m, d) - 1 +
+              (YearStartDay == 0 and DayPerWeek or YearStartDay) - 1,
+              DayPerWeek) + 1
 end ---- getYearWeek
 
 -- Get day number of the week.
@@ -279,7 +293,13 @@ end ---- getYearWeek
   m (number) - month.
   d (number) - day.
 ---- @return:
-  result (0..6) - day of week as number for Sunday..Saturday.
+  result (number) - day of week.
+---- @notes:
+  1 - Monday, 2 - Tuesday, 3 - Wednesday,
+  4 - Thursday, 5 - Friday, 6 - Saturday, 0 - Sunday.
+---- @notes:rus:
+  1 - понедельник, 2 - вторник, 3 - среда,
+  4 - четверг, 5 - пятница, 6 - суббота, 0 - воскресенье.
 --]]
 function TConfig:getWeekDay (y, m, d) --> (number)
 
