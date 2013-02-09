@@ -8,6 +8,7 @@ local Data = {
   btn_Cancel = "Cancel",
 
   ----------------------------------------
+  Calendar = "Calendar",
 
   --
   Date              = "Date",
