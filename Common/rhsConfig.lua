@@ -393,14 +393,17 @@ local addNewData = tables.extend
 
 -- Обработка конфигурации.
 local function Configure (ArgData)
-  -- 1. Заполнение DefData.
+
+  -- 1. Заполнение ArgData.
   local ArgData = addNewData(ArgData or {}, DefCfgData)
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
+
   -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
   local CfgData = {}
   --local CfgData = History:field(Custom.Field)
+
   -- 3. Дополнение конфигурации.
   CfgData.um = History:field("um")
   for k, v in pairs(ArgData) do
@@ -417,6 +420,7 @@ local function Configure (ArgData)
     Custom = Custom, History = History, --DlgTypes = DlgTypes,
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
+
   locale.customize(Config.Custom) -- Инфо локализации
   --logShow(Config.Custom, "Custom")
 

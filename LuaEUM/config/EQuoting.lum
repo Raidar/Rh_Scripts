@@ -223,6 +223,7 @@ local mEnquote = {
   text = L.LuaEnquote,
   -- [[
   MenuView = "RectMenu",
+
   Props = {
     RectMenu = {
       Rows = 9,
@@ -230,7 +231,14 @@ local mEnquote = {
       Fixed = { HeadRows = 1, HeadCols = 0, },
     }, -- RectMenu
   }, -- Props
-  CfgData = { UMenu = { TextNamedKeys = false, }, },
+
+  CfgData = {
+
+    UMenu = {
+      TextNamedKeys = false,
+    },
+
+  }, -- CfgData
   --]]
 
   Items = mItems,
@@ -267,7 +275,7 @@ local mQuoting = {
 local Data = {
   Menu = {
     text = L.LuaScripts,
-    Items = { mQuoting },
+    Items = { mQuoting, },
   },
   ["Quoting"] = mQuoting,
 } ---

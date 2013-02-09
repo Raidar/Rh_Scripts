@@ -31,7 +31,7 @@ local Custom = {
   label = "Chars",
   name = "lum",
   path = "Rh_Scripts.LuaUM.config.",
-  locale = { kind = 'require' },
+  locale = { kind = 'require', },
 } ---
 
 ---------------------------------------- Locale
@@ -43,7 +43,7 @@ end
 ---------------------------------------- Items
 local Menus = {}
 
-local Order, Datas, Props
+--local Order, Datas, Props
 local Keys = "AccelKey"
 
 local Groups = {
@@ -52,7 +52,7 @@ local Groups = {
   Punct = true,
   Techs = true,
   Draws = true,
-} ---
+} --- Groups
 
 local Texts = {
   CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
@@ -105,15 +105,17 @@ do
 
     Props = {
       Bottom = L.EscToQuit,
-    }, --
+    }, -- Props
 
     CfgData = {
       UMenu = {
         BottomHotKeys = false,
         ReturnToUMenu = true,
       }, --
-    }, --
-  } ---
+    }, -- CfgData
+
+  } --- DefConfig
+
   local setmetatable = setmetatable
 
 -- Таблица для конфигурации меню.
@@ -193,7 +195,7 @@ Menus.Chars_Custom = { -- Characters
     },
   }, -- Props
 
-  CfgData = { UMenu = DefUMenu },
+  CfgData = { UMenu = DefUMenu, },
 
   Items = CharsMenu.Items(Props, Datas, "AccelKey"),
 } ---
@@ -222,7 +224,7 @@ Menus.Chars_Alters = { -- Characters
     },
   }, -- Props
 
-  CfgData = { UMenu = DefUMenu },
+  CfgData = { UMenu = DefUMenu, },
 
   Items = CharsMenu.Items(Props, Datas, "AccelKey"),
 } --- Chars_Alters
@@ -231,22 +233,23 @@ Menus.Chars_Alters = { -- Characters
 ---------------------------------------- LETTERS etc
 
 ---------------------------------------- ---- Greek and extended
-Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
-Datas = -- Char + Shift
-        [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
-        [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?|]]..Chars.BS..
-        -- Ctrl + Shift
-        [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./°]]..Chars.CR..
-        [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>? ]]..
-        -- Alt + Shift
-        [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\ ]]..
-        [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?| ]]
-Props = {
-  Order = Order,
-  Serial = true,
-  --Heading = "Order",
-  Heading = "Both",
-} ---
+do
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
+  local Datas = -- Char + Shift
+                [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
+                [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?|]]..Chars.BS..
+                -- Ctrl + Shift
+                [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./°]]..Chars.CR..
+                [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>? ]]..
+                -- Alt + Shift
+                [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\ ]]..
+                [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?| ]]
+  local Props = {
+    Order = Order,
+    Serial = true,
+    --Heading = "Order",
+    Heading = "Both",
+  } ---
 
 unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
 unit.UseSpace('CharsGreekEx')
@@ -254,50 +257,54 @@ unit.CompactMenu('CharsGreekEx')
 
 --logShow(Menus.CharsGreekEx, "unit.Menu", 3)
 
+end -- do
 ---------------------------------------- ---- Cyrillic slavic
-Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
-Datas = -- Char + Shift
-        [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
-        [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,|()_+]]..Chars.BS..
-        -- Ctrl + Shift                                      
-        [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ°[]-=]]..Chars.CR..
-        [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ{}_+ ]]..
-        -- Alt + Shift
-        [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\  -= ]]..
-        [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|  _+ ]]..
-        -- Ctrl+Alt + Shift
-        [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ’ѭѩ…―  -= ]]..
-        [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$”ѬѨ&‾  _+ ]]
-Props = {
-  Order = Order,
-  Serial = true,
-  --Heading = "Order",
-  Heading = "Both",
-} ---
+do
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
+  local Datas = -- Char + Shift
+                [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
+                [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,|()_+]]..Chars.BS..
+                -- Ctrl + Shift                                      
+                [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ°[]-=]]..Chars.CR..
+                [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ{}_+ ]]..
+                -- Alt + Shift
+                [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\  -= ]]..
+                [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|  _+ ]]..
+                -- Ctrl+Alt + Shift
+                [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ’ѭѩ…―  -= ]]..
+                [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$”ѬѨ&‾  _+ ]]
+  local Props = {
+    Order = Order,
+    Serial = true,
+    --Heading = "Order",
+    Heading = "Both",
+  } ---
 
 unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
 --logShow(Menus.CharsCyrSlav, "unit.Menu", 2)
 unit.UseSpace('CharsCyrSlav')
 unit.CompactMenu('CharsCyrSlav')
 
+end -- do
 ---------------------------------------- MATHEMATICS
 
 ---------------------------------------- ---- Sub-/superscripts
-Order = [[1234567890=-`[]ijk/\ ]]
-Datas = -- Char + Shift
-        [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
-        [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ⁱʲᵏ, ]]..Chars.BS..
-        -- Ctrl + Shift                
-        [[1234567890+−=()ijk °]]..Chars.CR..
-        [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄     ‒ ]]..
-        -- Alt + Shift
-        [[ ⅔¾⅘⅚ ⅞        ᴵᴶᴷ/\ ]]..
-        [[ ⅖⅗ ⅝             ?| ]]
-Props = {
-  Order = Order,
-  Serial = true,
-  Heading = "Both",
-} ---
+do
+  local Order = [[1234567890=-`[]ijk/\ ]]
+  local Datas = -- Char + Shift
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ⁱʲᵏ, ]]..Chars.BS..
+                -- Ctrl + Shift                
+                [[1234567890+−=()ijk °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄     ‒ ]]..
+                -- Alt + Shift
+                [[ ⅔¾⅘⅚ ⅞        ᴵᴶᴷ/\ ]]..
+                [[ ⅖⅗ ⅝             ?| ]]
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+  } ---
 
 Keys = {
   Kind = "AccelKey";
@@ -312,31 +319,37 @@ unit.UseSpace('MathsScripts')
 
 --logShow(Menus.MathsScripts, "MathsScripts", 3)
 
+end -- do
 ---------------------------------------- ---- Other indexes
-Order = "aijklmnprstuvxy"
-Datas = -- Char + Shift
-        "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
-        "ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ"..
-        -- Ctrl + Shift
-        "               "..
-        "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
-        -- Alt + Shift
-        --"               "
-Props = {
-  Order = Order,
-  Serial = true,
-  Heading = "Both",
-} ---
+do
+  local Order = "aijklmnprstuvxy"
+  local Datas = -- Char + Shift
+                "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
+                "ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ"..
+                -- Ctrl + Shift
+                "               "..
+                "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
+                -- Alt + Shift
+                --"               "
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+  } ---
 
 unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
 
+end -- do
 ---------------------------------------- TECHNOLOGY
 
 ---------------------------------------- ---- Arrows
+do
 
+end -- do
 ---------------------------------------- PUNCTUATION
 
 ---------------------------------------- ---- Symbols
+do
 --[[
 /   - dot/point
 a   - acute
@@ -344,27 +357,27 @@ op  - prime + modifier apostroph
 qw  - quote
 b   - bullet
 --]]
-Order = [[/opqwb`1234567890-\ ]]
-Datas = -- Char + Shift
-        [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
-        [[․‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
-        -- Ctrl + Shift
-        [[‥‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
-        [[⁝ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
-        -- Alt + Shift
-        [[ ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
-        [[ ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
+  local Order = [[/opqwb`1234567890-\ ]]
+  local Datas = -- Char + Shift
+                [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
+                [[․‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
+                -- Ctrl + Shift
+                [[‥‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
+                [[⁝ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
+                -- Alt + Shift
+                [[ ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
+                [[ ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
 --[=[
-Order = [[/aopqwb`1234567890-\ ]]
-Datas = -- Char + Shift
-        [[…́‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
-        [[․̀‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
-        -- Ctrl + Shift
-        [[‥̋‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
-        [[⁝̏ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
-        -- Alt + Shift
-        [[ ̍ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
-        [[ ̎ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
+  local Order = [[/aopqwb`1234567890-\ ]]
+  local Datas = -- Char + Shift
+                [[…́‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
+                [[․̀‶″‛’‣˝¡¿†¯‰ˇ˛˚‹›– ]]..Chars.BS..
+                -- Ctrl + Shift
+                [[‥̋‷‴„“◦˜⁉⁈‡_‱˘  ʿʾ— ]]..Chars.CR..
+                [[⁝̏ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
+                -- Alt + Shift
+                [[ ̍ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
+                [[ ̎ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:
   ʹ - Greek Numeral Sign (Dexia keraia)
@@ -375,38 +388,54 @@ Datas = -- Char + Shift
   \x0483-\x0487 Combining Cyrillic
   etc
 --]=]
-Props = {
-  Order = Order,
-  Serial = true,
-  Heading = "Both",
-} ---
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+  } ---
 
 unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
 unit.UseSpace('PunctSymbols')
 
+end -- do
 ---------------------------------------- ---- Space & Hyphen
-Order = {
-  { '   " "', ' ', 'MULTIPLY' }, { ' "-"/Num-', '-', 'SUBTRACT' },
-  { '   "`"', '`', 'DIVIDE'   }, { ' "="/Num+', '=', 'ADD'      },
-} ---
-Datas = {
-  { ' ', 'Thin sp.' }, { '­', 'Soft hyph.' }, { ' ', 'Fig. space ' }, { '‒', 'Fig. dash' },
-  { ' ', 'En space' }, { '–', ' En dash  ' }, { ' ', 'Punct. sp. ' }, { '−', '  Minus  ' },
-  { ' ', 'Em space' }, { '—', ' Em dash  ' }, { ' ', 'Hair space ' }, { '‐', ' Hyphen  ' },
-  { ' ', 'N-b. sp.' }, { '‑', 'N-b. hyph.' }, { ' ', 'Narrow nbsp' }, { '‧', 'Hyph. pt.' },
-  --{ '',  '        ' }, { '_', '          ' }, { '',  '           ' }, { '',  '         ' },
-} ---
-Props = {
-  Order = Order,
-  Serial = true,
-  Heading = "Both",
-  --___ = true, -- DEBUG
-} ---
+do
+  local Order = {
+    { '   " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
+    { '   "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
+  } ---
+
+  local Datas = {
+    { ' ', 'Thin sp.',    }, { '­', 'Soft hyph.', },
+    { ' ', 'Fig. space ', }, { '‒', 'Fig. dash',  },
+
+    { ' ', 'En space',    }, { '–', ' En dash  ', },
+    { ' ', 'Punct. sp. ', }, { '−', '  Minus  ',  },
+
+    { ' ', 'Em space',    }, { '—', ' Em dash  ', },
+    { ' ', 'Hair space ', }, { '‐', ' Hyphen  ',  },
+
+    { ' ', 'N-b. sp.',    }, { '‑', 'N-b. hyph.', },
+    { ' ', 'Narrow nbsp', }, { '‧', 'Hyph. pt.',  },
+
+    --[[
+    { '',  '        ',    }, { '_', '          ', },
+    { '',  '           ', }, { '',  '         ',  },
+    --]]
+  } ---
+
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+    --___ = true, -- DEBUG
+  } ---
 
 unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
 
 --logShow(Menus.PunctSpaHyps.CfgData, "unit.Menu", 3)
 
+end -- do
 --------------------------------------------------------------------------------
 
 ---------------------------------------- ----

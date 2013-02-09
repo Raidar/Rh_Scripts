@@ -161,7 +161,7 @@ do
     local h = ansi.io.popen(program)
     --local h = ansi.io.popen(win.Utf8ToOem(program))
     if not h then return end
-    --logShow({ program, win.OemToUtf8(win.Utf8ToOem(program)) }, "ansi_exec")
+    --logShow({ program, win.OemToUtf8(win.Utf8ToOem(program)), }, "ansi_exec")
     local out = h:read("*a")
     --logShow(out, program)
     h:close()
@@ -172,7 +172,7 @@ do
 -- Получение статуса рабочей копии.
 function Svn.getStatus (ItemPath) --> (bool)
   local Status = Formats.Status:format(CfgData.Path, CfgData.Status, ItemPath)
-  --logShow({ Path = ItemPath, Status = Status }, "Item + Status")
+  --logShow({ Path = ItemPath, Status = Status, }, "Item + Status")
   return exec(Status)
   --return exec(Status.." "..context.utils.PluginPath..DefCustom.path.."SubWCRevData.txt")
 end ----
@@ -247,7 +247,7 @@ function Svn.Run (Args, Cfg) --> (bool)
 
   -- Выполнение операции.
   local CmdLine = Formats.Run:format(CfgData.Path, CfgData.File, Cmd, Path, Adds)
-  --logShow({ CmdLine = CmdLine, Args = Args, Adds = Adds, CfgData = CfgData }, "CmdLine")
+  --logShow({ CmdLine = CmdLine, Args = Args, Adds = Adds, CfgData = CfgData, }, "CmdLine")
 
   if CfgData.ShowCmd or CfgData[Cmd] and CfgData[Cmd].ShowCmd then
     utils.message("Command: "..Cmd, "Command line:\n"..CmdLine, "l")
@@ -268,46 +268,46 @@ end --
 ---------------------------------------- Items
 -- Операции пунктов меню.
 local AllOperations = {
-  { command = "checkout",       checked = "↵" },
-  { command = "update",         checked = "↶" },
-  { command = "commit",         checked = "↗" },
+  { command = "checkout",       checked = "↵", },
+  { command = "update",         checked = "↶", },
+  { command = "commit",         checked = "↗", },
   { separator = true },
-  { command = "diff",           checked = "♒" },
-  { command = "log",            checked = "☞" },
-  { command = "repobrowser",    checked = "♀", name = "browse" },
-  { command = "repobrowser",    checked = "☿", name = "browseto", nopath = true },
-  { command = "repostatus",     checked = "≟", name = "change" },
-  { command = "revisiongraph",  checked = "♂", name = "revgraph" },
+  { command = "diff",           checked = "♒", },
+  { command = "log",            checked = "☞", },
+  { command = "repobrowser",    checked = "♀", name = "browse", },
+  { command = "repobrowser",    checked = "☿", name = "browseto", nopath = true, },
+  { command = "repostatus",     checked = "≟", name = "change", },
+  { command = "revisiongraph",  checked = "♂", name = "revgraph", },
   { separator = true },
-  { command = "conflicteditor", checked = "✓", name = "conflict" },
-  { command = "resolve",        checked = "✔" },
-  { command = "update",         checked = "↩", name = "uptorev"; "/rev" },
-  { command = "rename",         checked = "=" },
-  { command = "remove",         checked = "−" },
-  { command = "revert",         checked = "↻" },
-  { command = "cleanup",        checked = "☑" },
-  { command = "lock",           checked = "☒" },
-  { command = "unlock",         checked = "☐" },
+  { command = "conflicteditor", checked = "✓", name = "conflict", },
+  { command = "resolve",        checked = "✔", },
+  { command = "update",         checked = "↩", name = "uptorev"; "/rev", },
+  { command = "rename",         checked = "=", },
+  { command = "remove",         checked = "−", },
+  { command = "revert",         checked = "↻", },
+  { command = "cleanup",        checked = "☑", },
+  { command = "lock",           checked = "☒", },
+  { command = "unlock",         checked = "☐", },
   { separator = true },
-  { command = "copy",           checked = "♈" },
-  { command = "switch",         checked = "♃" },
-  { command = "merge",          checked = "♉" },
-  { command = "export",         checked = "↴" },
-  { command = "relocate",       checked = "⇲" },
+  { command = "copy",           checked = "♈", },
+  { command = "switch",         checked = "♃", },
+  { command = "merge",          checked = "♉", },
+  { command = "export",         checked = "↴", },
+  { command = "relocate",       checked = "⇲", },
   { separator = true },
-  { command = "repocreate",     checked = "♊", name = "create" },
-  { command = "blame",          checked = "♁" },
-  { command = "add",            checked = "+" },
-  { command = "import",         checked = "↱" },
-  { command = "ignore",         checked = "×" },
+  { command = "repocreate",     checked = "♊", name = "create", },
+  { command = "blame",          checked = "♁", },
+  { command = "add",            checked = "+", },
+  { command = "import",         checked = "↱", },
+  { command = "ignore",         checked = "×", },
   { separator = true },
-  { command = "createpatch",    checked = "✗", name = "patch" },
-  { name    = "applypatch",     checked = "✘", name = "patching" },
-  { command = "properties",     checked = "☝", name = "props" },
+  { command = "createpatch",    checked = "✗", name = "patch", },
+  { name    = "applypatch",     checked = "✘", name = "patching", },
+  { command = "properties",     checked = "☝", name = "props", },
   { separator = true },
-  { command = "settings",       checked = "⚗" },
-  { command = "help",           checked = "?" },
-  { command = "about",          checked = "☧" },
+  { command = "settings",       checked = "⚗", },
+  { command = "help",           checked = "?", },
+  { command = "about",          checked = "☧", },
 } --- AllOperations
 
 -- Состав меню в зависимости от элемента.
@@ -415,7 +415,7 @@ function Svn.MakeItems (Operations, Kinds) --> (Items)
       local name = v.name or v.command
       local q = Svn.Item
 
-      --logShow({ q, Kinds }, "Check", 1)
+      --logShow({ q, Kinds, }, "Check", 1)
       if Kinds[name] or
          (not q.isWorkingCopy and
           Kinds[q.isWorkingCopy][q.isDir][name]) or
@@ -443,9 +443,10 @@ if CfgData.MenuView ~= "far.Menu" and CfgData.ItemWidth then
   mItems[#mItems+1] = { -- Special line
     text = ("─"):rep(CfgData.ItemWidth),
     disable = true,
-  checked = "─",
+    checked = "─",
   } --
 end
+
 mItems[#mItems+1] = { -- SVN Status
   text = L.tSVN_status,
   Hint = L.hSVN_status,
@@ -472,7 +473,7 @@ do
   end
 
   Svn.Item.View = View and View ~= Path and ".."..View or Path
-  --logShow({ Path, Lost, View }, "Parse Path")
+  --logShow({ Path, Lost, View, }, "Parse Path")
 end -- do
 
 local mTortoiseSVN = { -- Tortoise SVN
@@ -484,6 +485,7 @@ local mTortoiseSVN = { -- Tortoise SVN
 
   Props = {
     Bottom = CfgData.ShowPath and Svn.Item.View,
+
     RectMenu = {
       Cols = IsMoreCols and 2 or 1,
       Order = "V",
@@ -492,14 +494,17 @@ local mTortoiseSVN = { -- Tortoise SVN
       MenuAlign = "CM",
       UncheckedChar = " ",
     }, -- RectMenu
+
   }, -- Props
 
   CfgData = {
+
     UMenu = {
       BottomHotKeys = false,
       ReturnToUMenu = false,
-    },
-  },
+    }, --
+
+  }, -- CfgData
 
   Items = mItems,
 } --- mTortoiseSVN
@@ -508,7 +513,7 @@ local mTortoiseSVN = { -- Tortoise SVN
 local Data = {
   Menu = {
     text = L.tSVN,
-    Items = { mTortoiseSVN },
+    Items = { mTortoiseSVN, },
   },
 
   ["tSVN"] = mTortoiseSVN,
