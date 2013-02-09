@@ -1,5 +1,5 @@
 ﻿[Used keys]: Используемые клавиши
-TortoiseSVN / Git
+TortoiseSVN     / Git
 
 A — Add         / =
 B — Blame       / =
@@ -18,7 +18,7 @@ N — reName      / move
 O — resOlve     / —
 P — Patch       / Pull
 Q —
-R — Repo        / —
+R — Repo        / Reset / revert
 S — Settings    / —
 T — branch+Tag  / Tag
 U — Update      / pUsh
