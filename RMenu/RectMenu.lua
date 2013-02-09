@@ -489,16 +489,20 @@ function TMenu:DefinePropInfo () --| Props
   self.Colors = {
     Usual = UsualColors,
     Fixed = FixedColors,
+
     Text      = UsualColors.COL_MENUTEXT,
+    Border    = UsualColors.COL_MENUBOX,
     ScrollBar = UsualColors.COL_MENUSCROLLBAR,
     StatusBar = UsualColors.COL_MENUSTATUSBAR,
-    Border    = UsualColors.COL_MENUBOX,
+
     Borders   = UsualColors.Borders or Null,
-    DlgBox    = dlgUt.ItemColor(-- Text + Select + Box:
+    DlgBox    = UsualColors.DlgBox or
+                dlgUt.ItemColor(-- Text + Select + Box:
                                 UsualColors.COL_MENUTEXT,
                                 UsualColors.COL_MENUHIGHLIGHT,
                                 UsualColors.COL_MENUBOX),
   } -- Colors
+
   --logShow(self.Colors, "self.Colors", "d2 x2")
 end ---- DefinePropInfo
 
@@ -1810,13 +1814,13 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
 
     -- Вывод пункта (не разделителя):
     local Options = {
-      Row = Row, Col = Col, -- Координаты ячейки
-      textMax = self.textMax[Col], -- Макс. длина текста
-      lineMax = self.lineMax[Row], -- Макс. ширина текста
-      Filler  = Spaces, -- Заполнитель пустоты (строка пробелов)
-      isHot   = self.Props.isHot, -- Признак использования горячих букв
-      checked = self.Data.checked, -- Признак отмеченных пунктов
-      Props   = self.RectMenu, -- Свойства RectMenu
+      Row = Row, Col = Col,         -- Координаты ячейки
+      textMax = self.textMax[Col],  -- Макс. длина текста
+      lineMax = self.lineMax[Row],  -- Макс. ширина текста
+      Filler  = Spaces,             -- Заполнитель пустоты (строка пробелов)
+      isHot   = self.Props.isHot,   -- Признак использования горячих букв
+      checked = self.Data.checked,  -- Признак отмеченных пунктов
+      Props   = self.RectMenu,      -- Свойства RectMenu
     } --- Options
 
     return DrawItemText(Rect, Color, Item, Options)
@@ -1836,7 +1840,10 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect, A_Colors)
   local r, y = A_Cell.rMin, A_Rect.yMin --  row   & y pos
 
   -- Область вывода текста пункта:
-  local Rect = { Colors = A_Colors, x = 0, y = 0, w = 0, h = 0 }
+  local Rect = {
+    Colors = A_Colors,
+    x = 0, y = 0, w = 0, h = 0,
+  } ---
 
   while y < yLim and r <= A_Cell.rMax do
     h = self.RowHeight[r]
@@ -1881,7 +1888,7 @@ end ---- DrawMenuPart
 function TMenu:DrawMenu ()
   local Zone = self.Zone
   local FixRows, FixCols = self.FixedRows, self.FixedCols
-  local Base, FixedColors = self.Zone.Base, self.Colors.Fixed
+  local Base, FixedColors = Zone.Base, self.Colors.Fixed
   if Base.Row == 0 or Base.Col == 0 then return end
 
   -- Расчёт начальной позиции вывода.
@@ -2246,14 +2253,16 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     if MouseRec.ButtonState == MouseLeftBtn then
       local Zone = _Menu.Zone
       local x, y = MouseRec.MousePositionX, MouseRec.MousePositionY
-      -- TODO: Обработка выбором мышью.
       --logShow({ x, y, Zone = Zone, MouseRec = MouseRec, }, ProcItem, 3)
+
+      -- Обработка прокрутки мышью.
       if Zone.Is_ScrollH and y == Zone.Height then
         return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + x)
       elseif Zone.Is_ScrollV and x == Zone.Width then
         return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + y)
       end
 
+      -- Обработка выбором мышью.
       if MouseRec.EventFlags == MouseDblClick then
         return _Menu:MouseDblClick(hDlg, x, y)
       else

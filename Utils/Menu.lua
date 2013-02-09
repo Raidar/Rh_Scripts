@@ -425,6 +425,7 @@ function unit.ItemTextColor (Item, Selected, Colors) --> (color, color)
   local ItemKind = Item.disable and "disable" or
                    Item.grayed and "grayed" or "normal"
   local Colors = Colors and unit.ItemColors(Colors) or TextColors
+
   return (Colors)[Selected or false][ItemKind]
 end ---- ItemTextColor
 
