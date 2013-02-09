@@ -449,9 +449,9 @@ local function Dlg (Config) --> (dialog)
   --local A, B = I + 1, M + 2
   -- Some controls' sizes:
   --local SE = 5  -- Small field
-  local DE = 20 -- Desc field
+  local DE = 21 -- Desc field
   local HK = 16 -- HotKey field
-  local TX = 17 -- Text field
+  local TX = 16 -- Text field
   local CK = 3  -- Check field
   local I0 =  A +  1; local IH = I0 + HK
   --local I0 =  A + SE; local IH = I0 + HK
@@ -460,7 +460,6 @@ local function Dlg (Config) --> (dialog)
   local I3 = IC + TX; --local IA = I3 + CK
 
   local Data = Config.CfgData
-  local n, v, Area
 
   local Caption = L:caption"Dialog"
   local D = dialog.NewDialog() -- Форма окна:
@@ -488,9 +487,10 @@ local function Dlg (Config) --> (dialog)
   D.sep           = {DI.Text,     0,    J,    0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"MenuItems"}
   for k = 1, CfgDataSepPos - 1 do
     J = J + 1
-    n = CfgDataOrder[k]
-    v = Data[n]
-    Area = v.Area
+    local n = CfgDataOrder[k]
+    local v = Data[n]
+    local Area = v.Area
+
     --D["txta"..n]  = {DI.Text,     A,    J, I0-1,  0, 0, 0, 0, 0, Area}
     if v.separator then
     D["txts"..n]  = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:label"Separator"}
@@ -513,9 +513,10 @@ local function Dlg (Config) --> (dialog)
   D.sep           = {DI.Text,     0,    J,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"Residents"}
   for k = CfgDataSepPos + 1, #CfgDataOrder do
     J = J + 1
-    n = CfgDataOrder[k]
-    v = Data[n]
-    Area = v.Area
+    local n = CfgDataOrder[k]
+    local v = Data[n]
+    local Area = v.Area
+
     --D["txta"..n]  = {DI.Text,     A,    J, I0-2,  0, 0, 0, 0, 0, Area}
     D["txtrk"..n] = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:config("Res_Keys_"..v.Name)}
     D["txtr"..n]  = {DI.Text,    IH,    J, I1-1,  0, 0, 0, 0, 0, L:config("Res_"..v.Name)}
@@ -622,9 +623,12 @@ function unit.ConfigDlg (Data)
     Width = 0, Height = 0,
   } --
   local DBox = Config.DBox
-  DBox.Width  = 2 + 1 + --5 + -- Edge + 1 column
-                19 + 19 +    -- + 2 columns
-                (3 + 16) * 2 -- + 2 columns
+  DBox.Width  = 2 +           -- Edge
+                2 +           -- + 2 margins
+                --5 +           -- + 1 column: txt
+                16 + 1 +      -- + 1 column: edt
+                20 +          -- + 1 column: txt
+                (3 + 16) * 2  -- + 2 columns: chk + edt
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 1 + 2*2 + -- group empty lines + group item lines
                 #CfgDataOrder - 1
