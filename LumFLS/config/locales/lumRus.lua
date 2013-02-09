@@ -9,7 +9,7 @@ local Data = {
   MainMenu          = "fl-скрипты",
 
   ----------------------------------------
-  -- fl_scripts
+  -- fl_scripts:
   flsComments       = "&M - Комментарий",
     flsCommAutoDo       = "&C - Авто-вставка",
     flsCommAutoUn       = "&U - Авто-убирание",

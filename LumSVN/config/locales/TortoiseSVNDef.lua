@@ -5,11 +5,13 @@ local Data = {
   tSVN              = "&T - TortoiseSVN",       --          j      q    v xyz
   TortoiseSVN       = "TortoiseSVN",            -- abcdefghi klmnop rstu w
 
+  ----------------------------------------
   eError            = "Error",
   ePathNotFound     = "Path to TortoiseSVN not found",
   eStatusFailed     = "Getting SVN status is failed",
 
-  -- Menu items
+  ----------------------------------------
+  -- Menu items:
   tSVN_checkout     = "Chec&kout…",             -- k
   hSVN_checkout     = "Check out a working copy from a repository",
   tSVN_update       = "&Update",                -- u

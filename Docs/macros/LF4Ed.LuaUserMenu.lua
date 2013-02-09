@@ -89,7 +89,7 @@ Macro {
   area = "Editor",
   key = "CtrlJ",
   flags = "DisableOutput",
-  description = "LUM: Binding Insert",
+  description = "LUM: Template Insert",
   condition = Exist,
   action = function ()
     if not PluginMenu(guids.LF4Ed) then return end

@@ -17,6 +17,7 @@ local Data = {
   FileCreatingSuccess = 'Файл успешно создан',
   RequireReloadFAR = "Для вступления изменений в силу перезагрузите FAR Manager",
 
+  ----------------------------------------
   -- Dialog items texts.
   --btn_Ok     = "Ок",
   --btn_Close  = "Закрыть",
@@ -63,6 +64,8 @@ local Data = {
   cfg_Res_Keys_VoidTruncate = "End + модиф.-ры",
   cfg_Res_Desc_AutoActions  = "Шаблоны + Завершение",
   cfg_Res_Desc_VoidTruncate = "(конечных пробелов + пустых строк)",
+
+  ----------------------------------------
 } --- Data
 
 return Data

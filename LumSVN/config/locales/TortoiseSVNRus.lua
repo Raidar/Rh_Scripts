@@ -6,11 +6,13 @@ local Data = {
   --tSVN              = "&T - TortoiseSVN",
   --TortoiseSVN       = "TortoiseSVN",
 
+  ----------------------------------------
   eError            = "Ошибка",
   ePathNotFound     = "Путь к TortoiseSVN не найден",
   eStatusFailed     = "Не удалось получить состояние SVN",
 
-  -- Menu items
+  ----------------------------------------
+  -- Menu items:
   tSVN_checkout     = "&K - Извлечь…",              -- Извлечь…
   hSVN_checkout     = "Извлечь рабочую копию из хранилища",
   tSVN_update       = "&U - Обновить",              -- &Обновить

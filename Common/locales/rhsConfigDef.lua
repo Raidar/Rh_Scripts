@@ -16,6 +16,7 @@ local Data = {
   FileCreatingSuccess = 'File was created successfully',
   RequireReloadFAR = "Reload FAR Manager to apply all changes",
 
+  ----------------------------------------
   -- Dialog items texts.
   --btn_Ok     = "Ok",
   --btn_Close  = "Close",
@@ -62,6 +63,8 @@ local Data = {
   cfg_Res_Keys_VoidTruncate = "End w/modifiers",
   cfg_Res_Desc_AutoActions  = "Templates + Completion",
   cfg_Res_Desc_VoidTruncate = "Kill trailing spaces + empty lines",
+
+  ----------------------------------------
 } --- Data
 
 return Data

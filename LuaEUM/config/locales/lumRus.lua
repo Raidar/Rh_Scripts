@@ -9,15 +9,12 @@ local Data = {
   MainMenu          = "LUM для Редактора",
 
   ----------------------------------------
-  -- Template Insert
+  -- Template Insert:
   TemplateInsert    = "Вставка шаблона",
   TplInsItem        = "&J - Вставка шаблона",
 
   ----------------------------------------
-  -- Lua scripts
-  LuaScripts        = "&S - Lua-скрипты",
-  LuaScripting      = "Примеры Lua-скриптов",
-
+  -- Quotes and brackets:
   LuaQuoteText      = "&Q - Кавычки/скобки",
     LuaEnquote          = "&Q - Закавычивание",
       LuaEnquoteQuotes      = "Кавычки",
@@ -30,6 +27,11 @@ local Data = {
     LuaDequote          = "&D - Раскавычивание",
       LuaDequoteSingle      = "&S - Любое одинарное",
       LuaDequoteDouble      = "&D - Любое двойное",
+
+  ----------------------------------------
+  -- Lua scripts:
+  LuaScripts        = "&S - Lua-скрипты",
+  LuaScripting      = "Примеры Lua-скриптов",
 
   LuaClearText      = "&C - Чистка текста",
       LuaClearDeleteAllSpaces       = "&L - Удалить все пробелы",

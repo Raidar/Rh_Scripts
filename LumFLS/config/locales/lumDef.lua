@@ -8,7 +8,7 @@ local Data = {
   MainMenu          = "fl scripts",
 
   ----------------------------------------
-  -- fl_scripts
+  -- fl_scripts:
   flsComments       = "Co&mments",
     flsCommAutoDo       = "Auto &Comment",
     flsCommAutoUn       = "Auto &UnComment",
