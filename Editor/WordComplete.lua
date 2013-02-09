@@ -356,6 +356,7 @@ local function CreateMain (ArgData)
     History   = false,
     CfgData   = false,
     DlgTypes  = unit.DlgTypes,
+
     TextTemplate = false,
 
     -- Текущее состояние:
@@ -386,8 +387,9 @@ local function CreateMain (ArgData)
   self.CfgData = self.History:field(self.Custom.history.field)
 
   self.Menu = self.CfgData.Menu or {}
-  self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
-  self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
+  local Menu = self.Menu
+  Menu.CompleteKeys = Menu.CompleteKeys or unit.CompleteKeys
+  Menu.LocalUseKeys = Menu.LocalUseKeys or unit.LocalUseKeys
 
   -- 3. Дополнение конфигурации.
   setmetatable(self.CfgData, { __index = self.ArgData })
@@ -400,6 +402,21 @@ local function CreateMain (ArgData)
 end -- CreateMain
 
 ---------------------------------------- Dialog
+
+---------------------------------------- ---- Prepare
+-- Localize data.
+-- Локализация данных.
+function TMain:Localize ()
+  self.LocData = locale.getData(self.Custom)
+  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
+  if not self.LocData then return end
+
+  self.L = locale.make(self.Custom, self.LocData)
+
+  return self.L
+end ---- Localize
+
+---------------------------------------- ---- Form
 do
   local dialog = require "far2.dialog"
   local dlgUt = require "Rh_Scripts.Utils.Dialog"
@@ -507,17 +524,18 @@ function TMain:DlgForm () --> (dialog)
   return D
 end -- DlgForm
 
+---------------------------------------- ---- ConfigDlg
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
-  -- Конфигурация:
+
   local _Main = CreateMain(Data)
+  if not _Main then return end
+
+  _Main:Localize() -- Локализация.
+
   local HelpTopic = _Main.Custom.help.tlink
-  -- Локализация:
-  _Main.LocData = locale.getData(_Main.Custom)
-  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
-  if not _Main.LocData then return end
-  _Main.L = locale.make(_Main.Custom, _Main.LocData)
-  -- Конфигурация:
+
+  -- Настройка:
   local isAuto = _Main.Custom.isAuto
   local isSmall = _Main.Custom.isSmall
   if isSmall == nil then isSmall = true end
@@ -538,7 +556,7 @@ function unit.ConfigDlg (Data)
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
 
-  -- Настройка:
+  -- Диалог:
   local D = _Main:DlgForm()
   dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
   local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
