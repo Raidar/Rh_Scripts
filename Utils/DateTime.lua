@@ -276,8 +276,8 @@ function TConfig:getYearDay (y, m, d) --> (number)
   return d + self.YearDays[m - 1] + self:getLeapDays(y)
 end ---- getYearDay
 
--- Set day number in year.
--- Установка номера дня в году.
+-- Divide day number in year into date.
+-- Выделение даты из номера дня в году.
 --[[ @params:
   y (number) - year.
   r (number) - day of year.
@@ -285,7 +285,7 @@ end ---- getYearDay
   m (number) - month.
   d (number) - day.
 --]]
-function TConfig:setYearDay (y, r) --> (number, number)
+function TConfig:divYearDay (y, r) --> (number, number)
   local YearDays = self.YearDays
   if r <= YearDays[1] then
     return 1, r
@@ -302,7 +302,7 @@ function TConfig:setYearDay (y, r) --> (number, number)
   end
 
   return MonthPerYear, self.MonthDays[MonthPerYear]
-end ---- setYearDay
+end ---- divYearDay
 
 -- Get week number in year.
 -- Получение номера недели в году.
@@ -310,17 +310,20 @@ end ---- setYearDay
   y (number) - year.
   m (number) - month.
   d (number) - day.
+  f (number) - first day for first week (@default = 0).
 ---- @return:
   result (number) - week of year.
 ---- @notes:
-  The first week is a week with January 1.
+  The first week is a week with January 1 by default.
 ---- @notes:rus:
-  1-й неделей считается неделя с 1-м января.
+  По умолчанию 1-й неделей считается неделя с 1-м января.
 --]]
-function TConfig:getYearWeek (y, m, d) --> (number)
+function TConfig:getYearWeek (y, m, d, f) --> (number)
   local DayPerWeek = self.DayPerWeek
   local YearStartDay = self:getWeekDay(y, 01, 01)
-  return divf(self:getYearDay(y, m, d) - 1 +
+
+  return divf((f or 0) +
+              self:getYearDay(y, m, d) - 1 +
               (YearStartDay == 0 and DayPerWeek or YearStartDay) - 1,
               DayPerWeek) + 1
 end ---- getYearWeek
@@ -370,8 +373,8 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
--- Set day number of the common era.
--- Установка номера дня нашей эры.
+-- Divide day number of the common era into date.
+-- Выделение даты из номера дня нашей эры.
 --[[ @params:
   e (number) - day of common era.
 ---- @return:
@@ -379,7 +382,7 @@ end ---- getEraDay
   m (number) - month.
   d (number) - day.
 --]]
-function TConfig:setEraDay (e) --> (number, number, number)
+function TConfig:divEraDay (e) --> (number, number, number)
   -- TODO: Реализовать и прроверить!
   local e = e
 
@@ -395,8 +398,8 @@ function TConfig:setEraDay (e) --> (number, number, number)
 
   local y = 100 * P + R + 1
 
-  return y, self:setYearDay(y, e)
-end ---- setEraDay
+  return y, self:divYearDay(y, e)
+end ---- divEraDay
 
 -- Get month number of the common era.
 -- Получение номера месяца нашей эры.
@@ -410,17 +413,21 @@ function TConfig:getEraMonth (y, m) --> (number)
   return y * self.MonthPerYear + m
 end ---- getEraMonth
 
--- Set month number of the common era.
--- Установка номера месяца нашей эры.
+-- Divide month number of the common era.
+-- Выделение даты из номера месяца нашей эры.
 --[[ @params:
   r (number) - month of common era.
 ---- @return:
   y (number) - year.
   m (number) - month.
 --]]
-function TConfig:setEraMonth (r) --> (number, number)
-  return divm(r, self.MonthPerYear)
-end ---- setEraMonth
+function TConfig:divEraMonth (r) --> (number, number)
+  local MonthPerYear = self.MonthPerYear
+  local y, m = divm(r, MonthPerYear)
+
+  if m ~= 0 then return y, m end
+  return y - 1, MonthPerYear
+end ---- divEraMonth
 
 ---------------------------------------- ---- Time
 -- Count seconds without milliseconds.
@@ -480,9 +487,9 @@ function TDate:getYearDay () --> (bool)
   return self.config:getYearDay(self.y, self.m, self.d)
 end ----
 
-function TDate:setYearDay (r) --> (number, number)
+function TDate:divYearDay (r) --> (number, number)
   --local self = self
-  return self.config:setYearDay(self.y, r)
+  return self.config:divYearDay(self.y, r)
 end ----
 
 function TDate:getYearWeek () --> (number)
@@ -500,9 +507,9 @@ function TDate:getEraDay () --> (number)
   return self.config:getEraDay(self.y, self.m, self.d)
 end ----
 
-function TDate:setEraDay (r) --> (number, number, number)
+function TDate:divEraDay (r) --> (number, number, number)
   local self = self
-  return self.config:setEraDay(r)
+  return self.config:divEraDay(r)
 end ----
 
 function TDate:getEraMonth () --> (number)
@@ -515,9 +522,9 @@ function TDate:getEraMonth () --> (number)
   return self.config:getEraMonth(self.y, self.m)
 end ----
 
-function TDate:setEraMonth (r) --> (number, number)
+function TDate:divEraMonth (r) --> (number, number)
   --local self = self
-  return self.config:setEraMonth(r)
+  return self.config:divEraMonth(r)
 end ----
 
 function TDate:ymd () --> (number)
@@ -544,7 +551,7 @@ function TDate:from_y (v) --> (self, rest)
   self.y = w + 1
   v = v * self:getYearDays()
 
-  self.m, v = self:setYearDay(v)
+  self.m, v = self:divYearDay(v)
   self.d, v = modf(v)
 
   return self, v
@@ -554,7 +561,7 @@ function TDate:from_m (v) --> (self, rest)
   local self = self
 
   local w, v = modf(v)
-  self.y, self.m = self:setEraMonth(w + 1)
+  self.y, self.m = self:divEraMonth(w + 1)
   v = v * self:getMonthDays()
 
   self.d, v = modf(v)
@@ -566,7 +573,7 @@ function TDate:from_d (v) --> (self, rest)
   local self = self
 
   local w, v = modf(v)
-  self.y, self.m, self.d = self:setEraDay(w)
+  self.y, self.m, self.d = self:divEraDay(w)
 
   return self, v
 end ----

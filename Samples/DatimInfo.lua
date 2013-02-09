@@ -37,6 +37,8 @@ Info[#Info+1] = ("Day of year = %03d"):format(dt.yday)
 
 local d = datim.newDate(dt.year, dt.month, dt.day)
 --logShow(d, "TDate", "w")
+--local d = datim.newDate(1886, 12, 25)
+--local d = datim.newDate(2036, 12, 25)
 
 local c = d.config
 local YearDay   = c:getYearDay(d.y, d.m, d.d)
@@ -47,13 +49,13 @@ Info[#Info+1] = "────── TConfig ──────"
 Info[#Info+1] = "isLeapYear  = "..tostring(c:isLeapYear(d.y))
 Info[#Info+1] = "getLeapDays = "..("%1d"):format(c:getLeapDays(d.y))
 Info[#Info+1] = "getYearDay  = "..("%03d"):format(YearDay)
-Info[#Info+1] = "setYearDay  = "..DateFmt:format(d.y, c:setYearDay(d.y, YearDay))
+Info[#Info+1] = "divYearDay  = "..DateFmt:format(d.y, c:divYearDay(d.y, YearDay))
 Info[#Info+1] = "getYearWeek = "..(" %02d"):format(c:getYearWeek(d.y, d.m, d.d))
 Info[#Info+1] = "getWeekDay  = "..("  %1d"):format(c:getWeekDay(d.y, d.m, d.d))
 Info[#Info+1] = "getEraDay   = "..("%d"):format(EraDay)
-Info[#Info+1] = "setEraDay   = "..DateFmt:format(c:setEraDay(EraDay))
+Info[#Info+1] = "divEraDay   = "..DateFmt:format(c:divEraDay(EraDay))
 Info[#Info+1] = "getEraMonth = "..("%d"):format(EraMonth)
-Info[#Info+1] = "setEraMonth = "..("%04d-%02d"):format(c:setEraMonth(EraMonth))
+Info[#Info+1] = "divEraMonth = "..("%04d-%02d"):format(c:divEraMonth(EraMonth))
 Info[#Info+1] = SepLine
 
 local t = datim.newTime(dt.hour, dt.min, dt.sec)
