@@ -120,6 +120,7 @@ local mItems = {
     CmdLine = "edit:<git diff", },
   { text = "Show &log",
     CmdLine = "edit:<git log", },
+
   { text = "E&xtended log",
     Hint = "Press q to quit from console view",
 
@@ -163,30 +164,74 @@ local mItems = {
                   dLogGraphFormat..'" -- ', },
     }, -- Items
   },
+
   { text = "&Find changes",
     CmdLine = "edit:<git show", },
   { text = "Log &graph",
     CmdLine = "gitk", },
   mSeparator,
-  { text = "Amend…",
-    Hint = "Fix last commit",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git commit --amend -a -m ""', },
-  { text = "Unstage…",
-    Hint = "Clear index (Reset to head)",
-    Function = FillCmdLine,
-    Arguments = "git reset HEAD ", },
-  { text = "Undo head…",
-    Hint = "Reset to pre-head",
-    Function = FillCmdLine,
-    Arguments = "git reset --soft HEAD^ ", },
-  { text = "Redo head…",
-    Hint = "Redo to old head",
-    Function = FillCmdLine,
-    Arguments = "git commit -a -c ORIG_HEAD ", },
-  { text = "Discard changes…",
-    Function = FillCmdLine,
-    Arguments = "rem git checkout -- ", },
+
+  { text = "&Reset / revert",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        MinWidth = 25, -- Hint:len()
+      }, -- RectMenu
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+      },
+    }, -- CfgData
+
+    Items = {
+      { text = "&Fix / amend…",
+        Hint = "Amend: fix last commit",
+        Function = FillCmdLineWithBack,
+        Arguments = 'git commit --amend -a -m ""', },
+      { text = "&Clear index…",
+        Hint = "Unstage: reset to head",
+        Function = FillCmdLine,
+        Arguments = "git reset HEAD ", },
+      mSeparator,
+      { text = "&Undo head…",
+        Hint = "Reset to pre-head",
+        Function = FillCmdLine,
+        Arguments = "git reset --soft HEAD^ ", },
+      { text = "&Redo head…",
+        Hint = "Redo to old head",
+        Function = FillCmdLine,
+        Arguments = "git commit -a -c ORIG_HEAD ", },
+      mSeparator,
+      { text = "Reset &soft…",
+        Hint = "Soft reset last commit",
+        Function = FillCmdLine,
+        Arguments = "git reset --soft HEAD~1 ", },
+      { text = "Reset &hard…",
+        Hint = "Hard reset last commit",
+        Function = FillCmdLine,
+        Arguments = "git reset --hard HEAD~1 ", },
+      mSeparator,
+      { text = "Revert…",
+        Function = FillCmdLine,
+        Arguments = "git revert ", },
+      { text = "D&iscard changes…",
+        Hint = "Checkout: discard changes",
+        Function = FillCmdLine,
+        Arguments = "git checkout -- ", },
+    }, -- Items
+  },
+
   { text = "&Pull from origin…",
     Function = FillCmdLine,
     Arguments = "git pull origin master", },
@@ -200,9 +245,6 @@ local mItems = {
   { text = "Move…        &n",
     Function = FillCmdLine,
     Arguments = "git mv ", },
-  { text = "Revert…",
-    Function = FillCmdLine,
-    Arguments = "git revert ", },
   mSeparator,
   { text = "&Tag…",
     Function = FillCmdLine,
