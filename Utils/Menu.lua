@@ -351,7 +351,7 @@ function unit.MenuColors () --> (table)
   end
 
   local MenuBG = getBG(Colors.COL_MENUTEXT) -- Цвет фона
-  Colors.COL_MENUBGROUND    = make(basics.black, MenuBG)
+  Colors.COL_MENUBGROUND    = make(basics.black,  MenuBG)
   Colors.COL_MENUSTATUSBAR  = make(basics.silver, MenuBG)
 
   local MarkFG = basics.lime -- Цвет выделения части текста
@@ -371,7 +371,7 @@ function unit.ChangeColors (Colors, OldFG, OldBG, NewFG, NewBG) --> (table)
     if NewFG and (not OldFG or getFG(v) == OldFG) then
       Colors[k] = setFG(v, NewFG)
     end
-    if NewBG and (not OldFG or getBG(v) == OldBG) then
+    if NewBG and (not OldBG or getBG(v) == OldBG) then
       Colors[k] = setBG(v, NewBG)
     end
   end
@@ -388,29 +388,35 @@ function unit.ItemColors (Colors) --> (table)
       normal  = {
         normal = Colors.COL_MENUTEXT,
         hlight = Colors.COL_MENUHIGHLIGHT,
-        marked = Colors.COL_MENUMARKTEXT, },
+        marked = Colors.COL_MENUMARKTEXT,
+      },
       disable = {
         normal = Colors.COL_MENUDISABLEDTEXT,
         hlight = Colors.COL_MENUDISABLEDTEXT,
-        marked = Colors.COL_MENUDISABLEDTEXT, },
+        marked = Colors.COL_MENUDISABLEDTEXT,
+      },
       grayed  = {
         normal = Colors.COL_MENUGRAYTEXT,
         hlight = Colors.COL_MENUGRAYTEXT,
-        marked = Colors.COL_MENUGRAYTEXT, },
+        marked = Colors.COL_MENUGRAYTEXT,
+      },
     },
     [true] = { -- Выделенный пункт:
       normal  = {
         normal = Colors.COL_MENUSELECTEDTEXT,
         hlight = Colors.COL_MENUSELECTEDHIGHLIGHT,
-        marked = Colors.COL_MENUSELECTEDMARKTEXT, },
+        marked = Colors.COL_MENUSELECTEDMARKTEXT,
+      },
       --disable = {
       --  normal = Colors.COL_MENUDISABLEDTEXT,
       --  hlight = Colors.COL_MENUDISABLEDTEXT,
-      --  marked = Colors.COL_MENUSELECTEDMARKTEXT, },
+      --  marked = Colors.COL_MENUSELECTEDMARKTEXT,
+      --},
       grayed  = {
         normal = Colors.COL_MENUSELECTEDGRAYTEXT,
         hlight = Colors.COL_MENUSELECTEDGRAYTEXT,
-        marked = Colors.COL_MENUSELECTEDGRAYTEXT, },
+        marked = Colors.COL_MENUSELECTEDGRAYTEXT,
+      },
     },
   } --- TextColors
 end ---- ItemColors
@@ -419,7 +425,8 @@ do
   local DefColors = unit.MenuColors() -- Цвета меню
   local TextColors = unit.ItemColors(DefColors) -- Цвета пунктов
 
--- Цвет текста пункта меню.
+-- Get color text of menu item.
+-- Получение цвета текста пункта меню.
 function unit.ItemTextColor (Item, Selected, Colors) --> (color, color)
   --Selected = Selected == nil and Item.Selected or Selected
   local ItemKind = Item.disable and "disable" or

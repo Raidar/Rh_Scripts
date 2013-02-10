@@ -123,20 +123,23 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
 
   MarkB, MarkE = MarkB or 0, MarkE or 0
   if MarkB <= 0 or MarkB > MarkE then
-    return { 0,
-             { text = TextB, color = Color.normal },
-             { text = TextH, color = Color.hlight },
-             { text = TextE, color = Color.normal }, }
+    return {
+      0, -- for prefix
+      { text = TextB, color = Color.normal, },
+      { text = TextH, color = Color.hlight, },
+      { text = TextE, color = Color.normal, },
+    } ----
   end
 
-  local t = { 0,
-    { text = "", color = Color.normal },
-    { text = "", color = Color.marked },
-    { text = "", color = Color.normal },
-    { text = TextH, color = Color.hlight },
-    { text = "", color = Color.normal },
-    { text = "", color = Color.marked },
-    { text = "", color = Color.normal },
+  local t = {
+    0, -- for prefix
+    { text = "",    color = Color.normal, },
+    { text = "",    color = Color.marked, },
+    { text = "",    color = Color.normal, },
+    { text = TextH, color = Color.hlight, },
+    { text = "",    color = Color.normal, },
+    { text = "",    color = Color.marked, },
+    { text = "",    color = Color.normal, },
   } --- t
   local LenB, LenH, LenE = TextB:len(), TextH:len(), TextE:len()
 
@@ -249,7 +252,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   if Options.checked then
     TextB = checkedChar(Item.checked, RM.CheckedChar, RM.UncheckedChar)..TextB
   end
-  Parse[1] = { text = TextB, color = Color.normal, }
+  Parse[1]       = { text = TextB,       color = Color.normal, }
   Parse[Parse.n] = { text = Clear..Most, color = Color.normal, }
 
   DrawParseText(Rect, Item, Parse) -- Рисование разобранного текста
