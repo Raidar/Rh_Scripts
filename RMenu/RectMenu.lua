@@ -169,6 +169,7 @@ local function tospan (n, span) --> (bool)
   return torange(n, span.Min, span.Max)
 end --
 
+-- Count existing catenas (of menu items).
 -- Количество существующих рядов (пунктов меню).
 local function MenuCatCount (Majors, Minors, Count) --> (number, number)
   if Count == 0 then return 0, 0 end
@@ -197,8 +198,12 @@ local function MenuCatCount (Majors, Minors, Count) --> (number, number)
   end
 end -- MenuCatCount
 
-local VisibleCatCount = { Base = 0, Pike = 0 }
+local VisibleCatCount = {
+  Base = false,
+  Pike = false,
+} ---
 
+-- Count visible catenas from start.
 -- Количество видимых рядов с начала.
 --[[
   -- @params:
@@ -239,6 +244,7 @@ function VisibleCatCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number
   return k, L
 end ---- VisibleCatCount.Base
 
+-- Count visible catenas from end.
 -- Количество видимых рядов с конца.
 --[[
   -- @params:
@@ -1409,19 +1415,19 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 local IsModShift, IsModAltShift = keyUt.IsModShift, keyUt.IsModAltShift
 
 local Shifts = {
-  Z = { Row =  0, Col =  0 },
-  L = { Row =  0, Col = -1, canWrap = true },
-  U = { Row = -1, Col =  0, canWrap = true },
-  R = { Row =  0, Col =  1, canWrap = true },
-  D = { Row =  1, Col =  0, canWrap = true },
+  Z  = { Row =  0, Col =  0, },
+  L  = { Row =  0, Col = -1, canWrap = true, },
+  U  = { Row = -1, Col =  0, canWrap = true, },
+  R  = { Row =  0, Col =  1, canWrap = true, },
+  D  = { Row =  1, Col =  0, canWrap = true, },
 
-  H = { Row = -1, Col = -1, isNew = true },
-  E = { Row =  1, Col =  1, isNew = true },
+  H  = { Row = -1, Col = -1, isNew = true, },
+  E  = { Row =  1, Col =  1, isNew = true, },
 
- LU = { Row = -1, Col = -1 },
- LD = { Row =  1, Col = -1 },
- RU = { Row = -1, Col =  1 },
- RD = { Row =  1, Col =  1 },
+  LU = { Row = -1, Col = -1, },
+  LD = { Row =  1, Col = -1, },
+  RU = { Row = -1, Col =  1, },
+  RD = { Row =  1, Col =  1, },
 } --- Shifts
 
 -- Информация о перемещении курсора по ячейкам при нажатии клавиш.
@@ -1435,6 +1441,7 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
   local self = self
   local Data, Zone = self.Data, self.Zone
   local Base = self.Zone.Base
+
   local rMin, rMax = self.FixedRows.Min, self.FixedRows.Max
   local cMin, cMax = self.FixedCols.Min, self.FixedCols.Max
   local rSum, cSum = self.FixedRows.Count, self.FixedCols.Count
@@ -1448,45 +1455,50 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
   --[[
   local Last = { -- Последняя видимая ячейка:
     Row = Base.Row + self:VisibleRowCount(Base.Row) - rSum - 1,
-    Col = Base.Col + self:VisibleColCount(Base.Col) - cSum - 1 }
+    Col = Base.Col + self:VisibleColCount(Base.Col) - cSum - 1,
+  } ---
   --]]
   --logShow({ oCell, VisRows, VisCols, Last }, "Arrow Cell Data")
 
   local KeydCell = {
 
     Left = function ()
-      return Shifts.L, oCell, { Row = oCell.Row, Col = cMin }
+      return Shifts.L, oCell, { Row = oCell.Row, Col = cMin, }
     end,
 
     Up = function ()
-      return Shifts.U, oCell, { Row = rMin, Col = oCell.Col }
+      return Shifts.U, oCell, { Row = rMin, Col = oCell.Col, }
     end,
 
     Right = function ()
-      return Shifts.R, oCell, { Row = oCell.Row, Col = cMax }
+      return Shifts.R, oCell, { Row = oCell.Row, Col = cMax, }
     end,
 
     Down = function ()
-      return Shifts.D, oCell, { Row = rMax, Col = oCell.Col }
+      return Shifts.D, oCell, { Row = rMax, Col = oCell.Col, }
     end,
 
     Clear = function () return Shifts.Z, oCell, oCell end, -- Clear
 
     Home = function ()
       local nCell = RC_iseq(oCell, Base) and
-        { Row = Base.Row - self:VisibleRowCount(Base.Row, "Pike") + rSum + 1,
-          Col = Base.Col - self:VisibleColCount(Base.Col, "Pike") + cSum + 1 } or
-        { Row = Base.Row, Col = Base.Col } -- nCell
+        { Row = Base.Row -
+                self:VisibleRowCount(Base.Row, "Pike") + rSum + 1,
+          Col = Base.Col -
+                self:VisibleColCount(Base.Col, "Pike") + cSum + 1, } or
+        { Row = Base.Row, Col = Base.Col, } -- nCell
       --logShow({ oCell, nCell }, "Cells")
-      return Shifts.H, { Row = rMin, Col = cMin }, nCell
+      return Shifts.H, { Row = rMin, Col = cMin, }, nCell
     end, -- Home
 
     End = function ()
       local nCell = RC_iseq(oCell, Last) and
-        { Row = Last.Row + self:VisibleRowCount(oCell.Row) - rSum - 1,
-          Col = Last.Col + self:VisibleColCount(oCell.Col) - cSum - 1 } or
+        { Row = Last.Row +
+                self:VisibleRowCount(oCell.Row, "Base") - rSum - 1,
+          Col = Last.Col +
+                self:VisibleColCount(oCell.Col, "Base") - cSum - 1, } or
         Last -- nCell
-      return Shifts.E, { Row = rMax, Col = cMax }, nCell
+      return Shifts.E, { Row = rMax, Col = cMax, }, nCell
       --return Shifts.E, RC_cell(Idx2Cell(Data.Count, Data)), nCell
     end, -- End
 
@@ -1494,30 +1506,30 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
       local dCell = ListByDef and
         (oCell.Row == rMin and Shifts.Z or
          Base.Row == oCell.Row and
-         { Row = -self:VisibleRowCount(Base.Row, "Pike") + rSum, Col = 0 } or
-         { Row = Base.Row - oCell.Row, Col = 0 }) or
+         { Row = -self:VisibleRowCount(Base.Row, "Pike") + rSum, Col = 0, } or
+         { Row = Base.Row - oCell.Row,                           Col = 0, }) or
         (oCell.Col == cMin and Shifts.Z or
          Base.Col == oCell.Col and
-         { Row = 0, Col = -self:VisibleColCount(Base.Col, "Pike") + cSum } or
-         { Row = 0, Col = Base.Col - oCell.Col })
+         { Row = 0, Col = -self:VisibleColCount(Base.Col, "Pike") + cSum, } or
+         { Row = 0, Col = Base.Col - oCell.Col,                           })
       return dCell, oCell, ListByDef and
-             { Row = rMin, Col = oCell.Col } or
-             { Row = oCell.Row, Col = cMin }
+             { Row = rMin, Col = oCell.Col, } or
+             { Row = oCell.Row, Col = cMin, }
     end, -- Page Up
 
     PgDn  = function ()
       local dCell = ListByDef and
         (oCell.Row == rMax and Shifts.Z or
          Last.Row == oCell.Row and
-         { Row = self:VisibleRowCount(Last.Row) - rSum, Col = 0 } or
-         { Row = Last.Row - oCell.Row, Col = 0 }) or
+         { Row = self:VisibleRowCount(Last.Row, "Base") - rSum, Col = 0, } or
+         { Row = Last.Row - oCell.Row,                          Col = 0, }) or
         (oCell.Col == cMax and Shifts.Z or
          Last.Col == oCell.Col and
-         { Row = 0, Col = self:VisibleColCount(Last.Col) - cSum } or
-         { Row = 0, Col = Last.Col - oCell.Col })
+         { Row = 0, Col = self:VisibleColCount(Last.Col, "Base") - cSum, } or
+         { Row = 0, Col = Last.Col - oCell.Col,                          })
       return dCell, oCell, ListByDef and
-             { Row = rMax, Col = oCell.Col } or
-             { Row = oCell.Row, Col = cMax }
+             { Row = rMax,      Col = oCell.Col, } or
+             { Row = oCell.Row, Col = cMax,      }
     end, -- Page Down
 
     LeftUp      = function () return Shifts.LU, oCell, oCell end,
@@ -1619,7 +1631,7 @@ function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
     return self:ArrowKeyPress(hDlg, AKey, 0, false)
   end
   --]]
-  
+
   --[[ -- DEBUG
   local r = MousePosToCat(self.RowHeight, self.Data.RowSep,
                           self.Zone.Height, y,
