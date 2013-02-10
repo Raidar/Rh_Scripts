@@ -368,12 +368,14 @@ function unit.ChangeColors (Colors, OldFG, OldBG, NewFG, NewBG) --> (table)
   local Colors = Colors or unit.MenuColors()
 
   for k, v in pairs(Colors) do
-    if NewFG and (not OldFG or getFG(v) == OldFG) then
-      Colors[k] = setFG(v, NewFG)
+    local w = v
+    if NewFG and (not OldFG or getFG(w) == OldFG) then
+      w = setFG(w, NewFG)
     end
-    if NewBG and (not OldBG or getBG(v) == OldBG) then
-      Colors[k] = setBG(v, NewBG)
+    if NewBG and (not OldBG or getBG(w) == OldBG) then
+      w = setBG(w, NewBG)
     end
+    Colors[k] = w
   end
 
   return Colors
