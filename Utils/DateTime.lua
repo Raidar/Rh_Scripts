@@ -26,7 +26,7 @@
 
 local setmetatable = setmetatable
 
-local modf = math.modf
+local modf  = math.modf
 local floor = math.floor
 
 ----------------------------------------
@@ -49,7 +49,9 @@ local unit = {}
 
 ---------------------------------------- Config class
 local TConfig = {
-  Name          = "Gregorean Calendar",
+  Name          = "Terra",
+  Note          = "Gregorean Calendar",
+
   YearMin       = 1583,
   YearMax       = 9999,
 
@@ -97,6 +99,10 @@ local TConfig = {
     31, 31, 30,
     31, 30, 31,
     [0] = 0,
+    Min = 28,
+    Max = 31,
+    WeekMin = 4,
+    WeekMax = 5,
   }, --
   -- Количество дней в году по месяцам:
   YearDays = {
@@ -118,6 +124,26 @@ local TConfig = {
   --filled = nil,         -- Признак заполненности
 } ---
 unit.DefConfig = TConfig
+
+-- Fill month days with additional data.
+-- Заполнение дней месяцев дополнительными данными.
+function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
+  local MonthDays = MonthDays
+  local Min, Max = MonthDays[1], MonthDays[1]
+  for k = 2, #MonthDays do
+     local v = MonthDays[k]
+     if v < Min then Min = v end
+     if v > Max then Max = v end
+  end
+
+  MonthDays.Min = Min
+  MonthDays.Max = Max
+
+  MonthDays.WeekMin = numbers.divc(Min, DayPerWeek)
+  MonthDays.WeekMax = numbers.divc(Max, DayPerWeek)
+
+  return MonthDays
+end ---- fillMonthDaysData
 
 -- Find year days by months' days.
 -- Нахождение дней в году по дням в месяцах.
@@ -162,6 +188,8 @@ function unit.fillConfig (Config) --|> Config
   Config.MSecPerMin     = Config.MSecPerSec  * SecPerMin
   Config.MSecPerHour    = Config.MSecPerMin  * MinPerHour
   Config.MSecPerDay     = Config.MSecPerHour * HourPerDay
+
+  unit.fillMonthDaysData(Config.MonthDays)
 
   if not Config.YearDays then
     Config.YearDays = unit.findYearDays(Config.MonthDays)
