@@ -277,7 +277,6 @@ end -- do
 ---------------------------------------- Items table
 -- TODO: Исключить DefItemSeler, DefItemField, FieldMax
 --       после разделения RectMenu и RectGrid (Items-2D).
-
 do
 
 -- Выбор пункта меню по умолчанию.

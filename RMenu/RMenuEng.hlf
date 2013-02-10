@@ -7,7 +7,7 @@
 @Contents
 $ #Rectangular menu# (RectMenu)
   RectMenu is an utility of menu generation for "LuaFAR for Editor".
- This utility allows to output long menus in several rows and columns.
+ This utility allows to output menus in several rows and columns.
 
   Parameters of menu output function is similar to far.Menu() parameters.
  Additional properties are specified as following:

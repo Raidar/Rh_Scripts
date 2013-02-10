@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- RectMenu - Rectangular menu.
-  -- RectMenu - Прямоугольное меню.
+  -- Rectangular menu.
+  -- Прямоугольное меню.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -544,6 +544,7 @@ function TMenu:DefineListInfo () --| List
 
     if isItemPicked(Item) then
       j = j + 1 -- is Special!
+
     else -- no Special:
       k = k + 1
       --assert(k == i - j) -- Visible = Real - Hidden
@@ -552,14 +553,19 @@ function TMenu:DefineListInfo () --| List
       -- Свойства пункта:
       Item.RectMenu = Item.RectMenu or {}
       local RI = Item.RectMenu
-      RI.TextMark = RI.TextMark or RM.TextMark -- Маркировка
+      RI.TextMark   = RI.TextMark or RM.TextMark -- Маркировка
+      RI.TextAlign  = RI.TextAlign or "LT" -- Выравнивание
+
         -- Многострочность текста пункта:
-      if     RM.MultiLine == nil then RI.MultiLine = nil
-      elseif RI.MultiLine == nil then RI.MultiLine = RM.MultiLine end
+      if RM.MultiLine == nil then
+        RI.MultiLine = nil
+      elseif RI.MultiLine == nil then
+        RI.MultiLine = RM.MultiLine
+      end
 
       if not checked and Item.checked then checked = true end
     end
-  end
+  end -- for
 
   self.Data.Count, self.Data.Shift = k, j
   self.Data.checked = RM.ShowChecked ~= false and checked --or false
@@ -857,6 +863,7 @@ end ---- DefineZoneInfo
 
 end -- do
 do
+  local sfind = string.find
 
 -- Информация об окне диалога.
 function TMenu:DefineDBoxInfo () --| (Dlg...)
@@ -865,7 +872,7 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   --local Data, Zone, Titles = self.Data, self.Zone, self.Titles
 
   -- Выравнивание меню с учётом надписей.
-  local MenuAlign = self.RectMenu.MenuAlign or "LT"
+  local MenuAlign = self.RectMenu.MenuAlign or "TL"
   --MenuAlign = MenuAlign or "R"
   --MenuAlign = MenuAlign or "C"
   Zone.IndentH, Zone.IndentV = 0, 0 -- Нет выравнивания
@@ -879,9 +886,9 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   --          Length, Zone.Width, Delta, bshr(Delta, 1) }, "self.Zone")
   if Delta > 0 then -- Выравнивание:
     Zone.Width  = Length
-    if     MenuAlign:find("L", 1, true) then
+    if     sfind(MenuAlign, "L", 1, true) then
       Zone.IndentH = 0
-    elseif MenuAlign:find("R", 1, true) then
+    elseif sfind(MenuAlign, "R", 1, true) then
       Zone.IndentH = Delta
     else
       Zone.IndentH = bshr(Delta, 1)  end -- "C" --
@@ -894,9 +901,9 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   Delta = Length - Zone.Height -- Избыток пустоты
   if Delta > 0 then -- Выравнивание:
     Zone.Height = Length
-    if     MenuAlign:find("T", 1, true) then
+    if     sfind(MenuAlign, "T", 1, true) then
       Zone.IndentV = 0
-    elseif MenuAlign:find("B", 1, true) then
+    elseif sfind(MenuAlign, "B", 1, true) then
       Zone.IndentV = Delta
     else
       Zone.IndentV = bshr(Delta, 1)  end -- "M" --
@@ -1895,9 +1902,6 @@ end ---- ScrollVClick
 
 end -- do
 ---------------------------------------- Menu drawing
-local Spaces = (" "):rep(255)
---local Spaces = ("+"):rep(255) -- DEBUG only
-
 -- Draw menu item.
 -- Рисование пункта меню.
 function TMenu:DrawMenuItem (Rect, Row, Col)
@@ -1920,7 +1924,6 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
       Row = Row, Col = Col,         -- Координаты ячейки
       textMax = self.textMax[Col],  -- Макс. длина текста
       lineMax = self.lineMax[Row],  -- Макс. ширина текста
-      Filler  = Spaces,             -- Заполнитель пустоты (строка пробелов)
       isHot   = self.Props.isHot,   -- Признак использования горячих букв
       checked = self.Data.checked,  -- Признак отмеченных пунктов
       Props   = self.RectMenu,      -- Свойства RectMenu
@@ -1929,7 +1932,7 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
     return DrawItemText(Rect, Color, Item, Options)
   -- [[
   else -- Пустое место под пункт меню:
-    return DrawClearItemText(Rect, Rect.Colors.COL_MENUTEXT, Spaces)
+    return DrawClearItemText(Rect, Rect.Colors.COL_MENUTEXT)
   end -- if
   --]]
 end ---- DrawMenuItem
@@ -1974,7 +1977,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       Rect.x, Rect.w = x, xLim - x -- Заполнение пустоты:
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
-      DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT, Spaces)
+      DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT)
     end
 
     r, y = r + 1, y + h + Data.RowSep
@@ -1984,7 +1987,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     Rect.x, Rect.w = A_Rect.xMin, A_Rect.xMax - A_Rect.xMin
     Rect.y, Rect.h = y, yLim - y -- Заполнение пустоты:
     --logShow(Rect, "Draw Spaces by y", 1)
-    DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT, Spaces)
+    DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT)
   end -- if
   --logShow({ x, xLim }, "Values")
 
@@ -2281,7 +2284,7 @@ function TMenu:DrawStatusBar ()
     w = Zone.Width,
   }
 
-  LineFill(Rect, self.Colors.StatusBar, Hint, { Filler = Spaces })
+  LineFill(Rect, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 
 -- Обработчик рисования меню.

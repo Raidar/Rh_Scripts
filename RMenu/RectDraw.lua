@@ -26,11 +26,14 @@ local bshr = bit.rshift
 
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
 
 local Null = tables.Null
 
 local max2, min2 = numbers.max2, numbers.min2
 --local divf = numbers.divf
+
+local spaces = strings.spaces -- for text align
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
@@ -40,8 +43,6 @@ local far_Text = far.Text
 
 ----------------------------------------
 local menUt = require "Rh_Scripts.Utils.Menu"
-
-local checkedChar = menUt.checkedChar
 
 ----------------------------------------
 --[[
@@ -56,28 +57,30 @@ local unit = {}
 
 -- Вывод текста с ограничением по длине.
 local function LineText (Rect, Color, Text) --> (number)
-  local Len = min2(Text:len(), Rect.w)
+  local Len = min2(Text:len(), Rect.w) -- Длина выведенного текста
   far_Text(Rect.x, Rect.y, Color, Text:sub(1, Len) or "")
-  return Len -- Длина выведенного текста
+
+  return Len
 end ---- LineText
 unit.LineText = LineText
 
 -- Вывод текста с заполнением по длине.
-function unit.LineFill (Rect, Color, Text, Options) --> (bool)
+function unit.LineFill (Rect, Color, Text) --> (bool)
   local Len = LineText(Rect, Color, Text)
   if Len >= Rect.w then return false end
-  far_Text(Rect.x + Len, Rect.y, Color,
-           Options.Filler:sub(1, Rect.w - Len + 1) or "")
-  return true -- Длина выведенного текста
+
+  far_Text(Rect.x + Len, Rect.y, Color, spaces[Rect.w - Len + 1])
+
+  return true
 end ---- LineFill
 
--- [[
+-- Draw text for non-item of menu.
 -- Рисование текста не пункта меню.
-function unit.DrawClearItemText (Rect, Color, Clear)
-  -- TODO: MultiLine. -- TODO No one Line but Rect!!!
-  return LineText(Rect, Color, Clear) -- Пустое место
+function unit.DrawClearItemText (Rect, Color)
+  -- TODO: MultiLine.
+  -- TODO: No one Line but Rect!!!
+  return LineText(Rect, Color, spaces[Rect.w]) -- Пустое место
 end ---- DrawClearItemText
---]]
 
 local Separ = ("─"):rep(255) -- Текст-разделитель
 --logShow(Separ, "'─': # = "..tostring( Separ:len() ))
@@ -105,7 +108,8 @@ function unit.DrawSeparItemText (Rect, Color, Text)
 end ---- DrawSeparItemText
 
 ---------------------------------------- Parse text
-
+do
+-- Parse text to color fragments considering marking.
 -- Разбор текста на цветовые фрагменты с учётом маркировки.
 local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   local Mark = Item.RectMenu.TextMark or Null -- No change!
@@ -175,14 +179,26 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   return t
 end -- MakeParseText
 
---[[
+local checkedChar = menUt.checkedChar
+
+-- [[
 -- Разбор текста на отдельные линии по символу новой строки.
 local function LineParseText (Rect, Color, Parse, Item, Options)
-  local t = {}
+  local Parse = Parse
 
-  local k, n = 1, 1
+  local RM = Options.Props
+  local Margin = RM.CompactText and "" or " "
+  local Sign = Options.checked and
+               checkedChar(Item.checked, RM.CheckedChar, RM.UncheckedChar) or false
+
+  local t, n = {}, 1
+
+  local k = 1
   while k <= #Parse do
-    t[n] = Parse[k]
+    local v = Parse[k]
+    
+    t[n] = v
+
     n = n + 1
   end
 
@@ -193,9 +209,10 @@ end -- LineParseText
 -- Рисование разобранного текста как набора цветовых фрагментов.
 local function DrawParseText (Rect, Item, Parse) --> (table)
   local text, len
-  local ARect = { __index = Rect }; setmetatable(ARect, ARect)
+  local r = { __index = Rect }
+  setmetatable(r, r)
   --logShow({ Rect, Parse }, 'Parse Item Text')
-  -- TODO: MultiLine with text & line alignment -- make LineParseText!!!
+  -- TODO: MultiLine with text & line alignment!!!
 
   local v
   for k = Parse.m, Parse.n do
@@ -203,21 +220,21 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
     text = v.text
 
     if v.newline then -- Новая линия:
-      ARect.x, ARect.w = nil, nil
-      ARect.y = ARect.y + 1
-      ARect.h = ARect.h - 1
-      if ARect.h < 0 then break end
+      r.x, r.w = nil, nil
+      r.y = r.y + 1
+      r.h = r.h - 1
+      if r.h < 0 then break end
     end
 
-    if text and text ~= "" then -- Вывод:
-      len = LineText(ARect, v.color, text)
-      ARect.x = ARect.x + len
-      ARect.w = ARect.w - len
-      if ARect.w <= 0 then break end
+    if text and text ~= "" and r.w > 0 then -- Вывод:
+      len = LineText(r, v.color, text)
+      r.x = r.x + len
+      r.w = r.w - len
+      --if r.w <= 0 then break end -- TODO: Заменить на проверку!!!
     end
   end
 
-  return ARect
+  return r
 end -- DrawParseText
 
 ---------------------------------------- Draw item
@@ -240,24 +257,25 @@ function unit.DrawItemText (Rect, Color, Item, Options)
 
   -- Разбор текста с учётом маркировки:
   local Parse = MakeParseText(Item, Color, TextB, TextH, TextE)
-  local Most = RM.CompactText and "" or " "
+  local Margin = RM.CompactText and "" or " "
 
-  -- Выравнивание путём очистки конца:
-  local Clear = Rect.w - Len - Most:len() * 2
-  Clear = Options.Filler:sub(1, max2(0, Clear)) or ""
+  -- Выравнивание + очистка конца:
+  local Clear = Rect.w - Len - Margin:len() * 2
+  Clear = spaces[max2(0, Clear)]
 
   -- Учёт начальных и конечных символов:
   Parse.m, Parse.n = 1, #Parse + 1
-  TextB = Most
+  local MarginB = Margin
   if Options.checked then
-    TextB = checkedChar(Item.checked, RM.CheckedChar, RM.UncheckedChar)..TextB
+    MarginB = checkedChar(Item.checked, RM.CheckedChar, RM.UncheckedChar)..MarginB
   end
-  Parse[1]       = { text = TextB,       color = Color.normal, }
-  Parse[Parse.n] = { text = Clear..Most, color = Color.normal, }
+  Parse[1]       = { text = MarginB,       color = Color.normal, }
+  Parse[Parse.n] = { text = Clear..Margin, color = Color.normal, }
 
   DrawParseText(Rect, Item, Parse) -- Рисование разобранного текста
 end ---- DrawItemText
 
+end -- do
 --------------------------------------------------------------------------------
 return unit
 --------------------------------------------------------------------------------
