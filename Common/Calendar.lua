@@ -42,7 +42,7 @@ local datim = require "Rh_Scripts.Utils.DateTime"
 --local keyUt = require "Rh_Scripts.Utils.Keys"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -160,6 +160,7 @@ end -- CreateMain
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- Prepare
+do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
@@ -171,6 +172,27 @@ function TMain:Localize ()
 
   return self.L
 end ---- Localize
+
+  local menUt = require "Rh_Scripts.Utils.Menu"
+  local colors = require 'context.utils.useColors'
+  local basics = colors.BaseColors
+
+  local Colors = menUt.MenuColors()
+  local MainColors = UsualColors
+  MainColors = menUt.ChangeColors(MainColors,
+                                  --nil,
+                                  colors.getFG(Colors.COL_MENUTEXT),
+                                  colors.getBG(Colors.COL_MENUTEXT),
+                                  --basics.blue,
+                                  basics.black,
+                                  basics.silver)
+  MainColors = menUt.ChangeColors(MainColors,
+                                  nil,
+                                  --colors.getFG(Colors.COL_MENUSELECTEDTEXT),
+                                  colors.getBG(Colors.COL_MENUSELECTEDTEXT),
+                                  nil,
+                                  --basics.green,
+                                  basics.white)
 
 function TMain:MakeProps ()
 
@@ -199,6 +221,7 @@ function TMain:MakeProps ()
     --MenuEdge = 2,
     MenuAlign = "CM",
 
+    Colors = MainColors,
     --[[
     Colors = {
     }, --
@@ -222,6 +245,7 @@ function TMain:Prepare ()
   return self:MakeProps()
 end ---- Prepare
 
+end -- do
 ---------------------------------------- ---- Menu
 do
   local function DayToStr (d)
