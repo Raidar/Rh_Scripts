@@ -252,187 +252,132 @@ do
     return ("%02d"):format(d)
   end --
 
-  --local function WeekDayToStr (d)
-  --  return ("%02d"):format(d)
-  --end --
+  local function WeekDayToStr (d)
+    return ("<%1d>"):format(d)
+  end --
 
 -- Заполнение меню.
 function TMain:MakeMenu () --> (table)
   --local Cfg = self.CfgData
 
-  --[[
-  local Rows = 8
-  local ItemNames = {
-    Year    = Rows + 1,
-    Month   = Rows + 2,
-    Date    = Rows + 4,
-    Time    = Rows + 5,
-    Week    = Rows + 7,
-    YearWeek  = Rows + 0,
-    WeekDay   = Rows * 3 + 0,
-
-    FirstDay      = Rows * 3 + 1,
-    FirstWeekDay  = Rows * (3 + 5) + 1,
-  } --
-  --]]
-
   local Date = self.Date
   local Time = self.Time
+  local DT_cfg = Date.config
+  local DT_name = DT_cfg.Name
+
   local WeekDay = Date:getWeekDay()
+  local DayPerWeek = DT_cfg.DayPerWeek
+
+  local RowCount = DayPerWeek + 1 -- Количество строк календаря
+  local ItemNames = {
+    World     = RowCount + 1,
+    Year      = RowCount + 3,
+    Month     = RowCount + 4,
+    Date      = RowCount + 6,
+    Time      = RowCount + 8,
+    WeekDay   = RowCount + 7,
+
+    YearDay   = RowCount * 0 + 7,
+    YearWeek  = RowCount * 2 + 7,
+
+    PrevYear  =                3,
+    NextYear  = RowCount * 2 + 3,
+    PrevMonth =                4,
+    NextMonth = RowCount * 2 + 4,
+
+    Separators = {
+                     2,                5, -- 1
+      RowCount     + 2, RowCount     + 5, -- 2
+      RowCount * 2 + 2, RowCount * 2 + 5, -- 3
+    }, --
+
+    FirstDay      = RowCount * 3 + 1,
+    FirstWeekDay  = RowCount * (3 + DT_cfg.MonthDays.WeekMax) + 1,
+
+  } -- ItemNames
 
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local WeekDayNames   = L.WeekDay or Null
-  local YearMonthNames = L.YearMonth or Null
+  local Loc = L[DT_name]
+  local WeekDayNames   = (Loc or Null).WeekDay or Null
+  local YearMonthNames = (Loc or Null).YearMonth or Null
 
   local ItemDatas = {
-    Year        = ("%04d"):format(Date.y),
-    Date        = ("%04d-%02d-%02d"):format(Date.y, Date.m, Date.d),
-    Time        = ("%02d:%02d:%02d"):format(Time.h, Time.n, Time.s),
+    World     = (" %s "):format(Loc.Name),
+    Year      = ("%04d"):format(Date.y),
+    Month     = (YearMonthNames[0] or Null)[Date.m],
+    Date      = ("%04d-%02d-%02d"):format(Date.y, Date.m, Date.d),
+    Time      = ("%02d:%02d:%02d"):format(Time.h, Time.n, Time.s),
+    WeekDay   = (WeekDayNames[0] or Null)[WeekDay],
 
-    YearDay     = ("%03d"):format(Date:getYearDay()),
-    YearWeek    = ("%02d"):format(Date:getYearWeek()),
+    YearDay   = ("%03d"):format(Date:getYearDay()),
+    YearWeek  = ("%02d"):format(Date:getYearWeek()),
 
-    WeekDayName0    = (WeekDayNames[0] or Null)[WeekDay],
-    YearMonthName0  = (YearMonthNames[0] or Null)[Date.m],
+    PrevYear  = "<==",
+    NextYear  = "==>",
+    PrevMonth = "<--",
+    NextMonth = "-->",
   } --- ItemDatas
 
-  -- Текущие данные:
-  local t = {
-    -- 1 --
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Год
-      text = "<==",
-      Label = true,
-    },
-    { -- Месяц
-      text = "<--",
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Дата
-      text = "",
-      Label = true,
-    },
-    { -- Неделя
-      text = ItemDatas.YearDay,
-      Label = true,
-    },
-    { -- Время
-      text = "",
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    -- 2 --
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Год
-      text = ItemDatas.Year,
-      Label = true,
-    },
-    { -- Месяц
-      text = ItemDatas.YearMonthName0,
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Дата
-      text = ItemDatas.Date,
-      Label = true,
-    },
-    { -- Неделя
-      text = ItemDatas.WeekDayName0,
-      Label = true,
-    },
-    { -- Время
-      text = ItemDatas.Time,
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    -- 3 --
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Год
-      text = "==>",
-      Label = true,
-    },
-    { -- Месяц
-      text = "-->",
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-    { -- Дата
-      text = "",
-      Label = true,
-    },
-    { -- Неделя
-      text = ItemDatas.YearWeek,
-      Label = true,
-    },
-    { -- Время
-      text = "",
-      Label = true,
-    },
-    { -- Разделитель
-      --text = "",
-      separator = true,
-    },
-  } ---
+  local t = {}
 
-  local MonthCurrentDay = Date.d
-  local MonthStart = datim.newDate(Date.y, Date.m, 01)
-  local MonthDays = MonthStart:getMonthDays()
-  local MonthStartWeekDay = MonthStart:getWeekDay()
-  MonthStartWeekDay = MonthStartWeekDay == 0 and
-                      MonthStartWeekDay.config.DayPerWeek or MonthStartWeekDay
-  --t[8 * 3 - 1].text = ("%1d"):format(MonthStartWeekDay) -- DEBUG
-  local MonthStartYearWeek = MonthStart:getYearWeek()
+  -- Текущая информация:
+  for i = 1, 3 do
+    for j = 1, RowCount do
+      t[#t+1] = {
+        text = "",
+        Label = true,
+      } --
+    end
+  end --
 
-  local SelIndex -- Индекс пункта с текущей датой
+  for k, v in pairs(ItemDatas) do
+    local n = ItemNames[k]
+    if n then
+      t[n].text = v
+    end
+  end --
+
+  local Separators = ItemNames.Separators
+  for k = 1, #Separators do
+    local v = Separators[k]
+    t[v].separator = true
+  end
+
+  local CurrentDay = Date.d
+  local Start = datim.newDate(Date.y, Date.m, 01)
+  local MonthDays = Start:getMonthDays()
+  local StartWeekDay = Start:getWeekDay()
+  StartWeekDay = StartWeekDay == 0 and DayPerWeek or StartWeekDay
+  --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
+  local StartYearWeek = Start:getYearWeek()
+
   -- Дни месяца:
-  local k = 0
-  for i = 1, 5 do
+  local d = 0    -- День месяца
+  local SelIndex -- Индекс пункта с текущей датой
+  for i = 1, DT_cfg.MonthDays.WeekMax do
 
+    -- Номер недели:
     t[#t+1] = {
-      text = ("%02d"):format(MonthStartYearWeek + i - 1),
+      text = ("%02d"):format(StartYearWeek + i - 1),
       Label = true,
     } --
 
-    for j = 1, 7 do
+    -- Дни недели:
+    for j = 1, DayPerWeek do
       local State = 0
-      if i == 1 and j < MonthStartWeekDay then
+      if i == 1 and j < StartWeekDay then
         State = -1
-      elseif k > MonthDays then
+      elseif d > MonthDays then
         State = 1
       end
 
       local Text = ""
       if State == 0 then
-        k = k + 1
-        Text = DayToStr(k)
+        d = d + 1
+        Text = DayToStr(d)
 
-        if k == MonthCurrentDay then SelIndex = #t + 1 end
+        if d == CurrentDay then SelIndex = #t + 1 end
       end
 
       t[#t+1] = {
@@ -441,19 +386,19 @@ function TMain:MakeMenu () --> (table)
       } --
     end
 
-  end
+  end -- for
 
   self.Props.SelectIndex = SelIndex
 
   -- Дни недели:
-  local WeekDayNames2 = WeekDayNames[2] or Null
+  local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
   t[#t+1] = {
     text = "",
     separator = true,
   } --
-  for k = 1, 7 do
+  for w = 1, DayPerWeek do
     t[#t+1] = {
-      text = WeekDayNames2[k % 7], --or WeekDayToStr(k),
+      text = WeekDayShort[w % DayPerWeek] or WeekDayToStr(w),
       Label = true,
     } --
   end
