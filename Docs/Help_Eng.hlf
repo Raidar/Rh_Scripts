@@ -19,7 +19,7 @@ $ #Rh_Scripts#: Package
 
   #Utilities:#
     ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
-    ~Rectangular Menu~@<..\RMenu\>Contents@ (RectMenu)
+    ~Rectangular Menu~@<..\RectMenu\>Contents@ (RectMenu)
 
   #Some files:#
     ~Documentation files~@RhS_Docs@

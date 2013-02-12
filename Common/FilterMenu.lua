@@ -61,7 +61,7 @@ local hex = dbg.hex8
 local unit = {}
 
 ---------------------------------------- Internal
-local RunMenu = require "Rh_Scripts.RMenu.RectMenu"
+local RunMenu = require "Rh_Scripts.RectMenu.RectMenu"
 
 ---------------------------------------- Keys
 -- Символы спец. клавиш:

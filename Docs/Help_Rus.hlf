@@ -19,7 +19,7 @@ $ #Rh_Scripts#: Пакет
 
   #Утилиты:#
     ~Пользовательское меню Lua~@<..\LuaUM\>Contents@ (LUM)
-    ~Прямоугольное меню~@<..\RMenu\>Contents@ (RectMenu)
+    ~Прямоугольное меню~@<..\RectMenu\>Contents@ (RectMenu)
 
   #Некоторые файлы:#
     ~Файлы документации~@RhS_Docs@

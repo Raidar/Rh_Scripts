@@ -32,7 +32,7 @@ local unit = {}
 ---------------------------------------- Internal
 local MenuScripts = { -- Скрипты с меню:
   SearchMenu = "far2.searchmenu",               -- "Поисковое" меню
-  RectMenu   = "Rh_Scripts.RMenu.RectMenu",     -- Прямоугольное меню
+  RectMenu   = "Rh_Scripts.RectMenu.RectMenu",  -- Прямоугольное меню
   FilterMenu = "Rh_Scripts.Common.FilterMenu",  -- Фильтрационное меню
   MenuTexter = "Rh_Scripts.Common.MenuTexter",  -- Формирователь текста для меню
   --VKeyboard  = "Rh_Scripts.Common.VKeyboard",   -- "Виртуальная клавиатура"

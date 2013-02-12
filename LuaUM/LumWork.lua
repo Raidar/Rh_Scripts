@@ -47,24 +47,25 @@ do
 --]]
 -- TODO: Упростить код?!
 function unit.GetFileName (Name, Args) --> (string | nil, error)
-  local FullName, FullExtName
-  FullName = FullNameFmt:format(Args.Base, Args.Path, Name)
+  local FullName = FullNameFmt:format(Args.Base, Args.Path, Name)
   if fexists(FullName) then return FullName end
-  FullExtName = FullName..Args.DefExt
+  local FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
   if Args.LuaExt ~= Args.DefExt then
-    FullExtName = FullName..Args.LuaExt
+    local FullExtName = FullName..Args.LuaExt
     if fexists(FullExtName) then return FullExtName end
   end
 
-  FullName = FullNameFmt:format(Args.Base, Args.DefPath, Name)
-  if fexists(FullName) then return FullName end
-  FullExtName = FullName..Args.DefExt
-  if fexists(FullExtName) then return FullExtName end
-
-  if Args.LuaExt ~= Args.DefExt then
-    FullExtName = FullName..Args.LuaExt
+  if Args.DefPath ~= Args.Path then
+    local FullName = FullNameFmt:format(Args.Base, Args.DefPath, Name)
+    if fexists(FullName) then return FullName end
+    local FullExtName = FullName..Args.DefExt
     if fexists(FullExtName) then return FullExtName end
+
+    if Args.LuaExt ~= Args.DefExt then
+      local FullExtName = FullName..Args.LuaExt
+      if fexists(FullExtName) then return FullExtName end
+    end
   end
 end ---- GetFileName
 
@@ -95,13 +96,13 @@ do
   local GetFileName = unit.GetFileName
 
   local rhini = require "Rh_Scripts.Utils.IniFile"
-  local MergeTable, GetFileData = rhini.MergeTable, rhini.GetFileData
+  local MergeTable, GetFileData = rhini.MergeTable, rhini.GetLuaData
 
 -- Чтение с учётом внешнего объединения:
 function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
   local t, isItem = {}
   -- Учёт внешнего объединения:
-  t.Menu = { Title = Args.Title or "Main Menu", Items = {} }
+  t.Menu = { Title = Args.Title or "Main Menu", Items = {}, }
   local Items = t.Menu.Items
   --local Items, SubKey = t.Menu.Items, Props.SubKey or "^UM%_([^%.]+)$"
 
@@ -113,7 +114,9 @@ function unit.GetFileOuterJoin (Args, Props) --> (table | nil, error)
       local u, SError = GetFileData(FullName, nil, Props)
       --if not u then return nil, SError end
       if not isItem and u then isItem = true end
-      for k, v in pairs(u.Menu) do u[k] = v end
+      if u.Menu then
+        for k, v in pairs(u.Menu) do u[k] = v end
+      end
       Items[#Items+1] = u
     end -- if
   end -- for
@@ -148,19 +151,19 @@ end -- do
 
 -- Чтение с учётом внутреннего и внешнего объединения:
 function unit.GetFileJoinEnumData (Args, Props) --> (table | nil, error)
-  local t, SError
   Args.DefExt = Args.DefExt or ".lum"
   Args.LuaExt = ".lua"
   Props = Props or {}
 
+  local t, SError
   if Props.Join then -- Внешнее объединение:
     t, SError = unit.GetFileOuterJoin(Args, Props)
   else -- Внутреннее объединение (по умолчанию):
     t, SError = unit.GetFileInnerJoin(Args, Props)
   end
 
-  if not t then return nil, SError end
-  return t
+  if t then return t end
+  return nil, SError
 end ---- GetFileJoinEnumData
 
 -- Чтение данных из ini/lua-файлов в таблицу (учёт по умолчанию).
@@ -170,14 +173,14 @@ end ---- GetFileJoinEnumData
   2. Если данных нет, используется DefEnum по пути Base..Path/DefPath.
 --]]
 function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
-  local t, SError, MError
+  local SError, MError
 
   if Args.Enum and Args.Enum ~= "" then
     Args.CurEnum = Args.Enum
     --logShow({ Args, Props }, "Args and Props", 2)
-    t, MError = unit.GetFileJoinEnumData(Args, Props)
+    local t, MError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
-    --logShow(Args.CurEnum, SError)
+    --logShow(Args.CurEnum, MError)
   else
     MError = "File enum not specified."
   end
@@ -185,7 +188,7 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
   if Args.DefEnum and Args.DefEnum ~= "" then
     Args.CurEnum = Args.DefEnum
     --logShow({ Args, Props }, "Args and Props", 2)
-    t, SError = unit.GetFileJoinEnumData(Args, Props)
+    local t, SError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
     --logShow(Args.CurEnum, SError)
   else

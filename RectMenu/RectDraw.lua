@@ -208,16 +208,13 @@ end -- LineParseText
 
 -- Рисование разобранного текста как набора цветовых фрагментов.
 local function DrawParseText (Rect, Item, Parse) --> (table)
-  local text, len
-  local r = { __index = Rect }
-  setmetatable(r, r)
+  local r = { __index = Rect }; setmetatable(r, r)
   --logShow({ Rect, Parse }, 'Parse Item Text')
   -- TODO: MultiLine with text & line alignment!!!
 
-  local v
   for k = Parse.m, Parse.n do
-    v = Parse[k]
-    text = v.text
+    local v = Parse[k]
+    local text = v.text
 
     if v.newline then -- Новая линия:
       r.x, r.w = nil, nil
@@ -227,12 +224,12 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
     end
 
     if text and text ~= "" and r.w > 0 then -- Вывод:
-      len = LineText(r, v.color, text)
+      local len = LineText(r, v.color, text)
       r.x = r.x + len
       r.w = r.w - len
       --if r.w <= 0 then break end -- TODO: Заменить на проверку!!!
     end
-  end
+  end -- for
 
   return r
 end -- DrawParseText

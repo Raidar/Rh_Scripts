@@ -78,7 +78,7 @@ local ItemTextColor = menUt.ItemTextColor
 local uChars = require "Rh_Scripts.Utils.CharsSets"
 
 ----------------------------------------
-local RDraw = require "Rh_Scripts.RMenu.RectDraw"
+local RDraw = require "Rh_Scripts.RectMenu.RectDraw"
 local LineFill          = RDraw.LineFill
 local DrawItemText      = RDraw.DrawItemText
 local DrawClearItemText = RDraw.DrawClearItemText
@@ -502,11 +502,9 @@ function TMenu:DefinePropInfo () --| Props
 
   -- Цвета меню:
   local UsualColors = RM.Colors or {}
-  UsualColors.__index = MenuUsualColors
-  setmetatable(UsualColors, UsualColors)
+  UsualColors.__index = MenuUsualColors; setmetatable(UsualColors, UsualColors)
   local FixedColors = RM.FixedColors or {}
-  FixedColors.__index = MenuFixedColors
-  setmetatable(FixedColors, FixedColors)
+  FixedColors.__index = MenuFixedColors; setmetatable(FixedColors, FixedColors)
   self.Colors = {
     Usual = UsualColors,
     Fixed = FixedColors,
@@ -961,7 +959,7 @@ end -- do
 -- Определение вида меню.
 function TMenu:DefineAll () --| (self)
   local self = self
-  --logShow(self, "RMenu", 1)
+  --logShow(self, "RectMenu", 1)
   -- DO NOT CHANGE ORDER!
   self:DefinePropInfo() --| Props -- Свойства
   self:DefineListInfo() --| List -- Список пунктов меню

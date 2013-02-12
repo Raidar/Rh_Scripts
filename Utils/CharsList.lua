@@ -47,8 +47,7 @@ local function subTable (t, k) --> (table)
   t[k] = u
   return u
 end
-Names.__index = subTable
-setmetatable(Names, Names)
+Names.__index = subTable; setmetatable(Names, Names)
 
 ----------------------------------------
 local PluginPath = utils.PluginPath

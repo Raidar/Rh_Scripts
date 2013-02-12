@@ -57,7 +57,7 @@ unit.ScriptName = "Calendar"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Testing\\"
 
 local usercall = farUt.usercall
-unit.RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
+unit.RunMenu = usercall(nil, require, "Rh_Scripts.RectMenu.RectMenu")
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {

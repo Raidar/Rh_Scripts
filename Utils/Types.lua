@@ -48,8 +48,7 @@ local object = {
   _type_ = 'object',
   _name_ = "object",
 } ---
-unit.object = object
-setmetatable(object, object)
+unit.object = object; setmetatable(object, object)
 
 -- Конструктор.
 function object:new (...)
@@ -96,8 +95,7 @@ local class = {
   _type_ = 'class',
   _base_ = {},  -- Базовый класс
 } ---
-unit.class = class
-setmetatable(class, class_mt)
+unit.class = class; setmetatable(class, class_mt)
 
 -- Конструктор.
 function class:new (...)

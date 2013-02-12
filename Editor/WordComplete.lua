@@ -306,8 +306,8 @@ unit.DlgTypes = { -- Типы элементов диалога:
 
 ---------------------------------------- ---- Popup
 local usercall = farUt.usercall
---local unit.RunMenu = require "Rh_Scripts.RMenu.RectMenu"
-unit.RunMenu = usercall(nil, require, "Rh_Scripts.RMenu.RectMenu")
+--local unit.RunMenu = require "Rh_Scripts.RectMenu.RectMenu"
+unit.RunMenu = usercall(nil, require, "Rh_Scripts.RectMenu.RectMenu")
 
 ---------------------------------------- ---- Keys
 -- Названия действий.

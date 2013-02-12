@@ -81,12 +81,13 @@ local function MergeField (Field, Merged, Props) --> (Field | nil, error)
   end
 
   -- Соединение таблиц / как таблиц
-  if typeF ~= 'table' then Field = { Field } end
-  if typeM ~= 'table' then Merged = { Merged } end
+  if typeF ~= 'table' then Field = { Field, } end
+  if typeM ~= 'table' then Merged = { Merged, } end
 
   if MergeKind == "array" then
     for _, v in ipairs(Merged) do
       Field[#Field+1] = v end -- Добавление в конец
+
   else -- MergeKind == "record"
     for n, v in pairs(Merged) do -- Слияние полей:
       Field[n] = MergeField(Field[n], v, Props) end
@@ -114,7 +115,9 @@ local function MergeTable (Table, Merged, Props) --> (Table | nil, error)
       for k, v in pairs(Merged[s]) do
         Field[k] = MergeField(Field[k], v, Props)
       end -- for
-    else Table[s] = d end
+    else
+      Table[s] = d
+    end
   end
   --logShow(Table, "AddIniData")
 

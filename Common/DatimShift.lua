@@ -110,6 +110,7 @@ local function Configure (ArgData)
     Custom = Custom, History = History, DlgTypes = DlgTypes,
     CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
   } ---
+
   locale.customize(Config.Custom) -- Инфо локализации
   --logShow(Config.Custom, "Custom")
 --]]

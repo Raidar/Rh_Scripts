@@ -176,13 +176,14 @@ function TMenu:Prepare ()
   local Args, Props
 
   -- Считывание привязок типов к меню.
-  Args = { Base = PluginPath,
-           DefExt = ".lua",
-           Enum = Cfg_Files.MenusFile,
-           Path = Cfg_Files.FilesPath,
-           DefEnum = Cfg_Basic.BindsFile,
-           DefPath = Cfg_Basic.CfgUMPath }
-  --Props = { IlkSep = ';' }
+  Args = {
+    Base = PluginPath,
+    DefExt = ".lua",
+    Enum = Cfg_Files.MenusFile,
+    Path = Cfg_Files.FilesPath,
+    DefEnum = Cfg_Basic.BindsFile,
+    DefPath = Cfg_Basic.CfgUMPath,
+  } ---
   local BindsData, SError = LW.GetFileEnumData(Args, Props)
   if not BindsData then
     self.Error = L:et2("FileDataError", "BindsFile", SError)
@@ -223,13 +224,15 @@ function TMenu:Prepare ()
                Scope.DefMenu.Before or "", MenuEnum, Scope.DefMenu.After or "")
   end
   -- Считывание и разбор файлов меню.
-  Args = { Base = PluginPath,
-           DefExt = ".lum",
-           Enum = MenuEnum,
-           Path = Cfg_Files.MenusPath,
-           DefEnum = Cfg_Basic.UMenuFile,
-           DefPath = Cfg_Basic.CfgUMPath }
-  Props = { Join = Scope.JoinUMenu or false }
+  Args = {
+    Base = PluginPath,
+    DefExt = ".lum",
+    Enum = MenuEnum,
+    Path = Cfg_Files.MenusPath,
+    DefEnum = Cfg_Basic.UMenuFile,
+    DefPath = Cfg_Basic.CfgUMPath,
+  } ---
+  Props = { Join = Scope.JoinUMenu or false, }
   --Props = { Join = Scope.JoinUMenu or false, IlkSep = ';' }
   self.Menus, SError = LW.GetFileEnumData(Args, Props)
   if not self.Menus then
