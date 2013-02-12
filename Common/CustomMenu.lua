@@ -34,7 +34,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -385,21 +385,30 @@ function TMenu:GetNameItem (Name) --> (string, string, table | nil)
   local CurMenu = self.CurMenu
   --logShow(self, Name, 1)
   local Base = CurMenu[Name] or -- Краткое имя-результат...
-               _GetBackMenu(CurMenu, Name) -- или же таблица:
-  if type(Base) == 'table' then return Name, Name, Base end
+               _GetBackMenu(CurMenu, Name) -- или же таблица/функция:
+  local tp = type(Base)
+  if tp == 'table' or tp == 'function' then
+    return Name, Name, Base
+  elseif tp ~= 'string' then
+    return -- Ошибка
+  end
 
-  -- TODO: Check code if Base == nil!!
-  local Menu = _GetBackMenu(CurMenu, Base) -- Таблица или нет?
+  local Menu = _GetBackMenu(CurMenu, Base) -- Таблица/функция или нет?
   --return Name, Base, Menu
+
   -- [[
-  if type(Menu) == 'table' then return Name, Base, Menu end
+  -- TODO: Разобраться и вспомнить для чего это надо было!
+  tp = type(Menu)
+  if tp == 'table' or tp == 'function' then
+    return Name, Base, Menu
+  end
   Base = Base or Name -- Краткое имя (результат/оригинал)
   if type(Base) ~= 'string' then return Name, nil, false end
 
   --logShow(self, Base, 1)
   local FullName -- Полное имя (имя с учётом имени меню):
   FullName, Menu = self:GetNameMenu(self.CurName, Base)
-  Menu = Menu or _GetBackMenu(CurMenu, FullName) -- Поиск таблицы!
+  Menu = Menu or _GetBackMenu(CurMenu, FullName) -- Поиск таблицы/функции!
   --logShow(Menu, FullName, 1)
   return Base, FullName, Menu
   --]]
@@ -478,8 +487,7 @@ function TMenu:CheckCallItem (Item) --> (bool)
   assert(type(Item.Check) == 'function')
 
   local DefCfg = { Config = self.Config, Item = Item }
-  local Cfg = { __index = DefCfg }
-  setmetatable(Cfg, Cfg)
+  local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
 
   -- Выполнение проверки пункта.
   return farUt.fcall(Item.Check, Cfg) -- MAYBE: pfcall
@@ -573,7 +581,7 @@ function TMenu:MakeRunItem () --> (table)
 
   -- Управление переходом в меню.
   RunItem.Menu = RunItem -- Информация для прямого перехода и...
-  RunItem.Back = { Menu = CurMenu, Pos = self.RunCount } -- для обратного
+  RunItem.Back = { Menu = CurMenu, Pos = self.RunCount, } -- для обратного
 
   -- Определение полей пункта меню.
   --self:ChangeProperties({ MenuView = Props.MenuView }, RunItem)
@@ -581,14 +589,22 @@ function TMenu:MakeRunItem () --> (table)
 
   self.RunMenu[self.RunCount] = RunItem
   --logShow(RunItem, "RunItem #"..tostring(self.RunCount), 2)
+
+  return true
 end ---- MakeRunItem
 
 -- Формирование пункта-таблицы запускаемого меню.
 function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
-  local CurName, BaseName = self.CurName
+  local CurName = self.CurName
+
+  local Item = Item
+  if type(Item) == 'function' then
+    --logShow({ CurName, self.Menus }, "RunItem # "..tostring(Index), "w d2")
+    Item = Item() -- TODO: Поставить pcall?!
+  end
 
   if type(Item) == 'table' then
-
+    local BaseName
     -- Получение реального пункта меню с его именем:
     BaseName, self.RunItem = tostring(Index), Item
     Item.Name = Item.Name or ("%s.%s"):format(CurName, BaseName)
@@ -600,14 +616,23 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
     for s in Item:gmatch("([^;]+)") do
       --logShow({ self.Menus, CurName, s }, "RunItem # "..tostring(k), 1)
       -- Получение реального пункта меню с его именем:
-      local ItemName
-      BaseName, ItemName, self.RunItem = self:GetNameItem(s)
-      if not self.RunItem then
+      local BaseName, ItemName, RunItem = self:GetNameItem(s)
+      if type(RunItem) == 'function' then
+        RunItem = RunItem() -- TODO: Поставить pcall?!
+      end
+
+      if not RunItem then
         self.Error = self.L:et1("MnuSecNotFound", BaseName, ItemName or "(none)")
         return
+      elseif type(RunItem) ~= 'table' then
+        self.Error = self.L:et1("MnuWrongItem", type(RunItem), CurName, Index)
+        return
       end
-      self.RunItem.Name = ItemName
-      return self:MakeRunItem()
+
+      RunItem.Name = ItemName
+      self.RunItem = RunItem
+      self:MakeRunItem()
+      --return self:MakeRunItem()
     end --
 
   else
@@ -619,8 +644,14 @@ end ---- MakeRunMenuItem
 -- Формирование запускаемого меню из текущего меню-таблицы.
 function TMenu:MakeRunMenu () --> (table)
   local CurMenu = self.CurMenu
-  if type(CurMenu.Items) ~= 'table' then
-    CurMenu.Items = { CurMenu.Items }
+  local Items = CurMenu.Items
+  if type(Items) == 'function' then
+    Items = Items()
+  end
+  if type(Items) == 'table' then
+    CurMenu.Items = Items
+  else
+    CurMenu.Items = { Items }
   end
 
   -- Создание из списка пунктов-таблиц.
@@ -697,8 +728,7 @@ end ---- DefineScriptName
 function TMenu:RunScript (Item)
   local Config = self.Config
   -- Исключение изменений в реальном пункте.
-  local Item = { __index = Item }
-  setmetatable(Item, Item)
+  local Item = { __index = Item }; setmetatable(Item, Item)
 
   local Args, ChunkArgs, SError
   -- Обработка имени скрипта.
@@ -735,9 +765,8 @@ function TMenu:RunScript (Item)
     return nil, SError
   end
 
-  local DefCfg = { Config = Config, Item = Item }
-  local Cfg = { __index = DefCfg }
-  setmetatable(Cfg, Cfg)
+  local DefCfg = { Config = Config, Item = Item, }
+  local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
 
   --logShow(Item, ChunkName)
   -- Запуск скрипта / функции скрипта с передачей ему аргументов.

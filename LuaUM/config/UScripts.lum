@@ -41,18 +41,18 @@ local mQuickInfo = {
     { text = L.OthQInfoVers,
       Script = "LumScripts.lua",
       Function = "LuaFarVersion",
-      Relative = "default" },
+      Relative = "default", },
     -- Global variables --
     { text = L.OthQInfoGlobal,
       Script = "LumScripts.lua",
       Function = "GlobalVarsData",
-      Relative = "default" },
+      Relative = "default", },
     -- package content --
     { text = L.OthQInfoPackage,
       Script = "LumScripts.lua",
       Function = "packageContent",
-      Relative = "default" },
-  } ---
+      Relative = "default", },
+  }, --
 } --- mQuickInfo
 
 ---------------------------------------- LuaFAR context
@@ -63,12 +63,12 @@ local mLFcontext = {
     { text = L.OthLFcDetectType,
       Script = "LumContext.lua",
       Function = "detType",
-      Relative = "default" },
+      Relative = "default", },
     -- Open files list --
     { text = L.OthLFcOpenFiles,
       Script = "LumContext.lua",
       Function = "OpenFilesList",
-      Relative = "default" },
+      Relative = "default", },
     -- Info --
     { text = L.OthLFcSepInfo,
       separator = true,
@@ -77,29 +77,29 @@ local mLFcontext = {
     { text = L.OthLFcBriefInfo,
       Script = "LumContext.lua",
       Function = "briefInfo",
-      Relative = "default" },
+      Relative = "default", },
     -- Information --
     { text = L.OthLFcDetailedInfo,
       Script = "LumContext.lua",
       Function = "detailedInfo",
-      Relative = "default" },
+      Relative = "default", },
     -- types table --
     { text = L.OthLFcTypesTable,
       Script = "LumContext.lua",
       Function = "typesTable",
-      Relative = "default" },
+      Relative = "default", },
     -- types info --
     { text = L.OthLFcTypesInfo,
       Script = "LumContext.lua",
       Function = "typesInfo",
-      Relative = "default" },
+      Relative = "default", },
     mSeparator,
     -- Testing detect type --
     { text = L.OthLFcTestDetType,
       Script = "LumContext.lua",
       Function = "testType",
-      Relative = "default" },
-  } ---
+      Relative = "default", },
+  }, --
 } --- mLFcontext
 
 --[[
@@ -111,38 +111,38 @@ local mFuncScripts = {
     { text = "&Global environment",
       Script = "LumScripts.lua",
       Function = "GlobalEnvironment",
-      Relative = "default" },
+      Relative = "default", },
     -- Function environment --
     { text = "&Function environment",
       Script = "LumScripts.lua",
       Function = "FunctionEnvironment",
-      Relative = "default" },
+      Relative = "default", },
     mSeparator,
     -- Default arguments of function --
     { text = "&Default args of func",
       Script = "LumScripts.lua",
       Function = 'DefaultArguments(34, "abc", true)',
-      Relative = "default" },
+      Relative = "default", },
     -- Arguments of function --
     { text = "&Arguments of function",
       Script = "LumScripts.lua",
       Function = 'FunctionArguments',
       --Arguments = "34",
       Arguments = '34, "abc", true',
-      Relative = "default" },
+      Relative = "default", },
     { text = "&In-func-name arguments",
       Script = "LumScripts.lua",
       Function = 'FunctionArguments(34, "abc", true)',
-      Relative = "default" },
+      Relative = "default", },
     { text = "&Table function call",
       Script = "LumScripts.lua",
       Function = 'Var.SubFunction',
-      Relative = "default" },
+      Relative = "default", },
     { text = "&Module function call",
       Script = "LumScripts.lua",
       Function = 'LumScripts.ModFunction',
-      Relative = "default" },
-  } ---
+      Relative = "default", },
+  }, --
 } --- mFuncScripts
 --]]
 ---------------------------------------- Hello, world!
@@ -154,14 +154,54 @@ local mHelloWorld = {
     { text = L.OthHelloWorldMsg,
       Script = "LumScripts.lua",
       Function = "HelloWorldMsg",
-      Relative = "default" },
+      Relative = "default", },
     -- "Hello" text insert --
     { text = L.OthHelloWorldText,
       Script = "LumScripts.lua",
       Function = "HelloWorldText",
-      Relative = "default" },
-  } ---
+      Relative = "default", },
+  }, --
 } --- mHelloWorld
+
+local mDeferredHello = {
+  text = L.OthHelloWorld,
+  --AccelKey = "W",
+  --[[ -- Items as one function
+  Items = function ()
+    return {
+      --Items = {
+        -- "Hello" message --
+        { text = L.OthHelloWorldMsg,
+          Script = "LumScripts.lua",
+          Function = "HelloWorldMsg",
+          Relative = "default", },
+        -- "Hello" text insert --
+        { text = L.OthHelloWorldText,
+          Script = "LumScripts.lua",
+          Function = "HelloWorldText",
+          Relative = "default", },
+      --}, --
+    } ----
+  end, --
+  --]]
+  --[[ -- Items as array of functions
+  Items = {
+    function ()
+      return { text = L.OthHelloWorldMsg,
+               Script = "LumScripts.lua",
+               Function = "HelloWorldMsg",
+               Relative = "default", }
+    end,
+
+    function ()
+      return { text = L.OthHelloWorldText,
+               Script = "LumScripts.lua",
+               Function = "HelloWorldText",
+               Relative = "default", }
+    end,
+  }, --
+  --]]
+} --- mDeferredHello
 
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts
@@ -177,7 +217,7 @@ local mScripts = { -- Other scripts
     { text = "Show O&wn LUM menu",
       Script = "Rh_Scripts\\OwnLUM\\OwnLUM.lua",
       Area = "editor",
-      Relative = "scripts" },
+      Relative = "scripts", },
     --]]
   } ---
 } --- mScripts
@@ -186,8 +226,9 @@ local mScripts = { -- Other scripts
 local Data = {
   Menu = {
     text = L.OtherScripts,
-    Items = { mScripts },
-    --Items = { mSeparator, mScripts },
+    Items = { mScripts, },
+    --Items = { mScripts, mDeferredHello, },
+    --Items = { mSeparator, mScripts, },
   },
 
   --["Other Scripts"] = mScripts,
