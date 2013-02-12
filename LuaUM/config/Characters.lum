@@ -120,16 +120,20 @@ do
 
 -- Таблица для конфигурации меню.
 function unit.MenuConfig (Name, Default) --> (table)
-  local Config, Default = {}, Default == nil and true or Default
+  local Config = {}
+  local Default = Default == nil and true or Default
   if Default then Config.__index = DefConfig end
 
   Config.Name  = Name
   Config.text  = Texts[Name].text
   Config.Title = Texts[Name].Title
-  if Default then return setmetatable(Config, Config) end
+
+  if Default then
+    return setmetatable(Config, Config)
+  end
 
   return Config
-end ----
+end ---- MenuConfig
 
 end -- do
 
@@ -144,7 +148,7 @@ function unit.Menu (Cfg, Props, Datas, Keys)
   local Name = IsCfg and Cfg.Name or Cfg
 
   Menus[Name] = MakeMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
-end ----
+end ---- Menu
 
 end -- do
 

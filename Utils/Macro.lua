@@ -42,7 +42,6 @@ local tables = require 'context.utils.useTables'
 local Null = tables.Null
 
 ----------------------------------------
---local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
 ----------------------------------------

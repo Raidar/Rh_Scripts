@@ -16,6 +16,7 @@
 --------------------------------------------------------------------------------
 
 local assert = assert
+local require = require
 local setmetatable = setmetatable
 
 ----------------------------------------
@@ -33,7 +34,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -229,7 +230,7 @@ function TMenu:FillProperties (Props, Table) --|> (Props)
   updateFields(Props.Filter, TableProps.Filter)
 
   return Props
-end ----
+end ---- FillProperties
 
 local ChangeMenuProps = {
   SearchMenu = function (Props, Table) --| Props
@@ -244,8 +245,9 @@ function TMenu:ChangeProperties (Props, Table) --|> Props
   local MakeChangeProps = ChangeMenuProps[Props.MenuView]
   --if MakeChangeProps then logShow(Table, Props.MenuView, 1) end
   if MakeChangeProps then MakeChangeProps(Props, Table) end
+
   return Props
-end ----
+end ---- ChangeProperties
 
 ---------------------------------------- ---- User Item
 local ItemKinds = { -- Виды пунктов меню:
@@ -285,8 +287,9 @@ do
 function TMenu:MakeItemKeys (Item) --| Item
   --local UMenu = self.CurData.UMenu
   local FullNamedKeys = self.CurData.UMenu.FullNamedKeys
+
   MakeAccelKey(Item, FullNamedKeys)
-end ----
+end ---- MakeItemKeys
 
 end -- do
 
@@ -300,7 +303,7 @@ function TMenu:DefineLuaMacro (Item) --| Item
   end
 
   return true
-end ----
+end ---- DefineLuaMacro
 
 -- Определение полей пункта меню.
 function TMenu:DefineMenuItem (Item) --| Item
@@ -475,7 +478,8 @@ function TMenu:CheckCallItem (Item) --> (bool)
   assert(type(Item.Check) == 'function')
 
   local DefCfg = { Config = self.Config, Item = Item }
-  local Cfg = { __index = DefCfg }; setmetatable(Cfg, Cfg)
+  local Cfg = { __index = DefCfg }
+  setmetatable(Cfg, Cfg)
 
   -- Выполнение проверки пункта.
   return farUt.fcall(Item.Check, Cfg) -- MAYBE: pfcall
@@ -486,6 +490,7 @@ function TMenu:CheckItem (Item) --> (bool)
   if self:CheckAreaItem(Item) then
     return self:CheckCallItem(Item)
   end
+
   return false
 end ----
 
@@ -508,7 +513,7 @@ function TMenu:MakeMenuConfig () --> (table)
   end --
 
   return CurData
-end ----
+end ---- MakeMenuConfig
 
 -- Формирование свойств текущего меню-таблицы.
 function TMenu:MakeMenuProps () --> (table)
@@ -845,15 +850,17 @@ end ---- MakeAction
 end -- do
 ---------------------------------------- ---- Show
 do
-  -- TODO: Дляar.Menu делать замену клавиш на VK'шные!
+  -- TODO: Для RectMenu делать замену клавиш на VK'шные!
   local DefBreakKeys = { --  BreakKeys по умолчанию:
-    { BreakKey = "BS",      Action = "Back" },      -- Возврат в надменю
-    { BreakKey = "ShiftF1", Action = "Item Info" }, -- Сведения о пункте меню
-    { BreakKey = "CtrlF1",  Action = "Menu Info" }, -- Сведения о меню в целом
+    -- [[
+    { BreakKey = "BS",      Action = "Back", },       -- Возврат в надменю
+    { BreakKey = "ShiftF1", Action = "Item Info", },  -- Сведения о пункте меню
+    { BreakKey = "CtrlF1",  Action = "Menu Info", },  -- Сведения о меню в целом
+    --]]
 
-    { BreakKey = "BACK",    Action = "Back" },      -- Возврат в надменю
-    { BreakKey = "S+F1",    Action = "Item Info" }, -- Сведения о пункте меню
-    { BreakKey = "C+F1",    Action = "Menu Info" }, -- Сведения о меню в целом
+    { BreakKey = "BACK",    Action = "Back", },       -- Возврат в надменю
+    { BreakKey = "S+F1",    Action = "Item Info", },  -- Сведения о пункте меню
+    { BreakKey = "C+F1",    Action = "Menu Info", },  -- Сведения о меню в целом
   } --- DefBreakKeys
 
   local Call = require "Rh_Scripts.Common.MenuCaller"
@@ -866,7 +873,7 @@ function TMenu:ShowMenu (Properties, Items) --> (item, pos)
   --logShow(BreakKeys, "BreakKeys")
   -- Отображение меню на экране.
   return Call(Properties, Items, BreakKeys)
-end ----
+end ---- ShowMenu
 
 end -- do
 
@@ -893,6 +900,7 @@ function TMenu:HandleBreakKeys ()
       --logShow(Item, Action)
       -- TODO: Сделать нормальный вывод только нужной информации.
       logShow(Item, self.L.MenuItem..": "..self:GetItemTitle(Item), 0)
+
     elseif Action == "Menu Info" then -- о меню в целом
       local Item = self.Menus[tables.Nameless] or self.BaseMenu
       -- TODO: Сделать нормальный вывод только нужной информации.
@@ -900,7 +908,7 @@ function TMenu:HandleBreakKeys ()
       logShow(Item, self.L.MenuMenu..": "..self:GetItemTitle(self.BaseMenu), 0)
     end --
 
-    self.ActItem = { Menu = self.CurMenu, isBack = false }
+    self.ActItem = { Menu = self.CurMenu, isBack = false, }
     return
   end
 
@@ -994,7 +1002,7 @@ function TMenu:Run ()
     end
 
     farUt.RedrawAll()
-    self.ActItem = { Menu = self.CurMenu, isBack = false }
+    self.ActItem = { Menu = self.CurMenu, isBack = false, }
   until false
 
   return true

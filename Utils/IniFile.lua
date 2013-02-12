@@ -38,6 +38,7 @@ local strings = require 'context.utils.useStrings'
 
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
+local hex = dbg.hex8
 --]]
 
 --------------------------------------------------------------------------------

@@ -77,9 +77,9 @@ local GetModBase = keyUt.GetModBase
 
 ----------------------------------------
 --[[
-local hex = numbers.hex8
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
+local hex = dbg.hex8
 --]]
 
 --------------------------------------------------------------------------------

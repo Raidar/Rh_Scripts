@@ -32,11 +32,9 @@ local band = bit.band
 
 ----------------------------------------
 --[[
-local numbers = require 'context.utils.useNumbers'
-local hex = numbers.hex8
-
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
+local hex = dbg.hex8
 --]]
 
 --------------------------------------------------------------------------------

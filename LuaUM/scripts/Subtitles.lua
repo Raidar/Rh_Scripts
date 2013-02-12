@@ -26,8 +26,10 @@ local locale = require 'context.utils.useLocale'
 local n2s = numbers.n2s
 
 ----------------------------------------
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow, datShow = dbg.Show, dbg.ShowData
+--]]
 
 --------------------------------------------------------------------------------
 local unit = {}

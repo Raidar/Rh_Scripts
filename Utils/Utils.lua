@@ -57,24 +57,6 @@ local unit = {}
   Большинство функций не выполняют проверки значений и типов для параметров.
 --]]
 ---------------------------------------- String
---[[
-do
-  local sfind = ("").cfind or ("").find
-
--- Count of occurrences with find.
--- Подсчёт числа вхождений по find.
-function unit.findcount (s, pat, init, plain)
-  local count, pos = 0, init or 1
-  local fpos, fend = sfind(s, pat, pos, plain)
-  while fpos do
-    count, pos = count + 1, fend + 1
-    fpos, fend = sfind(s, pat, pos, plain)
-  end
-  return count
-end ---- findcount
-
-end -- do
---]]
 
 ---------------------------------------- Table
 local function _isEqual (t, u) --> (bool)
@@ -726,11 +708,15 @@ end ---- ClearHotText
 do
   local far_Text = far.Text
 
+--[[
 -- Horizontal output of text.
 -- Вывод текста горизонтально.
 function unit.HText (X, Y, Color, Str)
   return far_Text(X, Y, Color, Str)
 end ----
+--]]
+
+unit.HText = far_Text
 
 -- Vertical output of text.
 -- Вывод текста вертикально.

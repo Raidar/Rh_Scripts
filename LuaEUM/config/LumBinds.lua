@@ -51,10 +51,10 @@ local Data = {
   --none   = { Menu = "Characters", },
   none   = { Menu = "J_None;Characters", },
   --text   = { Menu = "Characters", },
-  html   = { Menu = "J_Html;Characters", },
+  html   = { Menu = "J_Html", }, --;Characters
   c      = { Menu = "J_C_Cpp", },
   pascal = { Menu = "J_Pascal", },
-  lua    = { Menu = "J_Lua;Characters", },
+  lua    = { Menu = "J_Lua", }, --;Characters
 
   sub    = { Menu = "Subtitles;J_None;Characters", },
 } ---

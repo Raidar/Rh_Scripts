@@ -63,6 +63,7 @@ local unit = {
 } ---
 
 ---------------------------------------- Keys
+
 ---------------------------------------- ---- Symbol keys
 local SKEY_SymNames = keyUt.SKEY_SymNames
 
@@ -161,7 +162,8 @@ do
 
   -- Получение имени символа по её кодовой точке.
   local function uCPname (c) --> (string)
-    return CharNames[c] and CharNames[c].name or ""
+    local c = CharNames[c]
+    return c and c.name or ""
   end --
 
 -- Make menu item.
@@ -171,7 +173,10 @@ function uItem.MakeItem (text, Keys, key, char, hint) --> (table)
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
 
-  local t = { text = text, Plain = x }
+  local t = {
+    text = text,
+    Plain = x,
+  } ---
   --if text == "" or text == " " then t.grayed = true end
   if text == "" or text == " " then t.disable = true end
   if hint == true then
@@ -182,6 +187,7 @@ function uItem.MakeItem (text, Keys, key, char, hint) --> (table)
   end
   if hint then t.Hint = hint end
 
+  local char = char
   x = type(char) ~= 'table'
   uItem.MakeKey(t, Keys.Kind and Keys or Keys[1], key, x and char or char[2])
   char = x and char or char[3]
@@ -222,17 +228,24 @@ end -- do
 function uList.Items (Properties, Data, Keys) --> (table)
   -- Настройка параметров:
   local tp = type(Data)
-  assert(tp == 'string' or tp == 'table')
+  if tp ~= 'string' and tp ~= 'table' then
+    return nil, "Data type is not valid"
+  end
 
   local Order = Properties.Order or uItem.DefItemOrder
   local iLen = Properties.Length or 1
   if tp == 'table' then iLen = 1 end
 
   local Size = Properties.Size or length(Order)
-  assert(Size and Size >= 1)
+  if not Size or Size < 1 then
+    return nil, "Order size is not valid"
+  end
 
   local dLen = length(Data)
-  assert(dLen and dLen >= 1)
+  if not dLen or dLen < 1 then
+    return nil, "Data length is not valid"
+  end
+
   local Count = Properties.Count or
                 tp == 'string' and dLen / Size or dLen or 1
   if Count < 1 then Count = 1 end
@@ -374,7 +387,7 @@ function uList.SetLabelItemsText (Items, Text, Value) --|> Items
   end
 
   return Items
-end ----
+end ---- SetLabelItemsText
 
 -- Change fields for items with specified keys' pattern.
 -- Изменение полей пунктов с заданным шаблоном для клавиши.
@@ -397,7 +410,7 @@ function uList.SetKeyItemsField (Items, Pattern, Field, Value) --|> Items
   end
 
   return Items
-end ----
+end ---- SetKeyItemsField
 
 ---------------------------------------- main
 do
@@ -447,7 +460,7 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
     if not InsText(Area, ActItem.Plain, {}) then return true end
 
     return not Redraw()
-  end --
+  end -- DoChooseItem
 
   local Properties = {
     Id = Guid,
@@ -462,7 +475,7 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
 
       OnChooseItem = DoChooseItem,
     }, --
-  } ---
+  } --- Properties
 
   --[[
   if Props.___ then

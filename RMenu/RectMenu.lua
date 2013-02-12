@@ -43,7 +43,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local HText, VText = far.Text, farUt.VText
 
 ----------------------------------------
-local context = context
+--local context = context
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -56,20 +56,14 @@ local newFlag, isFlag = utils.newFlag, utils.isFlag
 local Null = tables.Null
 
 local abs, sign = math.abs, numbers.sign
-local b2n, sqrti = numbers.b2n, numbers.sqrti
+local b2n = numbers.b2n
 local max2, min2 = numbers.max2, numbers.min2
 local divc, divr = numbers.divc, numbers.divr
-local torange = numbers.torange
-local inrange, outrange = numbers.inrange, numbers.outrange
 
 ----------------------------------------
 local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
 ----------------------------------------
-local fkeys = require "far2.keynames"
-
-local InputRecordToName = fkeys.InputRecordToName
-
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
 ----------------------------------------
@@ -92,36 +86,39 @@ local DrawSeparItemText = RDraw.DrawSeparItemText
 
 ----------------------------------------
 --[[
-local hex = numbers.hex8
-local tostring = tostring
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
+local hex = dbg.hex8
 --]]
 
 --------------------------------------------------------------------------------
 --local unit = {}
 
----------------------------------------- Item cell
+---------------------------------------- Common
 
--- Получение ячейки из строки и столбца.
+---------------------------------------- ---- Cell
+-- Make cell from row and column.
+-- Формирование ячейки из строки и столбца.
 local function RC_cell (Row, Col)
-  return { Row = Row, Col = Col }
+  return { Row = Row, Col = Col, }
 end
 --unit.RC_cell = RC_cell
 
+-- Check equality of two cells.
 -- Проверка на равенство двух ячеек.
 local function RC_iseq (c1, c2) --> (bool)
   return c1 and c2 and c1.Row == c2.Row and c1.Col == c2.Col
 end
 --unit.RC_iseq = RC_iseq
 
--- Ячейка на основе другой ячейки.
+-- Make cell as copy of other cell.
+-- Формирование ячейки как копии другой ячейки.
 local function RC_copy (cell) --> (bool)
   return { Row = cell.Row, Col = cell.Col }
 end ----
 --unit.RC_copy = RC_copy
 
----------------------------------------- Item index
+---------------------------------------- ---- Index
 
 local inc2, divm, swap = numbers.inc2, numbers.divm, numbers.swap
 
@@ -152,22 +149,30 @@ local function Cell2Idx (Row, Col, Data) --> (Index)
   end
 end -- Cell2Idx
 
----------------------------------------- Catena
+---------------------------------------- ---- Span
+--local inrange, outrange = numbers.inrange, numbers.outrange
 
 -- Проверка на нахождение значения в пределах.
 local function inspan (n, span) --> (bool)
-  return inrange(n, span.Min, span.Max)
+  --return inrange(n, span.Min, span.Max)
+  return n >= span.Min and n <= span.Max
 end --
 
 -- Проверка на НЕнахождение значения в пределах.
 local function outspan (n, span) --> (bool)
-  return outrange(n, span.Min, span.Max)
+  --return outrange(n, span.Min, span.Max)
+  return n < span.Min or n > span.Max
 end --
 
 -- Получение значения в пределах.
 local function tospan (n, span) --> (bool)
-  return torange(n, span.Min, span.Max)
+  --return torange(n, span.Min, span.Max)
+  return n < span.Min and span.Min or
+         n > span.Max and span.Max or n
 end --
+
+---------------------------------------- Catena
+local sqrti = numbers.sqrti
 
 -- Count existing catenas (of menu items).
 -- Количество существующих рядов (пунктов меню).
@@ -198,6 +203,7 @@ local function MenuCatCount (Majors, Minors, Count) --> (number, number)
   end
 end -- MenuCatCount
 
+---------------------------------------- ---- Visibility
 local VisibleCatCount = {
   Base = false,
   Pike = false,
@@ -216,7 +222,7 @@ local VisibleCatCount = {
 function VisibleCatCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
   if not Len[Base] then return 0, 0 end
 
-  Base = torange(Base, Fixes.Min, Fixes.Max)
+  local Base = tospan(Base, Fixes)
   local k, L = Base, 0
   local Count, Limit = Fixes.Max, Total + Sep - Fixes.Length
   repeat
@@ -257,7 +263,7 @@ end ---- VisibleCatCount.Base
 function VisibleCatCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number)
   if not Len[Pike] then return 0, 0 end
 
-  Pike = torange(Pike, Fixes.Min, Fixes.Max)
+  local Pike = tospan(Pike, Fixes)
   local k, L = Pike, 0
   local Count, Limit = Fixes.Min, Total + Sep - Fixes.Length
   --logShow({ k, Total, Sep, L, Limit, Len, Pike, Fixes }, "Pike", 2)
@@ -727,9 +733,11 @@ end ---- DefineSpotInfo
 
 end -- do
 do
+  local torange = numbers.torange
+
   -- Задание параметров фиксированных рядов меню.
   local function MakeFixedCats (Cats, Len, Sep, Count) --| Cats
-    local self = self
+    local Cats = Cats
     if Cats.Head == 0 and Cats.Foot == 0 then return end
     if Count == 0 then
       Cats.Head, Cats.Foot = 0, 0
@@ -1174,7 +1182,7 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
     local Cell, _
     local Fixes = self.FixedRows
     --logShow({ Cell, RC_cell(Row, Col) }, "dRow ~= 0")
-    if outrange(Row, Fixes.Min, Fixes.Max) then
+    if outspan(Row, Fixes) then
       Cell = { Row = Row }
     else
       _, Cell = self:FindRowCell(Row, Col, dRow)
@@ -1201,7 +1209,7 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
   if dCol ~= 0 then -- Ячейка по столбцам:
     local Cell, _
     local Fixes = self.FixedCols
-    if outrange(Col, Fixes.Min, Fixes.Max) then
+    if outspan(Col, Fixes) then
       Cell = { Col = Col }
     else
       _, Cell = self:FindColCell(Row, Col, dCol)
@@ -1235,7 +1243,7 @@ function TMenu:FindRowCell (Row, Col, dRow) --> (Index, Cell)
   local Fixes = self.FixedRows
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Row = Row + dRow
-    if outrange(Row, Fixes.Min, Fixes.Max) then return end
+    if outspan(Row, Fixes) then return end
   end
 
   return self:CellIndex(Row, Col), RC_cell(Row, Col)
@@ -1248,7 +1256,7 @@ function TMenu:FindColCell (Row, Col, dCol) --> (Index, Cell)
   local Fixes = self.FixedCols
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Col = Col + dCol
-    if outrange(Col, Fixes.Min, Fixes.Max) then return end
+    if outspan(Col, Fixes) then return end
   end
 
   return self:CellIndex(Row, Col), RC_cell(Row, Col)
@@ -1851,7 +1859,7 @@ function TMenu:ScrollHClick (hDlg, pos)
   local self = self
   --logShow(Bar, pos, 2)
   local Bar = self.ScrollBars.ScrollH
-  if outrange(pos, Bar.X1, Bar.X2) then return false end
+  if pos < Bar.X1 or pos > Bar.X2 then return false end
 
   if     pos == Bar.X1 then
     return self:ArrowKeyPress(hDlg, "Left", 0, true)
@@ -1877,7 +1885,7 @@ end ---- ScrollHClick
 function TMenu:ScrollVClick (hDlg, pos)
   local self = self
   local Bar = self.ScrollBars.ScrollV
-  if outrange(pos, Bar.Y1, Bar.Y2) then return false end
+  if pos < Bar.Y1 or pos > Bar.Y2 then return false end
 
   if     pos == Bar.Y1 then
     return self:ArrowKeyPress(hDlg, "Up", 0, true)
@@ -2345,6 +2353,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 --[[ 2.2. Обработка реакции меню ]]
 
   --local NoDlgClose -- Нет выбора пункта меню для спец. действий.
+  local InputRecordToName = (require "far2.keynames").InputRecordToName
 
   -- Обработчик нажатия клавиши клавиатуры:
   local function DlgKeyInput (hDlg, ProcItem, VirKey) --> (bool)
