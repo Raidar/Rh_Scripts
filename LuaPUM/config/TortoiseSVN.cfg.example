@@ -1,4 +1,6 @@
 --------------------------------------------------------------------------------
+-- Copy this file to "%FarProfile%\scripts\Rh_Scripts\LuaPUM\config" directory.
+-- Rename it to "TortoiseSVN.cfg" and change values of Data fields.
 Data = {
   TortoiseSVN = {
     Path = "D:\\Tools\\tSVN\\bin\\", -- Путь к TortoiseSVN

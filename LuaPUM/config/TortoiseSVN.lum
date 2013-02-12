@@ -30,7 +30,7 @@ local logShow = dbg.Show
 if utils.isPluginPanel() then return end
 
 ----------------------------------------
-local Svn = {}
+local unit = {}
 
 --------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ local Svn = {}
 local DefCustom = {
   label = "tSVN",
   name = "TortoiseSVN",
-  path = "scripts\\Rh_Scripts\\LumSVN\\config\\",
+  path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
   locale = { kind = 'load', },
 } --- DefCustom
 
@@ -65,9 +65,6 @@ local DefCfgData = {
 
   -- Дополнительные параметры:
   onClose = "/closeonend:0",
-
-  --isWorkingCopy  = false,
-  --isSubversioned = false,
 } --- DefCfgData
 
 ---------------------------------------- Status
@@ -81,8 +78,9 @@ local isStatus = {
   IsModifs = "Local modifications found",
 } ---
 
--- Проверка на отсутствие рабочей копии.
-function Svn.isWorkingCopy (Status) --> (bool)
+-- Check for working copy.
+-- Проверка на наличие рабочей копии.
+function unit.isWorkingCopy (Status) --> (bool)
   --assert(type(Status) == 'string')
   return Status ~= "" and
          (Status:find(isStatus.IsModifs, 1, true) or
@@ -90,15 +88,13 @@ function Svn.isWorkingCopy (Status) --> (bool)
               Status:find(isStatus.IsNotaWC, 1, true)))
 end --
 
--- Проверка на отсутствие версионирования.
-function Svn.isSubversioned (Status) --> (bool)
+-- Check for subversion present.
+-- Проверка на наличие версионирования.
+function unit.isSubversioned (Status) --> (bool)
   --assert(type(Status) == 'string')
   return not (Status:find(isStatus.NoCommit, 1, true) and
               Status:find(isStatus.NoUpdate, 1, true))
 end --
-
---DefCfgData.isWorkingCopy  = Svn.isWorkingCopy
---DefCfgData.isSubversioned = Svn.isSubversioned
 
 ---------------------------------------- Configure
 local addNewData = tables.extend
@@ -155,23 +151,10 @@ local Formats = { -- SVN
 
 do
   local exec = runUt.Run.Process
-  --[[
-  -- Execute program and return its output.
-  -- Выполняет программу и возвращает его вывод.
-  local function exec (program) --> (string)
-    local h = ansi.io.popen(program)
-    --local h = ansi.io.popen(win.Utf8ToOem(program))
-    if not h then return end
-    --logShow({ program, win.OemToUtf8(win.Utf8ToOem(program)), }, "ansi_exec")
-    local out = h:read("*a")
-    --logShow(out, program)
-    h:close()
-    return out
-  end ---- exec
-  --]]
 
+-- Get status for working copy.
 -- Получение статуса рабочей копии.
-function Svn.getStatus (ItemPath) --> (bool)
+function unit.getStatus (ItemPath) --> (bool)
   local Status = Formats.Status:format(CfgData.Path, CfgData.Status, ItemPath)
   --logShow({ Path = ItemPath, Status = Status, }, "Item + Status")
   return exec(Status)
@@ -180,9 +163,12 @@ end ----
 
 end -- do
 
-do
+-- Make information about panel item.
+-- Формирование информации об элементе панели.
+function unit.MakeItemInfo ()
+
   local Path = farUt.FarGetAreaItemName.panels()
-  local Status = Path ~= "" and Svn.getStatus(Path) or ""
+  local Status = Path ~= "" and unit.getStatus(Path) or ""
 
   if Status == "" then
     utils.warning(L.eError, L.eStatusFailed)
@@ -198,25 +184,26 @@ do
     return -- SVN Special directory
   end
 
-  Svn.Item = {
+  unit.Item = {
     --Item    = Item,
     Path    = Path,
     Name    = (Name == ".." and "" or Name),
     isDir   = not not Attrs:find("d", 1, true),
     Status  = Status,
-    isWorkingCopy  = not not Svn.isWorkingCopy(Status), -- true/false
+    isWorkingCopy  = not not unit.isWorkingCopy(Status), -- true/false
     isSubversioned = false,
   } ---
-  if Svn.Item.isWorkingCopy then
-    Svn.Item.isSubversioned = not not Svn.isSubversioned(Status)
+  if unit.Item.isWorkingCopy then
+    unit.Item.isSubversioned = not not unit.isSubversioned(Status)
   end
 
-  --logShow("'"..Svn.Item.Status.."'", "SVN Status")
-  --logShow(Svn.Item, "SVN")
-end -- do
+  --logShow("'"..unit.Item.Status.."'", "SVN Status")
+  --logShow(unit.Item, "SVN")
+end ----
 
+-- Make parameters.
 -- Формирование параметров.
-function Svn.MakeParams (Args, Command) --> (string | nil)
+function unit.MakeParams (Args, Command) --> (string | nil)
   -- Анализ общих параметров.
   local t = {}
   t[#t+1] = CfgData.onClose or ""
@@ -234,17 +221,18 @@ function Svn.MakeParams (Args, Command) --> (string | nil)
   return table.concat(t, ' ')
 end ---- MakeParams
 
+-- Run SVN operation.
 -- Выполнение операции SVN.
-function Svn.Run (Args, Cfg) --> (bool)
+function unit.Run (Args, Cfg) --> (bool)
   -- Анализ основных параметров.
   local Cmd = Args.command or CfgData.Command
   local Path = ""
   if not Args.nopath then
-    Path = Formats.Path:format(Svn.Item.Path)
+    Path = Formats.Path:format(unit.Item.Path)
   end
 
   -- Анализ дополнительных параметров.
-  local Adds = Svn.MakeParams(Args, Cmd) or ""
+  local Adds = unit.MakeParams(Args, Cmd) or ""
 
   -- Выполнение операции.
   local CmdLine = Formats.Run:format(CfgData.Path, CfgData.File, Cmd, Path, Adds)
@@ -260,9 +248,10 @@ function Svn.Run (Args, Cfg) --> (bool)
   return runUt.Run.CmdLine(CmdLine)
 end ---- Run
 
+-- Show SVN status.
 -- Показ статуса SVN.
-function Svn.ShowStatus ()
-  local Status = Svn.Item.Status
+function unit.ShowStatus ()
+  local Status = unit.Item.Status
   utils.message(L.wSVN_status, Status:match(isStatus.Text) or Status, "l")
 end --
 
@@ -319,9 +308,11 @@ local Kinds = {
   about     = true,
 
   [false] = { -- is not a working copy
+
     [false] = { -- is a file
       browseto  = true,
     },
+
     [true] = { -- is a directory
       checkout  = true,
       browseto  = true,
@@ -329,14 +320,19 @@ local Kinds = {
       create    = true,
       import    = true,
     },
-  }, --
+
+  }, -- false
+
   [true] = { -- is a working copy
+
     [false] = { -- is a file
+
       [false] = { -- is unversioned item
         browse    = true,
         add       = true,
         ignore    = true,
       },
+
       [true] = { -- is subversioned item
         update    = true,
         commit    = true,
@@ -358,8 +354,11 @@ local Kinds = {
         patch     = true,
         props     = true,
       },
+
     },
+
     [true] = { -- is a directory
+
       [false] = { -- is unversioned item
         checkout  = true,
         browse    = true,
@@ -369,6 +368,7 @@ local Kinds = {
         import    = true,
         ignore    = true,
       },
+
       [true] = { -- is subversioned item
         update    = true,
         commit    = true,
@@ -396,14 +396,19 @@ local Kinds = {
         patching  = true,
         props     = true,
       },
+
     },
-  },
+
+  }, -- true
+
 } --- Kinds
 
--- Формирование списка пунктов из опций.
-function Svn.MakeItems (Operations, Kinds) --> (Items)
+-- Make menu items list.
+-- Формирование списка пунктов.
+function unit.MakeItems (Operations, Kinds) --> (Items)
   local t = {}
 
+  -- Основные пункты меню.
   for k = 1, #Operations do
     local v = Operations[k]
 
@@ -414,7 +419,7 @@ function Svn.MakeItems (Operations, Kinds) --> (Items)
 
     elseif v.command then -- TEMP
       local name = v.name or v.command
-      local q = Svn.Item
+      local q = unit.Item
 
       --logShow({ q, Kinds, }, "Check", 1)
       if Kinds[name] or
@@ -426,98 +431,106 @@ function Svn.MakeItems (Operations, Kinds) --> (Items)
           text = L["tSVN_"..name] or name,
           Hint = L["hSVN_"..name] or name,
           checked   = CfgData.IconChars and v.checked,
-          Function  = Svn.Run,
+          Function  = unit.Run,
           Arguments = v,
         } ---
       end
     end
   end -- for
 
+  -- Дополнительные пункты меню.
+  if CfgData.MenuView ~= "far.Menu" and CfgData.ItemWidth then
+    t[#t+1] = { -- Special line
+      text = ("─"):rep(CfgData.ItemWidth),
+      disable = true,
+      checked = "─",
+    } --
+  end
+
+  t[#t+1] = { -- SVN Status
+    text = L.tSVN_status,
+    Hint = L.hSVN_status,
+    Function = unit.ShowStatus,
+    checked = "♌",
+  } --
+
   return t
 end ---- MakeItems
 
--- Основные пункты меню.
-local mItems = Svn.MakeItems(AllOperations, Kinds)
-
--- Дополнительные пункты меню.
-if CfgData.MenuView ~= "far.Menu" and CfgData.ItemWidth then
-  mItems[#mItems+1] = { -- Special line
-    text = ("─"):rep(CfgData.ItemWidth),
-    disable = true,
-    checked = "─",
-  } --
-end
-
-mItems[#mItems+1] = { -- SVN Status
-  text = L.tSVN_status,
-  Hint = L.hSVN_status,
-  Function = Svn.ShowStatus,
-  checked = "♌",
-} --
-
 ---------------------------------------- Menu
-local ColRowsMax = 20
-local IsMoreCols = #mItems > ColRowsMax
-
-do
+-- Get bottom caption for menu.
+-- Получение нижней надписи для меню.
+function unit.GetMenuBottom ()
   local MenuWidth = CfgData.ItemWidth + 3
-  if IsMoreCols then MenuWidth = MenuWidth * 2 end
+  if unit.IsMoreCols then MenuWidth = MenuWidth * 2 end
 
-  local Path, Lost, View = Svn.Item.Path
+  local Path, Lost, View = unit.Item.Path
 
-  if MenuWidth < Svn.Item.Path:len() then
+  if MenuWidth < unit.Item.Path:len() then
     if IsMoreCols then
       Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+\\[^\\]+)$")
     else
       Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+)$")
     end
   end
-
-  Svn.Item.View = View and View ~= Path and ".."..View or Path
   --logShow({ Path, Lost, View, }, "Parse Path")
-end -- do
 
-local mTortoiseSVN = { -- Tortoise SVN
-  text  = L.tSVN,
-  Title = L.TortoiseSVN,
-  Area = "panels",
+  return View and View ~= Path and ".."..View or Path
+end ---- GetMenuBottom
 
-  MenuView = CfgData.MenuView,
+-- Make menu.
+-- Формирование меню.
+function unit.MakeMenu () --> (Items)
 
-  Props = {
-    Bottom = CfgData.ShowPath and Svn.Item.View,
+  unit.MakeItemInfo()
 
-    RectMenu = {
-      Cols = IsMoreCols and 2 or 1,
-      Order = "V",
-      Separators = IsMoreCols and "V" or "",
-      --BoxKind = "R",
-      MenuAlign = "CM",
-      UncheckedChar = " ",
-    }, -- RectMenu
+  local mItems = unit.MakeItems(AllOperations, Kinds)
 
-  }, -- Props
+  local ColRowsMax = 20
+  unit.IsMoreCols = #mItems > ColRowsMax
 
-  CfgData = {
+  return { -- Tortoise SVN
+    text  = L.tSVN,
+    Title = L.TortoiseSVN,
+    Area = "panels",
 
-    UMenu = {
-      BottomHotKeys = false,
-      ReturnToUMenu = false,
-    }, --
+    MenuView = CfgData.MenuView,
 
-  }, -- CfgData
+    Props = {
+      Bottom = CfgData.ShowPath and unit.GetMenuBottom(),
 
-  Items = mItems,
-} --- mTortoiseSVN
+      RectMenu = {
+        Cols = unit.IsMoreCols and 2 or 1,
+        Order = "V",
+        Separators = unit.IsMoreCols and "V" or "",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+      }, --
+
+    }, -- CfgData
+
+    Items = mItems,
+  } ----
+end ---- MakeMenu
 
 ---------------------------------------- Data
 local Data = {
   Menu = {
     text = L.tSVN,
-    Items = { mTortoiseSVN, },
+    Items = { unit.MakeMenu, },
   },
 
-  ["tSVN"] = mTortoiseSVN,
+  ["tSVN"] = unit.MakeMenu,
 } ---
 
 return Data

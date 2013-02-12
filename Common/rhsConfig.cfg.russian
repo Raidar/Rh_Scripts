@@ -19,12 +19,6 @@ do local t = {}; Data = t
       t["Title"] = "LUM для  &Панелей"
     end
   end
-  do local t = {}; Data["mLumSVN"] = t
-    t["Title"] = "LU&M для SVN"
-    do local t = {}; Data["mLumSVN"]["config"] = t
-      t["Title"] = "LUM для  &SVN"
-    end
-  end
   do local t = {}; Data["sLUMs"] = t
     t["Title"] = "Меню UM"
   end

@@ -34,7 +34,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -144,7 +144,7 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
   if not DefMenu then return end
 
   --[[
-  logShow({ { "Menu",
+  --logShow({ { "Menu",
               Name = Menu.Name, Title = Menu.Title,
               Caption = Menu.Caption, text = Menu.text },
             { "DefMenu",
@@ -171,7 +171,7 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
     Menu.Title = nil
   end
   --logShow(Menu.text, Menu.Title)
-end ----
+end ---- SetBaseTitle
 
 -- Подготовка объекта класса меню (после создания).
 function TMenu:Prepare () --> (bool | nil, error)
@@ -371,8 +371,9 @@ local function _GetBackMenu (Menu, Name) --> (table | nil)
   --                 _GetBackMenu(Menu.Back.Menu, Name))
   if not Menu then return end
   if Menu[Name] then return Menu[Name] end
+
   return _GetBackMenu(Menu.Back.Menu, Name)
-end --
+end -- _GetBackMenu
 
 --[[ -- MAYBE: Change _GetBackMenu to function of TMenu.
 function TMenu:GetBackMenu (Name) --> (table | nil)
@@ -539,7 +540,7 @@ function TMenu:MakeMenuProps () --> (table)
   --logShow(Props, "self.Props", 2)
   --[[
   if BackMenu and BackMenu == self.Menus.Characters then
-    logShow(Props, "self.Props", 3, "", logProps)
+    --logShow(Props, "self.Props", 3, "", logProps)
   end
   --]]
 
@@ -641,11 +642,13 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
   end
 end ---- MakeRunMenuItem
 
+-- Make runnable menu from current menu-table.
 -- Формирование запускаемого меню из текущего меню-таблицы.
 function TMenu:MakeRunMenu () --> (table)
   local CurMenu = self.CurMenu
   local Items = CurMenu.Items
   if type(Items) == 'function' then
+    --logShow(CurMenu, "CurMenu", "w d2")
     Items = Items()
   end
   if type(Items) == 'table' then
@@ -906,6 +909,11 @@ end ---- ShowMenu
 
 end -- do
 
+local function ShowInfo (...)
+  local dbg = require "context.utils.useDebugs"
+  return dbg.Show(...)
+end --
+
 -- Обработка BreakKeys.
 function TMenu:HandleBreakKeys ()
   -- Здесь self.ActItem -- BreakCode -- элемент таблицы BreakKeys.
@@ -928,16 +936,16 @@ function TMenu:HandleBreakKeys ()
       local Item = self.RunMenu[self.ItemPos]
       --logShow(Item, Action)
       -- TODO: Сделать нормальный вывод только нужной информации.
-      logShow(Item, self.L.MenuItem..": "..self:GetItemTitle(Item), 0)
+      ShowInfo(Item, self.L.MenuItem..": "..self:GetItemTitle(Item), 0)
 
     elseif Action == "Menu Info" then -- о меню в целом
       local Item = self.Menus[tables.Nameless] or self.BaseMenu
       -- TODO: Сделать нормальный вывод только нужной информации.
       --logShow(Item, Action)
-      logShow(Item, self.L.MenuMenu..": "..self:GetItemTitle(self.BaseMenu), 0)
+      ShowInfo(Item, self.L.MenuMenu..": "..self:GetItemTitle(self.BaseMenu), 0)
     end --
 
-    self.ActItem = { Menu = self.CurMenu, isBack = false, }
+    self.ActItem = { Menu = self.CurMenu, isBack = false }
     return
   end
 

@@ -440,6 +440,18 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
 
   local mItems = uList.Items(Props, Data, Keys)
 
+  --[[
+  local mItems
+
+  -- Deferred make items.
+  -- Отложенное формирование пунктов.
+  local function MakeItems ()
+    mItems = uList.Items(Props, Data, Keys)
+    --logShow(mItems, "mItems", "w d2")
+    return mItems
+  end --
+  --]]
+
   local Area = farUt.GetAreaType()
 
   local mChooseKinds = {
@@ -506,6 +518,7 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
     CfgData = CfgData,
 
     Items = mItems,
+    --Items = MakeItems,
   } ----
 end ---- Menu
 

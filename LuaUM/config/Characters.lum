@@ -142,31 +142,32 @@ do
   local MakeMenu = CharsMenu.Menu
 
 -- Сформировать меню из набора символов.
-function unit.Menu (Cfg, Props, Datas, Keys)
+function unit.Menu (Cfg, Props, Datas, Keys) --> (Menu)
   local IsCfg = type(Cfg) == 'table'
   local Keys = Keys or "AccelKey"
   local Name = IsCfg and Cfg.Name or Cfg
 
-  Menus[Name] = MakeMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
+  return MakeMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
 end ---- Menu
 
 end -- do
 
 -- Использовать пробелы как обычные символы.
-function unit.UseSpace (Name) --| Menus[Name].Items
-  CharsMenu.List.SetLabelItemsText(Menus[Name].Items, " ", "_")
-  CharsMenu.List.SetKeyItemsField(Menus[Name].Items, "Space$", false)
+function unit.UseSpace (Menu) --| Menu.Items
+  CharsMenu.List.SetLabelItemsText(Menu.Items, " ", "_")
+  CharsMenu.List.SetKeyItemsField(Menu.Items, "Space$", false)
+  --return Menu
 end ----
 
 -- Использовать компактное меню для умещения на экране.
-function unit.CompactMenu (Name) --| Menus[Name].Props.RectMenu
-  local RectMenu = Menus[Name].Props.RectMenu
+function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
+  local RectMenu = Menu.Props.RectMenu
   --RectMenu.BoxKind = ""
   --RectMenu.Shadowed = false
   --RectMenu.MenuEdgeH = 0
   RectMenu.CompactText = true
   RectMenu.Separators = "V"
-end ----
+end ---- CompactMenu
 
 ---------------------------------------- CHARACTERS
 --[===[
@@ -237,7 +238,8 @@ Menus.Chars_Alters = { -- Characters
 ---------------------------------------- LETTERS etc
 
 ---------------------------------------- ---- Greek and extended
-do
+function unit.CharsGreekEx ()
+
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
   local Datas = -- Char + Shift
                 [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
@@ -255,15 +257,16 @@ do
     Heading = "Both",
   } ---
 
-unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
-unit.UseSpace('CharsGreekEx')
-unit.CompactMenu('CharsGreekEx')
+  local Menu = unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
+  unit.UseSpace(Menu)
+  unit.CompactMenu(Menu)
+  --logShow(Menu, "CharsGreekEx", 3)
 
---logShow(Menus.CharsGreekEx, "unit.Menu", 3)
-
-end -- do
+  return Menu
+end ---- CharsGreekEx
 ---------------------------------------- ---- Cyrillic slavic
-do
+function unit.CharsCyrSlav ()
+
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
   local Datas = -- Char + Shift
                 [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
@@ -284,16 +287,18 @@ do
     Heading = "Both",
   } ---
 
-unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
---logShow(Menus.CharsCyrSlav, "unit.Menu", 2)
-unit.UseSpace('CharsCyrSlav')
-unit.CompactMenu('CharsCyrSlav')
+  local Menu = unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
+  --logShow(Menu, "CharsCyrSlav", 2)
+  unit.UseSpace(Menu)
+  unit.CompactMenu(Menu)
 
-end -- do
+  return Menu
+end ---- CharsCyrSlav
 ---------------------------------------- MATHEMATICS
 
 ---------------------------------------- ---- Sub-/superscripts
-do
+function unit.MathsScripts ()
+
   local Order = [[1234567890=-`[]ijk/\ ]]
   local Datas = -- Char + Shift
                 [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
@@ -318,14 +323,15 @@ Keys = {
   ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
 } ---
 
-unit.Menu('MathsScripts', Props, Datas, Keys)
-unit.UseSpace('MathsScripts')
+  local Menu = unit.Menu('MathsScripts', Props, Datas, Keys)
+  unit.UseSpace(Menu)
+  --logShow(Menu, "MathsScripts", 3)
 
---logShow(Menus.MathsScripts, "MathsScripts", 3)
-
-end -- do
+  return Menu
+end ---- MathsScripts
 ---------------------------------------- ---- Other indexes
-do
+function unit.MathsIndexes ()
+
   local Order = "aijklmnprstuvxy"
   local Datas = -- Char + Shift
                 "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
@@ -341,19 +347,22 @@ do
     Heading = "Both",
   } ---
 
-unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
+  local Menu = unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
 
-end -- do
+  return Menu
+end ---- MathsIndexes
 ---------------------------------------- TECHNOLOGY
 
 ---------------------------------------- ---- Arrows
-do
+function unit.TechsArrows ()
 
-end -- do
+  local Menu = unit.Menu('TechsArrows', Props, Datas, "AccelKey")
+
+  return Menu
+end ---- TechsArrows
 ---------------------------------------- PUNCTUATION
 
 ---------------------------------------- ---- Symbols
-do
 --[[
 /   - dot/point
 a   - acute
@@ -361,6 +370,8 @@ op  - prime + modifier apostroph
 qw  - quote
 b   - bullet
 --]]
+function unit.PunctSymbols ()
+
   local Order = [[/opqwb`1234567890-\ ]]
   local Datas = -- Char + Shift
                 [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
@@ -398,12 +409,14 @@ b   - bullet
     Heading = "Both",
   } ---
 
-unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
-unit.UseSpace('PunctSymbols')
+  local Menu = unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
+  unit.UseSpace(Menu)
 
-end -- do
+  return Menu
+end ---- PunctSymbols
 ---------------------------------------- ---- Space & Hyphen
-do
+function unit.PunctSpaHyps ()
+
   local Order = {
     { '   " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
     { '   "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
@@ -435,11 +448,11 @@ do
     --___ = true, -- DEBUG
   } ---
 
-unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
+  local Menu = unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
+  --logShow(Menu, "PunctSpaHyps", 3)
 
---logShow(Menus.PunctSpaHyps.CfgData, "unit.Menu", 3)
-
-end -- do
+  return Menu
+end ---- PunctSpaHyps
 --------------------------------------------------------------------------------
 
 ---------------------------------------- ----
@@ -452,14 +465,14 @@ local mCharacters = {
   --Items = { Menus.Chars_Custom, Menus.Chars_Alters, Menus.CharsGreekEx },
   Items = {
     --{ text = Groups.Chars, separator = true, },
-    Menus.CharsGreekEx, Menus.CharsCyrSlav,
+    unit.CharsGreekEx, unit.CharsCyrSlav,
     { text = Groups.Maths, separator = true, },
-    Menus.MathsScripts, Menus.MathsIndexes,
+    unit.MathsScripts, unit.MathsIndexes,
     --{ text = Groups.Techs, separator = true, },
     --Menus.Techs_Arrows,
     { text = Groups.Punct, separator = true, },
-    Menus.PunctSymbols, Menus.PunctSpaHyps,
-  },
+    unit.PunctSymbols, unit.PunctSpaHyps,
+  }, --
 } --- mCharacters
 
 ---------------------------------------- Data
@@ -467,7 +480,7 @@ local Data = {
   Menu = {
     text = L.CharacterKits,
 
-    Items = { mCharacters },
+    Items = { mCharacters, },
   },
 
   ["Characters"] = mCharacters,

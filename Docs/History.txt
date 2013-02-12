@@ -10,6 +10,10 @@
 
 2013-02-12, v.3.0.5.5
 ―――――――
+  LuaUM:
+[*] Реализация отложенной загрузки меню Characters.
+[*] Реализация отложенной загрузки меню TortoiseSVN.
+    Перенос меню TortoiseSVN из LumSVN в LuaPUM.
   RectMenu:
 [+] Отложенная загрузка: Item и Items могут быть функциями.
 [*] Переименование каталога RMenu в RectMenu (включая файлы справки).
@@ -69,7 +73,7 @@
 2013-01-22, v.3.0.4.16
 ―――――――
   Utils:
-[*] LuaUtils.lua: Перенос двух функций в модуль useStrings.lua .
+[*] LuaUtils.lua: Перенос двух функций в модуль useStrings.lua .
 [*] Переименование модуля LuaUtils.lua в Character.lua .
 [*] Переименование модуля CharNames.lua в CharsList.lua .
 
