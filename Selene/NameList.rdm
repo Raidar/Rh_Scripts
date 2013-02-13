@@ -1,0 +1,37 @@
+[NameList]
+
+0x0A - LF  - line feed -- used as new line
+0x10 - TAB - tab -- used as group separator in line
+0x20 - SP  - space -- used as sample separator in line
+
+XXXX   - code point
+name   - name of character -- in uppercase
+lcname - name of control / noncharacter -- in lowercase
+
+Aliases are separated with comma in line.
+
+XXXX TAB name                       -- Name line
+XXXX TAB <lcname>                   -- Name line
+
+TAB = name (1.0)                    -- Version 1.0 name
+TAB = alias                         -- Alias line -- Alternative names
+TAB % formal alias                  -- Formal alias line -- Alt. names
+TAB * comment                       -- Comment line -- Informative note
+
+TAB x char SP name                  -- Cross reference
+TAB x char SP <lcname>              -- Cross reference
+TAB x (name SP - SP char)           -- Cross reference in ()
+TAB x (<lcname> SP - SP char)       -- Cross reference in ()
+TAB x char                          -- Cross reference for ideographs
+
+TAB : char char                     -- Canonical decomposition
+TAB # char char                     -- Compatibility decomposition
+TAB # <lctag> char                  -- Compatibility decomposition
+
+LF                                  -- Empty line
+;                                   -- File comment
+;;                                  -- Sidebar line
+TAB ;                               -- Ignored line
+TAB <reserved>                      -- Reserved line
+
+――――――――
