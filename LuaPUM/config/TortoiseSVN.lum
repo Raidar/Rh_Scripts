@@ -79,19 +79,19 @@ local MMain = { __index = TMain }
 local function CreateMain (ArgData)
 
   local self = {
-    ArgData = addNewData(ArgData, unit.DefCfgData),
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
 
-    Custom      = false,
-    Options     = false,
-    History     = false,
-    CfgData     = false,
-    --DlgTypes    = unit.DlgTypes,
-    LocData     = false,
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    CfgData   = false,
+    --DlgTypes  = unit.DlgTypes,
+    LocData   = false,
 
     -- Текущее состояние:
-    Path        = false,
-    Item        = false,
-    Status      = false,
+    Path      = false,
+    Item      = false,
+    Status    = false,
 
     IsWorkingCopyItem   = false,
     IsSubversionedItem  = false,

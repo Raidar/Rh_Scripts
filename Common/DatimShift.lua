@@ -88,30 +88,35 @@ local LocData -- Данные локализации
 local L -- Класс сообщений локализации
 
 ---------------------------------------- Configure
-
 -- Обработка конфигурации.
 local function Configure (ArgData)
-  -- 1. Заполнение ArgData.
+
   local ArgData = addNewData(ArgData, DefCfgData)
   ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
-  -- 2. Заполнение конфигурации.
+
   local History = nil
   local CfgData = {}
 --[[
   local History = datas.newHistory(Custom.history.full)
   local CfgData = History:field(Custom.history.field)
 --]]
-  -- 3. Дополнение конфигурации.
+
   setmetatable(CfgData, { __index = ArgData })
   --logShow(CfgData, "CfgData")
-  local Config = { -- Конфигурация:
-    Custom = Custom, History = History, DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+
+  -- Конфигурация:
+  local Config = {
+    Custom = Custom,
+    History = History,
+    DlgTypes = DlgTypes,
+    CfgData = CfgData,
+    ArgData = ArgData,
+    --DefCfgData = DefCfgData,
   } ---
 
-  locale.customize(Config.Custom) -- Инфо локализации
+  locale.customize(Config.Custom)
   --logShow(Config.Custom, "Custom")
 --]]
   return Config

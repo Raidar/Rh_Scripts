@@ -526,7 +526,7 @@ function unit.newDate (y, m, d, config) --> (object)
     m = m or 0, -- Количество месяцев
     d = d or 0, -- Количество дней
 
-    config = config or unit.newConfig();
+    config = config or unit.newConfig(),
   } --- self
 
   return setmetatable(self, MDate)
@@ -664,7 +664,7 @@ function unit.newTime (h, n, s, z, config) --> (object)
     s = s or 0, -- Количество секунд
     z = z or 0, -- Количество миллисекунд
 
-    config = config or unit.newConfig();
+    config = config or unit.newConfig(),
   } --- self
 
   return setmetatable(self, MTime)

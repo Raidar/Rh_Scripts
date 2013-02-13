@@ -155,11 +155,10 @@ local MMain = { __index = TMain }
 -- Создание объекта основного класса.
 local function CreateMain (ArgData)
 
-  -- 1. Заполнение ArgData.
   if ArgData == "AutoCfgData" then ArgData = unit.AutoCfgData end
 
   local self = {
-    ArgData = addNewData(ArgData, unit.DefCfgData),
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
     Options   = false,
@@ -168,22 +167,20 @@ local function CreateMain (ArgData)
     DlgTypes  = unit.DlgTypes,
 
     Current   = false,
-  } ---
+  } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
-  -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
   self.CfgData = self.History:field(self.Custom.history.field)
 
-  -- 3. Дополнение конфигурации.
   setmetatable(self.CfgData, { __index = self.ArgData })
-
   --logShow(self.CfgData, "CfgData")
-  locale.customize(self.Custom) -- Инфо локализации
+
+  locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
@@ -243,27 +240,22 @@ function TMain:DlgForm () --> (dialog)
   return D
 end -- DlgForm
 
--- Настройка конфигурации.
-function unit.ConfigDlg (Data)
-  -- Конфигурация:
-  local _Main = CreateMain(Data)
-  local HelpTopic = _Main.Custom.help.tlink
-  -- Локализация:
-  _Main.LocData = locale.getData(_Main.Custom)
-  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
-  if not _Main.LocData then return end
-  _Main.L = locale.make(_Main.Custom, _Main.LocData)
-  -- Конфигурация:
-  --local isAuto  = _Main.Custom.isAuto
-  local isSmall = _Main.Custom.isSmall
+function TMain:DlgBox ()
+
+  --local isAuto  = self.Custom.isAuto
+  local isSmall = self.Custom.isSmall
   --if isSmall == nil then isSmall = true end
-  -- Подготовка:
+
+  -- Область:
   local DBox = {
-    cSlab = 3,
-    Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
-    Width = 0, Height = 0,
-  } --
-  _Main.DBox = DBox
+    cSlab     = 3,
+
+    Width     = 0,
+    Height    = 0,
+    Flags     = isSmall and F.FDLG_SMALLDIALOG or nil,
+  } -- DBox
+  self.DBox = DBox
+
   DBox.Width  = 2 + 36*2 -- Edge + 2 columns
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 1*2 + -- group empty lines + group item lines
@@ -272,7 +264,22 @@ function unit.ConfigDlg (Data)
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
 
-  -- Настройка:
+  return DBox
+end ---- DlgBox
+
+-- Настройка конфигурации.
+function unit.ConfigDlg (Data)
+
+  local _Main = CreateMain(Data)
+  if not _Main then return end
+
+  _Main:Localize() -- Локализация
+
+  local DBox = _Main:DlgBox()
+  if not DBox then return end
+
+  local HelpTopic = _Main.Custom.help.tlink
+
   local D = _Main:DlgForm()
   dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
   local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
@@ -290,6 +297,21 @@ end ---- ConfigDlg
 end -- do
 ---------------------------------------- Main making
 
+---------------------------------------- ---- Prepare
+do
+-- Localize data.
+-- Локализация данных.
+function TMain:Localize ()
+  self.LocData = locale.getData(self.Custom)
+  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
+  if not self.LocData then return end
+
+  self.L = locale.make(self.Custom, self.LocData)
+
+  return self.L
+end ---- Localize
+
+end -- do
 ---------------------------------------- ---- Regex
 local far_find, far_gsub = regex.find, regex.gsub
 

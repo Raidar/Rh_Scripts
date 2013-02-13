@@ -97,37 +97,37 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
 
   -- Object
   local self = {
-    Props = Properties,
-    Menus = Menus,
-    Config = Config,
-    Scope  = Scope,
+    Props     = Properties,
+    Menus     = Menus,
+    Config    = Config,
+    Scope     = Scope,
 
-    -- Локализация.
     -- TODO: Выделить из LUM в CustomMenu его сообщения!
-    LocData = Scope.LocData,
-    L = Scope.Locale,
+    LocData   = Scope.LocData,
+    L         = Scope.Locale,
 
-    BaseName = "Menu",  -- Имя базового меню
-    BaseMenu = false,   -- Ссылка на базовое меню в Menus
+    BaseName  = "Menu",   -- Имя базового меню
+    BaseMenu  = false,    -- Ссылка на базовое меню в Menus
 
     -- Текущее состояние:
-    Error    = false,     -- Текст ошибки
-    SelPos   = 1,         -- Позиция пункта-меню в надменю
-    isNova   = true,      -- Признак показа нового меню
-    CurMenu  = false,     -- Текущее меню-таблица
-    CurName  = "(none)",  -- Имя этого текущего меню
-    CurData  = false,     -- Таблица данных конфигурации меню
-    CurProps = false,     -- Таблица свойств (для вывода) меню
+    Error     = false,    -- Текст ошибки
+    SelPos    = 1,        -- Позиция пункта-меню в надменю
+    isNova    = true,     -- Признак показа нового меню
+    CurMenu   = false,    -- Текущее меню-таблица
+    CurName   = "(none)", -- Имя этого текущего меню
+    CurData   = false,    -- Таблица данных конфигурации меню
+    CurProps  = false,    -- Таблица свойств (для вывода) меню
 
-    RunMenu  = false,     -- Текущее запускаемое меню
-    RunItem  = false,     -- Текущий пункт этого меню
-    RunCount = 0,         -- Число пунктов этого меню
+    RunMenu   = false,    -- Текущее запускаемое меню
+    RunItem   = false,    -- Текущий пункт этого меню
+    RunCount  = 0,        -- Число пунктов этого меню
 
-    ActItem = {         -- Выбранный пункт этого меню
-      Menu = false,       -- Ссылка на запускаемое меню
-      isBack = nil,       -- Признак возврата в это меню
+    ActItem   = {         -- Выбранный пункт этого меню
+      Menu      = false,    -- Ссылка на запускаемое меню
+      isBack    = nil,      -- Признак возврата в это меню
     },
-    ItemPos = 1,        -- Позиция выбранного пункта меню
+    ItemPos   = 1,        -- Позиция выбранного пункта меню
+
   } --- self
 
   return setmetatable(self, MMenu)

@@ -39,6 +39,7 @@ local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
 local isFlag = utils.isFlag
+local addNewData = tables.extend
 
 ----------------------------------------
 --local farUt = require "Rh_Scripts.Utils.Utils"
@@ -373,22 +374,18 @@ local function MakeDlgTypes (cData, aData)
 end -- MakeDlgTypes
 
 ---------------------------------------- Configure
-local addNewData = tables.extend
 
 -- Обработка конфигурации.
 local function Configure (ArgData)
 
-  -- 1. Заполнение ArgData.
   local ArgData = addNewData(ArgData or {}, DefCfgData)
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
 
-  -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
   local CfgData = {}
   --local CfgData = History:field(Custom.Field)
 
-  -- 3. Дополнение конфигурации.
   CfgData.um = History:field("um")
   for k, v in pairs(ArgData) do
     CfgData[k] = History:field(k) -- Чтение текущих значений
@@ -400,12 +397,18 @@ local function Configure (ArgData)
     setmetatable(CfgData[k], { __index = v })
   end -- for
   --logShow(CfgData, "CfgData", 2)
-  local Config = { -- Конфигурация:
-    Custom = Custom, History = History, --DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+
+  -- Конфигурация:
+  local Config = {
+    Custom = Custom,
+    History = History,
+    --DlgTypes = DlgTypes,
+    CfgData = CfgData,
+    ArgData = ArgData,
+    --DefCfgData = DefCfgData,
   } ---
 
-  locale.customize(Config.Custom) -- Инфо локализации
+  locale.customize(Config.Custom)
   --logShow(Config.Custom, "Custom")
 
   return Config

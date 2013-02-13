@@ -147,7 +147,6 @@ function unit.Configure (ArgData, isDefData) --> (table)
   --logShow(ArgData, "ArgData", 2)
   --logShow(getmetatable(ArgData), "ArgData meta", 2)
 
-  -- 1. Заполнение ArgData.
   local DefB = ArgData.Basic
   local DefConfig = not isDefData and unit.DefConfig or nil
   local DefData = DefConfig and DefConfig.ArgData
@@ -159,7 +158,6 @@ function unit.Configure (ArgData, isDefData) --> (table)
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
 
-  -- 2. Заполнение конфигурации.
   local History = datas.newHistory(Custom.history.full)
   local CfgData = {}
   for k, _ in pairs(HistoryFields) do
@@ -177,14 +175,21 @@ function unit.Configure (ArgData, isDefData) --> (table)
   end
   --logShow(ArgData, "ArgData")
 
-  -- 3. Дополнение конфигурации.
-  local Config = { -- Конфигурация:
+  -- Конфигурация:
+  local Config = {
+    Custom = Custom,
+    History = History,
+    DlgTypes = DlgTypes,
+    CfgData = CfgData,
+    ArgData = ArgData,
+    --DefData = DefData,
+
     __index = DefConfig,
-    Custom = Custom, History = History, DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefData = DefData,
   } ---
+
   locale.customize(Config.Custom) -- Инфо локализации
   --logShow(Config, "Config", 2)
+
   --return Config
   return DefConfig and setmetatable(Config, Config) or Config
 end ---- Configure

@@ -48,12 +48,12 @@ local function CreateMenu (Properties)--, Items) --> (object)
   local Options = Properties.Caller or {}
 
   local self = {
-    Options  = Options,
-    Require  = Options.Require or require,
-    Call     = Options.Call,
-    Kind     = Options.Kind or Properties.MenuView,
+    Options   = Options,
+    Require   = Options.Require or require,
+    Call      = Options.Call,
+    Kind      = Options.Kind or Properties.MenuView,
 
-    Run = false, -- Вид запускаемого меню
+    Run       = false, -- Вид запускаемого меню
   } --- self
 
   return setmetatable(self, MMenu)

@@ -48,12 +48,12 @@ local function CreateMenu (Properties, Items, BreakKeys) --> (object)
   local Properties = Properties or {}
   local Options = Properties.VirKey or {}
   local self = {
-    Props = Properties,
-    Items = Items,
-    BKeys = BreakKeys,
+    Props     = Properties,
+    Items     = Items,
+    BKeys     = BreakKeys,
 
-    Count = #Items,
-    Options = Options,
+    Count     = #Items,
+    Options   = Options,
   } --- self
 
   return setmetatable(self, MMenu)

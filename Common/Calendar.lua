@@ -72,7 +72,7 @@ unit.DefCustom = {
     file = unit.FileName,
     path = unit.FilePath,
   }, --
-} --- DefCustom
+} -- DefCustom
 
 --[[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
@@ -93,8 +93,8 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
 ---------------------------------------- Main class
 local TMain = {
-  --Guid       = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
-  --ConfigGuid = win.Uuid("642eb0fd-d297-4855-bd87-dcecfc55bcc4"),
+  --Guid       = win.Uuid(""),
+  --ConfigGuid = win.Uuid(""),
 }
 local MMain = { __index = TMain }
 
@@ -102,22 +102,23 @@ local MMain = { __index = TMain }
 local function CreateMain (ArgData)
 
   local self = {
-    ArgData = addNewData(ArgData, unit.DefCfgData),
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
     Options   = false,
     History   = false,
     CfgData   = false,
     --DlgTypes  = unit.DlgTypes,
+    LocData   = false,
+    L         = false,
 
     -- Текущее состояние:
     Date      = false,    -- Дата
     Time      = false,    -- Время
 
-    --Error    = false,   -- Текст ошибки
+    --Error     = false,    -- Текст ошибки
     --Menu      = false,    -- CfgData.Menu or {}
 
-    --Words     = false,    -- Список слов
     Items     = false,    -- Список пунктов меню
     Props     = false,    -- Свойства меню
 
@@ -125,14 +126,13 @@ local function CreateMain (ArgData)
     ItemPos   = false,    -- Позиция выбранного пункта меню
     --Action    = false,    -- Выбранное действие
     --Effect    = false,    -- Выбранный эффект
-  } ---
+  } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
-  -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
   self.CfgData = self.History:field(self.Custom.history.field)
 
@@ -145,11 +145,10 @@ local function CreateMain (ArgData)
   self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
   self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
 
-  -- 3. Дополнение конфигурации.
   setmetatable(self.CfgData, { __index = self.ArgData })
   --logShow(self.CfgData, "CfgData")
 
-  locale.customize(self.Custom) -- Инфо локализации
+  locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
@@ -256,7 +255,7 @@ do
     return ("<%1d>"):format(d)
   end --
 
--- Заполнение меню.
+-- Формирование меню.
 function TMain:MakeMenu () --> (table)
   --local Cfg = self.CfgData
 

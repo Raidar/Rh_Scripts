@@ -66,14 +66,14 @@ local function CreateMenu (Properties, Items) --> (object)
   --logShow(Properties.Flags, "Flags")
 
   local self = {
-    Props = Properties,
-    Items = Items,
+    Props     = Properties,
+    Items     = Items,
 
-    Flags = Flags,
-    Count = #Items,
-    Options = Options,
+    Flags     = Flags,
+    Count     = #Items,
+    Options   = Options,
 
-    isHot = utils.isFlag(Flags, F.FMENU_SHOWAMPERSAND),
+    isHot     = utils.isFlag(Flags, F.FMENU_SHOWAMPERSAND),
   } --- self
 
   return setmetatable(self, MMenu)

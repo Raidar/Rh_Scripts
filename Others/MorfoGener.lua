@@ -88,23 +88,30 @@ local DlgTypes = { -- Типы элементов диалогов:
 ---------------------------------------- Configure
 -- Обработка конфигурации.
 local function Configure (ArgData)
-  -- 1. Заполнение ArgData.
+
   local ArgData = addNewData(ArgData, DefCfgData)
   ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
   addNewData(Custom.options, DefOptions)
-  -- 2. Заполнение конфигурации.
+
   local History = datas.newHistory(Custom.history.full)
   --logShow(History, "History")
   local CfgData = History:field(Custom.history.field)
-  -- 3. Дополнение конфигурации.
+
   setmetatable(CfgData, { __index = ArgData })
   --logShow(CfgData, "CfgData")
-  local Config = { -- Конфигурация:
-    Custom = Custom, History = History, DlgTypes = DlgTypes,
-    CfgData = CfgData, ArgData = ArgData, --DefCfgData = DefCfgData,
+
+  -- Конфигурация:
+  local Config = {
+    Custom = Custom,
+    History = History,
+    DlgTypes = DlgTypes,
+    CfgData = CfgData,
+    ArgData = ArgData,
+    --DefCfgData = DefCfgData,
   } ---
+
   locale.customize(Config.Custom) -- Инфо локализации
   --logShow(Config.Custom, "Custom")
 
@@ -203,9 +210,10 @@ local MLang = { __index = TLang }
 -- Создание объекта класса язык.
 local function CreateLang (Config) --> (object)
   local self = {
-    Config = Config,
-    Language = false,
+    Config    = Config,
+    Language  = false,
   } --- self
+
   return setmetatable(self, MLang)
 end -- CreateLang
 

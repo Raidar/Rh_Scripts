@@ -66,10 +66,10 @@ function unit.CharControl (cfg) --> (object)
   local cfg = cfg or {}
   local CharEnum = cfg.CharEnum or const.DefCharEnum
   local self = {
-    cfg = cfg,
-    CharEnum = CharEnum,
-    CharsSet = ".",
-    SeparSet = "",
+    cfg       = cfg,
+    CharEnum  = CharEnum,
+    CharsSet  = ".",
+    SeparSet  = "",
   } --- self
 
   if CharEnum ~= "." then
@@ -176,12 +176,13 @@ function unit.CharCounter (cfg) --> (object)
   local CharEnum = cfg.CharEnum or "."
 
   local self = {
-    cfg = cfg,
-    CharEnum = CharEnum,
-    CharsSet = '.',
-    Seq    = cfg.Seq or "",
-    SeqMax = cfg.SeqMax or 1,
-    SeqMin = cfg.SeqMin or 1,
+    cfg       = cfg,
+    CharEnum  = CharEnum,
+    CharsSet  = '.',
+    Seq       = cfg.Seq or "",
+    SeqMax    = cfg.SeqMax or 1,
+    SeqMin    = cfg.SeqMin or 1,
+
     Count = {
       Total = 0,
       Ones  = cfg.Ones or {},
@@ -189,7 +190,8 @@ function unit.CharCounter (cfg) --> (object)
       --Chars = cfg.Chars or {},
       Magic = cfg.Magic or {},
       Specs = cfg.Specs or {},
-    } --
+    }, -- Count
+
   } --- self
 
   if CharEnum ~= '.' then

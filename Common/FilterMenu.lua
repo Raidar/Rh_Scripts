@@ -120,14 +120,15 @@ local function CreateMenu (Properties, Items, BreakKeys) --> (object)
   local Options = Properties.Filter or {}
 
   local self = {
-    Props = Properties,
-    Items = Items,
-    BKeys = BreakKeys or {},
+    Props     = Properties,
+    Items     = Items,
+    BKeys     = BreakKeys or {},
 
-    Flags = Flags,
-    Count = #Items,
-    Options = Options,
+    Flags     = Flags,
+    Count     = #Items,
+    Options   = Options,
   } --- self
+
   return setmetatable(self, MMenu)
 end -- CreateMenu
 

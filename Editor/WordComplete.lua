@@ -341,7 +341,6 @@ TMain.PopupGuid = TMain.Guid
 -- Создание объекта основного класса.
 local function CreateMain (ArgData)
 
-  -- 1. Заполнение ArgData.
   if ArgData == "AutoCfgData" then
     ArgData = unit.AutoCfgData
   elseif ArgData == "CodeCfgData" then
@@ -349,18 +348,19 @@ local function CreateMain (ArgData)
   end
 
   local self = {
-    ArgData = addNewData(ArgData, unit.DefCfgData),
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
     Options   = false,
     History   = false,
     CfgData   = false,
     DlgTypes  = unit.DlgTypes,
+    LocData   = false,
 
-    TextTemplate = false,
+    Assist    = false,
 
     -- Текущее состояние:
-    --Error    = false,   -- Текст ошибки
+    --Error     = false,    -- Текст ошибки
     Menu      = false,    -- CfgData.Menu or {}
 
     Popup     = false,    -- Всплывающее меню-список
@@ -375,14 +375,13 @@ local function CreateMain (ArgData)
     ItemPos   = false,    -- Позиция выбранного пункта меню
     Action    = false,    -- Выбранное действие
     Effect    = false,    -- Выбранный эффект
-  } ---
+  } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
-  -- 2. Заполнение конфигурации.
   self.History = datas.newHistory(self.Custom.history.full)
   self.CfgData = self.History:field(self.Custom.history.field)
 
@@ -391,11 +390,10 @@ local function CreateMain (ArgData)
   Menu.CompleteKeys = Menu.CompleteKeys or unit.CompleteKeys
   Menu.LocalUseKeys = Menu.LocalUseKeys or unit.LocalUseKeys
 
-  -- 3. Дополнение конфигурации.
   setmetatable(self.CfgData, { __index = self.ArgData })
   --logShow(self.CfgData, "CfgData")
 
-  locale.customize(self.Custom) -- Инфо локализации
+  locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
@@ -524,30 +522,26 @@ function TMain:DlgForm () --> (dialog)
   return D
 end -- DlgForm
 
----------------------------------------- ---- ConfigDlg
--- Настройка конфигурации.
-function unit.ConfigDlg (Data)
+function TMain:DlgBox ()
 
-  local _Main = CreateMain(Data)
-  if not _Main then return end
-
-  _Main:Localize() -- Локализация.
-
-  local HelpTopic = _Main.Custom.help.tlink
-
-  -- Настройка:
-  local isAuto = _Main.Custom.isAuto
-  local isSmall = _Main.Custom.isSmall
+  local isAuto  = self.Custom.isAuto
+  local isSmall = self.Custom.isSmall
   if isSmall == nil then isSmall = true end
-  -- Подготовка:
+
+  -- Область:
   local DBox = {
-    cSlab = 3, cFind = 4, cSort = 1,
-    cList = isAuto and 1 or 3,
-    cCmpl = isAuto and 1 or 2,
-    Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
-    Width = 0, Height = 0,
-  } --
-  _Main.DBox = DBox
+    cSlab     = 3,
+    cFind     = 4,
+    cSort     = 1,
+    cList     = isAuto and 1 or 3,
+    cCmpl     = isAuto and 1 or 2,
+
+    Width     = 0,
+    Height    = 0,
+    Flags     = isSmall and F.FDLG_SMALLDIALOG or nil,
+  } -- DBox
+  self.DBox = DBox
+
   DBox.Width  = 2 + 36*2 -- Edge + 2 columns
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 5*2 + -- group empty lines + group item lines
@@ -556,7 +550,23 @@ function unit.ConfigDlg (Data)
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
 
-  -- Диалог:
+  return DBox
+end ---- DlgBox
+
+---------------------------------------- ---- ConfigDlg
+-- Настройка конфигурации.
+function unit.ConfigDlg (Data)
+
+  local _Main = CreateMain(Data)
+  if not _Main then return end
+
+  _Main:Localize() -- Локализация
+
+  local DBox = _Main:DlgBox()
+  if not DBox then return end
+
+  local HelpTopic = _Main.Custom.help.tlink
+
   local D = _Main:DlgForm()
   dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
   local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
@@ -586,14 +596,15 @@ function TMain:MakeKit ()
   local Custom  = ArgData.Custom
 
   local Data = {
-    Enabled = ArgData.Enabled,
+    Enabled     = ArgData.Enabled,
     -- Свойства набранного слова:
-    CharEnum = ArgData.CharEnum,
-    CharsMin = ArgData.CharsMin,
-    UseMagic = ArgData.UseMagic,
-    UsePoint = ArgData.UsePoint,
-    UseInside  = ArgData.UseInside,
-    UseOutside = ArgData.UseOutside,
+    CharEnum    = ArgData.CharEnum,
+    CharsMin    = ArgData.CharsMin,
+    UseMagic    = ArgData.UseMagic,
+    UsePoint    = ArgData.UsePoint,
+    UseInside   = ArgData.UseInside,
+    UseOutside  = ArgData.UseOutside,
+
     Custom = {
       isAuto = Custom.isAuto,
       --isSmall = false,
@@ -601,19 +612,21 @@ function TMain:MakeKit ()
       help   = { topic = TextTemplate.ScriptName, },
       locale = { kind = 'load', file = TextTemplate.ScriptName, },
     }, --
+
     --[[
     Options = { -- TODO: использовать unit.DefOptions
       SuitName = unit.ScriptCodeName,
     }, --
     --]]
-  } --
 
-  self.TextTemplate = TextTemplate.Execute(Data)
+  } -- Data
+
+  self.Assist = TextTemplate.Execute(Data)
 
   -- TODO: Реализовать завершение кода:
   -- !. Шаблонами будут подходящие слова, выводимые затем в виде списка.
   -- !. Реализовать поддержку пункта меню apply вместо вывода слова!
-  -- !. Заменить метод обработки шаблонов self.TextTemplate:ProcessTemplates
+  -- !. Заменить метод обработки шаблонов self.Assist:ProcessTemplates
   -- на свой метод вывода списка подходящих слов.
 
   return true
@@ -656,7 +669,7 @@ function TMain:MakeProps ()
     COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, SelBGColor),
     COL_MENUSELECTEDHIGHLIGHT = setBG(Colors.COL_MENUSELECTEDHIGHLIGHT, SelBGColor),
     BorderAngle = Cfg.AngleColor or nil,
-  } --
+  } -- RM_Props.Colors
 
   RM_Props.MenuEdge = 0 --1
   RM_Props.AltHotOnly = true
@@ -665,6 +678,7 @@ function TMain:MakeProps ()
     local Info = EditorGetInfo()
     local BoxLen = RM_Props.BoxKind and 2 or 0
     local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
+
     self.Popup = {
       LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
                     --+ (Cfg.HotChars and 2 or 0),
@@ -672,7 +686,8 @@ function TMain:MakeProps ()
       PosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
       PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
       --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
-    } --
+    } -- Popup
+
   end -- do
 
   -- Свойства набранного слова:

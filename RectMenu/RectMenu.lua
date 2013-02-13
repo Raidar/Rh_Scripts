@@ -298,13 +298,17 @@ local MMenu = { __index = TMenu }
 local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
   local self = {
     Menu = {
-      Props = Properties,
-      Items = Items,
+      Props     = Properties,
+      Items     = Items,
       BreakKeys = BreakKeys,
       Additions = Additions,
     }, ---
-    Props = 0, RectMenu = 0, Flags = 0, Area = 0,
+    Props = 0,
+    RectMenu = 0,
+    Flags = 0,
+    Area = 0,
     Titles = { Top = "", Bottom = "", Left = "", Right = "", },
+
     List = tables.create(#Items),
 
     Data = {
@@ -329,7 +333,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
       Is_ScrollH = 0, Is_ScrollV = 0,
       BoxScrollH = 0, BoxScrollV = 0, EmbScrollH = 0, EmbScrollV = 0,
       BoxWidth = 0, BoxHeight = 0,
-    }, ---
+    }, -- Zone
 
     Form = 0, DlgFlags = 0, DlgPos = 0,
   } --- self
