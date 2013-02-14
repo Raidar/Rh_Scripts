@@ -425,6 +425,7 @@ end ---- ItemColors
 do
   local DefColors = unit.MenuColors() -- Цвета меню
   local TextColors = unit.ItemColors(DefColors) -- Цвета пунктов
+  --logShow(DefColors, "MenuColors", "w d2 xv8")
 
 -- Get color text of menu item.
 -- Получение цвета текста пункта меню.
