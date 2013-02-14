@@ -116,12 +116,16 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   --if #Mark > 0 then logShow(Mark, "Mark info") end
   local MarkB, MarkE
 
-  if type(Mark[1]) == 'string' then
-    if Mark[1] ~= "" then
-      MarkB, MarkE = (TextB..TextH..TextE):cfind(Mark[1], Mark[2], Mark[3])
+  if type(Mark) == 'table' then
+    if type(Mark[1]) == 'string' then
+      if Mark[1] ~= "" then
+        MarkB, MarkE = (TextB..TextH..TextE):cfind(Mark[1], Mark[2], Mark[3])
+      end
+    else
+      MarkB, MarkE = Mark[1], Mark[2]
     end
-  else
-    MarkB, MarkE = Mark[1], Mark[2]
+  elseif Mark == true then
+    MarkB, MarkE = 1, (TextB..TextH..TextE):len()
   end
   --if MarkB then logShow(Mark, "Mark info") end
 
