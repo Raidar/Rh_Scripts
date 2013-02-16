@@ -56,7 +56,7 @@ local TConfig = {
   YearMax       = 9999,
 
   YearPerAge    =  100, -- Век:             1 Age       =  100 Years
-  MonthPerYear  =   12, -- Год:             1 Year      =   12 Monthes
+  MonthPerYear  =   12, -- Год:             1 Year      =   12 Months
   DayPerWeek    =    7, -- Неделя:          1 Week      =    7 Days
   HourPerDay    =   24, -- День:            1 Day       =   24 Hours
   MinPerHour    =   60, -- Час:             1 Hour      =   60 Minutes
@@ -70,7 +70,7 @@ local TConfig = {
   MSecPerCSec   =   10, -- Число мсек в ссек:   1 cSec  =  1000 / 100 mSecs
 
   QuarterPerYear  =  4, -- Квартальный год: 1 Year          = 4 Quarters
-  MonthPerQuarter =  3, -- Квартал:         1 Quarter       = 12 / 4 Monthes
+  MonthPerQuarter =  3, -- Квартал:         1 Quarter       = 12 / 4 Months
 
   BaseYear      =  365, -- Обычный год:     1 Base Year     = 365 Days
   LeapYear      =  366, -- Високосный год:  1 Leap Year     = 365 + 1 Days
@@ -92,18 +92,29 @@ local TConfig = {
   --YearStartWeek = 4, -- День первой недели года:    4-я января
   --YearStartWeek = 7, -- День первой недели года:    Первая полная неделя ??
 
-  -- Количество дней в месяцах:
+  -- Rest week days.
+  -- Выходные дни недели.
+  RestWeekDays = {
+    [0] = true,
+    [6] = true,
+  }, -- RestWeekDays
+
+  -- Months' days count.
+  -- Количество дней в месяцах.
   MonthDays = {
     31, 28, 31,
     30, 31, 30,
     31, 31, 30,
     31, 30, 31,
     [0] = 0,
+
     Min = 28,
     Max = 31,
     WeekMin = 4,
     WeekMax = 5,
-  }, --
+  }, -- MonthDays 
+
+  -- Year' days count by months.
   -- Количество дней в году по месяцам:
   YearDays = {
      31,  59,  90,
@@ -111,15 +122,18 @@ local TConfig = {
     212, 243, 273,
     304, 334, 365,
     [0] = 0,
-  }, --
+  }, -- YearDays
+
+  -- Numbers of week days for last days of previous months
+  -- (provided that December 31 of previous year is Sunday).
   -- Номера дней недели для последних дней предыдущих месяцев
-  -- (при условии, что 31 декабря предыущего года — воскресение):
+  -- (при условии, что 31 декабря предыущего года — воскресенье).
   WeekDays = {
     0, 3, 3,
     6, 1, 4,
     6, 2, 5,
     0, 3, 5,
-  }, --
+  }, -- WeekDays
 
   --filled = nil,         -- Признак заполненности
 } ---
@@ -189,6 +203,10 @@ function unit.fillConfig (Config) --|> Config
   Config.MSecPerHour    = Config.MSecPerMin  * MinPerHour
   Config.MSecPerDay     = Config.MSecPerHour * HourPerDay
 
+  if not Config.RestWeekDays then
+    Config.RestWeekDays = {}
+  end
+
   unit.fillMonthDaysData(Config.MonthDays)
 
   if not Config.YearDays then
@@ -205,7 +223,7 @@ function unit.fillConfig (Config) --|> Config
 end ---- FillConfig
 
 do
-  local MConfig = { __index = TConfig, }
+  local MConfig = { __index = TConfig }
 
 function unit.newConfig (Config) --|> Config
   local self = Config or {}
@@ -401,6 +419,7 @@ function TConfig:getEraDay (y, m, d) --> (number)
   local P, R = divm(y - 1, 100) -- 100⋅P + R
   local p, q = divm(P, 4)       --   4⋅p + q
   local r, s = divm(R, 4)       --   4⋅r + s
+  --logShow({ P, R, p, q, r, s }, "getYearDay", "w d2")
 
   return 146097 * p + 36524 * q +
            1461 * r +   365 * s +
@@ -417,20 +436,44 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
-  -- TODO: Реализовать и прроверить!
   local e = e
 
   local p, q
   p, e = divm(e, 146097)
+  if e == 0 then
+    e = 146097
+    p = p - 1
+  end
   q, e = divm(e,  36524)
+  if e == 0 then
+    e = 36524
+    q = q - 1
+  end
   local P = 4 * p + q
 
   local r, s
   r, e = divm(e,   1461)
+  if e == 0 then
+    e = 1461
+    r = r - 1
+  end
   s, e = divm(e,    365)
+  if e == 0 then
+    e = 365
+    s = s - 1
+  end
+
   local R = 4 * r + s
 
-  local y = 100 * P + R + 1
+  local y = 100 * P + R
+  if e == 1 and self:isLeapYear(y) then
+    y = y - 1
+    e = e + 365
+  end
+
+  y = y + 1
+
+  --logShow({ P, R, p, q, r, s, e, y }, "divEraDay", "w d2")
 
   return y, self:divYearDay(y, e)
 end ---- divEraDay
@@ -479,6 +522,77 @@ function TConfig:isDate (y, m, d) --> (y, m, d)
          (d > 0) and (d <= self:getMonthDays(y, m))
 end ---- isDate
 
+-- Fix year for year ±1.
+-- Исправление года для года ±1.
+function TConfig:fixYear (date, shift) --> (date)
+  local date = date
+
+  if date.y == 0 then
+    date.y = date.y + shift -- No zero year!
+  end
+
+  return date
+end ---- fixYear
+
+-- Fix month day for year ±1.
+-- Исправление дня месяца для года ±1.
+function TConfig:fixYearMonthDay (date) --> (date)
+  local date = date
+
+  if date.d < 1 then
+    date.d = 1
+  else
+    local MonthDays = self.MonthDays[date.m]
+
+    if date.d > MonthDays then
+      date.d = MonthDays
+    end
+  end
+
+  return date
+end ---- fixYearMonthDay
+
+-- Fix year and month for month ±1.
+-- Исправление месяца и года для месяца ±1.
+function TConfig:fixYearMonth (date) --> (date)
+  local self = self
+  local date = date
+  local MonthPerYear = self.MonthPerYear
+
+  if date.m == 0 then
+    date.m = MonthPerYear
+    date.y = date.y - 1
+
+    self:fixYear(date, -1)
+
+  elseif date.m == MonthPerYear + 1 then
+    date.m = 1
+    date.y = date.y + 1
+
+    self:fixYear(date, 1)
+  end
+
+  return self:fixYearMonthDay(date)
+end ---- fixYearMonth
+
+-- Fix month day for day ±1.
+-- Исправление дня месяца для дня ±1.
+function TConfig:fixMonthDay (date) --> (date)
+  local self = self
+  local date = date
+
+  if date.d == 0 then
+    date.d = self.MonthDays.Max + 1
+    date.m = date.m - 1
+
+  elseif date.d == self:getMonthDays(date.y, date.m) then
+    date.d = 1
+    date.m = date.m + 1
+  end
+
+  return self:fixYearMonth(date)
+end ---- fixMonthDay
+
 ---------------------------------------- ---- Time
 -- Count seconds without milliseconds.
 -- Количество секунд без долей секунд.
@@ -517,7 +631,7 @@ end ---- isTime
 local TDate = {} -- Класс даты
 
 do
-  local MDate = { __index = TDate, }
+  local MDate = { __index = TDate }
 
 -- Создание объекта класса.
 function unit.newDate (y, m, d, config) --> (object)
@@ -558,10 +672,15 @@ function TDate:getYearDay () --> (bool)
   return self.config:getYearDay(self.y, self.m, self.d)
 end ----
 
-function TDate:divYearDay (r) --> (m, d)
-  --local self = self
-  return self.config:divYearDay(self.y, r)
-end ----
+function TDate:setYearDay (r) --> (m, d)
+  local self = self
+
+  local m, d = self.config:divYearDay(self.y, r)
+  self.m = m
+  self.d = d
+
+  return self
+end ---- setYearDay
 
 function TDate:getYearWeek () --> (number)
   local self = self
@@ -578,28 +697,43 @@ function TDate:getEraDay () --> (number)
   return self.config:getEraDay(self.y, self.m, self.d)
 end ----
 
-function TDate:divEraDay (r) --> (y, m, d)
+function TDate:setEraDay (r) --> (self)
   local self = self
-  return self.config:divEraDay(r)
-end ----
+
+  local y, m, d = self.config:divEraDay(r)
+  self.y = y
+  self.m = m
+  self.d = d
+
+  return self
+end ---- setEraDay
 
 function TDate:getEraMonth () --> (number)
   local self = self
   return self.config:getEraMonth(self.y, self.m)
 end ----
 
-function TDate:getEraMonth () --> (number)
+function TDate:setEraMonth (r) --> (y, m)
   local self = self
-  return self.config:getEraMonth(self.y, self.m)
-end ----
 
-function TDate:divEraMonth (r) --> (y, m)
-  return self.config:divEraMonth(r)
-end ----
+  local y, m, d = self.config:divEraMonth(r)
+  self.y = y
+  self.m = m
+
+  return self.config:fixYearMonthDay(self)
+end ---- setEraMonth
 
 function TDate:ymd () --> (number)
   return self:getEraDay()
 end ----
+
+-- Shift by specified day count.
+-- Сдвиг на заданное число дней.
+function TDate:shd (count) --> (self)
+  local self = self
+
+  return self:setEraDay(self:getEraDay() + count)
+end ---- shd
 
 ---------------------------------------- ---- to & from
 function TDate:to_y () --> (number)
@@ -649,12 +783,69 @@ function TDate:from_d (v) --> (self, rest)
 end ----
 
 ---------------------------------------- ---- operations
+function TDate:inc_y () --> (self)
+  local self = self
+
+  self.y = self.y + 1
+  self.config:fixYear(self, 1)
+
+  return self.config:fixYearMonthDay(self)
+end ---- inc_y
+
+function TDate:dec_y () --> (self)
+  local self = self
+
+  self.y = self.y - 1
+  self.config:fixYear(self, -1)
+
+  return self.config:fixYearMonthDay(self)
+end ---- dec_y
+
+function TDate:inc_m () --> (self)
+  local self = self
+
+  self.m = self.m + 1
+
+  return self.config:fixYearMonth(self)
+end ---- inc_m
+
+function TDate:dec_m () --> (self)
+  local self = self
+
+  self.m = self.m - 1
+
+  return self.config:fixYearMonth(self)
+end ---- dec_m
+
+function TDate:inc_d () --> (self)
+  local self = self
+
+  self.d = self.d + 1
+
+  return self.config:fixMonthDay(self)
+end ---- inc_d
+
+function TDate:dec_d () --> (self)
+  local self = self
+
+  self.d = self.d - 1
+
+  return self.config:fixMonthDay(self)
+end ---- dec_d
+
+function TDate:inc_w () --> (self)
+  return self:shd(self.config.DayPerWeek)
+end ---- inc_w
+
+function TDate:dec_w () --> (self)
+  return self:shd(-self.config.DayPerWeek)
+end ---- inc_w
 
 ---------------------------------------- Time class
 local TTime = {} -- Класс времени
 
 do
-  local MTime = { __index = TTime, }
+  local MTime = { __index = TTime }
 
 -- Создание объекта класса.
 function unit.newTime (h, n, s, z, config) --> (object)
@@ -710,6 +901,16 @@ function TTime:cz () --> (number)
   --local self = self
   return round(self.z / self.config.MSecPerCSec)
 end ----
+
+-- Shift by specified second count.
+-- Сдвиг на заданное число cекунд.
+function TTime:shs (count) --> (self)
+  local self = self
+
+  local count = self:to_s() + count
+
+  return self:from_s(count)
+end ---- shs
 
 ---------------------------------------- ---- to & from
 function TTime:to_h () --> (number)
