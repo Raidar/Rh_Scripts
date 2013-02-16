@@ -28,10 +28,10 @@ local farColors = far.Colors
 ----------------------------------------
 --local context = context
 
-local strings = require 'context.utils.useStrings'
-local numbers = require 'context.utils.useNumbers'
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
+local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
 local colors = require 'context.utils.useColors'
 
 local isFlag, addFlag, delFlag = utils.isFlag, utils.addFlag, utils.delFlag
@@ -327,6 +327,7 @@ function unit.FieldMax (Items, Count, Seler, Field, Data) --> (number)
     end -- if
     i = i + 1
   end -- while
+
   return Max
 end ---- FieldMax
 

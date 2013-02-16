@@ -37,8 +37,9 @@ Info[#Info+1] = ("Day of year = %03d"):format(dt.yday)
 
 local d = datim.newDate(dt.year, dt.month, dt.day)
 --logShow(d, "TDate", "w")
---local d = datim.newDate(1886, 12, 25)
---local d = datim.newDate(2036, 12, 25)
+--local d = datim.newDate(1886, 12, 25) -- Check yester year
+--local d = datim.newDate(2036, 12, 25) -- Check future year
+--local d = datim.newDate(2000, 12, 31) -- Check end of year
 
 local c = d.config
 local YearDay   = c:getYearDay(d.y, d.m, d.d)

@@ -46,10 +46,11 @@ local EditorInsText = editor.InsertText
 local lua = require 'context.utils.useLua'
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
+local numbers = require 'context.utils.useNumbers'
+--local strings = require 'context.utils.useStrings'
+local colors = require 'context.utils.useColors'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
-local numbers = require 'context.utils.useNumbers'
-local colors = require 'context.utils.useColors'
 
 local isFlag, delFlag = utils.isFlag, utils.delFlag
 

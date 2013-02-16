@@ -48,8 +48,9 @@ local context = context
 local detect = context.detect
 
 local utils = require 'context.utils.useUtils'
-local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
+--local numbers = require 'context.utils.useNumbers'
+local strings = require 'context.utils.useStrings'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
