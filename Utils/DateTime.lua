@@ -110,8 +110,8 @@ local TConfig = {
 
     Min = 28,
     Max = 31,
-    WeekMin = 4,
-    WeekMax = 5,
+    WeekMin = 4 + 1,
+    WeekMax = 5 + 1,
   }, -- MonthDays 
 
   -- Year' days count by months.
@@ -153,8 +153,8 @@ function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
   MonthDays.Min = Min
   MonthDays.Max = Max
 
-  MonthDays.WeekMin = numbers.divc(Min, DayPerWeek)
-  MonthDays.WeekMax = numbers.divc(Max, DayPerWeek)
+  MonthDays.WeekMin = numbers.divc(Min, DayPerWeek) + 1
+  MonthDays.WeekMax = numbers.divc(Max, DayPerWeek) + 1
 
   return MonthDays
 end ---- fillMonthDaysData
@@ -163,12 +163,14 @@ end ---- fillMonthDaysData
 -- Нахождение дней в году по дням в месяцах.
 function unit.findYearDays (MonthDays) --|> (YearDays)
   local MonthDays = MonthDays
+
   local Sum = 0
   local YearDays = { [0] = 0, }
   for k = 1, #MonthDays do
      Sum = Sum + MonthDays[k]
      YearDays[k] = Sum
   end
+
   return YearDays
 end ---- findYearDays
 
@@ -176,10 +178,12 @@ end ---- findYearDays
 -- Нахождение дней недели для последних дней предыдущих месяцев.
 function unit.findWeekDays (YearDays, DayPerWeek) --|> (YearDays)
   local YearDays, DayPerWeek = YearDays, DayPerWeek
+
   local WeekDays = {}
   for k = 1, #YearDays do
     WeekDays[k] = YearDays[k - 1] % DayPerWeek
   end
+
   return WeekDays
 end ---- findWeekDays
 
