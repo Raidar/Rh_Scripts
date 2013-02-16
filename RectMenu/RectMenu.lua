@@ -319,7 +319,8 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
       Seps = 0, RowSep = 0, ColSep = 0,
     }, ---
 
-    HKeys = 0, AKeys = 0, BKeys = 0,
+    HKeys = 0, AKeys = 0, BKeys = 0, -- Быстрые клавиши (hot, accel, break)
+
     textMax = 0, lineMax = 0,
     ColWidth = 0, RowHeight = 0,
     FixedRows = 0, FixedCols = 0,
@@ -632,6 +633,15 @@ end ---- DefineKeysInfo
 
 end -- do
 do
+  -- Convert value to table with field [0].
+  -- Преобразование значения в таблицу с полем [0].
+  local function valtotab (v) --> (table)
+    if type(v) == 'table' then return v end
+
+    return { [0] = v or 0 }
+  end ---- valtotab
+  --local valtotab = farUt.valtotab
+
   local FieldMax = menUt.FieldMax
   local ClearHotText = farUt.ClearHotText
 
@@ -653,8 +663,8 @@ function TMenu:DefineSpotInfo () --| Zone
   local MultiLine = RM.MultiLine -- Многострочность текста пункта
 
   -- Используемые размеры пункта меню.
-  local textMax = farUt.valtotab(RM.textMax)
-  local lineMax = farUt.valtotab(RM.lineMax)
+  local textMax = valtotab(RM.textMax)
+  local lineMax = valtotab(RM.lineMax)
 
   local Count, ColCount, RowCount = Data.Count, Data.Cols, Data.Rows
   local Hot = not isFlag(self.Flags, F.FMENU_SHOWAMPERSAND) and '&'
@@ -663,27 +673,24 @@ function TMenu:DefineSpotInfo () --| Zone
   local function textLen (Item, Index, Selex, Col) --> (bool)
     local _, j = Idx2Cell(Selex, Data)
     if j ~= Col then return 0 end
+
     local s = Item.text -- Длина текста
     if not Item.RectMenu.MultiLine then
       return ViewItemText(s, Hot):len()
     else
-      --local ss = ViewItemText(s, Hot)
-      --if not ss then logShow(Item, Index, 1) end
       return slinemax(ViewItemText(s, Hot))
     end
   end -- textLen
 
   -- Определение длины текста по столбцам.
-  if textMax then
-    if not textMax[0] then textMax[0] = 0 end
-    tables.fillnils(textMax, ColCount, textMax[0])
-  else -- no textMax:
-    textMax = {}
+  do
     for k = 1, ColCount do -- Макс. длина текста:
-      textMax[k] = FieldMax(List, Count, nil, textLen, k)
+      if not textMax[k] then
+        textMax[k] = FieldMax(List, Count, nil, textLen, k)
+      end
     end
-    --logShow(textMax, "textMax")
   end
+  --logShow(textMax, "textMax", "w d2")
   if not textMax[0] or textMax[0] == 0 then
     textMax[0] = farUt.t_imax(textMax) or 0
   end
@@ -703,23 +710,19 @@ function TMenu:DefineSpotInfo () --| Zone
 
   -- Определение высоты текста по строкам.
   if MultiLine == nil then
-    if not lineMax then lineMax = { [0] = 1 } end
+    lineMax[0] = 1
     tables.fillwith(lineMax, RowCount, lineMax[0])
-  else -- is MultiLine
-    if lineMax then
-      if not lineMax[0] then lineMax[0] = 0 end
-      tables.fillnils(lineMax, RowCount, lineMax[0])
-    else
-      lineMax = {}
-      for k = 1, RowCount do -- Макс. высота текста:
+  else
+    for k = 1, RowCount do -- Макс. высота текста:
+      if not lineMax[k] then
         lineMax[k] = FieldMax(List, Count, nil, lineLat, k)
       end
-      --logShow(lineMax, "lineMax")
     end
-    if not lineMax[0] or lineMax[0] == 0 then
-      lineMax[0] = farUt.t_imax(lineMax) or 0
-    end
-  end -- MultiLine
+  end
+  --logShow(lineMax, "lineMax", "w d2")
+  if not lineMax[0] or lineMax[0] == 0 then
+    lineMax[0] = farUt.t_imax(lineMax) or 0
+  end
   --logShow(lineMax, "lineMax")
 
   self.textMax, self.lineMax = textMax, lineMax
@@ -976,16 +979,16 @@ function TMenu:DefineAll () --| (self)
 end ---- DefineAll
 
 -- Обновление вида меню.
-function TMenu:UpdateAll (hDlg, Flags, Table) --| (self)
+function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   local self = self
   local oldR = self.DlgPos
   local isRedraw = Flags.isRedraw
 
   --self = 0 -- TODO: Exclude all fields for right new info!?
   self.Menu = {
-    Props = Table[1],
-    Items = Table[2],
-    BreakKeys = Table[3],
+    Props     = Data[1],
+    Items     = Data[2],
+    BreakKeys = Data[3],
     Additions = self.Menu.Additions,
   } -- Menu
   self:DefineAll() -- Определение вида меню
@@ -1404,11 +1407,12 @@ end ---- MoveBase
 
 -- Move to other cell.
 -- Переход на другую ячейку.
-function TMenu:MoveToCell (hDlg, NewIndexCell) --> (bool)
+function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   local self = self
   local OldIndex = self.SelIndex
   local oCell = RC_cell(Idx2Cell(OldIndex, self.Data))
   local dCell, NewIndex, nCell = NewIndexCell(oCell)
+  if dCell == nil then return true end -- TODO: TEST
 
   if NewIndex == false then return false end
   if NewIndex == nil then
@@ -1421,6 +1425,8 @@ function TMenu:MoveToCell (hDlg, NewIndexCell) --> (bool)
   end
   self:CellBase(nCell)
   self:SetSelected(NewIndex)
+
+  self:SelectItem(hDlg, Kind, self:GetSelectIndex())
 
   return self:DoMenuDraw() -- Перерисовка меню
 end ---- MoveToCell
@@ -1570,13 +1576,35 @@ function TMenu:CheckArrowUse (AKey) --> (bool)
   return true
 end ---- CheckArrowUse
 
+-- Пользовательская обработка клавиш навигации.
+function TMenu:UserArrowKeyPress (hDlg, AKey) --> (nil|true | Data)
+  local self = self
+  local OnArrowKeyPress = self.RectMenu.OnArrowKeyPress
+  if not OnArrowKeyPress then return end
+
+  local Data, Flags = OnArrowKeyPress(AKey, self:GetSelectIndex())
+  --logShow({ AKey, Table, Flags }, "OnArrowKeyPress", "w d2")
+  Flags = Flags or Null -- or {}
+
+  if type(Data) == 'table' then
+    self:UpdateAll(hDlg, Flags, Data)
+    return true
+  end
+
+  return nil, Data
+end ---- UserArrowKeyPress
+
 -- Обработка клавиш курсора в меню.
 function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
 
   -- Переход на новую ячейку по нажатию клавиши.
   local function KeyPressCell (OldCell) --> (table, number, table)
+
+    local isOk, ANewKey = self:UserArrowKeyPress(hDlg, AKey)
+    if isOk then return nil, isOk end -- TODO: TEST
+
     local self = self
-    local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, AKey)
+    local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, ANewKey or AKey)
 
     if IsModCtrl(VMod) then -- CTRL:
       if not jCell then return false end
@@ -1591,8 +1619,128 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
     return dCell, self:GotoCell(bCell, dCell, dCell.isNew, isWrap)
   end --
 
-  return self:MoveToCell(hDlg, KeyPressCell)
+  return self:MoveToCell(hDlg, KeyPressCell, AKey)
 end ---- ArrowKeyPress
+
+local UnhotSKeys = {
+  [""]      = true,
+  [" "]     = true,
+  ["Space"] = true,
+} ---
+
+-- Обработка быстрых клавиш в меню.
+function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
+  local self = self
+  local RM = self.RectMenu
+  --local Ctrl, RM = self.Ctrl, self.RectMenu
+  if RM.NoRapidKey then return end -- TODO: --> Doc!
+
+  local StrKey = VirKey.Name
+  --logShow(VirKey, StrKey)
+
+  -- 1. Обработка AccelKeys.
+  local Index = self.AKeys[StrKey]
+  --logShow({ Index, self.AKeys }, StrKey, "d1 xv8")
+  if Index then
+    self:SetSelected(Index)
+    --logShow(StrKey, "Index: "..tostring(Index))
+    return self:ChooseItem(hDlg, "AKey", Index)
+  end
+
+  -- 2. Обработка Hot Chars.
+  local VMod = VirKey.ControlKeyState
+  --logShow({ VirKey, StrKey, self.HKeys }, "Check HKeys", "d1 xv8")
+  if ( RM.AltHotOnly and (IsModAlt(VMod) or IsModAltShift(VMod)) ) or
+     ( not RM.AltHotOnly and (VMod == 0 or IsModShift(VMod)) ) then
+    local SKey = VirKey.UnicodeChar:upper()
+    --logShow({ VirKey, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
+    if SKey and not UnhotSKeys[SKey] then
+      local Index = self.HKeys:cfind(SKey, 1, true)
+      local VName = VirKey.KeyName
+      --logShow({ Index, VName, self.HKeys }, tostring(SKey), "d1 xv8")
+      if not Index and VName:len() == 1 then
+        -- Использование латинской буквы
+        SKey = VName:upper()
+        if SKey and SKey ~= "" then
+          Index = self.HKeys:cfind(SKey, 1, true)
+        end
+      end
+      --logShow(self.HKeys, "HKeys : "..tostring(SKey).." at "..tostring(Index), "d1 xv8")
+      if Index then
+        self:SetSelected(Index)
+        return self:ChooseItem(hDlg, "HKey", Index)
+      end
+    end
+  end
+
+  -- 3. Обработка BreakKeys.
+  Index = self.BKeys[StrKey]
+  --logShow({ Index, self.BKeys }, StrKey, "d1 x8")
+  if Index then
+    self.KeyIndex = Index
+    return self:ChooseItem(hDlg, "BKey", Index)
+  end
+
+  return false
+end ---- RapidKeyPress
+
+-- Пользовательская обработка клавиш.
+function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Data)
+  local self = self
+  local OnKeyPress = self.RectMenu.OnKeyPress
+  if not OnKeyPress then return end
+
+  local Data, Flags = OnKeyPress(VirKey, self:GetSelectIndex())
+  --logShow({ VirKey, Table, Flags }, "OnKeyPress", , "w d2")
+  Flags = Flags or Null -- or {}
+  if Flags.isCancel then self.SelIndex = nil end
+  if Flags.isClose or Flags.isCancel then
+    return CloseDialog(hDlg)
+  end
+
+  if type(Data) == 'table' then
+    self:UpdateAll(hDlg, Flags, Data)
+    return true
+  end
+
+  return Data
+end ---- UserKeyPress
+
+-- Обработчик нажатия клавиши.
+function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
+  local self = self
+  --logShow(self, "self", 1)
+  local SelIndex = self.SelIndex
+  --logShow(VirKey, SelIndex, "d1 x8")
+
+  -- 1. Обработка выбора курсором.
+  if SelIndex then -- (только при наличии выделения)
+    -- Корректировка: Numpad / MSWheel --> Arrow keys
+    local AKey = VirKey.KeyName
+    AKey = keyUt.SKEY_NumpadNavs[AKey] or
+           keyUt.SKEY_MSWheelNavs[AKey] or AKey
+    --logShow(VirKey, AKey, "w d1 x8")
+    local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
+    --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
+
+    if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
+       (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
+      return self:ArrowKeyPress(hDlg, AKey, VMod, true)
+    end
+  end
+
+  -- 2. Обработка быстрого выбора.
+  local isOk = self:RapidKeyPress(hDlg, VirKey)
+  if isOk then return isOk end
+
+  -- 3. Пользовательская обработка
+  isOk = self:UserKeyPress(hDlg, VirKey)
+  if isOk then return isOk end
+
+  return false
+end ---- DoKeyPress
+
+---------------------------------------- ---- Mouse
 
 -- Convert mouse cursor position to cat number.
 -- Преобразование позиции курсора мыши в номер ряда.
@@ -1676,7 +1824,7 @@ function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
     return dCell, self:GotoCell(bCell, dCell, true, false)
   end --
 
-  return self:MoveToCell(hDlg, MouseClickCell)
+  return self:MoveToCell(hDlg, MouseClickCell, "Click")
 end ---- MouseBtnClick
 
 -- Обработка двойного нажатия левой кнопки мыши в меню.
@@ -1684,164 +1832,7 @@ function TMenu:MouseDblClick (hDlg, x, y) --> (bool)
   return self:DefaultChooseItem(hDlg, "DblClick")
 end ---- MouseDblClick
 
--- Пользовательская обработка выбора пункта/клавиши.
-function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
-  self.ChooseKind = Kind
-  local OnChooseItem = self.RectMenu.OnChooseItem
-  if not OnChooseItem then
-    return CloseDialog(hDlg)
-  end
-
-  local isClose = OnChooseItem(Kind, self:GetSelectIndex())
-  --local isClose = OnChooseItem(Kind, Index, self:GetSelectIndex())
-  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
-
-  if isClose then
-    return CloseDialog(hDlg)
-  end
-
-  --[[
-  local Flags = OnChooseItem(Kind, self:GetSelectIndex())
-  --local Flags = OnChooseItem(Kind, Index, self:GetSelectIndex())
-  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
-  Flags = Flags or Null -- or {}
-
-  if Flags.isClose then
-    return CloseDialog(hDlg)
-  end
-  --]]
-
-  return true
-end ---- ChooseItem
-
--- Обработка выбора пункта/клавиши по умолчанию.
-function TMenu:DefaultChooseItem (hDlg, Kind) --> (bool)
-  local self = self
-  local SelIndex = self.SelIndex
-  --logShow(self.List[SelIndex], SelIndex)
-
-  -- Исключение обработки "серых" пунктов меню:
-  if SelIndex and self.List[SelIndex].grayed then return true end
-
-  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex())
-end ---- DefaultChooseItem
-
-local UnhotSKeys = {
-  [""]      = true,
-  [" "]     = true,
-  ["Space"] = true,
-} ---
-
--- Обработка быстрых клавиш в меню.
-function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
-  local self = self
-  local RM = self.RectMenu
-  --local Ctrl, RM = self.Ctrl, self.RectMenu
-  if RM.NoRapidKey then return end -- TODO: --> Doc!
-
-  local StrKey = VirKey.Name
-  --logShow(VirKey, StrKey)
-
-  -- 1. Обработка AccelKeys.
-  local Index = self.AKeys[StrKey]
-  --logShow({ Index, self.AKeys }, StrKey, "d1 xv8")
-  if Index then
-    self:SetSelected(Index)
-    --logShow(StrKey, "Index: "..tostring(Index))
-    return self:ChooseItem(hDlg, "AKey", Index)
-  end
-
-  -- 2. Обработка Hot Chars.
-  local VMod = VirKey.ControlKeyState
-  --logShow({ VirKey, StrKey, self.HKeys }, "Check HKeys", "d1 xv8")
-  if ( RM.AltHotOnly and (IsModAlt(VMod) or IsModAltShift(VMod)) ) or
-     ( not RM.AltHotOnly and (VMod == 0 or IsModShift(VMod)) ) then
-    local SKey = VirKey.UnicodeChar:upper()
-    --logShow({ VirKey, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
-    if SKey and not UnhotSKeys[SKey] then
-      local Index = self.HKeys:cfind(SKey, 1, true)
-      local VName = VirKey.KeyName
-      --logShow({ Index, VName, self.HKeys }, tostring(SKey), "d1 xv8")
-      if not Index and VName:len() == 1 then
-        -- Использование латинской буквы
-        SKey = VName:upper()
-        if SKey and SKey ~= "" then
-          Index = self.HKeys:cfind(SKey, 1, true)
-        end
-      end
-      --logShow(self.HKeys, "HKeys : "..tostring(SKey).." at "..tostring(Index), "d1 xv8")
-      if Index then
-        self:SetSelected(Index)
-        return self:ChooseItem(hDlg, "HKey", Index)
-      end
-    end
-  end
-
-  -- 3. Обработка BreakKeys.
-  Index = self.BKeys[StrKey]
-  --logShow({ Index, self.BKeys }, StrKey, "d1 x8")
-  if Index then
-    self.KeyIndex = Index
-    return self:ChooseItem(hDlg, "BKey", Index)
-  end
-
-  return false
-end ---- RapidKeyPress
-
--- Пользовательская обработка клавиш.
-function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Table)
-  local self = self
-  local OnKeyPress = self.RectMenu.OnKeyPress
-  if not OnKeyPress then return end
-
-  local Table, Flags = OnKeyPress(VirKey, self:GetSelectIndex())
-  --logShow({ VirKey, Table, Flags }, "OnKeyPress", 2)
-  Flags = Flags or Null -- or {}
-  if Flags.isCancel then self.SelIndex = nil end
-  if Flags.isClose or Flags.isCancel then return CloseDialog(hDlg) end
-
-  if type(Table) == 'table' then
-    self:UpdateAll(hDlg, Flags, Table)
-    return true
-  end
-
-  return Table
-end ---- UserKeyPress
-
--- Обработчик нажатия клавиши.
-function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
-  local self = self
-  --logShow(self, "self", 1)
-  local SelIndex = self.SelIndex
-  --logShow(VirKey, SelIndex, "d1 x8")
-
-  -- 1. Обработка выбора курсором.
-  if SelIndex then -- (только при наличии выделения)
-    -- Корректировка: Numpad / MSWheel --> Arrow keys
-    local AKey = VirKey.KeyName
-    AKey = keyUt.SKEY_NumpadNavs[AKey] or
-           keyUt.SKEY_MSWheelNavs[AKey] or AKey
-    --logShow(VirKey, AKey, "d1 x8")
-    local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
-    --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
-
-    if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
-       (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
-      return self:ArrowKeyPress(hDlg, AKey, VMod, true)
-    end
-  end
-
-  -- 2. Обработка быстрого выбора.
-  local isOk = self:RapidKeyPress(hDlg, VirKey)
-  if isOk then return isOk end
-
-  -- 3. Пользовательская обработка
-  isOk = self:UserKeyPress(hDlg, VirKey)
-  if isOk then return isOk end
-
-  return false
-end ---- DoKeyPress
-
+---------------------------------------- ---- Scroll
 do
 -- Convert scroll position to cat number.
 -- Преобразование позиции прокрутки в номер ряда.
@@ -1880,7 +1871,7 @@ function TMenu:ScrollHClick (hDlg, pos)
     return dCell, self:GotoCell(bCell, dCell, true, true)
   end --
 
-  return self:MoveToCell(hDlg, ScrollHCell)
+  return self:MoveToCell(hDlg, ScrollHCell, "ScrollH")
 end ---- ScrollHClick
 
 -- Обработка вертикальной прокрутки.
@@ -1907,10 +1898,66 @@ function TMenu:ScrollVClick (hDlg, pos)
     return dCell, self:GotoCell(bCell, dCell, true, true)
   end --
 
-  return self:MoveToCell(hDlg, ScrollVCell)
+  return self:MoveToCell(hDlg, ScrollVCell, "ScrollV")
 end ---- ScrollVClick
 
 end -- do
+---------------------------------------- ---- Action
+
+-- Пользовательская обработка выделения пункта.
+function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|boolean)
+  self.SelectKind = Kind
+  local OnSelectItem = self.RectMenu.OnSelectItem
+
+  if OnSelectItem then
+    OnSelectItem(Kind, self:GetSelectIndex())
+  end
+
+  return true
+end ---- SelectItem
+
+-- Пользовательская обработка выбора пункта.
+function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
+  self.ChooseKind = Kind
+  local OnChooseItem = self.RectMenu.OnChooseItem
+  if not OnChooseItem then
+    return CloseDialog(hDlg)
+  end
+
+  local isClose = OnChooseItem(Kind, self:GetSelectIndex())
+  --local isClose = OnChooseItem(Kind, Index, self:GetSelectIndex())
+  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
+
+  if isClose then
+    return CloseDialog(hDlg)
+  end
+
+  --[[
+  local Flags = OnChooseItem(Kind, self:GetSelectIndex())
+  --local Flags = OnChooseItem(Kind, Index, self:GetSelectIndex())
+  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
+  Flags = Flags or Null -- or {}
+
+  if Flags.isClose then
+    return CloseDialog(hDlg)
+  end
+  --]]
+
+  return true
+end ---- ChooseItem
+
+-- Обработка выбора пункта по умолчанию.
+function TMenu:DefaultChooseItem (hDlg, Kind) --> (bool)
+  local self = self
+  local SelIndex = self.SelIndex
+  --logShow(self.List[SelIndex], SelIndex)
+
+  -- Исключение обработки "серых" пунктов меню:
+  if SelIndex and self.List[SelIndex].grayed then return true end
+
+  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex())
+end ---- DefaultChooseItem
+
 ---------------------------------------- Menu drawing
 -- Draw menu item.
 -- Рисование пункта меню.
