@@ -512,12 +512,17 @@ function unit.IsModShift (VMod) --> (bool)
   return VMod == VM_.Shift
 end --
 
-function unit.IsModCtrlShift (VMod) --> (bool)
-  return VMod == VM_.LCtrlShift or VMod == VM_.RCtrlShift
+function unit.IsModCtrlAlt (VMod) --> (bool)
+  return VMod == VM_.LCtrlLAlt or VMod == VM_.LCtrlRAlt or
+         VMod == VM_.RCtrlRAlt or VMod == VM_.RCtrlLAlt
 end --
 
 function unit.IsModAltShift (VMod) --> (bool)
   return VMod == VM_.LAltShift or VMod == VM_.RAltShift
+end --
+
+function unit.IsModCtrlShift (VMod) --> (bool)
+  return VMod == VM_.LCtrlShift or VMod == VM_.RCtrlShift
 end --
 
 -- "Смешанная" проверка.
