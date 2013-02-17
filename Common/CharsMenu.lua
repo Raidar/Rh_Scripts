@@ -79,22 +79,31 @@ uKeys.SVKeyValue = SVKeyValue
 -- Комбинации модификаторов:
 --local SModKeyPat = "%s+%s"
 local SModKeyPat = "%s%s"
-local SKeyModifs = { 'S', 'C', 'CS', 'A', 'AS', 'CA', 'CAS' }
+local SKeyModifs = {
+  'S', 'C', 'CS', 'A', 'AS', 'CA', 'CAS',
+} ---
 --local UsedModifs = SKeyModifs
-local UsedModifs = { 'Shift', 'Ctrl', 'CtrlShift',
-                     'Alt', 'AltShift', 'CtrlAlt', 'CtrlAltShift' }
+local UsedModifs = {
+  'Shift', 'Ctrl', 'CtrlShift',
+  'Alt', 'AltShift', 'CtrlAlt', 'CtrlAltShift',
+} ---
+--[[
 local function SModifKey (s, m, f) --> (string)
   return SModKeyPat:format(m, f(s))
 end --
 --uKeys.SModifKey = SModifKey
+--]]
 
 -- Комбинации для VK_.
-local SVKeyFuncs = { S = 0, C = 0, A = 0, CS = 0, AS = 0, CA = 0, CAS = 0 }
+local SVKeyFuncs = {
+  S = 0, C = 0, A = 0, CS = 0, AS = 0, CA = 0, CAS = 0,
+} ---
 uKeys.SVKeyFuncs = SVKeyFuncs
 
 for k, m in ipairs(SKeyModifs) do
   SVKeyFuncs[m] = function (s)
-    return SModifKey(s, UsedModifs[k], SVKeyValue)
+    --return SModifKey(s, UsedModifs[k], SVKeyValue)
+    return SModKeyPat:format(UsedModifs[k], SVKeyValue(s))
   end
 end
 
