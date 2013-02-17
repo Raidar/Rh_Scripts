@@ -20,29 +20,45 @@ local pairs, ipairs = pairs, ipairs
 local setmetatable = setmetatable
 
 ----------------------------------------
+local useprofiler = false
+--local useprofiler = true
+
+if useprofiler then
+  require "profiler" -- Lua Profiler
+  profiler.start("Calendar.log")
+end
+
+----------------------------------------
 --local win, far = win, far
 
 ----------------------------------------
 --local context = context
 
 local utils = require 'context.utils.useUtils'
+local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
+
+local divf = numbers.divf
 
 local Null = tables.Null
 local addNewData = tables.extend
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
+
 local datim = require "Rh_Scripts.Utils.DateTime"
 
 ----------------------------------------
---local keyUt = require "Rh_Scripts.Utils.Keys"
+local keyUt = require "Rh_Scripts.Utils.Keys"
+
+local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
+local IsModCtrlAlt = keyUt.IsModCtrlAlt
 
 ----------------------------------------
--- [[
+--[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -52,9 +68,9 @@ local unit = {}
 
 ---------------------------------------- Main data
 unit.FileName   = "DateTime"
-unit.FilePath   = "scripts\\Rh_Scripts\\Common\\"
+--unit.FilePath   = "scripts\\Rh_Scripts\\Common\\"
 unit.ScriptName = "Calendar"
-unit.ScriptPath = "scripts\\Rh_Scripts\\Testing\\"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 
 local usercall = farUt.usercall
 unit.RunMenu = usercall(nil, require, "Rh_Scripts.RectMenu.RectMenu")
@@ -70,7 +86,7 @@ unit.DefCustom = {
   locale = {
     kind = 'load',
     file = unit.FileName,
-    path = unit.FilePath,
+    --path = unit.FilePath,
   }, --
 } -- DefCustom
 
@@ -142,11 +158,6 @@ local function CreateMain (ArgData)
   --self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
   --self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
 
-  local dt = CfgData.dt or os.date("*t")
-  self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
-  self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
-  self.World = self.Date.config.Name
-
   setmetatable(self.CfgData, { __index = self.ArgData })
   --logShow(self.CfgData, "CfgData")
 
@@ -162,6 +173,25 @@ end -- CreateMain
 
 ---------------------------------------- ---- Prepare
 do
+-- Инициализация календаря.
+function TMain:InitData ()
+  local self = self
+  local CfgData = self.CfgData
+
+  local dt = CfgData.dt or os.date("*t")
+  self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
+  self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
+
+  local DT_cfg = self.Date.config
+  self.DT_cfg = DT_cfg
+
+  self.World    = DT_cfg.World
+  self.Type     = DT_cfg.Type
+  self.WeekMax  = DT_cfg.MonthDays.WeekMax
+
+  return true
+end ---- InitData
+
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
@@ -175,6 +205,40 @@ function TMain:Localize ()
 
   return self.L
 end ---- Localize
+
+function TMain:MakeLocLen () --> (bool)
+  local self = self
+
+  local World = self.World
+  local L = self.LocData[World]
+  --logShow(L, World, "w d2")
+
+  do -- Названия дней недели
+    local WeekDay = L.WeekDay[0]
+
+    local MaxLen = WeekDay[0]:len()
+    for k = 1, #WeekDay do
+      local Len = WeekDay[k]:len()
+      if MaxLen < Len then MaxLen = Len end
+    end
+
+    WeekDay.MaxLen = MaxLen
+  end
+
+  do -- Названия месяцев года
+    local YearMonth = L.YearMonth[0]
+
+    local MaxLen = YearMonth[1]:len()
+    for k = 2, #YearMonth do
+      local Len = YearMonth[k]:len()
+      if MaxLen < Len then MaxLen = Len end
+    end
+
+    YearMonth.MaxLen = MaxLen
+  end
+
+  return true
+end ---- MakeLocLen
 
 function TMain:MakeColors ()
 
@@ -212,40 +276,6 @@ function TMain:MakeColors ()
   return true
 end ---- MakeColors
 
-function TMain:MakeLocLen () --> (bool)
-  local self = self
-
-  local World = self.World
-  local L = self.LocData[World]
-  --logShow(L, World, "w d2")
-
-  do -- Названия дней недели
-    local WeekDay = L.WeekDay[0]
-
-    local MaxLen = WeekDay[0]:len()
-    for k = 1, #WeekDay do
-      local Len = WeekDay[k]:len()
-      if MaxLen < Len then MaxLen = Len end
-    end
-
-    WeekDay.MaxLen = MaxLen
-  end
-
-  do -- Названия месяцев года
-    local YearMonth = L.YearMonth[0]
-
-    local MaxLen = YearMonth[1]:len()
-    for k = 2, #YearMonth do
-      local Len = YearMonth[k]:len()
-      if MaxLen < Len then MaxLen = Len end
-    end
-
-    YearMonth.MaxLen = MaxLen
-  end
-
-  return true
-end ---- MakeLocLen
-
   local max = math.max
 
 function TMain:MakeProps ()
@@ -255,22 +285,24 @@ function TMain:MakeProps ()
   local Props = self.Menu.Props or {}
   self.Props = Props
 
-  Props.Id = self.Guid
+  Props.Id = Props.Id or self.Guid
+  Props.HelpTopic = self.Custom.help.tlink
 
   local L = self.LocData
   Props.Title  = L.Calendar
-  Props.Bottom = "Alt+(←→↑↓)"
 
   local wL = L[self.World]
-  self.TextMax = max(10,                    -- date / time
+  local DT_cfg = self.DT_cfg
+
+  self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
+                     DT_cfg.Formats.TimeLen,-- Time length
                      wL.Name:len() + 2,     -- World name
                      wL.WeekDay[0].MaxLen,  -- WeekDay max
                      wL.YearMonth[0].MaxLen -- YearMonth max
                     )
 
-  local DT_cfg = self.Date.config
   self.RowCount = 1 + DT_cfg.DayPerWeek + 1
-  self.ColCount = 3 + DT_cfg.MonthDays.WeekMax + 1
+  self.ColCount = 3 + self.WeekMax + 1
 
   -- Свойства RectMenu:
   local RM_Props = {
@@ -304,6 +336,8 @@ end ---- MakeProps
 -- Preparing.
 function TMain:Prepare ()
 
+  self:InitData()
+
   self:Localize()
   self:MakeLocLen()
 
@@ -330,7 +364,7 @@ do
     local Len = Text:len()
     if Len >= Max then return Text end
 
-    local sp = spaces[(Max - Len - (Max - Len) % 2) / 2]
+    local sp = spaces[divf(Max - Len, 2)]
 
     return sp..Text
   end -- CenterText
@@ -343,11 +377,11 @@ function TMain:FillMenu () --> (table)
   local Date = self.Date
   local Time = self.Time
   local World = self.World
-  local DT_cfg = Date.config
+  local DT_cfg = self.DT_cfg
 
   local WeekDay = Date:getWeekDay()
   local DayPerWeek = DT_cfg.DayPerWeek
-  local WeekMax = DT_cfg.MonthDays.WeekMax
+  local WeekMax = self.WeekMax
 
   local RowCount = self.RowCount
   local ItemNames = {
@@ -374,28 +408,29 @@ function TMain:FillMenu () --> (table)
       RowCount * 2 + 1,                   RowCount * 2 + 9, -- 3*
     }, --
 
-    FirstDay      = RowCount * 3 + 1,
-    FirstWeekDay  = RowCount * (3 + WeekMax) + 1,
+    --FirstDay      = RowCount * 3 + 1,
+    --FirstWeekDay  = RowCount * (3 + WeekMax) + 1,
 
   } -- ItemNames
 
+  local Formats = DT_cfg.Formats
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local Loc = L[World]
-  local WeekDayNames   = (Loc or Null).WeekDay or Null
-  local YearMonthNames = (Loc or Null).YearMonth or Null
+  local wL = L[World]
+  local WeekDayNames   = (wL or Null).WeekDay or Null
+  local YearMonthNames = (wL or Null).YearMonth or Null
 
   local ItemDatas = {
-    --World     = (" %s "):format(Loc.Name),
-    World     = World ~= "Terra" and (" %s "):format(Loc.Name) or "",
-    Year      = ("%04d"):format(Date.y),
+    --World     = Formats.World:format(wL.World),
+    World     = World ~= "Terra" and Formats.World:format(wL.World) or "",
+    Year      = Formats.Year:format(Date.y),
     Month     = (YearMonthNames[0] or Null)[Date.m],
-    Date      = ("%04d-%02d-%02d"):format(Date.y, Date.m, Date.d),
-    Time      = Time and ("%02d:%02d:%02d"):format(Time.h, Time.n, Time.s) or "",
+    Date      = Formats.Date:format(Date.y, Date.m, Date.d),
+    Time      = Time and Formats.Time:format(Time.h, Time.n, Time.s) or "",
     WeekDay   = (WeekDayNames[0] or Null)[WeekDay],
 
-    YearDay   = ("%03d"):format(Date:getYearDay()),
-    YearWeek  = ("%02d"):format(Date:getYearWeek()),
+    YearDay   = Formats.YearDay:format(Date:getYearDay()),
+    YearWeek  = Formats.YearWeek:format(Date:getYearWeek()),
 
     --[[
     PrevYear  = "<==",
@@ -405,16 +440,27 @@ function TMain:FillMenu () --> (table)
     --]]
   } --- ItemDatas
 
+  --[[
+  local ItemHints = {
+    World     = Formats.Type:format(wL[self.Type]),
+  } --- ItemHints
+  --]]
+
   -- Текущая информация:
   local TextMax = self.TextMax
   for k, v in pairs(ItemDatas) do
-    local n = ItemNames[k]
-    if n then
-      if n < RowCount or n > RowCount * 2 then
-        t[n].text = v
+    local pos = ItemNames[k]
+    if pos then
+      if pos < RowCount or pos > RowCount * 2 then
+        t[pos].text = v
       else
-        t[n].text = CenterText(v, TextMax)
+        t[pos].text = CenterText(v, TextMax)
       end
+
+      --[[
+      local hint = ItemHints[k]
+      if hint then t[pos].Hint = hint end
+      --]]
     end
   end --
 
@@ -438,15 +484,16 @@ function TMain:MakeMenu () --> (table)
 
   local WeekDay = Date:getWeekDay()
   local DayPerWeek = DT_cfg.DayPerWeek
-  local WeekMax = DT_cfg.MonthDays.WeekMax
+  local WeekMax = self.WeekMax
 
   local RowCount = self.RowCount
 
+  local Formats = DT_cfg.Formats
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local Loc = L[World]
-  local WeekDayNames   = (Loc or Null).WeekDay or Null
-  local YearMonthNames = (Loc or Null).YearMonth or Null
+  local wL = L[World]
+  local WeekDayNames   = (wL or Null).WeekDay or Null
+  local YearMonthNames = (wL or Null).YearMonth or Null
 
   local t = {}
 
@@ -461,29 +508,26 @@ function TMain:MakeMenu () --> (table)
   end --
 
   local CurrentDay = Date.d
-  local Start = datim.newDate(Date.y, Date.m, 01)
+  local Start = Date:copy()
+  Start.d = 1
   --logShow(Start, CurrentDay, "w d2")
   local MonthDays = Start:getMonthDays()
+  local StartYearWeek = Start:getYearWeek()
+
   local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
   if StartWeekDay == 0 then
     StartWeekDay = DayPerWeek
-  elseif StartWeekDay == 1 then
+  elseif StartWeekDay < divf(DayPerWeek, 2) then
     StartWeekShift = 1
     StartWeekDay = StartWeekDay + DayPerWeek
   end
-  --StartWeekDay = StartWeekDay == 0 and DayPerWeek or StartWeekDay
-                 --== 1 and StartWeekDay + DayPerWeek or StartWeekDay
-
   --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
-  local StartYearWeek = Start:getYearWeek()
 
   local Prev = Start:copy()
-  --logShow(Prev, Prev:getEraDay(), "w d2")
   Prev:shd(-StartWeekDay)
-  --logShow(Prev, StartWeekDay, "w d2")
+  --logShow({ Prev, Start }, StartWeekDay, "w d2")
   local Next = Start:copy()
   Next:shd(MonthDays)
-  --logShow(Next, MonthDays, "w d2")
 
   -- Дни месяца:
   local d = 0       -- День текущего месяца
@@ -494,16 +538,16 @@ function TMain:MakeMenu () --> (table)
 
     -- Номер недели месяца:
     t[#t+1] = {
-      text = (" %1d"):format(i - StartWeekShift),
+      text = Formats.MonthWeek:format(i - StartWeekShift),
       Label = true,
     } --
 
     -- Дни недели:
     for j = 1, DayPerWeek do
       local State = 0
-      if i < 2 then
-        if j < StartWeekDay then
-          p = p + 1
+      if i < 3 then
+        if (i - 1) * DayPerWeek + j < StartWeekDay then
+          if p <= 0 then p = p + 1 end
           State = -1
         end
       elseif d >= MonthDays then
@@ -519,7 +563,7 @@ function TMain:MakeMenu () --> (table)
 
         if d == CurrentDay then SelIndex = #t + 1 end
       else
-        Text = DayToStr(p or q)
+        Text = DayToStr(p and p <= 0 and 0 or p or q)
       end
 
       t[#t+1] = {
@@ -533,19 +577,22 @@ function TMain:MakeMenu () --> (table)
         }, --
 
         Data = {
+          r = j,
+          c = i,
+          State = State,
           [-1] = Prev,
           [ 0] = Date,
           [ 1] = Next,
           Start = Start,
-          State = State,
-          d = State == 0 and d or p or q,
+          d = (State == 0 and d or
+               p and p <= 0 and 0 or p or q),
         }, --
       } --
     end
 
     -- Номер недели года:
     t[#t+1] = {
-      text = ("%02d"):format(StartYearWeek + i - 1 - StartWeekShift),
+      text = Formats.YearWeek:format(StartYearWeek + i - 1 - StartWeekShift),
       Label = true,
     } --
 
@@ -582,28 +629,79 @@ end -- MakeMenu
 -- Формирование календаря.
 function TMain:MakeCalendar () --> (table)
 
-  --local Cfg = self.CfgData
-
-  --self.Date = datim.newDate(2012, 12, 31)
-  --self.Date = datim.newDate(2013, 01, 01)
-  --local dt = self.Value or os.date("*t")
-  --self.Date = self.Date or datim.newDate(dt.year, dt.month, dt.day)
-  --self.Time = self.Time or datim.newTime(dt.hour, dt.min, dt.sec)
-
   self.Items = false -- Сброс меню (!)
 
   return self:MakeMenu()
 end -- MakeCalendar
 
 end -- do
----------------------------------------- ---- Show
--- Показ меню заданного вида.
-function TMain:ShowMenu () --> (item, pos)
-  return usercall(nil, unit.RunMenu,
-                  self.Props, self.Items, self.Keys)
-  --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
-end ----
+---------------------------------------- ---- Input
+do
+  local tonumber = tonumber
+  local InputFmtY   = "^(%d+)"
+  local InputFmtYM  = "^(%d+)%-(%d+)"
+  local InputFmtYMD = "^(%d+)%-(%d+)%-(%d+)"
 
+function TMain:ParseInput ()
+  local self = self
+  local Date = self.Date:copy()
+
+  local Input = self.Input or ""
+  local _, Count = Input:gsub("-", "")
+
+  if Count == 0 then
+    local y = Input:match(InputFmtY)
+    y = tonumber(y) or 1
+    Date.y, Date.m, Date.d = y, 1, 1
+  elseif Count == 1 then
+    local y, m = Input:match(InputFmtYM)
+    y, m = tonumber(y) or 1, tonumber(m) or 1
+    Date.y, Date.m, Date.d = y, m, 1
+  else
+    local y, m, d = Input:match(InputFmtYMD)
+    y, m, d = tonumber(y) or 1, tonumber(m) or 1, tonumber(d) or 1
+    --logShow({ Count, y, m, d }, Input)
+    Date.y, Date.m, Date.d = y, m, d
+  end
+
+  return Date:fixMonth():fixDay()
+end ---- ParseInput
+
+function TMain:StartInput (Date)
+  local self = self
+  local L = self.LocData
+
+  self.Input = ""
+  self.Props.Bottom = L.Date
+  self.IsInput = true
+end ---- StartInput
+
+function TMain:StopInput (Date)
+  local self = self
+
+  self.IsInput = false
+  self.Props.Bottom = ""
+  self.Date = self:ParseInput() or Date
+end ---- StopInput
+
+function TMain:EditInput (SKey)
+  local self = self
+
+  local Input = self.Input
+  if SKey == "BS" then
+    if Input ~= "" then Input = Input:sub(1, -2) end
+  else
+    if SKey == "Subtract" then SKey = "-" end
+
+    Input = Input..SKey
+  end
+
+  self.Input = Input
+  self.Props.Bottom = Input
+end ---- EditInput
+
+end -- do
+---------------------------------------- ---- Events
 do
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
@@ -616,32 +714,198 @@ do
     AltDown     = "inc_y",
   } -- DateActions
 
-function TMain:AssignEvents () --> (bool | nil)
+  local InputActions = {
+    ["1"] = true,
+    ["2"] = true,
+    ["3"] = true,
+    ["4"] = true,
+    ["5"] = true,
+    ["6"] = true,
+    ["7"] = true,
+    ["8"] = true,
+    ["9"] = true,
+    ["0"] = true,
+    ["-"] = true,
+    ["BS"] = true,
+    ["Subtract"] = true,
+  } --- InputActions
 
-  -- Обработчик нажатия клавиши.
+function TMain:AssignEvents () --> (bool | nil)
+  local self = self
+
+  local function MakeUpdate () -- Обновление!
+    farUt.RedrawAll()
+    self:MakeCalendar()
+    --logShow(self.Items, "MakeUpdate")
+    if not self.Items then return nil, CloseFlag end
+    --logShow(ItemPos, hex(FKey))
+    return { self.Props, self.Items, self.Keys }, CompleteFlags
+  end -- MakeUpdate
+
+  -- Обработчик нажатия клавиш.
   local function KeyPress (VirKey, ItemPos)
     local SKey = VirKey.Name --or InputRecordToName(VirKey)
     if SKey == "Esc" then return nil, CancelFlag end
-
     --logShow(SKey, "SKey")
+
+    --local DT_cfg = self.DT_cfg
+    local Data = self.Items[ItemPos].Data
+    if not Data then return end
+
+    local Date = Data[Data.State]
+    if Data.d <= 0 then return end
+    Date.d = Data.d
+
+    local isUpdate = true
     local Action = DateActions[SKey]
     if Action then
-      local date = self.Date
-      date[Action](date)
-      self.Time = false
+      Date[Action](Date)
+
+    elseif SKey == "Divide" then
+      if self.IsInput then
+        self:StopInput(Date)
+        return MakeUpdate()
+      else
+        self:StartInput(Date)
+      end
+
+    elseif self.IsInput and InputActions[SKey] then
+      self:EditInput(SKey)
+
+    else
+      isUpdate = false
     end
 
-    local function MakeUpdate () -- Обновление!
-      farUt.RedrawAll()
-      self:MakeCalendar()
-      --logShow(self.Items, "MakeUpdate")
-      if not self.Items then return nil, CloseFlag end
-      --logShow(ItemPos, hex(FKey))
-      return { self.Props, self.Items, self.Keys }, CompleteFlags
-    end -- MakeUpdate
+    self.Time = false
 
-    return MakeUpdate()
+    if isUpdate then
+      self.Date = Date
+      return MakeUpdate()
+    end
+
+    return
   end -- KeyPress
+
+  -- Обработчик нажатия клавиш навигации.
+  local function NavKeyPress (AKey, VMod, ItemPos)
+    local AKey, VMod = AKey, VMod
+
+    local DT_cfg = self.DT_cfg
+    local Data = self.Items[ItemPos].Data
+    if not Data then return end
+
+    local State = Data.State
+    local Date = Data[State]
+    if Data.d <= 0 then return end
+    Date.d = Data.d
+    --logShow({ AKey, VMod, Data }, ItemPos, "w d2")
+
+    local isUpdate = true
+    if VMod == 0 then
+      --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
+      if AKey == "Clear" or AKey == "Multiply" then
+        self:InitData()
+        return MakeUpdate()
+      elseif AKey == "Left"  and Data.c == 1 then
+        if State == 0 then Date:shd(-DT_cfg.DayPerWeek) end
+      elseif AKey == "Right" and Data.c == self.WeekMax then
+        if State == 0 then Date:shd(DT_cfg.DayPerWeek) end
+      elseif AKey == "Up"    and Data.r == 1 then
+         Date:dec_d()
+      elseif AKey == "Down"  and Data.r == DT_cfg.DayPerWeek then
+        --logShow({ Date, Date:inc_d() }, AKey)
+         --logShow(Date:inc_d(), AKey)
+         Date:inc_d()
+      else
+        isUpdate = false
+      end
+
+    elseif IsModCtrl(VMod) then
+      if AKey == "Clear" or AKey == "Multiply" then
+        self:InitData()
+        return MakeUpdate()
+      elseif AKey == "PgUp" then
+        Date.y = (divf(Date.y, 10) - 1) * 10 + 1
+        Date.m = 1
+        Date.d = 1
+      elseif AKey == "PgDn" then
+        Date.y = (divf(Date.y, 10) + 1) * 10
+        Date.m = Date:getYearMonths()
+        Date.d = Date:getMonthDays()
+      elseif AKey == "Home" then
+        Date.y = (divf(Date.y, 100) - 1) * 100 + 1
+        Date.m = 1
+        Date.d = 1
+      elseif AKey == "End" then
+        Date.y = (divf(Date.y, 100) + 1) * 100
+        Date.m = Date:getYearMonths()
+        Date.d = Date:getMonthDays()
+      else
+        isUpdate = false
+      end
+
+    elseif IsModAlt(VMod) then
+      if AKey == "Clear" or AKey == "Multiply" then
+        self:InitData()
+        return MakeUpdate()
+      elseif AKey == "PgUp" then
+        Date.d = 1
+      elseif AKey == "PgDn" then
+        Date.d = Date:getMonthDays()
+      elseif AKey == "Home" then
+        if Date.m == 1 and Date.d == 1 then
+          Date.y = Date.y - 1
+        end
+        Date.m = 1
+        Date.d = 1
+      elseif AKey == "End" then
+        if Date.m == Date:getYearMonths() and
+           Date.d == Date:getMonthDays() then
+          Date.y = Date.y + 1
+        end
+        Date.m = Date:getYearMonths()
+        Date.d = Date:getMonthDays()
+      else
+        isUpdate = false
+      end
+
+    elseif IsModCtrlAlt(VMod) then
+      if AKey == "Clear" or AKey == "Multiply" then
+        self:InitData()
+        return MakeUpdate()
+      elseif AKey == "PgUp" then
+        Date.y = (divf(Date.y, 1000) - 1) * 1000 + 1
+        Date.m = 1
+        Date.d = 1
+      elseif AKey == "PgDn" then
+        Date.y = (divf(Date.y, 1000) + 1) * 1000
+        Date.m = Date:getYearMonths()
+        Date.d = Date:getMonthDays()
+      elseif AKey == "Home" then
+        Date.y = 1
+        Date.m = 1
+        Date.d = 1
+      elseif AKey == "End" then
+        Date.y = 9999
+        Date.m = Date:getYearMonths()
+        Date.d = Date:getMonthDays()
+      else
+        isUpdate = false
+      end
+
+    else
+      isUpdate = false
+    end
+
+    self.Time = false
+
+    if isUpdate then
+      self.Date = Date
+      return MakeUpdate()
+    end
+
+    return
+  end -- NavKeyPress
 
   -- Обработчик выделения пункта.
   local function SelectItem (Kind, ItemPos)
@@ -650,18 +914,43 @@ function TMain:AssignEvents () --> (bool | nil)
     if not Data then return end
 
     self.Date = Data[Data.State]
+    if Data.d <= 0 then return end
     self.Date.d = Data.d
 
     return self:FillMenu()
   end -- SelectItem
 
-  -- Назначение обработчика:
+  -- Обработчик выбора пункта.
+  local function ChooseItem (Kind, ItemPos)
+    local Data = self.Items[ItemPos].Data
+    if not Data then return end
+
+    if self.IsInput and Kind == "Enter" then
+      local Date = Data[Data.State]
+      self:StopInput(Date)
+      return MakeUpdate()
+    end
+
+    return nil, CloseFlag
+  end -- ChooseItem
+
+  -- Назначение обработчиков:
   local RM_Props = self.Props.RectMenu
   RM_Props.OnKeyPress = KeyPress
+  RM_Props.OnNavKeyPress = NavKeyPress
   RM_Props.OnSelectItem = SelectItem
+  RM_Props.OnChooseItem = ChooseItem
 end -- AssignEvents
 
 end --
+
+---------------------------------------- ---- Show
+-- Показ меню заданного вида.
+function TMain:ShowMenu () --> (item, pos)
+  return usercall(nil, unit.RunMenu,
+                  self.Props, self.Items, self.Keys)
+  --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
+end ----
 
 -- Вывод календаря.
 function TMain:Show () --> (bool | nil)
@@ -670,6 +959,8 @@ function TMain:Show () --> (bool | nil)
 
   self:MakeCalendar()
   if self.Error then return nil, self.Error end
+
+  if useprofiler then profiler.stop() end
 
   self.ActItem, self.ItemPos = self:ShowMenu()
 
