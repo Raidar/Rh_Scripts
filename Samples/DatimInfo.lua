@@ -46,6 +46,9 @@ local d = datim.newDate(dt.year, dt.month, dt.day)
 --local d = datim.newDate(2001, 01, 01) -- Check start of base year
 --local d = datim.newDate(2012, 12, 31) -- Check end   of leap year
 --local d = datim.newDate(2013, 01, 01) -- Check start of base year
+--local d = datim.newDate(-001, 01, 01) -- Check start of base year BOE
+--local d = datim.newDate(-001, 12, 31) -- Check start of base year BOE
+--local d = datim.newDate(0001, 01, 01) -- Check start of base year OE
 
 local c = d.config
 local YearDay   = c:getYearDay(d.y, d.m, d.d)
