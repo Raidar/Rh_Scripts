@@ -1691,9 +1691,7 @@ function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Data)
   --logShow({ VirKey, Table, Flags }, "OnKeyPress", , "w d2")
   Flags = Flags or Null -- or {}
   if Flags.isCancel then self.SelIndex = nil end
-  if Flags.isClose or Flags.isCancel then
-    return CloseDialog(hDlg)
-  end
+  if Flags.isClose or Flags.isCancel then return CloseDialog(hDlg) end
 
   if type(Data) == 'table' then
     self:UpdateAll(hDlg, Flags, Data)
@@ -1724,11 +1722,13 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
     local isOk, NewKey, NewMod = self:UserNavKeyPress(hDlg, AKey, VMod)
     if isOk then return isOk end
     --if isOk ~= nil then return isOk end -- TODO: TEST
+    --logShow({ AKey, VMod, isOk, NewKey, NewMod }, SelIndex, "w h8 d1")
 
     AKey, VMod = NewKey or AKey, NewMod or VMod
 
     if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
        (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
+      --logShow({ AKey, VMod }, SelIndex, "w h8 d1")
       return self:ArrowKeyPress(hDlg, AKey, VMod, true)
     end
   end
@@ -1928,24 +1928,16 @@ function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
     return CloseDialog(hDlg)
   end
 
-  local isClose = OnChooseItem(Kind, self:GetSelectIndex())
-  --local isClose = OnChooseItem(Kind, Index, self:GetSelectIndex())
-  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
-
-  if isClose then
-    return CloseDialog(hDlg)
-  end
-
-  --[[
-  local Flags = OnChooseItem(Kind, self:GetSelectIndex())
-  --local Flags = OnChooseItem(Kind, Index, self:GetSelectIndex())
-  --logShow({ Result, Table, Flags }, "OnChooseItem", 2)
+  local Data, Flags = OnChooseItem(Kind, self:GetSelectIndex())
+  --logShow({ Data, Flags }, "OnChooseItem", 2)
   Flags = Flags or Null -- or {}
+  if Flags.isCancel then self.SelIndex = nil end
+  if Flags.isClose or Flags.isCancel then return CloseDialog(hDlg) end
 
-  if Flags.isClose then
-    return CloseDialog(hDlg)
+  if type(Data) == 'table' then
+    self:UpdateAll(hDlg, Flags, Data)
+    return true
   end
-  --]]
 
   return true
 end ---- ChooseItem
