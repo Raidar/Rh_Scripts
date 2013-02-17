@@ -139,6 +139,50 @@ local TConfig = {
 } ---
 unit.DefConfig = TConfig
 
+do
+  local MConfig = { __index = TConfig }
+
+function unit.newConfig (Config) --|> Config
+  local self = Config or {}
+  self = setmetatable(self, MConfig)
+
+  if Config then
+    return unit.fillConfig(self)
+  end
+
+  return self
+end ---- newConfig
+
+---------------------------------------- ---- Filling
+-- Fill date constants.
+-- Заполнение констант даты.
+function unit.fillCfgDate (Config) --|> Config
+
+  Config.MonthPerQuarter    = Config.MonthPerYear / Config.QuarterPerYear
+  Config.LeapYear           = Config.BaseYear + 1
+  Config.MeanMonth          = Config.MeanYear / Config.MonthPerYear
+
+  return Config
+end ---- fillCfgDate
+
+-- Fill time constants.
+-- Заполнение констант времени.
+function unit.fillCfgTime (Config) --|> Config
+
+  local HourPerDay  = Config.HourPerDay
+  local MinPerHour  = Config.MinPerHour
+  local SecPerMin   = Config.SecPerMin
+
+  Config.MinPerDay      =        MinPerHour  * HourPerDay
+  Config.SecPerHour     =        SecPerMin   * MinPerHour
+  Config.SecPerDay      = Config.SecPerHour  * HourPerDay
+  Config.MSecPerMin     = Config.MSecPerSec  * SecPerMin
+  Config.MSecPerHour    = Config.MSecPerMin  * MinPerHour
+  Config.MSecPerDay     = Config.MSecPerHour * HourPerDay
+
+  return Config
+end ---- fillCfgTime
+
 -- Fill month days with additional data.
 -- Заполнение дней месяцев дополнительными данными.
 function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
@@ -187,25 +231,9 @@ function unit.findWeekDays (YearDays, DayPerWeek) --|> (YearDays)
   return WeekDays
 end ---- findWeekDays
 
--- Fill derived constants.
--- Заполнение производных констант.
-function unit.fillConfig (Config) --|> Config
-  if Config.filled then return end
-
-  Config.MonthPerQuarter    = Config.MonthPerYear / Config.QuarterPerYear
-  Config.LeapYear           = Config.BaseYear + 1
-  Config.MeanMonth          = Config.MeanYear / Config.MonthPerYear
-
-  local HourPerDay  = Config.HourPerDay
-  local MinPerHour  = Config.MinPerHour
-  local SecPerMin   = Config.SecPerMin
-
-  Config.MinPerDay      =        MinPerHour  * HourPerDay
-  Config.SecPerHour     =        SecPerMin   * MinPerHour
-  Config.SecPerDay      = Config.SecPerHour  * HourPerDay
-  Config.MSecPerMin     = Config.MSecPerSec  * SecPerMin
-  Config.MSecPerHour    = Config.MSecPerMin  * MinPerHour
-  Config.MSecPerDay     = Config.MSecPerHour * HourPerDay
+-- Fill table constants.
+-- Заполнение табличных констант.
+function unit.fillCfgTables (Config) --|> Config
 
   if not Config.RestWeekDays then
     Config.RestWeekDays = {}
@@ -221,24 +249,24 @@ function unit.fillConfig (Config) --|> Config
     Config.WeekDays = unit.findWeekDays(Config.YearDays, Config.DayPerWeek)
   end
 
+  return Config
+end ---- fillCfgTables
+
+-- Fill derived constants.
+-- Заполнение производных констант.
+function unit.fillConfig (Config) --|> Config
+  if Config.filled then return end
+
+  unit.fillCfgDate(Config)
+
+  unit.fillCfgTime(Config)
+
+  unit.fillCfgTables(Config)
+
   Config.filled = true
 
   return Config
 end ---- FillConfig
-
-do
-  local MConfig = { __index = TConfig }
-
-function unit.newConfig (Config) --|> Config
-  local self = Config or {}
-  self = setmetatable(self, MConfig)
-
-  if Config then
-    return unit.fillConfig(self)
-  end
-
-  return self
-end ---- newConfig
 
 end -- do
 ---------------------------------------- ---- Date
@@ -263,6 +291,17 @@ end ----
 function TConfig:getLeapDays (y) --> (bool)
   return self:isLeapYear(y) and 1 or 0
 end ----
+
+-- Count months in year.
+-- Количество месяцев в годе.
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (number) - month count in year.
+--]]
+function TConfig:getYearMonths (y) --> (number)
+  return self.MonthPerYear
+end ---- getYearMonths
 
 -- Count days in month.
 -- Количество дней в месяце.
@@ -440,44 +479,35 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
-  local e = e
+  local e = e - 365
+  --local E = e
 
   local p, q
   p, e = divm(e, 146097)
-  if e == 0 then
-    e = 146097
-    p = p - 1
-  end
   q, e = divm(e,  36524)
-  if e == 0 then
-    e = 36524
-    q = q - 1
-  end
   local P = 4 * p + q
 
   local r, s
   r, e = divm(e,   1461)
-  if e == 0 then
-    e = 1461
-    r = r - 1
-  end
   s, e = divm(e,    365)
-  if e == 0 then
-    e = 365
-    s = s - 1
-  end
 
   local R = 4 * r + s
 
   local y = 100 * P + R
-  if e == 1 and self:isLeapYear(y) then
-    y = y - 1
-    e = e + 365
-  end
 
   y = y + 1
+  e = e + 365
+  local yd = self:getYearDays(y)
+  if e > yd then
+    y = y + 1
+    e = e - yd
+  end
 
-  --logShow({ P, R, p, q, r, s, e, y }, "divEraDay", "w d2")
+  --[[
+  logShow({ E, P, R, p, q, r, s, e,
+            y, self:isLeapYear(y), },
+            "divEraDay", "w d2")
+  --]]
 
   return y, self:divYearDay(y, e)
 end ---- divEraDay
@@ -585,11 +615,13 @@ function TConfig:fixMonthDay (date) --> (date)
   local self = self
   local date = date
 
+  --logShow(date, self:getMonthDays(date.y, date.m))
+
   if date.d == 0 then
     date.d = self.MonthDays.Max + 1
     date.m = date.m - 1
 
-  elseif date.d == self:getMonthDays(date.y, date.m) then
+  elseif date.d == self:getMonthDays(date.y, date.m) + 1 then
     date.d = 1
     date.m = date.m + 1
   end
@@ -661,7 +693,12 @@ function TDate:copy () --> (object)
   return unit.newDate(self:data())
 end ----
 
-function TDate:getMonthDays () --> (bool)
+function TDate:getYearMonths () --> (number)
+  --local self = self
+  return self.config:getYearMonths(self.y)
+end ----
+
+function TDate:getMonthDays () --> (number)
   local self = self
   return self.config:getMonthDays(self.y, self.m)
 end ----
