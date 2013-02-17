@@ -437,11 +437,14 @@ do
     end
   end --
 
+  local CloseFlag  = { isClose = true }
+  --local CancelFlag = { isCancel = true }
+  --local CompleteFlags = { isRedraw = false, isRedrawAll = true }
+
 local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 
 --local InsText = editor.InsertText
 local InsText = farUt.InsertText
-local Redraw  = farUt.RedrawAll
 
 function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
   local MenuConfig = MenuConfig or {}
@@ -469,19 +472,21 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
     DblClick = true,
   } --- mChooseKinds
 
-  local function DoChooseItem (Kind, Index)
+  local function ChooseItem (Kind, Index)
     --logShow({ Index = Index, SelIndex = SelIndex }, Kind)
     --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
-    if not mChooseKinds[Kind or ""] then return true end
+    if not mChooseKinds[Kind or ""] then return nil, CloseFlag end
 
     local ActItem = mItems[Index]
-    if not ActItem or not ActItem.Plain then return true end
+    if not ActItem or not ActItem.Plain then return nil, CloseFlag end
 
     --if not InsText(nil, ActItem.Plain) then return true end
-    if not InsText(Area, ActItem.Plain, {}) then return true end
+    if not InsText(Area, ActItem.Plain, {}) then return nil, CloseFlag end
 
-    return not Redraw()
-  end -- DoChooseItem
+    farUt.RedrawAll()
+
+    return true
+  end -- ChooseItem
 
   local Properties = {
     Id = Guid,
@@ -494,7 +499,7 @@ function unit.Menu (MenuConfig, Props, Data, Keys) --> (table)
       MenuEdge = 2,
       Fixed = Fixed,
 
-      OnChooseItem = DoChooseItem,
+      OnChooseItem = ChooseItem,
     }, --
   } --- Properties
 
