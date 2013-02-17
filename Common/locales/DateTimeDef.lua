@@ -15,11 +15,11 @@ local Data = {
   Time              = "Time",
 
   ----------------------------------------
-  ["Gregorean Calendar"] = "Gregorean Calendar",
 
   ----------------------------------------
   Terra = {
     Name = "Earth",
+    ["Type.Gregorean"] = "Gregorean Calendar",
 
     WeekDay = {
       n = 3,
