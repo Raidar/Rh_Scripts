@@ -41,10 +41,9 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 
 ----------------------------------------
 --[[
-local numbers = require 'context.utils.useNumbers'
-
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
+local hex8 = dbg.hex8
 --]]
 
 --------------------------------------------------------------------------------
@@ -388,9 +387,9 @@ local function ConfigDlg (Config, Kind, Derived)
     --]]
     --[[
     far.Show(hDlg, ID,
-             numbers.hex8(Color),
+             hex8(Color),
              ROnly_Items[Item.name] and
-             numbers.hex8(dlgUt.ChangeColor(Color, ROnly_Color)) or "none",
+             hex8(dlgUt.ChangeColor(Color, ROnly_Color)) or "none",
              Item.id, Item.name, unpack(Item))
     --]]
   end --
