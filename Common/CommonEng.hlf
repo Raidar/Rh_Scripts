@@ -21,9 +21,10 @@ $ #Script files#: Common scripts
     \37CustomMenu.lua\-     — ¦~Custom menu~@CustomMenu@.
     \37FilterMenu.lua\-     — ¦~Filtration menu~@FilterMenu@
     \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
-    \37MenuTexter.lua\-     — ¦~Text-maker for menu~@MenuTexter@
+    \37MenuTexter.lua\-     — ¦~Text-maker~@MenuTexter@ of menu items.
 
-    \37CharsMenu.lua\-      — ¦Menu of characters output items@CharsMenu@.
+    \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
+    \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
 
@@ -171,7 +172,7 @@ Additional 4th parameter allows to define function for menu call.
  ~Contents~@Contents@
 
 @MenuTexter
-$ #Text‑maker for menu# (MenuTexter)
+$ #Text‑maker of menu items# (MenuTexter)
   MenuTexter is a kind of menu with defining needful text format for menu items.
 
   First 3 parameters of menu output function is similar to far.Menu() parameters.
@@ -186,9 +187,15 @@ These properties@TM_Props@ is similar to properties of user menu display
 
  ~Contents~@Contents@
 
+@Calendar
+$ #Calendar for one month# (Calendar)
+  Calendar is a script to output calendar for one month.
+
+ ~Содержание~@Contents@
+
 @rhsConfig
 $ #Rh_Scripts pack configurator# (rhsConfig)
-  rhsConfig is a script for customizing Rh_Scripts package.
+  rhsConfig is a script to customize Rh_Scripts package.
  It allows to choose only needful menu items and resident modules.
   A \37rhsConfig.cfgrus\- file is an example of configuration with russian
 names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
