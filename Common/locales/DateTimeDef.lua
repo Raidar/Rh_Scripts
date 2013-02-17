@@ -22,6 +22,7 @@ local Data = {
     Name = "Earth",
 
     WeekDay = {
+      n = 3,
       [0] = {
         [0] = "Sunday",
         "Monday",     "Tuesday",  "Wednesday",
@@ -47,6 +48,7 @@ local Data = {
     }, -- WeekDay
 
     YearMonth = {
+      n = 3,
       [0] = {
         "January",    "February",     "March",
         "April",      "May",          "June",
