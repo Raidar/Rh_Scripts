@@ -25,14 +25,21 @@ local locale = require 'context.utils.useLocale'
 
 local n2s = numbers.n2s
 
-----------------------------------------
--- [[
-local dbg = require "context.utils.useDebugs"
-local logShow, datShow = dbg.Show, dbg.ShowData
---]]
-
 --------------------------------------------------------------------------------
 local unit = {}
+
+---------------------------------------- Show
+local dbgs
+
+local function doShow (...)
+  dbgs = dbgs or require "context.utils.useDebugs"
+  return dbgs.Show(...)
+end -- doShow
+
+local function datShow (...)
+  dbgs = dbgs or require "context.utils.useDebugs"
+  return dbgs.ShowData(...)
+end -- datShow
 
 ---------------------------------------- Datim
 local SubsDatim = require "Rh_Scripts.LuaUM.scripts.SubsDatim"
@@ -83,7 +90,7 @@ function unit.CurClauseData () --| (window)
 
   local data = SubsDatim.getLineData(tp)
 
-  return logShow(data, L.cap_CurClauseData)
+  return doShow(data, L.cap_CurClauseData)
 end ----
 
 -- Показ данных по разнице как времени.

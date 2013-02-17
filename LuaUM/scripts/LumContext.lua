@@ -21,21 +21,21 @@ local datas = require 'context.utils.useDatas'
 ----------------------------------------
 --local farUt = require "Rh_Scripts.Utils.Utils"
 
-----------------------------------------
--- [[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
-
 --------------------------------------------------------------------------------
+local dbgs
+
+local function doShow (...)
+  dbgs = dbgs or require "context.utils.useDebugs"
+  return dbgs.Show(...)
+end -- doShow
 
 ---------------------------------------- Common
 local format = string.format
 
 -- Информация по таблице context.
 function showInfo (Depth)
-  logShow(context, "context", format("d%d %s", Depth, "_w"))
-  logShow(ctxdata, "context data", format("d%d %s", Depth, "_w"))
+  doShow(context, "context", format("d%d %s", Depth, "_w"))
+  doShow(ctxdata, "context data", format("d%d %s", Depth, "_w"))
 end ----
 
 -- Краткая информация по context.
@@ -60,7 +60,7 @@ function OpenFilesList ()
      end
      showFileList = context.manage.showFileList
   end
-  --logShow(context, "context", "d2 _")
+  --doShow(context, "context", "d2 _")
   showFileList()
 end ----
 --]]
@@ -72,9 +72,9 @@ local abstypes = ctxdata.abstypes
 local cfgpairs = datas.cfgpairs
 
 function typesTable ()
-  logShow(types, "context types", "d1 _w", { pairs = cfgpairs })
+  doShow(types, "context types", "d1 _w", { pairs = cfgpairs })
   if abstypes then
-    logShow(abstypes, "abstract types", "d1 _w")
+    doShow(abstypes, "abstract types", "d1 _w")
   end
 end ----
 
@@ -113,9 +113,9 @@ end -- typesList
 -- Информация о типах.
 function typesInfo ()
   local t = typesList(types)
-  if t then logShow(t, "context types", "d1 w a1") end
+  if t then doShow(t, "context types", "d1 w a1") end
   t = typesList(abstypes)
-  if t then logShow(t, "abstract types", "d1 w a1") end
+  if t then doShow(t, "abstract types", "d1 w a1") end
 end ----
 
 local detArea = context.detect.area
@@ -123,14 +123,14 @@ local curFileType = detArea.current
 
 -- Тип текущего файла (detectType).
 function detType ()
-  local f = { matchcase = false, forceline = true }
-  --local f = { matchcase = true }
-  local info = { curFileType(f) }
+  local f = { matchcase = false, forceline = true, }
+  --local f = { matchcase = true, }
+  local info = { curFileType(f), }
 
   if #info > 0 then
-    logShow(info, "detType", "d2 _")
+    doShow(info, "detType", "d2 _")
   else
-    logShow("No types for detect\n\n'LuaFAR context' pack is required\n", "detType")
+    doShow("No types for detect\n\n'LuaFAR context' pack is required\n", "detType")
   end
 end ---- detType
 
@@ -142,6 +142,6 @@ function testType ()
     return f({ "default" })
     --return f({ "default", "altered" })
   end
-end ----
+end ---- testType
 
 --------------------------------------------------------------------------------
