@@ -1052,6 +1052,8 @@ function TMain:MakePopupMenu () --> (table)
   -- Задание параметров меню RectMenu.
   local Props = self.Props
   Props.Id = Props.Id or self.PopupGuid
+  Props.HelpTopic = self.Custom.help.tlink
+
   local RM_Props = Props.RectMenu
   --logShow(RM_Props, "RectMenu Props")
   if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
@@ -1098,6 +1100,8 @@ function TMain:MakePopupMenu () --> (table)
   --]]
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
+
+  return true
 end -- MakePopupMenu
 
 end -- do
