@@ -49,8 +49,8 @@ local unit = {}
 
 ---------------------------------------- Config class
 local TConfig = {
-  Name          = "Terra",
-  Note          = "Gregorean Calendar",
+  World         = "Terra",          -- Мир
+  Type          = "Type.Gregorean", -- Тип календаря
 
   YearMin       = 1583,
   YearMax       = 9999,
@@ -134,6 +134,23 @@ local TConfig = {
     6, 2, 5,
     0, 3, 5,
   }, -- WeekDays
+
+  -- Formats to output.
+  -- Форматы для вывода.
+  Formats = {
+    World   = "%s",
+    Type    = "%s",
+    Year    = "%04d",
+
+    Date    = "%04d-%02d-%02d",
+    Time    = "%02d:%02d:%02d",
+    DateLen = 10,
+    TimeLen =  8,
+
+    YearDay   = "%03d",
+    YearWeek  = "%02d",
+    MonthWeek = "%1d",
+  }, -- Formats
 
   --filled = nil,         -- Признак заполненности
 } ---
@@ -247,6 +264,10 @@ function unit.fillCfgTables (Config) --|> Config
 
   if not Config.WeekDays then
     Config.WeekDays = unit.findWeekDays(Config.YearDays, Config.DayPerWeek)
+  end
+
+  if not Config.Formats then
+    Config.Formats = {} -- TODO: Сделать генерацию форматов на основе констант.
   end
 
   return Config
@@ -479,8 +500,14 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
-  local e = e - 365
   --local E = e
+  local e = e
+
+  if e <= 365 then
+    return 1, self:divYearDay(1, e)
+  end
+
+  e = e - 365
 
   local p, q
   p, e = divm(e, 146097)
@@ -521,7 +548,7 @@ end ---- divEraDay
   result (number) - month of common era.
 --]]
 function TConfig:getEraMonth (y, m) --> (number)
-  return y * self.MonthPerYear + m
+  return (y - 1) * self.MonthPerYear + m
 end ---- getEraMonth
 
 -- Divide month number of the common era.
@@ -536,8 +563,9 @@ function TConfig:divEraMonth (r) --> (y, m)
   local MonthPerYear = self.MonthPerYear
   local y, m = divm(r, MonthPerYear)
 
-  if m ~= 0 then return y, m end
-  return y - 1, MonthPerYear
+  if m ~= 0 then return y + 1, m end
+
+  return y, MonthPerYear
 end ---- divEraMonth
 
 -- Check date.
@@ -764,6 +792,32 @@ function TDate:setEraMonth (r) --> (y, m)
   return self.config:fixYearMonthDay(self)
 end ---- setEraMonth
 
+function TDate:fixMonth () --> (self)
+  local self = self
+  local m = self.m
+  if m < 0 then
+    self.m = 1
+  else
+    local M = self:getYearMonths()
+    if m > M then self.m = M end
+  end
+
+  return self
+end ---- fixMonth
+
+function TDate:fixDay () --> (self)
+  local self = self
+  local d = self.d
+  if d < 0 then
+    self.d = 1
+  else
+    local D = self:getMonthDays()
+    if d > D then self.d = D end
+  end
+
+  return self
+end ---- fixDay
+
 function TDate:ymd () --> (number)
   return self:getEraDay()
 end ----
@@ -772,7 +826,6 @@ end ----
 -- Сдвиг на заданное число дней.
 function TDate:shd (count) --> (self)
   local self = self
-
   return self:setEraDay(self:getEraDay() + count)
 end ---- shd
 
