@@ -52,13 +52,9 @@ local Data = {
     ChsDraws_Boxing     = "Boxing",
 
   ----------------------------------------
-  -- Command samples
-  CommandSamples    = "&M - Commands samples",
-
-  CmdShowFarDesc    = "Show FAR description",
-    CmdFarDescExec      = "— by OS exec",
-    CmdFarDescProg      = "— as subprocess",
-    CmdFarDescLine      = "— from command line",
+  -- Addon scripts
+  AddonScripts      = "&A - Additions",
+    AddonCalendar       = "&C - Calendar",
 
   ----------------------------------------
   -- Other scripts
@@ -82,6 +78,15 @@ local Data = {
   OthHelloWorld     = "&Hello, world!",
     OthHelloWorldMsg    = "Show &message",
     OthHelloWorldText   = "&Insert text",
+
+  ----------------------------------------
+  -- Command samples
+  CommandSamples    = "&M - Commands samples",
+
+  CmdShowFarDesc    = "Show FAR description",
+    CmdFarDescExec      = "— by OS exec",
+    CmdFarDescProg      = "— as subprocess",
+    CmdFarDescLine      = "— from command line",
 
   ----------------------------------------
 } --- Data

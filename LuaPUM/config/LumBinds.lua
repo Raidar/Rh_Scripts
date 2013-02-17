@@ -41,13 +41,13 @@ local Data = {
   },
   --]]
   Default = { Caption = L.MainMenu,
-              --After = "UScripts;UCommands;U_DefSep;FARMacro;UMConfig", },
-              After = "UScripts;UCommands;GitCommands;TortoiseSVN;U_DefSep;FARMacro;UMConfig", },
-              --After = "UScripts;U_DefSep;FARMacro;UMConfig", },
+              --After = "UAddons;UScripts;UCommands;U_DefSep;FARMacro;UMConfig", },
+              After = "UAddons;UScripts;UCommands;GitCommands;TortoiseSVN;U_DefSep;FARMacro;UMConfig", },
+              --After = "UAddons;UScripts;U_DefSep;FARMacro;UMConfig", },
 
-  --back   = { Menu = "UScripts;TortoiseSVN;U_DefSep;UMConfig", noDefault = true, },
+  --back   = { Menu = "UAddons;UScripts;TortoiseSVN;U_DefSep;UMConfig", noDefault = true, },
 
-  --dir    = { Menu = "TortoiseSVN", },
+  --dir    = { Menu = "UAddons;UScripts;TortoiseSVN;U_DefSep;UMConfig", },
 
 } --- Data
 

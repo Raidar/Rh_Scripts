@@ -53,13 +53,9 @@ local Data = {
     ChsDraws_Boxing     = "Рамки",
 
   ----------------------------------------
-  -- Command samples
-  CommandSamples    = "&M - Примеры команд",
-
-  CmdShowFarDesc    = "Показать FAR description",
-    CmdFarDescExec      = "— по команде ОС",
-    CmdFarDescProg      = "— как подпроцесс",
-    CmdFarDescLine      = "— из командной строки",
+  -- Addon scripts
+  AddonScripts      = "&A - Дополнения",
+    AddonCalendar       = "&C - Календарь",
 
   ----------------------------------------
   -- Other scripts
@@ -83,6 +79,15 @@ local Data = {
   OthHelloWorld     = "&H - Пример Hello, world!",
     OthHelloWorldMsg    = "&M - Показ сообщения",
     OthHelloWorldText   = "&I - Вставка текста",
+
+  ----------------------------------------
+  -- Command samples
+  CommandSamples    = "&M - Примеры команд",
+
+  CmdShowFarDesc    = "Показать FAR description",
+    CmdFarDescExec      = "— по команде ОС",
+    CmdFarDescProg      = "— как подпроцесс",
+    CmdFarDescLine      = "— из командной строки",
 
   ----------------------------------------
 } --- Data

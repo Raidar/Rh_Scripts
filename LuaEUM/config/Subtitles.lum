@@ -59,9 +59,9 @@ local mCurrentClause = {
   text = L.CurrentClause,
   Items = {
     { text = L.itm_CurClauseLen,
-      Function = subs.CurClauseLen },
+      Function = subs.CurClauseLen, },
     { text = L.itm_CurClauseGap,
-      Function = subs.CurClauseGap },
+      Function = subs.CurClauseGap, },
     --mSeparator,
   } ---
 } --- mCurrentClause
@@ -73,9 +73,9 @@ local mSubtitles = {
     mCurrentClause,
     mSeparator,
     { text = L.itm_SubtitleType,
-      Function = subs.SubtitleType },
+      Function = subs.SubtitleType, },
     { text = L.itm_CurClauseData,
-      Function = subs.CurClauseData },
+      Function = subs.CurClauseData, },
   } -- Items
 } --- mSubtitles
 
@@ -83,7 +83,7 @@ local mSubtitles = {
 local Data = {
   Menu = {
     text = L.Subtitles,
-    Items = { mSubtitles },
+    Items = { mSubtitles, },
   },
   ["Subtitles"] = mSubtitles,
 } ---

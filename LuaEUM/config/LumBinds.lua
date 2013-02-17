@@ -43,15 +43,15 @@ local Data = {
   },
 
   Default = { Caption = L.MainMenu,
-              After = "EQuoting;EScripts;UScripts;UCommands;"..
+              After = "EQuoting;EScripts;UAddons;UScripts;UCommands;"..
                       "U_DefSep;FARMacro;UMConfig", },
 
-  back   = { Menu = "UScripts;U_DefSep;UMConfig", noDefault = true, },
+  back   = { Menu = "UAddons;UScripts;U_DefSep;UMConfig", noDefault = true, },
 
   --none   = { Menu = "Characters", },
   none   = { Menu = "J_None;Characters", },
   --text   = { Menu = "Characters", },
-  html   = { Menu = "J_Html", }, -- ;Characters
+  html   = { Menu = "J_Html;Characters", },
   c      = { Menu = "J_C_Cpp", },
   pascal = { Menu = "J_Pascal", },
   lua    = { Menu = "J_Lua", }, -- ;Characters

@@ -1,0 +1,67 @@
+--[[ LuaUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Addon scripts.
+  -- Скрипты-дополнения.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+local unit = {}
+
+---------------------------------------- Custom
+local Custom = {
+  label = "Others",
+  name = "lum",
+  path = "Rh_Scripts.LuaUM.config.",
+  locale = { kind = 'require', },
+} ---
+
+---------------------------------------- Locale
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+---------------------------------------- Separator
+local mSeparator = {
+  separator = true,
+} ---
+
+---------------------------------------- Calendar
+function unit.Calendar ()
+  local Unit = require "Rh_Scripts.Common.Calendar"
+
+  return {
+    text = L.AddonCalendar,
+    Function = Unit.Execute,
+  } ----
+end ---- Calendar
+
+
+---------------------------------------- Items/Menu
+local mScripts = { -- Other scripts
+  text = L.AddonScripts,
+  Items = {
+    unit.Calendar,
+  } ---
+} --- mScripts
+
+---------------------------------------- Data
+local Data = {
+  Menu = {
+    text = L.OtherScripts,
+    Items = { mScripts, },
+  },
+
+  --["Addon Scripts"] = mScripts,
+} ---
+
+return Data
+--------------------------------------------------------------------------------
