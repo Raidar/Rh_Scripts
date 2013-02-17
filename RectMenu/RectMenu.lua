@@ -1412,7 +1412,6 @@ function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   local OldIndex = self.SelIndex
   local oCell = RC_cell(Idx2Cell(OldIndex, self.Data))
   local dCell, NewIndex, nCell = NewIndexCell(oCell)
-  if dCell == nil then return true end -- TODO: TEST
 
   if NewIndex == false then return false end
   if NewIndex == nil then
@@ -1576,32 +1575,11 @@ function TMenu:CheckArrowUse (AKey) --> (bool)
   return true
 end ---- CheckArrowUse
 
--- Пользовательская обработка клавиш навигации.
-function TMenu:UserArrowKeyPress (hDlg, AKey) --> (nil|true | Data)
-  local self = self
-  local OnArrowKeyPress = self.RectMenu.OnArrowKeyPress
-  if not OnArrowKeyPress then return end
-
-  local Data, Flags = OnArrowKeyPress(AKey, self:GetSelectIndex())
-  --logShow({ AKey, Table, Flags }, "OnArrowKeyPress", "w d2")
-  Flags = Flags or Null -- or {}
-
-  if type(Data) == 'table' then
-    self:UpdateAll(hDlg, Flags, Data)
-    return true
-  end
-
-  return nil, Data
-end ---- UserArrowKeyPress
-
 -- Обработка клавиш курсора в меню.
 function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
 
   -- Переход на новую ячейку по нажатию клавиши.
   local function KeyPressCell (OldCell) --> (table, number, table)
-
-    local isOk, ANewKey = self:UserArrowKeyPress(hDlg, AKey)
-    if isOk then return nil, isOk end -- TODO: TEST
 
     local self = self
     local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, ANewKey or AKey)
@@ -1684,6 +1662,25 @@ function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
   return false
 end ---- RapidKeyPress
 
+-- Пользовательская обработка клавиш навигации.
+function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
+  local self = self
+  local OnNavKeyPress = self.RectMenu.OnNavKeyPress
+  if not OnNavKeyPress then return end
+
+  local Data, AKey, Mod, Flags =
+    OnNavKeyPress(AKey, VMod, self:GetSelectIndex())
+  --logShow({ AKey, Table, Flags }, "OnArrowKeyPress", "w d2")
+  Flags = Flags or Null -- or {}
+
+  if type(Data) == 'table' then
+    self:UpdateAll(hDlg, Flags, Data)
+    return true
+  end
+
+  return Data, AKey, Mod
+end ---- UserNavKeyPress
+
 -- Пользовательская обработка клавиш.
 function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Data)
   local self = self
@@ -1715,6 +1712,7 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
 
   -- 1. Обработка выбора курсором.
   if SelIndex then -- (только при наличии выделения)
+
     -- Корректировка: Numpad / MSWheel --> Arrow keys
     local AKey = VirKey.KeyName
     AKey = keyUt.SKEY_NumpadNavs[AKey] or
@@ -1722,6 +1720,12 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
     --logShow(VirKey, AKey, "w d1 x8")
     local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
     --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
+
+    local isOk, NewKey, NewMod = self:UserNavKeyPress(hDlg, AKey, VMod)
+    if isOk then return isOk end
+    --if isOk ~= nil then return isOk end -- TODO: TEST
+
+    AKey, VMod = NewKey or AKey, NewMod or VMod
 
     if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
        (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
