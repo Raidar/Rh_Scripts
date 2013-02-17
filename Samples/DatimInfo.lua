@@ -39,7 +39,13 @@ local d = datim.newDate(dt.year, dt.month, dt.day)
 --logShow(d, "TDate", "w")
 --local d = datim.newDate(1886, 12, 25) -- Check yester year
 --local d = datim.newDate(2036, 12, 25) -- Check future year
---local d = datim.newDate(2000, 12, 31) -- Check end of year
+--local d = datim.newDate(1900, 12, 31) -- Check end of base year
+--local d = datim.newDate(1999, 12, 31) -- Check end of base year
+--local d = datim.newDate(2000, 01, 01) -- Check start of leap year
+--local d = datim.newDate(2000, 12, 31) -- Check end   of leap year
+--local d = datim.newDate(2001, 01, 01) -- Check start of base year
+--local d = datim.newDate(2012, 12, 31) -- Check end   of leap year
+--local d = datim.newDate(2013, 01, 01) -- Check start of base year
 
 local c = d.config
 local YearDay   = c:getYearDay(d.y, d.m, d.d)
