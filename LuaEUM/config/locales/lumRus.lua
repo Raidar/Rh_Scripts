@@ -27,6 +27,8 @@ local Data = {
     LuaDequote          = "&D - Раскавычивание",
       LuaDequoteSingle      = "&S - Любое одинарное",
       LuaDequoteDouble      = "&D - Любое двойное",
+      LuaDequoteXmlComment  = "&X - Комментарий XML",
+      LuaDequoteLuaComment  = "&L - Комментарий Lua",
 
   ----------------------------------------
   -- Lua scripts:

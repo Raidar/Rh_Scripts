@@ -30,6 +30,7 @@ local logShow = dbg.Show
 --]]
 
 --------------------------------------------------------------------------------
+local unit = {}
 
 ---------------------------------------- Locale
 local Custom = {
@@ -54,7 +55,7 @@ function Text.Enquote (Args, Cfg)
   return farSelect.Enquote(unpack(Args))
 end ----
 
-function TextDequote (Args, Cfg)
+function Text.Dequote (Args, Cfg)
   return farSelect.Dequote(unpack(Args))
 end ----
 
@@ -81,8 +82,8 @@ local mSeparator = {
 } ---
 
 ---------------------------------------- Enquote
-local mItems = {}
-do
+function unit.EnquoteItems ()
+
   local mQuoteMarks = {
     { text = L.LuaEnquoteQuotes,
       Label = true, },
@@ -125,7 +126,7 @@ do
     { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
     { hot = "c/c⧺", pad = "  ", left = "/* ", right = " */", },
     mSeparator,
-    { hot = "html", pad = " ", left = "<!--", right = "-->", },
+    { hot = "xml ", pad = " ", left = "<!--", right = "-->", },
     { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
     --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
     --[=[
@@ -172,52 +173,56 @@ do
     { hot = "q",
       note = L.LuaQuoteReplace,
       Function = Text.Requote,
-      dequote = { 1, 1, true },
-      enquote = { '"', '"', true },
+      dequote = { 1, 1, true, },
+      enquote = { '"', '"', true, },
     },
     { hot = "w",
       note = L.LuaQuoteReplace,
       Function = Text.Requote,
-      dequote = { 1, 1, true },
-      enquote = { '«', '»', true },
+      dequote = { 1, 1, true, },
+      enquote = { '«', '»', true, },
     },
     --]]
   } --- mQuoteMarks
 
+  local t = {}
+
   local format = string.format
   local QuoteTextFmt = "&%s - %s%s|%s%s"
 
-for k = 1, #mQuoteMarks do
-  local v = mQuoteMarks[k]
-  local t
-  if v.hot then
-    if not v.Function then
-      t = {
-        text = format(QuoteTextFmt, v.hot,
-                      v.pad or "", v.left,
-                      v.right, v.note or ""),
-        Function = Text.Enquote,
-        Arguments = { v.left, v.right, true },
-      } ---
+  for k = 1, #mQuoteMarks do
+    local v = mQuoteMarks[k]
+    local u
+    if v.hot then
+      if not v.Function then
+        u = {
+          text = format(QuoteTextFmt, v.hot,
+                        v.pad or "", v.left,
+                        v.right, v.note or ""),
+          Function = Text.Enquote,
+          Arguments = { v.left, v.right, true, },
+        } ---
+      else
+        local w = v.enquote
+        u = {
+          text = format(QuoteTextFmt, v.hot,
+                        v.pad or "", w[1],
+                        w[2], v.note or ""),
+          Function = v.Function,
+          Arguments = v,
+        } ---
+      end
     else
-      local w = v.enquote
-      t = {
-        text = format(QuoteTextFmt, v.hot,
-                      v.pad or "", w[1],
-                      w[2], v.note or ""),
-        Function = v.Function,
-        Arguments = v,
-      } ---
+      u = v
     end
-  else
-    t = v
-  end
-  mItems[#mItems + 1] = t
-end --
 
---logShow(mItems, "mEnquote", "", { tnaming = false, astable = true })
+    t[#t + 1] = u
+  end -- for
 
-end -- do
+  --logShow(t, "mEnquote", "", { tnaming = false, astable = true })
+  
+  return t
+end ---- EnquoteItems
 
 local mEnquote = {
   text = L.LuaEnquote,
@@ -241,30 +246,46 @@ local mEnquote = {
   }, -- CfgData
   --]]
 
-  Items = mItems,
+  Items = unit.EnquoteItems,
 } --- mEnquote
 
 ---------------------------------------- Dequote
-local mDequote = {
-  text = L.LuaDequote,
-
-  Items = {
+function unit.DequoteItems ()
+  local t = {
     { text = L.LuaDequoteSingle,
       Function = Text.Dequote,
-      Arguments = { 1, 1, true },
+      Arguments = { 1, 1, true, },
     },
     { text = L.LuaDequoteDouble,
       Function = Text.Dequote,
-      Arguments = { 2, 2, true },
+      Arguments = { 2, 2, true, },
+    },
+    { text = L.LuaDequoteXmlComment,
+      --Area = ";selected",
+      Function = Text.Dequote,
+      Arguments = { "<!--", "-->", false, },
+    },
+    { text = L.LuaDequoteLuaComment,
+      --Area = ";selected",
+      Function = Text.Dequote,
+      Arguments = { "--[[", "]]", false, },
     },
   } ---
+
+  return t
+end ---- DequoteItems
+
+local mDequote = {
+  text = L.LuaDequote,
+
+  Items = unit.DequoteItems, 
 } --- mDequote
 
 ---------------------------------------- Items/Menu
 local mQuoting = {
   text = L.LuaQuoteText,
   Area = "editor",
-
+  
   Items = {
     mEnquote,   -- Закавычивание
     mDequote,   -- Раскавычивание

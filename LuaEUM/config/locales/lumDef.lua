@@ -26,6 +26,8 @@ local Data = {
     LuaDequote          = "&Dequote text",
       LuaDequoteSingle      = "Any &single",
       LuaDequoteDouble      = "Any &double",
+      LuaDequoteXmlComment  = "&Xml comment",
+      LuaDequoteLuaComment  = "&Lua comment",
 
   ----------------------------------------
   -- Lua scripts:
