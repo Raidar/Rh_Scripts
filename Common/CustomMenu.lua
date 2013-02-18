@@ -324,7 +324,7 @@ function TMenu:DefineMenuItem (Item) --| Item
   -- Настройка пункта -- макроса-шаблона.
   if Item.Macro then -- Флаги по умолчанию
     -- Преобразование в однострочный макрос.
-    Item.Macro = Item.Macro:gsub('\n', "")
+    --Item.Macro = Item.Macro:gsub('\n', "")
     -- TODO: Ошибка при области ~= "editor" -- MAYBE!!
     -- Область пункта по умолчанию.
     if not Item.Area then
