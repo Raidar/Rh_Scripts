@@ -100,6 +100,7 @@ local function CreateMain (ArgData)
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   --self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
+  --logShow(self.Custom.history.full, "history")
   if not utils.fexists(self.Custom.history.full) then return end
 
   self.History = datas.newHistory(self.Custom.history.full)
@@ -665,7 +666,8 @@ function unit.Execute ()
 end ---- Execute
 
 ---------------------------------------- Data
-local Menu = unit.Execute()
+local Menu, SError = unit.Execute()
+--logShow(Menu, SError or "")
 
 local Data = {
   Menu = Menu,
