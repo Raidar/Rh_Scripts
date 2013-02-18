@@ -1582,7 +1582,7 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
   local function KeyPressCell (OldCell) --> (table, number, table)
 
     local self = self
-    local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, ANewKey or AKey)
+    local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, AKey)
 
     if IsModCtrl(VMod) then -- CTRL:
       if not jCell then return false end
