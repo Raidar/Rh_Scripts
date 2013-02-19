@@ -54,7 +54,7 @@ local EditorSelect  = editor.Select
 --local context = context
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -86,8 +86,8 @@ function Truncate.Spaces (n) --> (number)
   --n = n or -1
   local s, q = EditorGetLine(nil, n, 2)
   s, q = s:gsub(SpaceTruncPat, TruncSub)
+  --logShow(s, q, "w d2")
   if q > 0 then EditorSetLine(nil, n, s) end
-
   return q
 end ----
 local TruncateSpaces = Truncate.Spaces
@@ -106,7 +106,8 @@ local TruncateUpdateEnd = Truncate.UpdateEnd
 -- Усечение пробелов в текущей линии.
 function Truncate.Line () --> (number)
   local q = TruncateSpaces(-1)
-  if q == 0 then return 0 end
+  -- Commented as workaround for FAR3:
+  --if q == 0 then return 0 end
   TruncateUpdateEnd()
   return q
 end ----
@@ -224,8 +225,9 @@ function ProcessEditorInput (rec) --> (bool)
       TruncateLine()
     end
   end -- if
+
   return false
-end ----
+end ---- ProcessEditorInput
 
 ---------------------------------------- main
 local args = (...)
