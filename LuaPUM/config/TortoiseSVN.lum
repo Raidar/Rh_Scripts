@@ -661,7 +661,8 @@ function unit.Execute ()
 
   return {
     text = _Main.LocData.tSVN,
-    Items = { MakeMenu, },
+
+    Items = { MakeMenu },
   }
 end ---- Execute
 

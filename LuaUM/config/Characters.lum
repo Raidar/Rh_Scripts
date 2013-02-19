@@ -41,20 +41,15 @@ if L == nil then
 end
 
 ---------------------------------------- Items
-local Menus = {}
-
---local Order, Datas, Props
-local Keys = "AccelKey"
-
-local Groups = {
+unit.GroupLocale = {
   Chars = true,
   Maths = true,
   Punct = true,
   Techs = true,
   Draws = true,
-} --- Groups
+} -- GroupLocale
 
-local Texts = {
+unit.Data = {
   CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
   MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
@@ -64,24 +59,27 @@ local Texts = {
   PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
   Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
   Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
-} --- Texts
+} -- Data
 
 do
   local pairs = pairs
+  local gL = unit.GroupLocale
+  
   local textFmt = "&%s - %s"  -- m/b utf-8 string
   local titleFmt = "%s: %s"   -- m/b utf-8 string
 
--- Localize value in Groups:
-for k, _ in pairs(Groups) do
-  Groups[k] = L["Chs"..k]
+-- Localize value in gL.
+for k in pairs(gL) do
+  gL[k] = L["Chs"..k]
 end --
 
--- Localize text & Title in Texts:
-for k, v in pairs(Texts) do
-  local text = "Chs"..k
-  text = L[text] or text
+  local Data = unit.Data
+
+-- Localize text & Title in Data.
+for k, v in pairs(Data) do
+  local text = L["Chs"..k] or k
   v.text  = textFmt:format(v.Hot, text)
-  v.Title = titleFmt:format(Groups[v.Group], text)
+  v.Title = titleFmt:format(gL[v.Group], text)
 end --
 
 end -- do
@@ -125,8 +123,9 @@ function unit.MenuConfig (Name, Default) --> (table)
   if Default then Config.__index = DefConfig end
 
   Config.Name  = Name
-  Config.text  = Texts[Name].text
-  Config.Title = Texts[Name].Title
+  local NameData = unit.Data[Name]
+  Config.text  = NameData.text
+  Config.Title = NameData.Title
 
   if Default then
     return setmetatable(Config, Config)
@@ -188,7 +187,7 @@ Props = {
   Heading = "Both",
 } ---
 
-Menus.Chars_Custom = { -- Characters
+unit.Chars_Custom = { -- Characters
   text = "&_ - Custom Chars",
   MenuView = "RectMenu",
 
@@ -217,7 +216,7 @@ Props = {
   Heading = "Both",
 } ---
 
-Menus.Chars_Alters = { -- Characters
+unit.Chars_Alters = { -- Characters
   text = "&+ - Alternate Chars",
   MenuView = "RectMenu",
 
@@ -315,13 +314,13 @@ function unit.MathsScripts ()
     Heading = "Both",
   } ---
 
-Keys = {
-  Kind = "AccelKey";
-  ChKeys.SVKeyValue,    ChKeys.SVKeyFuncs.S,
-  ChKeys.SVKeyFuncs.C,  ChKeys.SVKeyFuncs.CS,
-  ChKeys.SVKeyFuncs.A,  ChKeys.SVKeyFuncs.AS,
-  ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
-} ---
+  local Keys = {
+    Kind = "AccelKey";
+    ChKeys.SVKeyValue,    ChKeys.SVKeyFuncs.S,
+    ChKeys.SVKeyFuncs.C,  ChKeys.SVKeyFuncs.CS,
+    ChKeys.SVKeyFuncs.A,  ChKeys.SVKeyFuncs.AS,
+    ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
+  } ---
 
   local Menu = unit.Menu('MathsScripts', Props, Datas, Keys)
   unit.UseSpace(Menu)
@@ -455,35 +454,46 @@ function unit.PunctSpaHyps ()
 end ---- PunctSpaHyps
 --------------------------------------------------------------------------------
 
----------------------------------------- ----
-local mCharacters = {
-  text  = L.ChsKitItem,
-  Title = L.CharacterKits,
+---------------------------------------- Menu making
 
-  --Inherit = false,
+---------------------------------------- ---- Menu
+function unit.MakeMenu ()
+  local gL = unit.GroupLocale
 
-  --Items = { Menus.Chars_Custom, Menus.Chars_Alters, Menus.CharsGreekEx },
-  Items = {
-    --{ text = Groups.Chars, separator = true, },
-    unit.CharsGreekEx, unit.CharsCyrSlav,
-    { text = Groups.Maths, separator = true, },
-    unit.MathsScripts, unit.MathsIndexes,
-    --{ text = Groups.Techs, separator = true, },
-    --Menus.Techs_Arrows,
-    { text = Groups.Punct, separator = true, },
-    unit.PunctSymbols, unit.PunctSpaHyps,
-  }, --
-} --- mCharacters
+  return {
+    text  = L.ChsKitItem,
+    Title = L.CharacterKits,
+
+    --Inherit = false,
+
+    --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.CharsGreekEx, },
+    Items = {
+      --{ text = gL.Chars, separator = true, },
+      unit.CharsGreekEx, unit.CharsCyrSlav,
+
+      { text = gL.Maths, separator = true, },
+      unit.MathsScripts, unit.MathsIndexes,
+
+      --{ text = gL.Techs, separator = true, },
+      --unit.Techs_Arrows,
+
+      { text = gL.Punct, separator = true, },
+      unit.PunctSymbols, unit.PunctSpaHyps,
+
+    }, -- Items
+
+  } ----
+end ---- MakeMenu
 
 ---------------------------------------- Data
 local Data = {
   Menu = {
     text = L.CharacterKits,
 
-    Items = { mCharacters, },
+    Items = { unit.MakeMenu },
   },
 
-  ["Characters"] = mCharacters,
+  ["Characters"] = unit.MakeMenu,
 } ---
 
 return Data
