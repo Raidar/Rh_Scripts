@@ -58,7 +58,7 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 local IsModCtrlAlt = keyUt.IsModCtrlAlt
 
 ----------------------------------------
---[[
+-- [[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
 --]]
@@ -512,6 +512,7 @@ function TMain:MakeMenu () --> (table)
   Start.d = 1
   --logShow(Start, CurrentDay, "w d2")
   local MonthDays = Start:getMonthDays()
+  --logShow(Start, MonthDays, "w d2")
   local StartYearWeek = Start:getYearWeek()
 
   local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
@@ -547,7 +548,7 @@ function TMain:MakeMenu () --> (table)
       local State = 0
       if i < 3 then
         if (i - 1) * DayPerWeek + j < StartWeekDay then
-          if p <= 0 then p = p + 1 end
+          if p > 0 then p = p + 1 end
           State = -1
         end
       elseif d >= MonthDays then
