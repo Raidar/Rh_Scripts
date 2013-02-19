@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Characters kit.
-  -- Набор символов.
+  -- Characters kits.
+  -- Наборы символов.
 --]]
 --------------------------------------------------------------------------------
 
@@ -13,9 +13,8 @@
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
+--local CharsMenu -- require in unit.MakeMenu
 local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
-
-local ChKeys = CharsMenu.Keys
 
 ----------------------------------------
 --[[
@@ -41,15 +40,18 @@ if L == nil then
 end
 
 ---------------------------------------- Items
-unit.GroupLocale = {
+-- Группы наборов.
+-- Пока содержит только локализованное название группы.
+unit.KitGroups = {
   Chars = true,
   Maths = true,
   Punct = true,
   Techs = true,
   Draws = true,
-} -- GroupLocale
+} -- KitGroups
 
-unit.Data = {
+-- Данные о наборах.
+unit.KitsData = {
   CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
   MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
@@ -59,11 +61,11 @@ unit.Data = {
   PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
   Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
   Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
-} -- Data
+} -- KitsData
 
 do
   local pairs = pairs
-  local gL = unit.GroupLocale
+  local gL = unit.KitGroups
   
   local textFmt = "&%s - %s"  -- m/b utf-8 string
   local titleFmt = "%s: %s"   -- m/b utf-8 string
@@ -73,25 +75,15 @@ for k in pairs(gL) do
   gL[k] = L["Chs"..k]
 end --
 
-  local Data = unit.Data
+  local KitsData = unit.KitsData
 
--- Localize text & Title in Data.
-for k, v in pairs(Data) do
+-- Localize text & Title in KitsData.
+for k, v in pairs(KitsData) do
   local text = L["Chs"..k] or k
   v.text  = textFmt:format(v.Hot, text)
   v.Title = titleFmt:format(gL[v.Group], text)
 end --
 
-end -- do
-
-----------------------------------------
-local Chars = {}
-
-do
-  local U = unicode.utf8.char
-  Chars.BS = U(0x008)
-  Chars.LF = U(0x00A)
-  Chars.CR = U(0x00D)
 end -- do
 
 ----------------------------------------
@@ -116,14 +108,16 @@ do
 
   local setmetatable = setmetatable
 
+  local KitsData = unit.KitsData
+
 -- Таблица для конфигурации меню.
-function unit.MenuConfig (Name, Default) --> (table)
+function unit.MakeKindConfig (Name, Default) --> (table)
   local Config = {}
   local Default = Default == nil and true or Default
   if Default then Config.__index = DefConfig end
 
   Config.Name  = Name
-  local NameData = unit.Data[Name]
+  local NameData = KitsData[Name]
   Config.text  = NameData.text
   Config.Title = NameData.Title
 
@@ -132,22 +126,15 @@ function unit.MenuConfig (Name, Default) --> (table)
   end
 
   return Config
-end ---- MenuConfig
-
-end -- do
-
-do
-  local MenuCfg = unit.MenuConfig
-  local MakeMenu = CharsMenu.Menu
+end ---- MakeKindConfig
 
 -- Сформировать меню из набора символов.
-function unit.Menu (Cfg, Props, Datas, Keys) --> (Menu)
-  local IsCfg = type(Cfg) == 'table'
+function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
   local Keys = Keys or "AccelKey"
-  local Name = IsCfg and Cfg.Name or Cfg
+  local Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
 
-  return MakeMenu(IsCfg and Cfg or MenuCfg(Name), Props, Datas, Keys)
-end ---- Menu
+  return CharsMenu.Menu(Cfg, Props, Datas, Keys)
+end ---- MakeKindMenu
 
 end -- do
 
@@ -168,73 +155,18 @@ function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
   RectMenu.Separators = "V"
 end ---- CompactMenu
 
----------------------------------------- CHARACTERS
---[===[
--- Sample characters:
+---------------------------------------- Characters ----
 
--- Custom chars:
---Datas = "_a_b_A_B"
---Datas = "_a_b_c_A_B_C"
-Datas = "_a_b_c_d_A_B_C_D"
---Datas = "_a_b_c_d_e_A_B_C_D_E"
---Datas = "_a_b_c_d_e_f_g_A_B_C_D_E_F_G"
-Props = {
-  --Order = "",
-  Size = 4,
-  Count = 2,
-  Length = 2,
-  Serial = true,
-  Heading = "Both",
-} ---
+----------------------------------------
+local Chars = {}
 
-unit.Chars_Custom = { -- Characters
-  text = "&_ - Custom Chars",
-  MenuView = "RectMenu",
-
-  Props = {
-    RectMenu = {
-      Cols = Props.Size + 1, MenuAlign = "CM",
-      --Cols = 2+1, Order = "V", MenuAlign = "CM",
-      Fixed = DefFixedBoth,
-    },
-  }, -- Props
-
-  CfgData = { UMenu = DefUMenu, },
-
-  Items = CharsMenu.Items(Props, Datas, "AccelKey"),
-} ---
-
--- Alternate chars:
-Datas = "_a_A_b_B_c_C_d_D"
-
-Props = {
-  --Order = "",
-  Size = 4,
-  Count = 2,
-  Length = 2,
-  Serial = false,
-  Heading = "Both",
-} ---
-
-unit.Chars_Alters = { -- Characters
-  text = "&+ - Alternate Chars",
-  MenuView = "RectMenu",
-
-  Props = {
-    RectMenu = {
-      --Cols = 2+1, MenuAlign = "CM",
-      Cols = Props.Size + 1, Order = "V", MenuAlign = "CM",
-      Fixed = DefFixedBoth,
-    },
-  }, -- Props
-
-  CfgData = { UMenu = DefUMenu, },
-
-  Items = CharsMenu.Items(Props, Datas, "AccelKey"),
-} --- Chars_Alters
---]===]
-
----------------------------------------- LETTERS etc
+do
+  local U = unicode.utf8.char
+  Chars.BS = U(0x0008)
+  Chars.LF = U(0x000A)
+  Chars.CR = U(0x000D)
+end -- do
+---------------------------------------- Letters etc
 
 ---------------------------------------- ---- Greek and extended
 function unit.CharsGreekEx ()
@@ -256,7 +188,7 @@ function unit.CharsGreekEx ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.Menu('CharsGreekEx', Props, Datas, "AccelKey")
+  local Menu = unit.MakeKindMenu('CharsGreekEx', Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
   unit.CompactMenu(Menu)
   --logShow(Menu, "CharsGreekEx", 3)
@@ -286,14 +218,14 @@ function unit.CharsCyrSlav ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.Menu('CharsCyrSlav', Props, Datas, "AccelKey")
+  local Menu = unit.MakeKindMenu('CharsCyrSlav', Props, Datas, "AccelKey")
   --logShow(Menu, "CharsCyrSlav", 2)
   unit.UseSpace(Menu)
   unit.CompactMenu(Menu)
 
   return Menu
 end ---- CharsCyrSlav
----------------------------------------- MATHEMATICS
+---------------------------------------- Mathematics
 
 ---------------------------------------- ---- Sub-/superscripts
 function unit.MathsScripts ()
@@ -314,15 +246,16 @@ function unit.MathsScripts ()
     Heading = "Both",
   } ---
 
+  local ChKeys = CharsMenu.Keys
   local Keys = {
     Kind = "AccelKey";
     ChKeys.SVKeyValue,    ChKeys.SVKeyFuncs.S,
     ChKeys.SVKeyFuncs.C,  ChKeys.SVKeyFuncs.CS,
     ChKeys.SVKeyFuncs.A,  ChKeys.SVKeyFuncs.AS,
     ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
-  } ---
+  } --- Keys
 
-  local Menu = unit.Menu('MathsScripts', Props, Datas, Keys)
+  local Menu = unit.MakeKindMenu('MathsScripts', Props, Datas, Keys)
   unit.UseSpace(Menu)
   --logShow(Menu, "MathsScripts", 3)
 
@@ -346,20 +279,20 @@ function unit.MathsIndexes ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.Menu('MathsIndexes', Props, Datas, "AccelKey")
+  local Menu = unit.MakeKindMenu('MathsIndexes', Props, Datas, "AccelKey")
 
   return Menu
 end ---- MathsIndexes
----------------------------------------- TECHNOLOGY
+---------------------------------------- Technology
 
 ---------------------------------------- ---- Arrows
 function unit.TechsArrows ()
 
-  local Menu = unit.Menu('TechsArrows', Props, Datas, "AccelKey")
+  local Menu = unit.MakeKindMenu('TechsArrows', Props, Datas, "AccelKey")
 
   return Menu
 end ---- TechsArrows
----------------------------------------- PUNCTUATION
+---------------------------------------- Punctuation
 
 ---------------------------------------- ---- Symbols
 --[[
@@ -408,7 +341,7 @@ function unit.PunctSymbols ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.Menu('PunctSymbols', Props, Datas, "AccelKey")
+  local Menu = unit.MakeKindMenu('PunctSymbols', Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
 
   return Menu
@@ -447,18 +380,22 @@ function unit.PunctSpaHyps ()
     --___ = true, -- DEBUG
   } ---
 
-  local Menu = unit.Menu(unit.MenuConfig('PunctSpaHyps', false), Props, Datas, "DupleKey")
+  local Cfg = unit.MakeKindConfig('PunctSpaHyps', false)
+  local Menu = unit.MakeKindMenu(Cfg, Props, Datas, "DupleKey")
   --logShow(Menu, "PunctSpaHyps", 3)
 
   return Menu
 end ---- PunctSpaHyps
+
 --------------------------------------------------------------------------------
 
 ---------------------------------------- Menu making
 
 ---------------------------------------- ---- Menu
 function unit.MakeMenu ()
-  local gL = unit.GroupLocale
+  local gL = unit.KitGroups
+
+  --CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
   return {
     text  = L.ChsKitItem,
