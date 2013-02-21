@@ -46,11 +46,13 @@ unit.SKEY_Base = { "CTRL", "ALT", "SHIFT" }
 unit.SKEY_Text = { -- Используемые модификаторы
    C =  "Ctrl",  A =  "Alt",  S =  "Shift",
   LC = "LCtrl", LA = "LAlt", LS = "LShift",
-  RC = "RCtrl", RA = "RAlt", RS = "RShift", }
+  RC = "RCtrl", RA = "RAlt", RS = "RShift",
+} -- SKEY_Text
 unit.SKEY_Mods = { -- Обозначения модификаторов
    CTRL =  "C",  ALT =  "A",  SHIFT =  "S",
   LCTRL = "LC", LALT = "LA", LSHIFT = "LS",
-  RCTRL = "RC", RALT = "RA", RSHIFT = "RS", }
+  RCTRL = "RC", RALT = "RA", RSHIFT = "RS",
+} -- SKEY_Mods
 
 ---------------------------------------- VK_ mods
 -- ControlKeyState.
