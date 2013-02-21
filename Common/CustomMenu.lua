@@ -20,6 +20,15 @@ local require = require
 local setmetatable = setmetatable
 
 ----------------------------------------
+local useprofiler = false
+--local useprofiler = true
+
+if useprofiler then
+  require "profiler" -- Lua Profiler
+  profiler.start("CustomMenu.log")
+end
+
+----------------------------------------
 local F = far.Flags
 
 ----------------------------------------
@@ -1062,6 +1071,8 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
 
   if ShowMenu == 'self' then return _Menu end
   --logShow(Properties.Flags, "Flags")
+
+  if useprofiler then profiler.stop() end
 
   return _Menu:Run()
 end -- Menu
