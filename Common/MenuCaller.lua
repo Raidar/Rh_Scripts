@@ -18,9 +18,6 @@ local require = require
 local setmetatable = setmetatable
 
 ----------------------------------------
-local far_Menu = far.Menu
-
-----------------------------------------
 --[[
 local dbg = require "context.utils.useDebugs"
 local logShow = dbg.Show
@@ -60,6 +57,9 @@ local function CreateMenu (Properties)--, Items) --> (object)
 end -- CreateMenu
 
 ---------------------------------------- Menu making
+do
+  local far_Menu = far.Menu
+
 -- Определение вида запускаемого меню.
 function TMenu:DefineKind () --| (self.ShowMenu)
   local Script = MenuScripts[self.Kind]
@@ -67,6 +67,7 @@ function TMenu:DefineKind () --| (self.ShowMenu)
   self.Run = Script and self.Require(Script) or far_Menu
 end ----
 
+end -- do
 ---------------------------------------- main
 
 function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
@@ -80,12 +81,12 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   --logShow(_Menu, "MenuCaller", 1)
 
   -- Вывод меню / Возврат самого меню
-  if not _Menu.MenuCall then
+  if not _Menu.Call then
     return _Menu.Run(Properties, Items, BreakKeys, ShowMenu)
   end
 
   return _Menu.Call(_Menu.Run, Properties, Items, BreakKeys, ShowMenu)
-end -- Menu
+end ---- Menu
 
 --------------------------------------------------------------------------------
 return unit.Menu
