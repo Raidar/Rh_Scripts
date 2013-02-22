@@ -24,7 +24,7 @@ $ #Script files#: Common scripts
     \37MenuTexter.lua\-     — ¦~Text-maker~@MenuTexter@ of menu items.
 
     \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
-    \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
+    \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
 

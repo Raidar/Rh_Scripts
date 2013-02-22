@@ -133,15 +133,15 @@ function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
   local Keys = Keys or "AccelKey"
   local Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
 
-  return CharsMenu.Menu(Cfg, Props, Datas, Keys)
+  return CharsMenu.MakeMenu(Cfg, Props, Datas, Keys)
 end ---- MakeKindMenu
 
 end -- do
 
 -- Использовать пробелы как обычные символы.
 function unit.UseSpace (Menu) --| Menu.Items
-  CharsMenu.List.SetLabelItemsText(Menu.Items, " ", "_")
-  CharsMenu.List.SetKeyItemsField(Menu.Items, "Space$", false)
+  CharsMenu.SetLabelItemsText(Menu.Items, " ", "_")
+  CharsMenu.SetKeyItemsField(Menu.Items, "Space$", false)
   --return Menu
 end ----
 
@@ -246,13 +246,13 @@ function unit.MathsScripts ()
     Heading = "Both",
   } ---
 
-  local ChKeys = CharsMenu.Keys
+  local SVKeyFuncs = CharsMenu.SVKeyFuncs
   local Keys = {
     Kind = "AccelKey";
-    ChKeys.SVKeyValue,    ChKeys.SVKeyFuncs.S,
-    ChKeys.SVKeyFuncs.C,  ChKeys.SVKeyFuncs.CS,
-    ChKeys.SVKeyFuncs.A,  ChKeys.SVKeyFuncs.AS,
-    ChKeys.SVKeyFuncs.CS, ChKeys.SVKeyFuncs.CAS,
+    CharsMenu.SVKeyValue,   SVKeyFuncs.S,
+    SVKeyFuncs.C,           SVKeyFuncs.CS,
+    SVKeyFuncs.A,           SVKeyFuncs.AS,
+    SVKeyFuncs.CS,          SVKeyFuncs.CAS,
   } --- Keys
 
   local Menu = unit.MakeKindMenu('MathsScripts', Props, Datas, Keys)
