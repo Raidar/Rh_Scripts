@@ -181,6 +181,8 @@ function TMain:InitData ()
   local dt = CfgData.dt or os.date("*t")
   self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
   self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
+  self.YearMin = CfgData.YearMin or 1
+  self.YearMax = CfgData.YearMax or 9999
 
   local DT_cfg = self.Date.config
   self.DT_cfg = DT_cfg
@@ -636,6 +638,23 @@ function TMain:MakeCalendar () --> (table)
 end -- MakeCalendar
 
 end -- do
+---------------------------------------- ---- Utils
+-- Limit date.
+-- Ограничение даты.
+function TMain:LimitDate (Date)
+  if Date.y < self.YearMin then
+    Date.y = self.YearMin
+    Date.m = 1
+    Date.d = 1
+  
+  elseif Date.y > self.YearMax then
+    Date.y = self.YearMax
+    Date.m = Date:getYearMonths()
+    Date.d = Date:getMonthDays()
+  end
+
+  return Date
+end ---- LimitDate
 ---------------------------------------- ---- Input
 do
   local tonumber = tonumber
@@ -780,7 +799,8 @@ function TMain:AssignEvents () --> (bool | nil)
     self.Time = false
 
     if isUpdate then
-      self.Date = Date
+      --self.Date = Date
+      self.Date = self:LimitDate(Date)
       return MakeUpdate()
     end
 
@@ -901,7 +921,7 @@ function TMain:AssignEvents () --> (bool | nil)
     self.Time = false
 
     if isUpdate then
-      self.Date = Date
+      self.Date = self:LimitDate(Date)
       return MakeUpdate()
     end
 
@@ -929,6 +949,7 @@ function TMain:AssignEvents () --> (bool | nil)
     if self.IsInput and Kind == "Enter" then
       local Date = Data[Data.State]
       self:StopInput(Date)
+
       return MakeUpdate()
     end
 
@@ -951,7 +972,7 @@ function TMain:ShowMenu () --> (item, pos)
   return usercall(nil, unit.RunMenu,
                   self.Props, self.Items, self.Keys)
   --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
-end ----
+end ---- ShowMenu
 
 -- Вывод календаря.
 function TMain:Show () --> (bool | nil)
