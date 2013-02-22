@@ -13,8 +13,8 @@
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
---local CharsMenu -- require in unit.MakeMenu
-local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
+local CharsMenu -- require in unit.MakeMenu
+--local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
 ----------------------------------------
 --[[
@@ -395,7 +395,7 @@ end ---- PunctSpaHyps
 function unit.MakeMenu ()
   local gL = unit.KitGroups
 
-  --CharsMenu = require "Rh_Scripts.Common.CharsMenu"
+  CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
   return {
     text  = L.ChsKitItem,
