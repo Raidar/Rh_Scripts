@@ -12,7 +12,7 @@
 --]]
 --------------------------------------------------------------------------------
 --[[ Readme:
-В окне выводится информация о нажатой клавише. Закрытие окна - по ENTER/ESC!
+В окне выводится информация о нажатой клавише. Закрытие окна - по ESC !
 --]]
 --------------------------------------------------------------------------------
 
@@ -51,6 +51,7 @@ local logShow = log.Show
 --]]
 
 --------------------------------------------------------------------------------
+local unit = {}
 
 ---------------------------------------- Dialog
 local dialog = require "far2.dialog"
@@ -60,7 +61,7 @@ local DIF_Ampersand    = F.DIF_SHOWAMPERSAND
 local DIF_HelpText     = F.DIF_SHOWAMPERSAND + F.DIF_CENTERGROUP
 
 -- Форма окна диалога нажатия клавиши.
-local function KeyPress_Dlg()
+function unit.DlgForm ()
   local W, H = 48 - 4, 10 - 2 -- Width, Height
   local I, M = 3, bshr(W, 1) -- Indent, Width/2
   local Q = bshr(M, 1) -- Width/4
@@ -96,7 +97,7 @@ local function KeyPress_Dlg()
   --D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
 
   return D
-end -- KeyPress_Dlg
+end -- unit.DlgForm
 
 ----------------------------------------
 local VKCS_Name = {
@@ -146,8 +147,8 @@ end --
 local Guid = win.Uuid("f218e7ec-b782-4746-a188-952d6231afbb")
 
 -- Показ нажатой клавиши в диалоге.
-local function KeyPress_Run ()
-  local D = KeyPress_Dlg()
+function unit.Dialog ()
+  local D = unit.DlgForm()
 
   --logShow(D, "Dlg", "d2 n")
 
@@ -216,8 +217,8 @@ local function KeyPress_Run ()
   end -- DlgProc
 
   return far.Dialog(Guid, -1, -1, D._[4]+4, D._[5]+2, nil, D, 0, DlgProc)
-end -- KeyPress_Run
+end -- Dialog
 
 --------------------------------------------------------------------------------
-return KeyPress_Run()
+return unit.Dialog()
 --------------------------------------------------------------------------------
