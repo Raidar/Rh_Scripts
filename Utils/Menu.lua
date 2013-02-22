@@ -135,13 +135,6 @@ function unit.MakeItemKey (Item, StrKey, AbbrKey, isFullName)
   --logShow(Item[AbbrKey], Item[StrKey], "xv8")
 end ---- MakeItemKey
 
--- Формирование AccelKey для пункта.
-function unit.MakeAccelKey (Item, isFullName) --| AccelKey & AccelStr
-  if Item.AccelStr == "" then return end
-  unit.MakeItemKey(Item, "AccelKey", "AccelStr", isFullName)
-  --logShow(Item.AccelKey, Item.AccelStr, "xv8")
-end ---- MakeAccelKey
-
 -- Parse menu items keys.
 -- Разбор клавиш пунктов меню.
 --[[
@@ -155,11 +148,19 @@ function unit.ParseMenuItemsKeys (Items, Count, StrKey) --> (Keys)
 
   for k = 1, Count or (Items and #Items or 0) do
     local Item = Items[k]
+
     if not isItemUnused(Item) then
       local Key = Item[StrKey]
-      if Key then Keys[Key] = k end
+
+      if Key and type(Key) ~= 'table' then
+        Keys[Key] = k
+      elseif type(Key) == 'table' then
+        for j = 1, #Key do
+          Keys[ Key[j] ] = k
+        end
+      end
     end
-  end
+  end -- for
 
   return Keys
 end ---- ParseMenuItemsKeys
@@ -308,13 +309,19 @@ local max2 = numbers.max2
 --]]
 function unit.FieldMax (Items, Count, Seler, Field, Data) --> (number)
 
-  local function FieldLen (Item, Index, Selex, Data)
+  local function FieldStrLen (Item, Index, Selex, Data)
     return (Item[Field] or ""):len()
+  end --
+
+  local function FieldTabLen (Item, Index, Selex, Data)
+    return (Item[Field][1] or ""):len()
   end --
 
   local Count = Count or #Items
   local Seler = type(Seler) == 'function' and Seler or DefItemSeler
-  local Field = type(Field) == 'string' and FieldLen or Field or DefItemField
+  local Field = type(Field) == 'string' and FieldStrLen or
+                type(Field) == 'table'  and FieldTabLen or
+                Field or DefItemField
   --rhlog.TblMenu({ Count, Seler, Field }, "FieldMax")
 
   -- Просмотр пунктов меню:

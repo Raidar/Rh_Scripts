@@ -210,9 +210,14 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
     local KeyName -- Название комбо-клавиши
     local KeyAlign, RAlign = "" -- Выравнивание комбо-клавиши
     if Options.TextNamedKeys then -- Выравнивание названия комбо-клавиши
-      KeyName = Item.AccelStr ~= "" and Item.AccelStr or ""
-      if KeyName ~= "" then KeyAlign = SKeySepar
-      elseif ItemIsMenu then KeyAlign = spaces[SKeySepar:len()] end
+      local AccelStr = Item.AccelStr
+      if type(AccelStr) == 'table' then AccelStr = AccelStr[1] end
+      KeyName = AccelStr ~= "" and AccelStr or ""
+      if KeyName ~= "" then
+        KeyAlign = SKeySepar
+      elseif ItemIsMenu then
+        KeyAlign = spaces[SKeySepar:len()]
+      end
       RAlign = spaces[skeyMax - KeyName:len()]
 
       if Options.KeysAlignText then

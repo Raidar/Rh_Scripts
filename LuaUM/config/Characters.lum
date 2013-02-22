@@ -350,8 +350,10 @@ end ---- PunctSymbols
 function unit.PunctSpaHyps ()
 
   local Order = {
-    { '   " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
-    { '   "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
+    { '   " "', ' ', 'Multiply', }, { ' "-"/Num-', '-', 'Subtract', },
+    { '   "`"', '`', 'Divide',   }, { ' "="/Num+', '=', 'Add',      },
+    --{ '   " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
+    --{ '   "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
   } ---
 
   local Datas = {
@@ -381,8 +383,9 @@ function unit.PunctSpaHyps ()
   } ---
 
   local Cfg = unit.MakeKindConfig('PunctSpaHyps', false)
-  local Menu = unit.MakeKindMenu(Cfg, Props, Datas, "DupleKey")
-  --logShow(Menu, "PunctSpaHyps", 3)
+  --local Menu = unit.MakeKindMenu(Cfg, Props, Datas, "DupleKey")
+  local Menu = unit.MakeKindMenu(Cfg, Props, Datas, CharsMenu.DefDoubleKeys)
+  --logShow(Menu, "PunctSpaHyps", "w d3")
 
   return Menu
 end ---- PunctSpaHyps

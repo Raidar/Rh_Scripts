@@ -641,7 +641,17 @@ end ---- SKeyToName
   KeyName -- строка с полным названием клавиши.
   KeySep  -- разделитель модификаторов и самой клавиши.
 --]]
-function unit.NameToSKey (KeyName, KeySep) --> (string)
+local function NameToSKey (KeyName, KeySep) --> (string)
+  local KeyName = KeyName
+  if type(KeyName) == 'table' then
+    local u = {}
+    for k = 1, #KeyName do
+      u[k] = NameToSKey(KeyName[k], KeySep)
+    end
+
+    return u
+  end
+
   local mod, c, a, s, key = ParseFullName(KeyName)
   if not mod or mod == "" then return key or KeyName end
 
@@ -658,7 +668,8 @@ function unit.NameToSKey (KeyName, KeySep) --> (string)
   if s and s ~= "" then t[3] = "S" end
 
   return tconcat(t)
-end ---- NameToSKey
+end -- NameToSKey
+unit.NameToSKey = NameToSKey
 
 end -- do
 

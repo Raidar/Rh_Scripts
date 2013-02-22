@@ -36,8 +36,6 @@ local u_byte = strings.u8byte
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 
-local length = farUt.length
-
 ----------------------------------------
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
@@ -62,7 +60,7 @@ local SKEY_SymNames = keyUt.SKEY_SymNames
 local function SVKeyValue (s) --> (string)
   if not s or s == "" then return s end
   --return s:upper()
-  return SKEY_SymNames[s] or s:upper()
+  return SKEY_SymNames[s] or s:len() == 1 and s:upper() or s
 end --
 unit.SVKeyValue = SVKeyValue
 
@@ -108,6 +106,7 @@ unit.DefActionKeys = {
   SVKeyFuncs.A,  SVKeyFuncs.AS,
   SVKeyFuncs.CA, SVKeyFuncs.CAS,
 } --- DefActionKeys
+unit.DefDoubleKeys = { unit.DefActionKeys, unit.DefActionKeys }
 
 local DefKeyOrder = { [0] = ""; "" }
 unit.DefKeyOrder = DefKeyOrder
@@ -154,8 +153,18 @@ end ---- MakeItemText
 -- Make handle key for item.
 -- Формирование клавиши обработки для пункта.
 local function MakeItemKey (item, Keys, key, char)
-  if Keys[key] then item.AccelKey = Keys[key](char) end
-end --
+  local keys = Keys[key]
+  if keys then
+    local key = item.AccelKey
+    if not key then
+      item.AccelKey = keys(char)
+    elseif type(key) == 'string' then
+      item.AccelKey = { item.AccelKey, keys(char) }
+    elseif type(key) == 'table' then
+      key[#key + 1] = keys(char)
+    end
+  end
+end -- MakeItemKey
 unit.MakeItemKey = MakeItemKey
 
   local CharNameFmt = "U+%s — %s" -- utf-8 string
@@ -203,6 +212,8 @@ end ---- MakeCharItem
 
 end -- do
 ---------------------------------------- Items
+local length = farUt.length
+
 local MakeCharItem = unit.MakeCharItem
 local MakeHeadItem = unit.MakeHeadItem
 

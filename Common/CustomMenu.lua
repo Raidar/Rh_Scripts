@@ -290,14 +290,17 @@ function TMenu:DefineItemKind (Item) --| Item
 end ---- DefineItemKind
 
 do
-  local MakeAccelKey = menUt.MakeAccelKey
+  local MakeItemKey = menUt.MakeItemKey
 
 -- Задание клавиш быстрого доступа и прерывателя.
 function TMenu:MakeItemKeys (Item) --| Item
   --local UMenu = self.CurData.UMenu
-  local FullNamedKeys = self.CurData.UMenu.FullNamedKeys
 
-  MakeAccelKey(Item, FullNamedKeys)
+  -- Формирование AccelKey для пункта.
+  if Item.AccelStr ~= "" then
+    local FullNamedKeys = self.CurData.UMenu.FullNamedKeys
+    MakeItemKey(Item, "AccelKey", "AccelStr", FullNamedKeys)
+  end
 end ---- MakeItemKeys
 
 end -- do
