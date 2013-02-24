@@ -128,6 +128,9 @@ local function CreateMain (ArgData)
     Date      = false,    -- Дата
     Time      = false,    -- Время
 
+    FeteData  = false,    -- Данные о праздниках
+    Fetes     = false,    -- Даты праздников
+
     --Error     = false,    -- Текст ошибки
     --Menu      = false,    -- CfgData.Menu or {}
 
@@ -188,6 +191,37 @@ function TMain:InitData ()
 
   return true
 end ---- InitData
+
+function TMain:InitFetes ()
+  local self = self
+  local Custom = self.Custom
+
+  local h = addNewData({}, Custom.history)
+  --logShow(h, "Fete history", "w d2")
+  h.field = "Fetes"
+  h.dir   = "Fetes\\"
+  h.ext   = '.lua'
+  h.name  = self.World
+  h.file  = h.name..h.ext
+  --h.path  = h.path
+  h.work  = h.f_fpath:format(Custom.profile, h.path, h.dir)
+  h.full  = h.work..h.file
+  --logShow(h, "Fete history", "w d2")
+
+  local t = {
+    history = h,
+    History = datas.newHistory(h.full),
+    Fetes = false,
+  } ---
+  --logShow(t.History, "Fete History", "w d2")
+  t.Fetes = t.History:field(h.field)
+  --logShow(t.Fetes, "Fetes", "w d2")
+
+  self.FeteData = t
+  --logShow(t, "Fete Data", "w d3")
+
+  return true
+end ---- InitFetes
 
 -- Localize data.
 -- Локализация данных.
@@ -273,6 +307,12 @@ function TMain:MakeColors ()
   return true
 end ---- MakeColors
 
+function TMain:MakeFetes ()
+  local self = self
+  --local Custom = self.Custom
+
+end ---- MakeFetes
+
   local max = math.max
 
 function TMain:MakeProps ()
@@ -334,9 +374,12 @@ end ---- MakeProps
 function TMain:Prepare ()
 
   self:InitData()
+  --self:InitFetes()
 
   self:Localize()
   self:MakeLocLen()
+
+  --self:MakeFetes()
 
   self:MakeColors()
 
@@ -964,9 +1007,7 @@ end --
 ---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
-  return usercall(nil, unit.RunMenu,
-                  self.Props, self.Items, self.Keys)
-  --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
+  return usercall(nil, unit.RunMenu, self.Props, self.Items, self.Keys)
 end ---- ShowMenu
 
 -- Вывод календаря.
