@@ -20,16 +20,10 @@ local pairs, ipairs = pairs, ipairs
 local setmetatable = setmetatable
 
 ----------------------------------------
---local win, far = win, far
-
-----------------------------------------
---local context = context
 local logShow = context.ShowInfo
 
---local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
---local datas = require 'context.utils.useDatas'
 
 local u_byte = strings.u8byte
 --local u_char, u_byte = strings.u8char, strings.u8byte
