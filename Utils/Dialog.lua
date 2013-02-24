@@ -28,6 +28,7 @@ local F = far.Flags
 
 ----------------------------------------
 local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -37,12 +38,6 @@ local newFlags = utils.newFlags
 
 local Null = tables.Null
 local tfind = tables.find
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

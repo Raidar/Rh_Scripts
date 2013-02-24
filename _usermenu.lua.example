@@ -46,7 +46,7 @@ AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS"..ext, "Conf
 
 AddToMenu("evpc", ":sep:User Scripts")
   -- Void Truncater.
-AddToMenu("e", nil, "Ctrl+T", EditorPath.."VoidTruncate"..ext, "FileText")
+AddToMenu("e", nil, "Ctrl+T", EditorPath.."VoidTruncate"..ext, "TruncateFileText")
   -- Word Completion.
 AddToMenu("e", nil, "Ctrl+Space", EditorHandActions, "WC:Execute")
 AddToMenu("c", "&Word Completion", nil, EditorHandActions, "WC:Config")

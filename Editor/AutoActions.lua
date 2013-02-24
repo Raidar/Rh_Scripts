@@ -1,8 +1,8 @@
---[[ Auto Actions ]]--
+--[[ Auto actions ]]--
 
 ----------------------------------------
 --[[ description:
-  -- Auto Actions.
+  -- Auto actions.
   -- Авто-действия.
 --]]
 ----------------------------------------
@@ -16,14 +16,9 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local editors = ctxdata.editors
+local logShow = context.ShowInfo
 
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
+local editors = ctxdata.editors
 
 --------------------------------------------------------------------------------
 -- AutoTemplates -- АвтоШаблоны:
@@ -42,8 +37,6 @@ local function TT_CharPress (FarKey, Char)
   return TT_Execute(TT_CfgData)
 end --
 WC_CfgData.OnCharPress = TT_CharPress
-
----------------------------------------- Configure
 
 ---------------------------------------- Process
 local F = far.Flags
@@ -77,5 +70,5 @@ function ProcessEditorInput (rec) --> (bool)
   end -- if
 
   return false
-end ----
+end ---- ProcessEditorInput
 --------------------------------------------------------------------------------

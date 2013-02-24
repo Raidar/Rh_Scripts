@@ -33,6 +33,7 @@ local F = far.Flags
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -41,12 +42,6 @@ local tables = require 'context.utils.useTables'
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local menUt = require "Rh_Scripts.Utils.Menu"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -24,17 +24,16 @@ local band = bit.band
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
 --local tables = require 'context.utils.useTables'
 
 --local far23 = context.use.far23
 
-----------------------------------------
 --[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
+local debugs = require "context.utils.useDebugs"
+local hex = debugs.hex8
 --]]
 
 --------------------------------------------------------------------------------

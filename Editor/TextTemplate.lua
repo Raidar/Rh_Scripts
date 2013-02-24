@@ -46,6 +46,7 @@ local EditorRedraw  = editor.Redraw
 ----------------------------------------
 local context = context
 local detect = context.detect
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -61,13 +62,6 @@ local addNewData = tables.extend
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---logShow(context, "context", 3)
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

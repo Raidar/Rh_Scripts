@@ -11,13 +11,12 @@
   -- group: LUM.
 --]]
 --------------------------------------------------------------------------------
-local LumDlg = (require "Rh_Scripts.LuaUM.LumCfg").ConfigDlg
 
 ----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local logShow = context.ShowInfo
+
+----------------------------------------
+local LumDlg = (require "Rh_Scripts.LuaUM.LumCfg").ConfigDlg
 
 ---------------------------------------- main
 function LUM_Dlger (Args, Cfg)

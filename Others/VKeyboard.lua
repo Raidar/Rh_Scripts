@@ -19,6 +19,7 @@
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local numbers = require 'context.utils.useNumbers'
 
@@ -26,13 +27,6 @@
 --local farUt = require "Rh_Scripts.Utils.Utils"
 --local keyUt = require "Rh_Scripts.Utils.Keys"
 --local menUt = require "Rh_Scripts.Utils.Menu"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

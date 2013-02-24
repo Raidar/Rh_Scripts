@@ -15,16 +15,12 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
+local logShow = context.ShowInfo
+
 local getFileType = context.detect.area.current
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local function flsUserMenu (args)

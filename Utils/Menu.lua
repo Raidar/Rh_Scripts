@@ -27,6 +27,7 @@ local farColors = far.Colors
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -41,12 +42,6 @@ local t_create, t_concat = tables.create, table.concat
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local keyUt = require "Rh_Scripts.Utils.Keys"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

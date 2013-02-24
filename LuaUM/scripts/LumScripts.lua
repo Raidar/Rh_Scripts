@@ -161,12 +161,4 @@ end
 
 --doShow({ ... }, "LumScripts", 3)
 
--- Функция модуля --
-module ("LumScripts", package.seeall)
-
-function ModFunction (Args, Cfg)
-  local Scope = Cfg.Config.Scope
-  far.Message("Module Function", "Message: "..Scope.Area)
-end
-
 --------------------------------------------------------------------------------

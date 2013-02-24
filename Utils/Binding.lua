@@ -19,12 +19,7 @@ local require, pcall = require, pcall
 
 ----------------------------------------
 local detect = context.detect
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local logShow = context.ShowInfo
 
 --------------------------------------------------------------------------------
 local unit = {}

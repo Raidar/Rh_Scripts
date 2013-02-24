@@ -35,6 +35,7 @@ local far, editor = far, editor
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local tables = require 'context.utils.useTables'
 --local numbers = require 'context.utils.useNumbers'
@@ -43,12 +44,6 @@ local Null = tables.Null
 
 ----------------------------------------
 local farEdit = require "Rh_Scripts.Utils.Editor"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {

@@ -11,6 +11,7 @@ local unpack = unpack
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local locale = require 'context.utils.useLocale'
 
@@ -22,12 +23,6 @@ local farBlock = farEdit.Block
 local farSelect = farEdit.Selection
 
 local RedrawAll = farUt.RedrawAll
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 
@@ -130,10 +125,10 @@ local mClear = {
 } --- mClear
 
 ---------------------------------------- Truncate
-local Truncate = (require "Rh_Scripts.Editor.VoidTruncate").Truncate
+local Trunc = require "Rh_Scripts.Editor.VoidTruncate"
 
 local DoTrunc = {}
-for k, f in pairs(Truncate) do
+for k, f in pairs(Trunc) do
   DoTrunc[k] = function ()
     f()
     return RedrawAll()
@@ -144,13 +139,13 @@ local mTruncate = {
   text = L.LuaTruncateVoid,
   Items = {
     { text = L.LuaTruncCurLine,
-      Function = DoTrunc.Line, },
+      Function = DoTrunc.TruncateLine, },
     { text = L.LuaTruncAllLines,
-      Function = DoTrunc.Text, },
+      Function = DoTrunc.TruncateText, },
     { text = L.LuaTruncEndLines,
-      Function = DoTrunc.File, },
+      Function = DoTrunc.TruncateFile, },
     { text = L.LuaTruncFileText,
-      Function = Truncate.FileText, },
+      Function = Trunc.TruncateFileText, },
   } ---
 } --- mTruncate
 

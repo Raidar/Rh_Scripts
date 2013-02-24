@@ -9,14 +9,9 @@
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local tables = require 'context.utils.useTables'
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow, datShow = dbg.Show, dbg.ShowData
---]]
 
 --------------------------------------------------------------------------------
 

@@ -20,12 +20,6 @@ local BlockNoneType = F.BTYPE_NONE
 
 local editor = editor
 
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
-
 --------------------------------------------------------------------------------
 --local unit = {}
 

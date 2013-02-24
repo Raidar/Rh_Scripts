@@ -22,6 +22,7 @@ local editor = editor
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
 --local numbers = require 'context.utils.useNumbers'
@@ -36,12 +37,6 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 --local chrUt = require "Rh_Scripts.Utils.Character"
 
 local BlockTypes = farUt.BlockTypes
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {

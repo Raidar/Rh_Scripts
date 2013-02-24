@@ -13,13 +13,11 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local datim = require "Rh_Scripts.Utils.DateTime"
+local logShow = context.ShowInfo
 
 ----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local datim = require "Rh_Scripts.Utils.DateTime"
+
 --------------------------------------------------------------------------------
 local Info = {}
 local SepLine = "─────────────────────"

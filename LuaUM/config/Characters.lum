@@ -9,18 +9,13 @@
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
 local CharsMenu -- require in unit.MakeMenu
 --local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -11,6 +11,7 @@ local unpack = unpack
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local locale = require 'context.utils.useLocale'
 
@@ -22,12 +23,6 @@ local farBlock = farEdit.Block
 local farSelect = farEdit.Selection
 
 --local RedrawAll = farUt.RedrawAll
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

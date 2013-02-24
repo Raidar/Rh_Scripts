@@ -19,17 +19,12 @@ local io_open = io.open
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
 
 local capital = strings.capital
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

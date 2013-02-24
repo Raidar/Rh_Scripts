@@ -25,21 +25,16 @@ local OemToUtf8 = win.OemToUtf8
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
+--local numbers = require 'context.utils.useNumbers'
+--local strings = require 'context.utils.useStrings'
 local datas = require 'context.utils.useDatas'
+
+--local hex = numbers.hex8
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
-
-----------------------------------------
---[[
-local numbers = require 'context.utils.useNumbers'
-local strings = require 'context.utils.useStrings'
-
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

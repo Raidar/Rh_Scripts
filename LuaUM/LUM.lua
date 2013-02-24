@@ -20,6 +20,7 @@ local setmetatable = setmetatable
 
 ----------------------------------------
 local context = context
+local logShow = context.ShowInfo
 
 local asBindsType = context.detect.use.configType
 
@@ -34,12 +35,6 @@ local PluginPath = utils.PluginPath
 local farUt = require "Rh_Scripts.Utils.Utils"
 
 local LW = require "Rh_Scripts.LuaUM.LumWork"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -30,6 +30,7 @@ local F = far.Flags
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -43,12 +44,6 @@ local hex = numbers.hex8
 local fkeys = require "far2.keynames"
 
 local keyUt = require "Rh_Scripts.Utils.Keys"
-
-----------------------------------------
---[[
-local log = require "context.samples.logging"
-local logShow = log.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -33,6 +33,7 @@ local PanelsGetInfo = panel.GetPanelInfo
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
@@ -41,12 +42,6 @@ local numbers = require 'context.utils.useNumbers'
 local isFlag = utils.isFlag
 
 local b2n, max2 = numbers.b2n, numbers.max2
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

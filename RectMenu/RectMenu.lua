@@ -44,6 +44,7 @@ local HText, VText = far.Text, farUt.VText
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
@@ -83,13 +84,6 @@ local LineFill          = RDraw.LineFill
 local DrawItemText      = RDraw.DrawItemText
 local DrawClearItemText = RDraw.DrawClearItemText
 local DrawSeparItemText = RDraw.DrawSeparItemText
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 --local unit = {}

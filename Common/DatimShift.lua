@@ -24,6 +24,7 @@ local F = far.Flags
 
 ----------------------------------------
 --local context, ctxdata = context, ctxdata
+local logShow = context.ShowInfo
 
 --local types = ctxdata.config.types
 
@@ -38,12 +39,6 @@ local isFlag, delFlag = utils.isFlag, utils.delFlag
 --local n2s = numbers.n2s
 
 local addNewData = tables.extend
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

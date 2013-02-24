@@ -33,6 +33,7 @@ local setmetatable = setmetatable
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local tables = require 'context.utils.useTables'
 
@@ -49,13 +50,6 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local isVKeyChar = keyUt.isVKeyChar
 local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

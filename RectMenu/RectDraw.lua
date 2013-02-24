@@ -23,6 +23,7 @@ local bshr = bit.rshift
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
@@ -43,12 +44,6 @@ local far_Text = far.Text
 
 ----------------------------------------
 local menUt = require "Rh_Scripts.Utils.Menu"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

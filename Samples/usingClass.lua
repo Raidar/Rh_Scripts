@@ -14,13 +14,10 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local Types = require "Rh_Scripts.Utils.Types"
+local logShow = context.ShowInfo
 
 ----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local Types = require "Rh_Scripts.Utils.Types"
 
 --------------------------------------------------------------------------------
 local class = Types.class

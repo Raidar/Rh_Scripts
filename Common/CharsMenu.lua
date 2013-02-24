@@ -24,6 +24,7 @@ local setmetatable = setmetatable
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
@@ -41,12 +42,6 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local CharsList = require "Rh_Scripts.Utils.CharsList"
 local CharNames = CharsList.Names
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

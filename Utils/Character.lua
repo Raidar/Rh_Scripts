@@ -25,16 +25,11 @@ local format = string.format
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local lua = require 'context.utils.useLua'
 
 local const = lua.regex
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

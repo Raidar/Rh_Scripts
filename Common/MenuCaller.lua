@@ -18,10 +18,7 @@ local require = require
 local setmetatable = setmetatable
 
 ----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local logShow = context.ShowInfo
 
 --------------------------------------------------------------------------------
 local unit = {}

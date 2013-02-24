@@ -13,16 +13,13 @@
 --]]
 --------------------------------------------------------------------------------
 
+----------------------------------------
+local logShow = context.ShowInfo
+
 local getFileType = context.detect.area.editor
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local function LuaUserMenu (args)

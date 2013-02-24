@@ -138,10 +138,6 @@ local mFuncScripts = {
       Script = "LumScripts.lua",
       Function = 'Var.SubFunction',
       Relative = "default", },
-    { text = "&Module function call",
-      Script = "LumScripts.lua",
-      Function = 'LumScripts.ModFunction',
-      Relative = "default", },
   }, --
 } --- mFuncScripts
 --]]

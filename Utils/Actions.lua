@@ -18,10 +18,7 @@ local far = far
 local F = far.Flags
 
 ----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
+local logShow = context.ShowInfo
 
 --------------------------------------------------------------------------------
 local unit = {

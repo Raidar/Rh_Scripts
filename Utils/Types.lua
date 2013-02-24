@@ -30,14 +30,9 @@ local getmetatable, setmetatable = getmetatable, setmetatable
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

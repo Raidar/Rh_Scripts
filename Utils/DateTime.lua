@@ -31,18 +31,13 @@ local floor = math.floor
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local numbers = require 'context.utils.useNumbers'
 
 local divf  = numbers.divf
 local divm  = numbers.divm
 local round = numbers.round
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

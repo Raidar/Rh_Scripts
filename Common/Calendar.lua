@@ -33,6 +33,7 @@ end
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
@@ -56,12 +57,6 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 local IsModCtrlAlt = keyUt.IsModCtrlAlt
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

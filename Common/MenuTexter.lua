@@ -23,6 +23,7 @@ local F = far.Flags
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
@@ -34,13 +35,6 @@ local spaces = strings.spaces -- for text align
 local farUt = require "Rh_Scripts.Utils.Utils"
 --local keyUt = require "Rh_Scripts.Utils.Keys"
 local menUt = require "Rh_Scripts.Utils.Menu"
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -42,6 +42,7 @@ local EditorInsText = editor.InsertText
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local lua = require 'context.utils.useLua'
 local utils = require 'context.utils.useUtils'
@@ -75,13 +76,6 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 local isVKeyChar = keyUt.isVKeyChar
 local IsModAlt, IsModShift = keyUt.IsModAlt, keyUt.IsModShift
 local GetModBase = keyUt.GetModBase
-
-----------------------------------------
---[[
-local dbg = require "context.utils.useDebugs"
-local logShow = dbg.Show
-local hex = dbg.hex8
---]]
 
 --------------------------------------------------------------------------------
 local unit = {}
