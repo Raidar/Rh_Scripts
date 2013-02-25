@@ -166,7 +166,7 @@ local TruncateFile = unit.TruncateFile
 function unit.TruncateFileText (keep)
   TruncateFile(keep)
   TruncateText()
-  TruncateUpdateEnd()
+  UpdateLineEnd()
 
   return far.AdvControl(F.ACTL_REDRAWALL)
 end ---- TruncateFileText
