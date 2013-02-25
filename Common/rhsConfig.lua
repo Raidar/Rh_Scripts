@@ -421,8 +421,7 @@ local DI = dlgUt.DlgItemType
 local DIF = dlgUt.DlgItemFlag
 local LoadDlgItem, SaveDlgItem = dlgUt.LoadDlgItem, dlgUt.SaveDlgItem
 
--- Диалог конфигурации.
-local function Dlg (Config) --> (dialog)
+local function ConfigForm (Config) --> (dialog)
   local DBox = Config.DBox
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
@@ -517,7 +516,7 @@ local function Dlg (Config) --> (dialog)
   --D.edtumFileName = {DI.Edit,    IC,  H-1, I3-1,  0, 0, 0, 0, 0, ""}
 
   return D
-end -- ConfigDlg
+end -- ConfigForm
 
 -- Загрузка данных в элементы диалога.
 local function LoadDlgData (cData, aData, D, DlgTypes)
@@ -623,7 +622,7 @@ function unit.ConfigDlg (Data)
   end
   --logShow(DBox, "DBox", 1)
   -- Настройка:
-  local D = Dlg(Config)
+  local D = ConfigForm(Config)
   local cData, aData = Config.CfgData, Config.ArgData
   local DlgTypes = MakeDlgTypes(cData, aData)
   --logShow(DlgTypes, "DlgTypes", 2)

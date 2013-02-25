@@ -169,8 +169,7 @@ end -- CreateMain
 
 ---------------------------------------- Main making
 
----------------------------------------- ---- Prepare
-do
+---------------------------------------- ---- Init
 -- Инициализация календаря.
 function TMain:InitData ()
   local self = self
@@ -223,6 +222,8 @@ function TMain:InitFetes ()
   return true
 end ---- InitFetes
 
+---------------------------------------- ---- Prepare
+do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()

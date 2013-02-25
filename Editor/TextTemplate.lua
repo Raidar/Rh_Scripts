@@ -189,8 +189,8 @@ do
   local DI = dlgUt.DlgItemType
   local DIF = dlgUt.DlgItemFlag
 
--- Диалог конфигурации.
-function TMain:DlgForm () --> (dialog)
+-- Форма конфигурации.
+function TMain:ConfigForm () --> (dialog)
   local DBox = self.DBox
   local isAuto = self.Custom.isAuto
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
@@ -233,9 +233,9 @@ function TMain:DlgForm () --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end -- DlgForm
+end -- ConfigForm
 
-function TMain:DlgBox ()
+function TMain:ConfigBox ()
 
   --local isAuto  = self.Custom.isAuto
   local isSmall = self.Custom.isSmall
@@ -260,7 +260,7 @@ function TMain:DlgBox ()
   end
 
   return DBox
-end ---- DlgBox
+end ---- ConfigBox
 
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
@@ -270,12 +270,12 @@ function unit.ConfigDlg (Data)
 
   _Main:Localize() -- Локализация
 
-  local DBox = _Main:DlgBox()
+  local DBox = _Main:ConfigBox()
   if not DBox then return end
 
   local HelpTopic = _Main.Custom.help.tlink
 
-  local D = _Main:DlgForm()
+  local D = _Main:ConfigForm()
   dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
   local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
