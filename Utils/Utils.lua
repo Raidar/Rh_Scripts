@@ -736,28 +736,36 @@ do
 
 -- Insert text to active item of dialog.
 -- Вставка текста в активный элемент диалога.
-function unit.DialogInsertText (hDlg, s)
+local function DialogInsertText (hDlg, s)
+  local hDlg = hDlg
+  if not hDlg then
+    local Info = farAdvControl(F.ACTL_GETWINDOWINFO, -1)
+    if Info.Type ~= F.WTYPE_DIALOG then return false end
+    hDlg = Info.Id
+  end
+
   local id = SendDlgMessage(hDlg, F.DM_GETFOCUS)
-  if DlgEditItems( far.GetDlgItem(hDlg, id)[1] ) then -- DlgItem.Type!
+  if DlgEditItems[ far.GetDlgItem(hDlg, id)[1] ] then -- DlgItem.Type!
     return SendDlgMessage(hDlg, F.DM_SETTEXT, id, s) -- TODO: Check for boolean!
   end
-end ----
+end ---- DialogInsertText
+unit.DialogInsertText = DialogInsertText
 
 -- Insert text.
 -- Вставка текста.
 unit.FarInsertText = {
-  panels = function (s, args) return panel.InsertCmdLine(nil, s) end,
-  editor = function (s, args) return editor.InsertText(nil, s) end,
-  dialog = function (s, args) return unit.DialogInsertText(args.hDlg, s) end,
+  panels = function (s) return panel.InsertCmdLine(nil, s) end,
+  editor = function (s) return editor.InsertText(nil, s) end,
+  dialog = function (s) return DialogInsertText(nil, s) end,
 } --- FarInsertText
 
 -- Insert text in specified FAR area.
 -- Вставка текста в заданной области.
-function unit.InsertText (Area, ...) --> (bool | number)
+function unit.InsertText (Area, Text) --> (bool | number)
   if unit.FarInsertText[Area] then
-    return unit.FarInsertText[Area](...)
+    return unit.FarInsertText[Area](Text)
   end
-end ----
+end ---- InsertText
 
 end -- do
 
