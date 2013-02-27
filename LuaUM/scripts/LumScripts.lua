@@ -18,17 +18,12 @@ local F = far.Flags
 
 ----------------------------------------
 --local context = context
+local doShow = context.ShowInfo
 
 ----------------------------------------
 --local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
-local dbgs
-
-local function doShow (...)
-  dbgs = dbgs or require "context.utils.useDebugs"
-  return dbgs.Show(...)
-end -- doShow
 
 ---------------------------------------- Quick information
 local far2u = require "far2.utils"
@@ -63,7 +58,7 @@ function HelloWorldMsg (Args, Cfg)
   far.Message("Hello, world!", "Message ("..Scope.Area..")")
 end ---- HelloWorldMsg
 
--- Текст в редактор --
+-- Сообщение в виде текста --
 function HelloWorldText (Args, Cfg)
   local Scope = Cfg.Config.Scope
   if Scope.Area == "editor" then

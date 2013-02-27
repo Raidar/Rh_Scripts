@@ -95,7 +95,7 @@ unit.DefCustom = {
 
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', },
-} --- DefCustom
+} -- DefCustom
 
 ----------------------------------------
 unit.DefOptions = {
@@ -104,7 +104,7 @@ unit.DefOptions = {
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = unit.ScriptName,
   FileName = "kit_config",
-} ---
+} -- DefOptions
 
 ---------------------------------------- ---- Config
 local SelBGColor = colors.Colors.navy
