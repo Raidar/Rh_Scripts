@@ -343,6 +343,27 @@ do
   local getFG, getBG = colors.getFG, colors.getBG
   local setFG, setBG = colors.setFG, colors.setBG
 
+--[[ TODO: Rename colors
+  Normal
+  Hlight
+  Marked
+  Grayed
+  Disable
+  Sel + (NHMGD)
+
+  Foreground
+  Background
+  Border = box
+  DlgBox = Normal + Hlight + Border
+  Title
+  StatusBar
+  ScrollBar
+
+  --Arrows      x Normal
+  --SelArrows   x SelNormal
+  --DisArrows   x Disable
+--]]
+
 -- Получение всех возможных цветов меню.
 function unit.MenuColors () --> (table)
   local Colors = {}
@@ -394,15 +415,15 @@ function unit.ItemColors (Colors) --> (table)
         hlight = Colors.COL_MENUHIGHLIGHT,
         marked = Colors.COL_MENUMARKTEXT,
       },
-      disable = {
-        normal = Colors.COL_MENUDISABLEDTEXT,
-        hlight = Colors.COL_MENUDISABLEDTEXT,
-        marked = Colors.COL_MENUDISABLEDTEXT,
-      },
       grayed  = {
         normal = Colors.COL_MENUGRAYTEXT,
         hlight = Colors.COL_MENUGRAYTEXT,
         marked = Colors.COL_MENUGRAYTEXT,
+      },
+      disable = {
+        normal = Colors.COL_MENUDISABLEDTEXT,
+        hlight = Colors.COL_MENUDISABLEDTEXT,
+        marked = Colors.COL_MENUDISABLEDTEXT,
       },
     },
     [true] = { -- Выделенный пункт:
@@ -411,16 +432,16 @@ function unit.ItemColors (Colors) --> (table)
         hlight = Colors.COL_MENUSELECTEDHIGHLIGHT,
         marked = Colors.COL_MENUSELECTEDMARKTEXT,
       },
-      --disable = {
-      --  normal = Colors.COL_MENUDISABLEDTEXT,
-      --  hlight = Colors.COL_MENUDISABLEDTEXT,
-      --  marked = Colors.COL_MENUSELECTEDMARKTEXT,
-      --},
       grayed  = {
         normal = Colors.COL_MENUSELECTEDGRAYTEXT,
         hlight = Colors.COL_MENUSELECTEDGRAYTEXT,
         marked = Colors.COL_MENUSELECTEDGRAYTEXT,
       },
+      --disable = {
+      --  normal = Colors.COL_MENUDISABLEDTEXT,
+      --  hlight = Colors.COL_MENUDISABLEDTEXT,
+      --  marked = Colors.COL_MENUSELECTEDMARKTEXT,
+      --},
     },
   } --- TextColors
 end ---- ItemColors
