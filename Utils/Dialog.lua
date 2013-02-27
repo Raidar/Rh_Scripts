@@ -328,7 +328,7 @@ function unit.GetTextColor (Color) --> (table)
   else
   return band(Color, 0xFF) -- FAR2
   end
-end ----
+end ---- GetTextColor
 
 -- Получение "прямоугольника" окна.
 function unit.DialogRect (hDlg) --> (table)
