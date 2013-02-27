@@ -62,7 +62,7 @@ local IsModCtrlAlt = keyUt.IsModCtrlAlt
 local unit = {}
 
 ---------------------------------------- Main data
-unit.FileName   = "DateTime"
+--unit.FileName   = "DateTime"
 --unit.FilePath   = "scripts\\Rh_Scripts\\Common\\"
 unit.ScriptName = "Calendar"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
@@ -80,10 +80,15 @@ unit.DefCustom = {
   help   = { topic = unit.ScriptName, },
   locale = {
     kind = 'load',
-    file = unit.FileName,
+    --file = unit.FileName,
     --path = unit.FilePath,
   }, --
 } -- DefCustom
+
+----------------------------------------
+unit.DefOptions = {
+  BaseDir  = "Rh_Scripts.Common."..unit.ScriptName..".",
+} -- DefOptions
 
 --[[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
@@ -128,8 +133,7 @@ local function CreateMain (ArgData)
     Date      = false,    -- Дата
     Time      = false,    -- Время
 
-    FeteData  = false,    -- Данные о праздниках
-    Fetes     = false,    -- Даты праздников
+    Fetes     = false,    -- Даты событий
 
     --Error     = false,    -- Текст ошибки
     --Menu      = false,    -- CfgData.Menu or {}
@@ -170,6 +174,7 @@ end -- CreateMain
 ---------------------------------------- Main making
 
 ---------------------------------------- ---- Init
+do
 -- Инициализация календаря.
 function TMain:InitData ()
   local self = self
@@ -191,37 +196,22 @@ function TMain:InitData ()
   return true
 end ---- InitData
 
+  local prequire = farUt.prequire
+
 function TMain:InitFetes ()
   local self = self
   local Custom = self.Custom
+  local Options = self.Options
 
-  local h = addNewData({}, Custom.history)
-  --logShow(h, "Fete history", "w d2")
-  h.field = "Fetes"
-  h.dir   = "Fetes\\"
-  h.ext   = '.lua'
-  h.name  = self.World
-  h.file  = h.name..h.ext
-  --h.path  = h.path
-  h.work  = h.f_fpath:format(Custom.profile, h.path, h.dir)
-  h.full  = h.work..h.file
-  --logShow(h, "Fete history", "w d2")
+  Options.FeteName = self.World
 
-  local t = {
-    history = h,
-    History = datas.newHistory(h.full),
-    Fetes = false,
-  } ---
-  --logShow(t.History, "Fete History", "w d2")
-  t.Fetes = t.History:field(h.field)
-  --logShow(t.Fetes, "Fetes", "w d2")
-
-  self.FeteData = t
-  --logShow(t, "Fete Data", "w d3")
+  self.Fetes = prequire(Options.BaseDir..Options.FeteName)
+  --logShow(self.Fetes, "Fetes", "w d3")
 
   return true
 end ---- InitFetes
 
+end -- do
 ---------------------------------------- ---- Prepare
 do
 -- Localize data.
@@ -375,7 +365,7 @@ end ---- MakeProps
 function TMain:Prepare ()
 
   self:InitData()
-  --self:InitFetes()
+  self:InitFetes()
 
   self:Localize()
   self:MakeLocLen()
