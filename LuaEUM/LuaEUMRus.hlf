@@ -12,7 +12,7 @@ $ #Пользовательское меню Lua для Редактора# (~L
     ~Файлы утилиты~@LUM_Files@
 
   Ссылки:
-    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
     ~Пользовательское меню Lua~@<..\LuaUM\>Contents@ (LUM)
 
 @Help

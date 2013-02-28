@@ -11,7 +11,7 @@ $ #Common scripts#
     ~Script files~@Cmn_ScriptFiles@
 
   Links:
-    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
 
 @Help
  ~Common scripts~@Contents@
@@ -200,8 +200,8 @@ $ #Rh_Scripts pack configurator# (rhsConfig)
   A \37rhsConfig.cfgrus\- file is an example of configuration with russian
 names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
 
-    ~Menu items~@<..\Docs\>RhS_LFE_MenuItems@
-    ~Handlers~@<..\Docs\>RhS_LFE_Handlers@
+    ~Menu items~@<..\doc\>RhS_LFE_MenuItems@
+    ~Handlers~@<..\doc\>RhS_LFE_Handlers@
     ~Titles of items~@rhsConfig_Title@
 
   \34Notice\-: ¦Resident modules are executed automatically

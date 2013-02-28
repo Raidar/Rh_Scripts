@@ -11,7 +11,7 @@ $ #Общие скрипты#
     ~Файлы скриптов~@Cmn_ScriptFiles@
 
   Ссылки:
-    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
 
 @Help
  ~Общие скрипты~@Contents@
@@ -242,8 +242,8 @@ $ #Конфигуратор пакета Rh_Scripts# (rhsConfig)
   Файл \37rhsConfig.cfgrus\- — пример конфигурации с русскими названиями
 пунктов меню. Для его использования переименуйте файл в \37rhsConfig.cfg\-.
 
-    ~Пункты меню~@<..\Docs\>RhS_LFE_MenuItems@
-    ~Обработчики~@<..\Docs\>RhS_LFE_Handlers@
+    ~Пункты меню~@<..\doc\>RhS_LFE_MenuItems@
+    ~Обработчики~@<..\doc\>RhS_LFE_Handlers@
     ~Названия пунктов~@rhsConfig_Title@
 
   \34Внимание\-: ¦Резидентные модули выполняются автоматически

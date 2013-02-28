@@ -12,7 +12,7 @@ $ #Пользовательское меню Lua для работы с fl_scr
     ~Файлы утилиты~@LUM_Files@
 
   Ссылки:
-    ~Rh_Scripts~@<..\Docs\>Contents@ pack
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
     ~Пользовательское меню Lua (LUM)~@<..\LuaUM\>Contents@
 
 @Help

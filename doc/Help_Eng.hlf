@@ -105,7 +105,7 @@ $ #Documentation files#: Rh_Scripts pack
     \37History.txt\- — ¦History of changes (in Russian only).
 
   Documentation on English is in following directory:
- \37<LuaFAR for Editor directory>\scripts\Rh_Scripts\#Docs#\- .
+ \37<LuaFAR for Editor directory>\scripts\Rh_Scripts\#doc#\- .
 
  ~Contents~@Contents@
 
