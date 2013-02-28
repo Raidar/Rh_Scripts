@@ -710,7 +710,7 @@ do
   local utils = require 'context.utils.useUtils'
   local BasePath = utils.PluginPath
 
-  local DataPath = "scripts\\Rh_Scripts\\Data\\"
+  local DataPath = "scripts\\Rh_Scripts\\data\\"
   local DataName = "UnicodeData.txt"
   local CodeName = "slnudata.c"
 

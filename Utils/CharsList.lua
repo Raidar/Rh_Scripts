@@ -46,7 +46,7 @@ Names.__index = subTable; setmetatable(Names, Names)
 
 ----------------------------------------
 local PluginPath = utils.PluginPath
-local DataPath = "scripts\\Rh_Scripts\\Data\\"
+local DataPath = "scripts\\Rh_Scripts\\data\\"
 local DataName = "NamesList.txt"
 
 ---------------------------------------- main
