@@ -7,7 +7,7 @@ local Data = {
   Separator         = "Разделитель",
 
   ----------------------------------------
-  Subtitles         = "&Q - Субтитры",
+  Subtitles         = "&T - Субтитры",
 
     --hot_SubtitleType    = "Y",
     cap_SubtitleType    = "Тип файла субтитров",

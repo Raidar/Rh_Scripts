@@ -6,7 +6,7 @@ local Data = {
   Separator         = "Separator",
 
   ----------------------------------------
-  Subtitles         = "&Q - Subtitles",
+  Subtitles         = "&T - Subtitles",
 
     hot_SubtitleType    = "Y",
     cap_SubtitleType    = "Subtitle filetype",
