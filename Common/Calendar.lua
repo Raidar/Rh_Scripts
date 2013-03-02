@@ -109,8 +109,8 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
 ---------------------------------------- Main class
 local TMain = {
-  --Guid       = win.Uuid(""),
-  --ConfigGuid = win.Uuid(""),
+  Guid       = win.Uuid("1b26647b-44b0-4ac6-984d-45cba59568d0"),
+  ConfigGuid = win.Uuid("1b537bfd-e907-4836-beff-5ac000823a5b"),
 }
 local MMain = { __index = TMain }
 
