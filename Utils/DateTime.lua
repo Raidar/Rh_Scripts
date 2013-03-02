@@ -144,7 +144,9 @@ local TConfig = {
 
     YearDay   = "%03d",
     YearWeek  = "%02d",
+    MonthDay  = "%02d",
     MonthWeek = "%1d",
+    WeekDay   = "<%1d>",
   }, -- Formats
 
   --filled = nil,         -- Признак заполненности

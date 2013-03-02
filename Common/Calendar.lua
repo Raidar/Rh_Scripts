@@ -29,13 +29,14 @@ if useprofiler then
 end
 
 ----------------------------------------
+--local win = win
 --local win, far = win, far
 
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
 
-local utils = require 'context.utils.useUtils'
+--local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
@@ -200,7 +201,6 @@ end ---- InitData
 
 function TMain:InitFetes ()
   local self = self
-  local Custom = self.Custom
   local Options = self.Options
 
   Options.FeteName = self.World
@@ -289,7 +289,7 @@ function TMain:MakeColors ()
                          nil, basics.white)
   self.UsualColors = t
 
-  local t = tables.copy(t, false, pairs, true)
+  t = tables.copy(t, false, pairs, true)
   t = menUt.ChangeColors(t,
                          basics.black,      nil,
                          basics.white,      basics.gray)
@@ -299,9 +299,10 @@ function TMain:MakeColors ()
 end ---- MakeColors
 
 function TMain:MakeFetes ()
-  local self = self
+  --local self = self
   --local Custom = self.Custom
 
+  return true
 end ---- MakeFetes
 
   local max = math.max
@@ -370,7 +371,7 @@ function TMain:Prepare ()
   self:Localize()
   self:MakeLocLen()
 
-  --self:MakeFetes()
+  self:MakeFetes()
 
   self:MakeColors()
 
@@ -380,16 +381,8 @@ end ---- Prepare
 end -- do
 ---------------------------------------- ---- Menu
 do
-  local function DayToStr (d) --> (string)
-    return ("%02d"):format(d)
-  end --
-
-  local function WeekDayToStr (d) --> (string)
-    return ("<%1d>"):format(d)
-  end --
-
   local spaces = strings.spaces
-
+  -- Центрирование выводимого текста. -- TEMP: До реализации в RectMenu!
   local function CenterText (Text, Max) --> (string)
     local Text = Text or ""
     local Len = Text:len()
@@ -400,19 +393,17 @@ do
     return sp..Text
   end -- CenterText
 
--- Заполнение меню.
-function TMain:FillMenu () --> (table)
+-- Заполнение информационной части.
+function TMain:FillInfoPart () --> (bool)
   local self = self
-  local t = self.Items
-
+  
   local Date = self.Date
   local Time = self.Time
-  local World = self.World
+  --local World = self.World
   local DT_cfg = self.DT_cfg
 
-  local WeekDay = Date:getWeekDay()
-  local DayPerWeek = DT_cfg.DayPerWeek
-  local WeekMax = self.WeekMax
+  --local DayPerWeek = DT_cfg.DayPerWeek
+  --local WeekMax = self.WeekMax
 
   local RowCount = self.RowCount
   local ItemNames = {
@@ -439,26 +430,23 @@ function TMain:FillMenu () --> (table)
       RowCount * 2 + 1,                   RowCount * 2 + 9, -- 3*
     }, --
 
-    --FirstDay      = RowCount * 3 + 1,
-    --FirstWeekDay  = RowCount * (3 + WeekMax) + 1,
-
   } -- ItemNames
 
   local Formats = DT_cfg.Formats
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local wL = L[World]
+  local wL = L[self.World]
   local WeekDayNames   = (wL or Null).WeekDay or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
   local ItemDatas = {
-    --World     = Formats.World:format(wL.World),
-    World     = World ~= "Terra" and Formats.World:format(wL.World) or "",
+    World     = self.World ~= "Terra" and
+                Formats.World:format(wL.World) or "",
     Year      = Formats.Year:format(Date.y),
     Month     = (YearMonthNames[0] or Null)[Date.m],
     Date      = Formats.Date:format(Date.y, Date.m, Date.d),
     Time      = Time and Formats.Time:format(Time.h, Time.n, Time.s) or "",
-    WeekDay   = (WeekDayNames[0] or Null)[WeekDay],
+    WeekDay   = (WeekDayNames[0] or Null)[Date:getWeekDay()],
 
     YearDay   = Formats.YearDay:format(Date:getYearDay()),
     YearWeek  = Formats.YearWeek:format(Date:getYearWeek()),
@@ -476,6 +464,8 @@ function TMain:FillMenu () --> (table)
     World     = Formats.Type:format(wL[self.Type]),
   } --- ItemHints
   --]]
+
+  local t = self.Items
 
   -- Текущая информация:
   local TextMax = self.TextMax
@@ -502,46 +492,23 @@ function TMain:FillMenu () --> (table)
   end
 
   return true
-end ---- FillMenu
+end ---- FillInfoPart
 
--- Формирование меню.
-function TMain:MakeMenu () --> (table)
+-- Заполнение основной части.
+function TMain:FillMainPart () --> (bool)
   local self = self
 
   local Date = self.Date
-  local Time = self.Time
-  local World = self.World
-  local DT_cfg = Date.config
-
-  local WeekDay = Date:getWeekDay()
-  local DayPerWeek = DT_cfg.DayPerWeek
   local WeekMax = self.WeekMax
 
-  local RowCount = self.RowCount
-
+  local DT_cfg = Date.config
   local Formats = DT_cfg.Formats
-  local L, Null = self.LocData, Null
-  --logShow(L, "L", "wM")
-  local wL = L[World]
-  local WeekDayNames   = (wL or Null).WeekDay or Null
-  local YearMonthNames = (wL or Null).YearMonth or Null
-
-  local t = {}
-
-  -- Текущая информация:
-  for i = 1, 3 do
-    for j = 1, RowCount do
-      t[#t+1] = {
-        text = "",
-        Label = true,
-      } --
-    end
-  end --
-
-  local CurrentDay = Date.d
+  local DayPerWeek = DT_cfg.DayPerWeek
+  
+  --local CurrentDay = Date.d
   local Start = Date:copy()
   Start.d = 1
-  --logShow(Start, CurrentDay, "w d2")
+  --logShow(Start, Date.d, "w d2")
   local MonthDays = Start:getMonthDays()
   --logShow(Start, MonthDays, "w d2")
   local StartYearWeek = Start:getYearWeek()
@@ -561,18 +528,20 @@ function TMain:MakeMenu () --> (table)
   local Next = Start:copy()
   Next:shd(MonthDays)
 
+  local MonthDayFmt = Formats.MonthDay
+
   -- Дни месяца:
+  local t = self.Items
   local d = 0       -- День текущего месяца
   local p = Prev.d  -- День предыдущего месяца
   local q = 0       -- День следующего месяца
   local SelIndex    -- Индекс пункта с текущей датой
-  for i = 1, WeekMax do
 
+  local k = self.FirstDayIndex - 1
+  for i = 1, WeekMax do
     -- Номер недели месяца:
-    t[#t+1] = {
-      text = Formats.MonthWeek:format(i - StartWeekShift),
-      Label = true,
-    } --
+    k = k + 1
+    t[k].text = Formats.MonthWeek:format(i - StartWeekShift)
 
     -- Дни недели:
     for j = 1, DayPerWeek do
@@ -591,71 +560,109 @@ function TMain:MakeMenu () --> (table)
       local Text = ""
       if State == 0 then
         d = d + 1
-        Text = DayToStr(d)
+        Text = MonthDayFmt:format(d)
 
-        if d == CurrentDay then SelIndex = #t + 1 end
+        if not SelIndex and d == Date.d then
+          SelIndex = k + 1
+        end
+
       else
-        Text = DayToStr(p and p <= 0 and 0 or p or q)
+        Text = MonthDayFmt:format(p and p <= 0 and 0 or p or q)
       end
 
-      t[#t+1] = {
-        text = Text,
-        Label = true,
+      k = k + 1
+      local u = t[k]
 
-        grayed = (State ~= 0),
-
-        RectMenu = {
-          TextMark = DT_cfg.RestWeekDays[j % DayPerWeek],
-        }, --
-
-        Data = {
-          r = j,
-          c = i,
-          State = State,
-          [-1] = Prev,
-          [ 0] = Date,
-          [ 1] = Next,
-          Start = Start,
-          d = (State == 0 and d or
-               p and p <= 0 and 0 or p or q),
-        }, --
+      u.text = Text
+      u.grayed = (State ~= 0)
+      u.RectMenu = {
+        TextMark = DT_cfg.RestWeekDays[j % DayPerWeek],
+      } --
+      u.Data = {
+        r = j,
+        c = i,
+        State = State,
+        [-1] = Prev,
+        [ 0] = Date,
+        [ 1] = Next,
+        Start = Start,
+        d = (State == 0 and d or
+             p and p <= 0 and 0 or p or q),
       } --
     end
 
     -- Номер недели года:
-    t[#t+1] = {
-      text = Formats.YearWeek:format(StartYearWeek + i - 1 - StartWeekShift),
-      Label = true,
-    } --
-
+    k = k + 1
+    t[k].text = Formats.YearWeek:format(StartYearWeek + i - 1 - StartWeekShift)
   end -- for
 
   self.Props.SelectIndex = SelIndex
 
-  -- Дни недели:
-  local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
-  t[#t+1] = {
-    text = "",
-    separator = true,
-  } --
-  for w = 1, DayPerWeek do
-    t[#t+1] = {
-      text = WeekDayShort[w % DayPerWeek] or WeekDayToStr(w),
-      Label = true,
+  return true
+end ---- FillMainPart
 
-      RectMenu = {
-        TextMark = DT_cfg.RestWeekDays[w % DayPerWeek],
-      }, --
+-- Заполнение пояснительной части.
+function TMain:FillNotePart () --> (bool)
+  local self = self
+
+  local DT_cfg = self.Date.config
+  local Formats = DT_cfg.Formats
+  local DayPerWeek = DT_cfg.DayPerWeek
+
+  local L, Null = self.LocData, Null
+  --logShow(L, "L", "wM")
+  local wL = L[self.World]
+  local WeekDayNames = (wL or Null).WeekDay or Null
+  local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
+
+  local WeekDayFmt = Formats.WeekDay
+
+  -- Дни недели:
+  local t = self.Items
+  local k = self.FirstWeekIndex
+  t[k].separator = true
+  for w = 1, DayPerWeek do
+    k = k + 1
+    local u = t[k]
+
+    u.text = WeekDayShort[w % DayPerWeek] or WeekDayFmt:format(w)
+    u.RectMenu = {
+      TextMark = DT_cfg.RestWeekDays[w % DayPerWeek],
     } --
   end
-  t[#t+1] = {
-    text = "",
-    separator = true,
-  } --
+  k = k + 1
+  t[k].separator = true
 
+  return true
+end ---- FillNotePart
+
+-- Формирование меню.
+function TMain:MakeMenu () --> (table)
+  local self = self
+
+  local RowCount = self.RowCount
+  -- Запоминание позиций для заполнения:
+  self.FirstDayIndex  = RowCount * 3 + 1
+  self.FirstWeekIndex = RowCount * (3 + self.WeekMax) + 1
+
+  local t = {}
   self.Items = t
 
-  return self:FillMenu()
+  -- Формирование пунктов:
+  for _ = 1, 3 + self.WeekMax + 1 do
+    for _ = 1, RowCount do
+      t[#t+1] = {
+        text = "",
+        Label = true,
+      } --
+    end
+  end --
+
+  self:FillInfoPart() -- Информация
+  self:FillMainPart() -- Календарь
+  self:FillNotePart() -- Пояснение
+
+  return true
 end -- MakeMenu
 
 -- Формирование календаря.
@@ -870,7 +877,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    elseif IsModCtrl(VMod) then
+    elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitData()
         return MakeUpdate()
@@ -894,7 +901,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    elseif IsModAlt(VMod) then
+    elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitData()
         return MakeUpdate()
@@ -919,7 +926,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    elseif IsModCtrlAlt(VMod) then
+    elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitData()
         return MakeUpdate()
@@ -967,7 +974,7 @@ function TMain:AssignEvents () --> (bool | nil)
     if Data.d <= 0 then return end
     self.Date.d = Data.d
 
-    return self:FillMenu()
+    return self:FillInfoPart()
   end -- SelectItem
 
   -- Обработчик выбора пункта.
