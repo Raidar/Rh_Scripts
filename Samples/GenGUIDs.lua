@@ -21,6 +21,6 @@ local Count = far.InputBox("Generate GUIDs", "Enter GUID count", nil, "10", 5, n
 Count = tonumber(Count) or 10
 
 for _ = 1, Count do
-  InsText(GenUUID("tostring", GenUUID()))
+  InsText(GenUUID(GenUUID()))
 end
 --------------------------------------------------------------------------------
