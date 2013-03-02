@@ -113,14 +113,14 @@ local mClear = {
   Area = "editor",
 
   Items = {
-    { text = L.LuaClearDeleteAllSpaces,
-      Function = Clear.DeleteAllSpaces, },
     { text = L.LuaClearSqueezeSpaceChars,
       Function = Clear.SqueezeSpaceChars, },
-    { text = L.LuaClearDeleteAllEmptys,
-      Function = Clear.DeleteAllEmptys, },
+    { text = L.LuaClearDeleteAllSpaces,
+      Function = Clear.DeleteAllSpaces, },
     { text = L.LuaClearSqueezeEmptyLines,
       Function = Clear.SqueezeEmptyLines, },
+    { text = L.LuaClearDeleteAllEmptys,
+      Function = Clear.DeleteAllEmptys, },
   } ---
 } --- mClear
 
