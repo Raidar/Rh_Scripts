@@ -1,0 +1,42 @@
+[Rh_Scripts]
+
+[0 -- LUM]
+00B06FBA-0BB7-4333-8025-BA48B6077435 -- LUM
+
+06AF58B5-0837-487C-891D-697A5D8C08BA -- LuaUM.LumCfg Basic config
+07A36F6C-1A94-4CE1-9AAD-D7908DF447E5 -- LuaUM.LumCfg Files config
+082F7E38-B5F6-46C9-A1BB-2D8919872172 -- LuaUM.LumCfg UMenu config
+
+[1 -- Common]
+140A8BD3-546D-469B-867B-E0E61F9B41AF -- Common.rhsConfig config
+
+1B26647B-44B0-4AC6-984D-45CBA59568D0 -- Common.Calendar
+1B537BFD-E907-4836-BEFF-5AC000823A5B -- Common.Calendar config
+
+[2 -- Field]
+
+[3 -- Menu]
+349D77E8-95D5-4BC4-8ADD-7A39798DA4E4 -- RectMenu
+3700ABE9-C460-42B2-9F2E-1FE705B2942A -- CustomMenu
+3751918C-5CD0-4B56-8D32-13898F612930 -- FilterMenu
+
+3B84D47B-930C-47AB-A211-913C76280491 -- CharsMenu (RectMenu)
+
+[5 -- Panels]
+
+[6 -- Editor]
+62023165-B8f6-41d6-B468-94ca21d7b34f -- Editor.TextTemplate script
+6227AFFB-5E24-42CE-9EC0-106868FAD0BA -- Editor.TextTemplate config
+
+64B26458-1E8B-4844-9585-BECFB1CE8DE3 -- Editor.WordComplete script
+642EB0FD-D297-4855-BD87-DCECFC55BCC4 -- Editor.WordComplete config
+Editor.WordComplete Words list (RectMenu) == Editor.WordComplete script
+
+[7 -- Viewer]
+
+[F -- Samples]
+F218E7EC-B782-4746-A188-952D6231AFBB -- Samples.KeysInfo
+
+[C -- context]
+
+――――――――
