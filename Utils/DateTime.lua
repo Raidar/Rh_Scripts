@@ -81,8 +81,9 @@ local TConfig = {
   MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
-  -- TODO: Учёт начала недели и недели года.
+  -- TODO: Учёт отсчёта начала недели.
   --WeekStartDay     = 2, -- Первый день недели:         понедельник
+  -- Учёт отсчёта недели года.
   --YearStartWeekDay = 1, -- День первой недели года:    01.01 = in US
   YearStartWeekDay = 4, -- День первой недели года:    04.01 = ISO 8601
   --YearStartWeekDay = 7, -- День первой недели года:    07.01 = Полная неделя!
@@ -423,22 +424,30 @@ end ---- divYearDay
   y (number) - year.
   m (number) - month.
   d (number) - day.
+  f (number) - day for week start of year: 1..7,
+               @default = YearStartWeekDay.
 ---- @return:
   result (number) - week of year.
 --]]
-function TConfig:getYearWeek (y, m, d) --> (number)
+function TConfig:getYearWeek (y, m, d, f) --> (number)
   local self = self
-
+  
   local DayPerWeek = self.DayPerWeek
   local YearStartDay = self:getWeekDay(y, 1, 1)
   if YearStartDay == 0 then YearStartDay = DayPerWeek end
-  local YearStartShift = DayPerWeek - self.YearStartWeekDay + 1
+  local YearStartShift = DayPerWeek - (f or self.YearStartWeekDay) + 1
 
   return divf(self:getYearDay(y, m, d) - 1 +
               DayPerWeek + YearStartDay - 1 -
               (YearStartDay > YearStartShift and DayPerWeek or 0),
               DayPerWeek)
 end ---- getYearWeek
+
+function TConfig:getMonthWeek (y, m, d) --> (number)
+  local self = self
+  
+  return self:getYearWeek(y, m, d, 1) - self:getYearWeek(y, m, 1, 1) + 1
+end ---- getMonthWeek
 
 -- Get day number of the week.
 -- Получение номера дня недели.
@@ -750,6 +759,11 @@ end ---- setYearDay
 function TDate:getYearWeek () --> (number)
   local self = self
   return self.config:getYearWeek(self.y, self.m, self.d)
+end ----
+
+function TDate:getMonthWeek () --> (number)
+  local self = self
+  return self.config:getMonthWeek(self.y, self.m, self.d)
 end ----
 
 function TDate:getWeekDay () --> (number)
