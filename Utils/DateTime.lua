@@ -81,11 +81,11 @@ local TConfig = {
   MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
-  -- TODO: Константы и функции для правильного учёта недели года и начала недели.
-  --WeekStartDay  = 2, -- Первый день недели:         понедельник
-  --YearStartWeek = 1, -- День первой недели года:    1-я января
-  --YearStartWeek = 4, -- День первой недели года:    4-я января
-  --YearStartWeek = 7, -- День первой недели года:    Первая полная неделя ??
+  -- TODO: Учёт начала недели и недели года.
+  --WeekStartDay     = 2, -- Первый день недели:         понедельник
+  --YearStartWeekDay = 1, -- День первой недели года:    01.01 = in US
+  YearStartWeekDay = 4, -- День первой недели года:    04.01 = ISO 8601
+  --YearStartWeekDay = 7, -- День первой недели года:    07.01 = Полная неделя!
 
   -- Rest week days.
   -- Выходные дни недели.
@@ -120,9 +120,9 @@ local TConfig = {
   }, -- YearDays
 
   -- Numbers of week days for last days of previous months
-  -- (provided that December 31 of previous year is Sunday).
+  -- (provided that December 31 of previous year is Sunday).
   -- Номера дней недели для последних дней предыдущих месяцев
-  -- (при условии, что 31 декабря предыущего года — воскресенье).
+  -- (при условии, что 31 декабря предыущего года — воскресенье).
   WeekDays = {
     0, 3, 3,
     6, 1, 4,
@@ -130,8 +130,8 @@ local TConfig = {
     0, 3, 5,
   }, -- WeekDays
 
-  -- Formats to output.
-  -- Форматы для вывода.
+  -- Formats to output.
+  -- Форматы для вывода.
   Formats = {
     World   = "%s",
     Type    = "%s",
@@ -149,7 +149,7 @@ local TConfig = {
     WeekDay   = "<%1d>",
   }, -- Formats
 
-  --filled = nil,         -- Признак заполненности
+  --filled = nil,   -- Признак заполненности
 } ---
 unit.DefConfig = TConfig
 
@@ -423,22 +423,21 @@ end ---- divYearDay
   y (number) - year.
   m (number) - month.
   d (number) - day.
-  f (number) - first day for first week (@default = 0).
 ---- @return:
   result (number) - week of year.
----- @notes:
-  The first week is a week with January 1 by default.
----- @notes:rus:
-  По умолчанию 1-й неделей считается неделя с 1-м января.
 --]]
-function TConfig:getYearWeek (y, m, d, f) --> (number)
+function TConfig:getYearWeek (y, m, d) --> (number)
   local self = self
-  local YearStartDay = self:getWeekDay(y, 01, 01)
 
-  return divf((f or 0) +
-              self:getYearDay(y, m, d) - 1 +
-              (YearStartDay == 0 and self.DayPerWeek or YearStartDay) - 1,
-              self.DayPerWeek) + 1
+  local DayPerWeek = self.DayPerWeek
+  local YearStartDay = self:getWeekDay(y, 1, 1)
+  if YearStartDay == 0 then YearStartDay = DayPerWeek end
+  local YearStartShift = DayPerWeek - self.YearStartWeekDay + 1
+
+  return divf(self:getYearDay(y, m, d) - 1 +
+              DayPerWeek + YearStartDay - 1 -
+              (YearStartDay > YearStartShift and DayPerWeek or 0),
+              DayPerWeek)
 end ---- getYearWeek
 
 -- Get day number of the week.
