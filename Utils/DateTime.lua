@@ -322,6 +322,30 @@ function TConfig:getYearMonths (y) --> (number)
   return self.MonthPerYear
 end ---- getYearMonths
 
+-- Count weeks in year.
+-- Количество недель в году.
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (number) - weeks count in year.
+--]]
+function TConfig:getYearWeeks (y) --> (number)
+  local self = self
+  return self:getYearWeek(self:getYearLastDay(y)) -
+         self:getYearWeek(y == -1 and 1 or y + 1, 1, 1)
+end ---- getYearWeeks
+
+-- Count days in year.
+-- Количество дней в году.
+--[[ @params:
+  y (number) - year.
+---- @return:
+  result (number) - days count in year.
+--]]
+function TConfig:getYearDays (y) --> (number)
+  return self.BaseYear + self:getLeapDays(y)
+end ---- getYearDays
+
 -- Count days in month.
 -- Количество дней в месяце.
 --[[ @params:
@@ -340,17 +364,6 @@ function TConfig:getMonthDays (y, m) --> (number)
   end
 end ---- getMonthDays
 
--- Count days in year.
--- Количество дней в году.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (number) - days count in year.
---]]
-function TConfig:getYearDays (y) --> (number)
-  return self.BaseYear + self:getLeapDays(y)
-end ---- getYearDays
-
 -- Get week day for last day of prior month.
 -- Получение дня недели для последнего дня предыдущего месяца.
 --[[ @params:
@@ -368,6 +381,21 @@ function TConfig:getWeekDays (y, m) --> (number)
     return (self.WeekDays[m] + self:getLeapDays(y)) % self.DayPerWeek
   end
 end ---- getWeekDays
+
+-- Get last day in year.
+-- Получение последнего дня в году.
+--[[ @params:
+  y (number) - year.
+---- @return:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+--]]
+function TConfig:getYearLastDay (y) --> (number)
+  local self = self
+  local m = self:getYearMonths(y)
+  return y, m, self:getMonthDays(y, m)
+end ---- getYearLastDay
 
 -- Get day number in year.
 -- Получение номера дня в году.
@@ -734,6 +762,11 @@ end ----
 function TDate:getMonthDays () --> (number)
   local self = self
   return self.config:getMonthDays(self.y, self.m)
+end ----
+
+function TDate:getYearWeeks () --> (bool)
+  --local self = self
+  return self.config:getYearWeeks(self.y)
 end ----
 
 function TDate:getYearDays () --> (bool)
