@@ -85,6 +85,7 @@ function ProcessEditorInput (rec) --> (bool)
       EditorSetPos(nil, Info.TotalLines - 1)
       TruncateLine()
       if band(CState, SHIFT) ~= 0 then -- Select
+        --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
         EditorSelect(nil,
                      band(CState, ALT) ~= 0 and BT_Column or BT_Stream,
                      Info.CurLine, Info.CurPos,
@@ -93,6 +94,7 @@ function ProcessEditorInput (rec) --> (bool)
       end
     else -- End of line
       TruncateLine()
+      -- TODO: Добавить поддержку восстановления выделения!!!
     end
   end -- if
 
