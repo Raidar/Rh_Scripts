@@ -512,6 +512,7 @@ function TMain:FillMainPart () --> (bool)
   local MonthDays = Start:getMonthDays()
   --logShow(Start, MonthDays, "w d2")
   local StartYearWeek = Start:getYearWeek()
+  local YearWeekCount = Start:getYearWeeks()
 
   local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
   if StartWeekDay == 0 then
@@ -567,7 +568,8 @@ function TMain:FillMainPart () --> (bool)
         end
 
       else
-        Text = MonthDayFmt:format(p and p <= 0 and 0 or p or q)
+        local day = p and p <= 0 and 0 or p or q
+        Text = day > 0 and MonthDayFmt:format(day) or ""
       end
 
       k = k + 1
@@ -592,8 +594,11 @@ function TMain:FillMainPart () --> (bool)
     end
 
     -- Номер недели года:
+    local week = StartYearWeek + i - 1 - StartWeekShift
+
     k = k + 1
-    t[k].text = Formats.YearWeek:format(StartYearWeek + i - 1 - StartWeekShift)
+    t[k].text = week > 0 and week <= YearWeekCount and
+                Formats.YearWeek:format(week) or ""
   end -- for
 
   self.Props.SelectIndex = SelIndex
@@ -640,6 +645,10 @@ end ---- FillNotePart
 function TMain:MakeMenu () --> (table)
   local self = self
 
+  -- TODO: Отвязать от привязки к DayPerWeek.
+  -- 1. Прописать минимум 7 + 2 строки.
+  -- 2. При DayPerWeek > 7 учесть в выводе информации.
+  -- 3. При DayPerWeek < 7 фиксировать лишние строки.
   local RowCount = self.RowCount
   -- Запоминание позиций для заполнения:
   self.FirstDayIndex  = RowCount * 3 + 1
