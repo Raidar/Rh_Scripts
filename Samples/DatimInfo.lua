@@ -44,9 +44,11 @@ local d = datim.newDate(dt.year, dt.month, dt.day)
 --local d = datim.newDate(2001, 01, 01) -- Check start of base year
 --local d = datim.newDate(2012, 12, 31) -- Check end   of leap year
 --local d = datim.newDate(2013, 01, 01) -- Check start of base year
---local d = datim.newDate(-001, 01, 01) -- Check start of base year BOE
---local d = datim.newDate(-001, 12, 31) -- Check start of base year BOE
---local d = datim.newDate(0001, 01, 01) -- Check start of base year OE
+--local d = datim.newDate(0000, 01, 01) -- Check start of base year BCE = -1
+--local d = datim.newDate(0000, 12, 31) -- Check start of base year BCE = -1
+--local d = datim.newDate(-001, 01, 01) -- Check start of base year - 1 BCE
+--local d = datim.newDate(-001, 12, 31) -- Check start of base year - 1 BCE
+--local d = datim.newDate(0001, 01, 01) -- Check start of base year ACE
 --local d = datim.newDate(2013, 03, 04)
 
 local c = d.config
