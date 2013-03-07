@@ -184,7 +184,8 @@ function TMain:InitData ()
   local dt = CfgData.dt or os.date("*t")
   self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
   self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
-  self.YearMin = CfgData.YearMin or 1
+  --self.YearMin = CfgData.YearMin or 1
+  self.YearMin = CfgData.YearMin or -9999 + 1
   self.YearMax = CfgData.YearMax or 9999
 
   local DT_cfg = self.Date.config
@@ -439,12 +440,15 @@ function TMain:FillInfoPart () --> (bool)
   local WeekDayNames   = (wL or Null).WeekDay or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
+  -- TODO: Реализовать свойство в TDate!
+  local y = Date.y > 0 and Date.y or Date.y - 1
+
   local ItemDatas = {
     World     = self.World ~= "Terra" and
                 Formats.World:format(wL.World) or "",
-    Year      = Formats.Year:format(Date.y),
+    Year      = Formats.Year:format(y),
     Month     = (YearMonthNames[0] or Null)[Date.m],
-    Date      = Formats.Date:format(Date.y, Date.m, Date.d),
+    Date      = Formats.Date:format(y, Date.m, Date.d),
     Time      = Time and Formats.Time:format(Time.h, Time.n, Time.s) or "",
     WeekDay   = (WeekDayNames[0] or Null)[Date:getWeekDay()],
 
@@ -541,8 +545,10 @@ function TMain:FillMainPart () --> (bool)
   local k = self.FirstDayIndex - 1
   for i = 1, WeekMax do
     -- Номер недели месяца:
+    local week = i - StartWeekShift
+
     k = k + 1
-    t[k].text = Formats.MonthWeek:format(i - StartWeekShift)
+    t[k].text = week > 0 and Formats.MonthWeek:format(week) or ""
 
     -- Дни недели:
     for j = 1, DayPerWeek do
@@ -594,7 +600,7 @@ function TMain:FillMainPart () --> (bool)
     end
 
     -- Номер недели года:
-    local week = StartYearWeek + i - 1 - StartWeekShift
+    week = StartYearWeek + i - 1 - StartWeekShift
 
     k = k + 1
     t[k].text = week > 0 and week <= YearWeekCount and
@@ -937,8 +943,15 @@ function TMain:AssignEvents () --> (bool | nil)
 
     elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
       if AKey == "Clear" or AKey == "Multiply" then
-        self:InitData()
-        return MakeUpdate()
+        if Date.y == 1 and Date.m == 1 and Date.d == 1 then
+          Date.y = 1
+          Date.m = Date:getYearMonths()
+          Date.d = Date:getMonthDays()
+        else
+          Date.y = 1
+          Date.m = 1
+          Date.d = 1
+        end
       elseif AKey == "PgUp" then
         Date.y = (divf(Date.y, 1000) - 1) * 1000 + 1
         Date.m = 1
@@ -948,7 +961,7 @@ function TMain:AssignEvents () --> (bool | nil)
         Date.m = Date:getYearMonths()
         Date.d = Date:getMonthDays()
       elseif AKey == "Home" then
-        Date.y = 1
+        Date.y = -9998
         Date.m = 1
         Date.d = 1
       elseif AKey == "End" then
