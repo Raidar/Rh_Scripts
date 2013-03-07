@@ -332,7 +332,7 @@ end ---- getYearMonths
 function TConfig:getYearWeeks (y) --> (number)
   local self = self
   return self:getYearWeek(self:getYearLastDay(y)) -
-         self:getYearWeek(y == -1 and 1 or y + 1, 1, 1)
+         self:getYearWeek(y + 1, 1, 1)
 end ---- getYearWeeks
 
 -- Count days in year.
@@ -427,6 +427,14 @@ end ---- getYearDay
 --]]
 function TConfig:divYearDay (y, r) --> (m, d)
   local self = self
+
+  if r == 0 then
+    local MonthPerYear = self.MonthPerYear
+    return MonthPerYear, self.MonthDays[MonthPerYear]
+  end
+
+  if r < 0 then r = -r end
+
   local YearDays = self.YearDays
 
   if r <= YearDays[1] then
@@ -499,7 +507,8 @@ function TConfig:getWeekDay (y, m, d) --> (number)
   local r, s = divm(R, 4)       --   4⋅r + s
 
   --return (5 * (q + r) + s + self:getYearDay(y, m, d)) % self.DayPerWeek
-  return (5 * (q + r) + s + self:getWeekDays(y, m) + d) % self.DayPerWeek
+  return (5 * (q + r) + s +
+          self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 
 -- Get day number of the common era.
@@ -514,6 +523,7 @@ end ---- getWeekDay
 function TConfig:getEraDay (y, m, d) --> (number)
 
   local P, R = divm(y - 1, 100) -- 100⋅P + R
+  --local P, R = divm(y - i, 100) -- 100⋅P + R
   local p, q = divm(P, 4)       --   4⋅p + q
   local r, s = divm(R, 4)       --   4⋅r + s
   --logShow({ P, R, p, q, r, s }, "getYearDay", "w d2")
@@ -522,6 +532,8 @@ function TConfig:getEraDay (y, m, d) --> (number)
            1461 * r +   365 * s +
          self:getYearDay(y, m, d)
 end ---- getEraDay
+
+--local abs, sign = math.abs, numbers.sign
 
 -- Divide day number of the common era into date.
 -- Выделение даты из номера дня нашей эры.
@@ -533,11 +545,18 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
-  --local E = e
-  local e = e
+  local e, i = e, 1
+  if e <= 0 then
+    e, i = -e, -1
+  end
+  --local E = e -- for log only
 
   if e <= 365 then
-    return 1, self:divYearDay(1, e)
+    if i > 0 then
+      return 1, self:divYearDay(1, e)       -- н.э.
+    else
+      return 0, self:divYearDay(0, 366 - e) -- до н.э.
+    end
   end
 
   e = e - 365
@@ -555,12 +574,10 @@ function TConfig:divEraDay (e) --> (y, m, d)
 
   local y = 100 * P + R
 
-  y = y + 1
-  e = e + 365
+  y, e = y + 1, e + 365
   local yd = self:getYearDays(y)
   if e > yd then
-    y = y + 1
-    e = e - yd
+    y, e = y + 1, e - yd
   end
 
   --[[
@@ -569,7 +586,12 @@ function TConfig:divEraDay (e) --> (y, m, d)
             "divEraDay", "w d2")
   --]]
 
-  return y, self:divYearDay(y, e)
+  if i > 0 then
+    return y, self:divYearDay(y, e)
+  else
+    y = y - 1
+    return -y, self:divYearDay(y, 366 - e)
+  end
 end ---- divEraDay
 
 -- Get month number of the common era.
@@ -620,12 +642,6 @@ end ---- isDate
 -- Fix year for year ±1.
 -- Исправление года для года ±1.
 function TConfig:fixYear (date, shift) --> (date)
-  local date = date
-
-  if date.y == 0 then
-    date.y = date.y + shift -- No zero year!
-  end
-
   return date
 end ---- fixYear
 
@@ -869,7 +885,18 @@ end ----
 -- Сдвиг на заданное число дней.
 function TDate:shd (count) --> (self)
   local self = self
-  return self:setEraDay(self:getEraDay() + count)
+
+  local e = self:getEraDay()
+  local f = e + count
+  --[[
+  if e > 0 and f < 0 then
+    f = f + 1
+  elseif e < 0 and f > 0 then
+    f = f - 1
+  end
+  --]]
+
+  return self:setEraDay(f)
 end ---- shd
 
 ---------------------------------------- ---- to & from
