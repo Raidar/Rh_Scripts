@@ -15,8 +15,8 @@
 --]]
 --------------------------------------------------------------------------------
 
-local type, assert = type, assert
-local pairs, ipairs = pairs, ipairs
+local type = type
+local pairs = pairs
 local setmetatable = setmetatable
 
 ----------------------------------------
