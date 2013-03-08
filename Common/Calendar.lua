@@ -131,7 +131,7 @@ local function CreateMain (ArgData)
     L         = false,
 
     -- Текущее состояние:
-    DT_Cfg    = false,    -- Конфигурация даты+времени
+    DT_cfg    = false,    -- Конфигурация даты+времени
     Date      = false,    -- Дата
     Time      = false,    -- Время
 
@@ -141,7 +141,9 @@ local function CreateMain (ArgData)
 
     YearMin   = false,    -- Минимально допустимый год
     YearMax   = false,    -- Максимально допустимый год
-    WeekMax   = false,    -- Максимальное число недель в месяце
+
+    WeekRows  = false,    -- Число строк для дней в неделе
+    WeekCols  = false,    -- Число столбцов для недель в месяце
 
     Fetes     = false,    -- Даты событий
 
@@ -211,7 +213,8 @@ function TMain:InitData ()
   --self.YearMin = CfgData.YearMin or 1
   self.YearMin  = CfgData.YearMin or -9998
   self.YearMax  = CfgData.YearMax or  9999
-  self.WeekMax  = DT_cfg.MonthDays.WeekMax
+  self.WeekRows = DT_cfg.DayPerWeek
+  self.WeekCols = DT_cfg.MonthDays.WeekMax
 
   return true
 end ---- InitData
@@ -353,8 +356,11 @@ function TMain:MakeProps ()
                      wL.YearMonth[0].MaxLen -- YearMonth max
                     )
 
-  self.RowCount = 1 + DT_cfg.DayPerWeek + 1
-  self.ColCount = 3 + self.WeekMax + 1
+  self.InfoRows = 7
+  self.InfoCols = 3
+  self.RowLimit = max(self.WeekRows, self.InfoRows)
+  self.RowCount = 1 + self.RowLimit + 1
+  self.ColCount = self.InfoCols + self.WeekCols + 1
 
   -- Свойства RectMenu:
   local RM_Props = {
@@ -363,8 +369,8 @@ function TMain:MakeProps ()
     --Cols = self.ColCount,
     Fixed = {
       HeadRows = 1,
-      FootRows = 1,
-      HeadCols = 3,
+      FootRows = self.RowCount - 1 - self.WeekRows,
+      HeadCols = self.InfoCols,
       FootCols = 1,
     },
 
@@ -436,9 +442,6 @@ function TMain:FillInfoPart () --> (bool)
   --local World = self.World
   local DT_cfg = self.DT_cfg
 
-  --local DayPerWeek = DT_cfg.DayPerWeek
-  --local WeekMax = self.WeekMax
-
   local RowCount = self.RowCount
   local ItemNames = {
     World     = RowCount + 1,
@@ -460,8 +463,8 @@ function TMain:FillInfoPart () --> (bool)
                      2,                5,                8, -- 1
       RowCount     + 2, RowCount     + 5, RowCount     + 8, -- 2
       RowCount * 2 + 2, RowCount * 2 + 5, RowCount * 2 + 8, -- 3
-                     1,                                  9, -- 1*
-      RowCount * 2 + 1,                   RowCount * 2 + 9, -- 3*
+                     1,                   RowCount * 1,     -- 1*
+      RowCount * 2 + 1,                   RowCount * 3,     -- 3*
     }, --
 
   } -- ItemNames
@@ -536,7 +539,7 @@ function TMain:FillMainPart () --> (bool)
   local self = self
 
   local Date = self.Date
-  local WeekMax = self.WeekMax
+  local WeekCols = self.WeekCols
 
   local DT_cfg = Date.config
   local Formats = DT_cfg.Formats
@@ -578,7 +581,8 @@ function TMain:FillMainPart () --> (bool)
   local SelIndex    -- Индекс пункта с текущей датой
 
   local k = self.FirstDayIndex - 1
-  for i = 1, WeekMax do
+  local EndRows = self.InfoRows - self.WeekRows
+  for i = 1, WeekCols do
     -- Номер недели месяца:
     local week = i - StartWeekShift
 
@@ -641,6 +645,14 @@ function TMain:FillMainPart () --> (bool)
     k = k + 1
     t[k].text = week > 0 and week <= YearWeekCount and
                 Formats.YearWeek:format(week) or ""
+
+    if EndRows > 0 then k = k + EndRows end -- Пропуск
+    --[[
+    for j = 1, self.InfoRows - self.WeekRows do
+      k = k + 1
+      --t[k].Label = true
+    end
+    --]]
   end -- for
 
   self.Props.SelectIndex = SelIndex
@@ -687,20 +699,16 @@ end ---- FillNotePart
 function TMain:MakeMenu () --> (table)
   local self = self
 
-  -- TODO: Отвязать от привязки к DayPerWeek.
-  -- 1. Прописать минимум 7 + 2 строки.
-  -- 2. При DayPerWeek > 7 учесть в выводе информации.
-  -- 3. При DayPerWeek < 7 фиксировать лишние строки.
-  local RowCount = self.RowCount
+  local RowCount, ColCount = self.RowCount, self.ColCount
   -- Запоминание позиций для заполнения:
-  self.FirstDayIndex  = RowCount * 3 + 1
-  self.FirstWeekIndex = RowCount * (3 + self.WeekMax) + 1
+  self.FirstDayIndex  = RowCount * self.InfoCols + 1
+  self.FirstWeekIndex = RowCount * (ColCount - 1) + 1
 
   local t = {}
   self.Items = t
 
   -- Формирование пунктов:
-  for _ = 1, 3 + self.WeekMax + 1 do
+  for _ = 1, ColCount do
     for _ = 1, RowCount do
       t[#t+1] = {
         text = "",
