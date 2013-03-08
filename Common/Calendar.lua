@@ -520,7 +520,9 @@ function TMain:FillMainPart () --> (bool)
   local MonthDays = Start:getMonthDays()
   --logShow(Start, MonthDays, "w d2")
   local StartYearWeek = Start:getYearWeek()
+
   local YearWeekCount = Start:getYearWeeks()
+  local MonthWeekCount = Start:getMonthWeeks()
 
   local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
   if StartWeekDay == 0 then
@@ -552,7 +554,8 @@ function TMain:FillMainPart () --> (bool)
     local week = i - StartWeekShift
 
     k = k + 1
-    t[k].text = week > 0 and Formats.MonthWeek:format(week) or ""
+    t[k].text = week > 0 and week <= MonthWeekCount and
+                Formats.MonthWeek:format(week) or ""
 
     -- Дни недели:
     for j = 1, DayPerWeek do

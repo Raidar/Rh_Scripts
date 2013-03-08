@@ -3,8 +3,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- .
-  -- .
+  -- Fete and memorial days.
+  -- Праздничные и памятные дни.
 --]]
 --------------------------------------------------------------------------------
 
@@ -85,13 +85,13 @@ local Data = {
     Note = L.WorldCosmonauticsDay, },
   { y = false, m = 7, mweek = -1, wday = 5,
     start = { y = 2000, m = 7, d = 28, },
-    --format = "mweek-wday",
+    format = "mwd",
     Kind = "prof",
     Note = L.SystemAdminsDay, },
   { yday = 256, -- 2^8:
     -- y = false, m = 9, d = 12 or 13,
     start = { y = 1996, m = 7, d = 15, },
-    --format = "yday",
+    format = "yday",
     Kind = "prof",
     Note = L.ProgrammersDay, },
   { y = 1863, m = 9, d = 27,
