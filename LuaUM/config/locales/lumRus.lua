@@ -55,8 +55,9 @@ local Data = {
   ----------------------------------------
   -- Addon scripts
   AddonScripts      = "&A - Дополнения",
-    AddonCalendar       = "&C - Календарь",
-
+    AddonTerraCalendar  = "&C - Календарь",
+    AddonPernCalendar   = "&P - Пернский календарь",
+    
   ----------------------------------------
   -- Other scripts
   OtherScripts      = "&O - Разные скрипты",

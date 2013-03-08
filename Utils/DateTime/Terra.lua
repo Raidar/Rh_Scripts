@@ -468,8 +468,6 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
---local abs, sign = math.abs, numbers.sign
-
 -- Divide day number of the common era into date.
 -- Выделение даты из номера дня нашей эры.
 --[[ @params:
@@ -480,6 +478,8 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
+  local self = self
+
   local e, i = e, 1
   if e <= 0 then
     e, i = -e, -1

@@ -9,6 +9,7 @@
 
 ----------------------------------------
 --local context = context
+local logShow = context.ShowInfo
 
 local locale = require 'context.utils.useLocale'
 
@@ -35,21 +36,45 @@ local mSeparator = {
 } ---
 
 ---------------------------------------- Calendar
-function unit.Calendar ()
-  local Unit = require "Rh_Scripts.Common.Calendar"
+function unit.TerraCalendar ()
+  local Calendar = require "Rh_Scripts.Common.Calendar"
 
   return {
-    text = L.AddonCalendar,
-    Function = Unit.Execute,
+    text = L.AddonTerraCalendar,
+    Function = Calendar.Execute,
   } ----
-end ---- Calendar
+end ---- TerraCalendar
 
+function unit.PernCalendar ()
+  local datim = require "Rh_Scripts.Utils.DateTime"
+  local Calendar = require "Rh_Scripts.Common.Calendar"
+  local cfgWorld = require "Rh_Scripts.Utils.DateTime.Pern"
+  --logShow(cfgWorld, "Pern Config", "w d2")
+
+  local Config = datim.newConfig(cfgWorld.TConfig)
+  local Data = {
+    Config = Config,
+    dt = "",
+    Date = datim.newDate(2508, 1, 1, Config),
+    Time = datim.newTime(0, 0, 0, Config),
+    YearMin = -200,
+    YearMax = 5000,
+  } --- Data
+
+  return {
+    text = L.AddonPernCalendar,
+    Function = Calendar.Execute,
+    Arguments = Data,
+  } ----
+end ---- PernCalendar
 
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts
   text = L.AddonScripts,
   Items = {
-    unit.Calendar,
+    unit.TerraCalendar,
+    mSeparator,
+    unit.PernCalendar,
   } ---
 } --- mScripts
 
