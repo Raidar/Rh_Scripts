@@ -34,8 +34,8 @@ local logShow = context.ShowInfo
 
 local numbers = require 'context.utils.useNumbers'
 
-local divf  = numbers.divf
-local divm  = numbers.divm
+--local divf  = numbers.divf
+--local divm  = numbers.divm
 local round = numbers.round
 
 ----------------------------------------
@@ -145,7 +145,7 @@ function unit.fillCfgTables (Config) --|> Config
     Config.RestWeekDays = {}
   end
 
-  unit.fillMonthDaysData(Config.MonthDays)
+  unit.fillMonthDaysData(Config.MonthDays, Config.DayPerWeek)
 
   if not Config.YearDays then
     Config.YearDays = unit.findYearDays(Config.MonthDays)
@@ -165,7 +165,7 @@ end ---- fillCfgTables
 -- Fill derived constants.
 -- Заполнение производных констант.
 function unit.fillConfig (Config) --|> Config
-  if Config.filled then return end
+  if Config.filled then return Config end
 
   unit.fillCfgDate(Config)
 
@@ -288,7 +288,7 @@ end ----
 function TDate:setEraMonth (r) --> (y, m)
   local self = self
 
-  local y, m, d = self.config:divEraMonth(r)
+  local y, m = self.config:divEraMonth(r)
   self.y = y
   self.m = m
 
@@ -588,11 +588,12 @@ end ---- from_n
 function TTime:from_s (v) --> (self)
   local c, v = self.config, v
 
-  local x = c.SecPerHour
+  local x
+  x = c.SecPerHour
   self.h = floor(v / x)
   v = v - self.h * x
 
-  local x = c.SecPerMin
+  x = c.SecPerMin
   self.n = floor(v / x)
   v = v - self.n * x
 
@@ -606,15 +607,16 @@ function TTime:from_z (v) --> (self)
   local self = self
   local c, v = self.config, v
 
-  local x = c.MSecPerHour
+  local x
+  x = c.MSecPerHour
   self.h = floor(v / x)
   v = v - self.h * x
 
-  local x = c.MSecPerMin
+  x = c.MSecPerMin
   self.n = floor(v / x)
   v = v - self.n * x
 
-  local x = c.MSecPerSec
+  x = c.MSecPerSec
   self.s = floor(v / x)
   self.z = v - self.s * x
 
