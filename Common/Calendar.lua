@@ -324,6 +324,10 @@ function TMain:MakeProps ()
   local wL = L[self.World]
   local DT_cfg = self.DT_cfg
 
+  local Type = DT_cfg.Type
+  Props.Bottom = wL[Type]
+  --logShow(wL[Type], Type, "wM")
+
   self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
                      DT_cfg.Formats.TimeLen,-- Time length
                      wL.Name:len() + 2,     -- World name
