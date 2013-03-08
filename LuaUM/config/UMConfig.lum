@@ -45,17 +45,17 @@ local mConfig = {
     { text = L.ConfigBasic,
       Script = "LumDialog.lua",
       Function = 'LUM_Dlger("Basic")',
-      Relative = "default" },
+      Relative = "default", },
     -- Files --
     { text = L.ConfigFiles,
       Script = "LumDialog.lua",
       Function = 'LUM_Dlger("Files")',
-      Relative = "default" },
+      Relative = "default", },
     -- UMenu --
     { text = L.ConfigUMenu,
       Script = "LumDialog.lua",
       Function = 'LUM_Dlger("UMenu")',
-      Relative = "default" },
+      Relative = "default", },
   } ---
 } --- Config
 
@@ -63,8 +63,8 @@ local mConfig = {
 local Data = {
   Menu = {
     text = L.ConfigMenu,
-    Items = { mConfig },
-    --Items = { mCfgSep, mConfig },
+    Items = { mConfig, },
+    --Items = { mCfgSep, mConfig, },
   },
 
   ["Config"] = mConfig,
