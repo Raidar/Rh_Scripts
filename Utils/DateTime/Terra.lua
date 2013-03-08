@@ -20,6 +20,7 @@ local setmetatable = setmetatable
 local logShow = context.ShowInfo
 
 local numbers = require 'context.utils.useNumbers'
+local locale = require 'context.utils.useLocale'
 
 local divf = numbers.divf
 local divm = numbers.divm
@@ -27,6 +28,31 @@ local divm = numbers.divm
 --------------------------------------------------------------------------------
 local unit = {}
 
+---------------------------------------- Main data
+unit.ScriptName = "Terra"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
+
+---------------------------------------- ---- Custom
+unit.DefCustom = {
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
+
+  label = unit.ScriptName,
+
+  help   = { topic = unit.ScriptName, },
+  locale = {
+    kind = 'load',
+  }, --
+} -- DefCustom
+
+-- [[
+local L, e1, e2 = locale.localize(nil, unit.DefCustom)
+if L == nil then
+  return locale.showError(e1, e2)
+end
+
+--logShow(L, "L", "wM")
+--]]
 ---------------------------------------- Config class
 local TConfig = {
   World         = "Terra",          -- Мир
@@ -134,6 +160,8 @@ local TConfig = {
     MonthWeek = "%1d",
     WeekDay   = "<%1d>",
   }, -- Formats
+
+  LocData = L,
 
   --filled = nil,   -- Признак заполненности
 } ---

@@ -96,6 +96,7 @@ local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
 end
+
 logShow(L, "L", "wM")
 --]]
 ---------------------------------------- ---- Config
@@ -130,9 +131,17 @@ local function CreateMain (ArgData)
     L         = false,
 
     -- Текущее состояние:
-    World     = false,    -- Мир
+    DT_Cfg    = false,    -- Конфигурация даты+времени
     Date      = false,    -- Дата
     Time      = false,    -- Время
+
+    World     = false,    -- Мир
+    Type      = false,    -- Тип календаря
+    wL        = false,    -- Локализация конфигурации
+
+    YearMin   = false,    -- Минимально допустимый год
+    YearMax   = false,    -- Максимально допустимый год
+    WeekMax   = false,    -- Максимальное число недель в месяце
 
     Fetes     = false,    -- Даты событий
 
@@ -149,7 +158,7 @@ local function CreateMain (ArgData)
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logShow(self.ArgData, "ArgData")
+  --logShow(self.ArgData, "ArgData", "wA d2")
   self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
   self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
@@ -157,12 +166,15 @@ local function CreateMain (ArgData)
   self.CfgData = self.History:field(self.Custom.history.field)
 
   local CfgData = self.CfgData
-  self.Menu = CfgData.Menu or {}
+  --self.Menu = CfgData.Menu or {}
   --self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
   --self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
 
   setmetatable(self.CfgData, { __index = self.ArgData })
-  --logShow(self.CfgData, "CfgData")
+  --logShow(self.CfgData, "CfgData", "w")
+
+  self.DT_cfg = datim.newConfig(CfgData.Config)
+  --logShow(self.DT_cfg, "DT_cfg", "wA d2")
 
   locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
@@ -180,19 +192,25 @@ do
 function TMain:InitData ()
   local self = self
   local CfgData = self.CfgData
+  --logShow(CfgData, "CfgData")
+
+  local DT_cfg = self.DT_cfg
+  --logShow(DT_cfg, "DT_cfg", "w d3")
 
   local dt = CfgData.dt or os.date("*t")
-  self.Date = CfgData.Date or datim.newDate(dt.year, dt.month, dt.day)
-  self.Time = CfgData.Time or datim.newTime(dt.hour, dt.min, dt.sec)
-  --self.YearMin = CfgData.YearMin or 1
-  self.YearMin = CfgData.YearMin or -9999 + 1
-  self.YearMax = CfgData.YearMax or 9999
-
-  local DT_cfg = self.Date.config
-  self.DT_cfg = DT_cfg
+  self.Date = CfgData.Date and CfgData.Date:copy() or
+              datim.newDate(dt.year, dt.month, dt.day, DT_cfg)
+  self.Time = CfgData.Time and CfgData.Time:copy() or
+              datim.newTime(dt.hour, dt.min, dt.sec, DT_cfg)
+  --logShow(self.Date, "Default Date", "w d1")
 
   self.World    = DT_cfg.World
   self.Type     = DT_cfg.Type
+  self.wL       = DT_cfg.LocData
+
+  --self.YearMin = CfgData.YearMin or 1
+  self.YearMin  = CfgData.YearMin or -9998
+  self.YearMax  = CfgData.YearMax or  9999
   self.WeekMax  = DT_cfg.MonthDays.WeekMax
 
   return true
@@ -206,7 +224,7 @@ function TMain:InitFetes ()
 
   Options.FeteName = self.World
 
-  self.Fetes = prequire(Options.BaseDir..Options.FeteName)
+  self.Fetes = prequire(Options.BaseDir..Options.FeteName) or {}
   --logShow(self.Fetes, "Fetes", "w d3")
 
   return true
@@ -232,12 +250,13 @@ end ---- Localize
 function TMain:MakeLocLen () --> (bool)
   local self = self
 
-  local World = self.World
-  local L = self.LocData[World]
-  --logShow(L, World, "w d2")
+  local wL = self.wL
+  if not wL then return end
+
+  --logShow(L, self.World, "w d2")
 
   do -- Названия дней недели
-    local WeekDay = L.WeekDay[0]
+    local WeekDay = wL.WeekDay[0]
 
     local MaxLen = WeekDay[0]:len()
     for k = 1, #WeekDay do
@@ -249,7 +268,7 @@ function TMain:MakeLocLen () --> (bool)
   end
 
   do -- Названия месяцев года
-    local YearMonth = L.YearMonth[0]
+    local YearMonth = wL.YearMonth[0]
 
     local MaxLen = YearMonth[1]:len()
     for k = 2, #YearMonth do
@@ -312,7 +331,7 @@ function TMain:MakeProps ()
   local self = self
 
   -- Свойства меню:
-  local Props = self.Menu.Props or {}
+  local Props = self.CfgData.Props or {}
   self.Props = Props
 
   Props.Id = Props.Id or self.Guid
@@ -321,12 +340,11 @@ function TMain:MakeProps ()
   local L = self.LocData
   Props.Title  = L.Calendar
 
-  local wL = L[self.World]
+  local wL = self.wL
   local DT_cfg = self.DT_cfg
 
-  local Type = DT_cfg.Type
-  Props.Bottom = wL[Type]
-  --logShow(wL[Type], Type, "wM")
+  Props.Bottom = wL[DT_cfg.Type]
+  --logShow(Props.Bottom, DT_cfg.Type, "wM d1")
 
   self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
                      DT_cfg.Formats.TimeLen,-- Time length
@@ -366,6 +384,11 @@ function TMain:MakeProps ()
   return true
 end ---- MakeProps
 
+local Msgs = {
+  NoLocale      = "No localization",
+  NoWorldLocale = 'No localization for world "%s"',
+} ---
+
 -- Подготовка.
 -- Preparing.
 function TMain:Prepare ()
@@ -373,8 +396,14 @@ function TMain:Prepare ()
   self:InitData()
   self:InitFetes()
 
-  self:Localize()
-  self:MakeLocLen()
+  if not self:Localize() then
+    self.Error = Msgs.NoLocale
+    return
+  end
+  if not self:MakeLocLen() then
+    self.Error = Msgs.NoWorldLocale:format(self.World or "Unknown")
+    return
+  end
 
   self:MakeFetes()
 
@@ -440,7 +469,7 @@ function TMain:FillInfoPart () --> (bool)
   local Formats = DT_cfg.Formats
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local wL = L[self.World]
+  local wL = self.wL
   local WeekDayNames   = (wL or Null).WeekDay or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
@@ -449,7 +478,7 @@ function TMain:FillInfoPart () --> (bool)
 
   local ItemDatas = {
     World     = self.World ~= "Terra" and
-                Formats.World:format(wL.World) or "",
+                Formats.World:format(wL.Name) or "",
     Year      = Formats.Year:format(y),
     Month     = (YearMonthNames[0] or Null)[Date.m],
     Date      = Formats.Date:format(y, Date.m, Date.d),
@@ -469,7 +498,7 @@ function TMain:FillInfoPart () --> (bool)
 
   --[[
   local ItemHints = {
-    World     = Formats.Type:format(wL[self.Type]),
+    World     = Formats.Type:format(wL[DT_cfg.Type]),
   } --- ItemHints
   --]]
 
@@ -629,7 +658,7 @@ function TMain:FillNotePart () --> (bool)
 
   local L, Null = self.LocData, Null
   --logShow(L, "L", "wM")
-  local wL = L[self.World]
+  local wL = self.wL
   local WeekDayNames = (wL or Null).WeekDay or Null
   local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
 
@@ -1064,12 +1093,14 @@ end -- Run
 
 function unit.Execute (Data) --> (bool | nil)
 
+  --logShow(Data, "Data", "w d2")
+
   local _Main = CreateMain(Data)
   if not _Main then return end
 
-  --logShow(Data, "Data", 2)
-  --logShow(_Main, "Config", "_d2")
-  --logShow(_Main.CfgData, "CfgData", 2)
+  --logShow(Data, "Data", "w d2")
+  --logShow(_Main, "Config", "w _d2")
+  --logShow(_Main.CfgData, "CfgData", "w d2")
   --if not _Main.CfgData.Enabled then return end
 
   _Main:Prepare()

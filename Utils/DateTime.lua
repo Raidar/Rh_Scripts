@@ -47,8 +47,9 @@ local unit = {}
 ---------------------------------------- Config
 
 function unit.newConfig (Config) --|> Config
+  --logShow (Config, "Config", "wA d3")
 
-  local self = cfgTerra.newConfig(Config)
+  local self = cfgTerra.newConfig(Config ~= cfgTerra.TConfig and Config)
 
   if Config then
     return unit.fillConfig(self)
