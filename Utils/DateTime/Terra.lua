@@ -15,18 +15,14 @@
 
 local setmetatable = setmetatable
 
-local modf  = math.modf
-local floor = math.floor
-
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
 
 local numbers = require 'context.utils.useNumbers'
 
-local divf  = numbers.divf
-local divm  = numbers.divm
-local round = numbers.round
+local divf = numbers.divf
+local divm = numbers.divm
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -39,28 +35,28 @@ local TConfig = {
   YearMin       = 1583,
   YearMax       = 9999,
 
-  YearPerAge    =  100, -- Век:             1 Age       =  100 Years
-  MonthPerYear  =   12, -- Год:             1 Year      =   12 Months
-  DayPerWeek    =    7, -- Неделя:          1 Week      =    7 Days
-  HourPerDay    =   24, -- День:            1 Day       =   24 Hours
-  MinPerHour    =   60, -- Час:             1 Hour      =   60 Minutes
-  SecPerMin     =   60, -- Минута:          1 Minute    =   60 Seconds
+  YearPerAge    =  100,     -- Век:             1 Age       =  100 Years
+  MonthPerYear  =   12,     -- Год:             1 Year      =   12 Months
+  DayPerWeek    =    7,     -- Неделя:          1 Week      =    7 Days
+  HourPerDay    =   24,     -- День:            1 Day       =   24 Hours
+  MinPerHour    =   60,     -- Час:             1 Hour      =   60 Minutes
+  SecPerMin     =   60,     -- Минута:          1 Minute    =   60 Seconds
 
-  MSecPerSec    = 1000, -- Секунда:         1 Second    = 1000 Milliseconds
+  MSecPerSec    = 1000,     -- Секунда:         1 Second    = 1000 Milliseconds
 
-  DSecPerSec    =   10, -- Число дсек в сек:    1 Sec   =   10 dSecs
-  CSecPerSec    =  100, -- Число ссек в сек:            =  100 cSecs
-  MSecPerDSec   =  100, -- Число мсек в дсек:   1 dSec  =  1000 /  10 mSecs
-  MSecPerCSec   =   10, -- Число мсек в ссек:   1 cSec  =  1000 / 100 mSecs
+  DSecPerSec    =   10,     -- Число дсек в сек:    1 Sec   =   10 dSecs
+  CSecPerSec    =  100,     -- Число ссек в сек:            =  100 cSecs
+  MSecPerDSec   =  100,     -- Число мсек в дсек:   1 dSec  =  1000 /  10 mSecs
+  MSecPerCSec   =   10,     -- Число мсек в ссек:   1 cSec  =  1000 / 100 mSecs
 
-  QuarterPerYear  =  4, -- Квартальный год: 1 Year          = 4 Quarters
-  MonthPerQuarter =  3, -- Квартал:         1 Quarter       = 12 / 4 Months
+  QuarterPerYear  =  4,     -- Квартальный год: 1 Year          = 4 Quarters
+  MonthPerQuarter =  3,     -- Квартал:         1 Quarter       = 12 / 4 Months
 
-  BaseYear      =  365, -- Обычный год:     1 Base Year     = 365 Days
-  LeapYear      =  366, -- Високосный год:  1 Leap Year     = 365 + 1 Days
-  MoonMonth     =   28, -- Лунный месяц:    1 Moon Month    = 28 Days
-  MeanYear    =  365.4, -- Средний год:     1 Mean Year     ~ 365.4 Days
-  MeanMonth   =  30.45, -- Средний месяц:   1 Mean Month    ~ 365.4 / 12 Days
+  BaseYear      =  365,     -- Обычный год:     1 Base Year     = 365 Days
+  LeapYear      =  366,     -- Високосный год:  1 Leap Year     = 365 + 1 Days
+  MoonMonth     =   28,     -- Лунный месяц:    1 Moon Month    = 28 Days
+  MeanYear  =  365.2425,    -- Средний год:     1 Mean Year
+  MeanMonth = 30.436875,    -- Средний месяц:   1 Mean Month
 
                             -- Множители:               час  мин  сек  мсек
   MinPerDay     =     1440, -- Число минут в день:       24 * 60
@@ -97,7 +93,7 @@ local TConfig = {
     Max = 31,
     WeekMin = 4 + 1,
     WeekMax = 5 + 1,
-  }, -- MonthDays 
+  }, -- MonthDays
 
   -- Year' days count by months.
   -- Количество дней в году по месяцам:
@@ -110,9 +106,9 @@ local TConfig = {
   }, -- YearDays
 
   -- Numbers of week days for last days of previous months
-  -- (provided that December 31 of previous year is Sunday).
+  -- (provided that last day of previous year is Sunday).
   -- Номера дней недели для последних дней предыдущих месяцев
-  -- (при условии, что 31 декабря предыущего года — воскресенье).
+  -- (при условии, что последний день предыдущего года — воскресенье).
   WeekDays = {
     0, 3, 3,
     6, 1, 4,
@@ -141,10 +137,12 @@ local TConfig = {
 
   --filled = nil,   -- Признак заполненности
 } ---
-unit.DefConfig = TConfig
+unit.TConfig = TConfig
 
 do
   local MConfig = { __index = TConfig }
+
+unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
   local self = Config or {}
@@ -299,8 +297,7 @@ function TConfig:divYearDay (y, r) --> (m, d)
   local self = self
 
   if r == 0 then
-    local MonthPerYear = self.MonthPerYear
-    return MonthPerYear, self.MonthDays[MonthPerYear]
+    return 12, self:getMonthDays(y, 12)
   end
 
   if r < 0 then r = -r end
@@ -314,14 +311,13 @@ function TConfig:divYearDay (y, r) --> (m, d)
   end
 
   local r = r - self:getLeapDays(y)
-  local MonthPerYear = self.MonthPerYear
-  for m = MonthPerYear - 1, 2, -1 do
+  for m = 12 - 1, 2, -1 do
     if r > YearDays[m] then
       return m + 1, r - YearDays[m]
     end
   end
 
-  return MonthPerYear, self.MonthDays[MonthPerYear]
+  return 12, self:getMonthDays(y, 12)
 end ---- divYearDay
 
 -- Get week number in year.
@@ -337,7 +333,7 @@ end ---- divYearDay
 --]]
 function TConfig:getYearWeek (y, m, d, f) --> (number)
   local self = self
-  
+
   local DayPerWeek = self.DayPerWeek
   local YearStartDay = self:getWeekDay(y, 1, 1)
   if YearStartDay == 0 then YearStartDay = DayPerWeek end
@@ -360,7 +356,7 @@ end ---- getYearWeek
 --]]
 function TConfig:getMonthWeek (y, m, d) --> (number)
   local self = self
-  
+
   return self:getYearWeek(y, m, d, 1) - self:getYearWeek(y, m, 1, 1) + 1
 end ---- getMonthWeek
 
@@ -437,7 +433,7 @@ function TConfig:getEraDay (y, m, d) --> (number)
   --local P, R = divm(y - i, 100) -- 100⋅P + R
   local p, q = divm(P, 4)       --   4⋅p + q
   local r, s = divm(R, 4)       --   4⋅r + s
-  --logShow({ P, R, p, q, r, s }, "getYearDay", "w d2")
+  --logShow({ P, R, p, q, r, s }, "getEraDay", "w d2")
 
   return 146097 * p + 36524 * q +
            1461 * r +   365 * s +
@@ -565,7 +561,7 @@ function TConfig:fixYearMonthDay (date) --> (date)
   if date.d < 1 then
     date.d = 1
   else
-    local MonthDays = self.MonthDays[date.m]
+    local MonthDays = self:getMonthDays(date.y, date.m)
 
     if date.d > MonthDays then
       date.d = MonthDays
@@ -607,7 +603,7 @@ function TConfig:fixMonthDay (date) --> (date)
   --logShow(date, self:getMonthDays(date.y, date.m))
 
   if date.d == 0 then
-    date.d = self.MonthDays.Max + 1
+    date.d = self.MonthDays.Max + 1 --> fixed in fixYearMonth
     date.m = date.m - 1
 
   elseif date.d == self:getMonthDays(date.y, date.m) + 1 then
@@ -633,7 +629,7 @@ end ---- fixMonthDay
 function TConfig:getDaySec (h, n, s) --> (number)
   --local self = self
   return s + (n + h * self.MinPerHour) * self.SecPerMin
-end ----
+end ---- getDaySec
 
 ---------------------------------------- ---- ---- Check
 -- Check time.
