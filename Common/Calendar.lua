@@ -175,9 +175,6 @@ local function CreateMain (ArgData)
   setmetatable(self.CfgData, { __index = self.ArgData })
   --logShow(self.CfgData, "CfgData", "w")
 
-  self.DT_cfg = datim.newConfig(CfgData.Config)
-  --logShow(self.DT_cfg, "DT_cfg", "wA d2")
-
   locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
@@ -190,29 +187,23 @@ end -- CreateMain
 
 ---------------------------------------- ---- Init
 do
--- Инициализация календаря.
+
 function TMain:InitData ()
   local self = self
   local CfgData = self.CfgData
   --logShow(CfgData, "CfgData")
 
-  local DT_cfg = self.DT_cfg
-  --logShow(DT_cfg, "DT_cfg", "w d3")
-
-  local dt = CfgData.dt or os.date("*t")
-  self.Date = CfgData.Date and CfgData.Date:copy() or
-              datim.newDate(dt.year, dt.month, dt.day, DT_cfg)
-  self.Time = CfgData.Time and CfgData.Time:copy() or
-              datim.newTime(dt.hour, dt.min, dt.sec, DT_cfg)
-  --logShow(self.Date, "Default Date", "w d1")
-
-  self.World    = DT_cfg.World
-  self.Type     = DT_cfg.Type
+  local DT_cfg = datim.newConfig(CfgData.Config)
+  self.DT_cfg = DT_cfg
+  --logShow(DT_cfg, "DT_cfg", "wA d3")
+  
+  self.World    = CfgData.World or DT_cfg.World
+  self.Type     = CfgData.Type or DT_cfg.Type
   self.wL       = DT_cfg.LocData
 
   --self.YearMin = CfgData.YearMin or 1
-  self.YearMin  = CfgData.YearMin or -9998
-  self.YearMax  = CfgData.YearMax or  9999
+  self.YearMin  = CfgData.YearMin or DT_cfg.YearMin or -9998
+  self.YearMax  = CfgData.YearMax or DT_cfg.YearMax or  9999
   self.WeekRows = DT_cfg.DayPerWeek
   self.WeekCols = DT_cfg.MonthDays.WeekMax
 
@@ -232,6 +223,24 @@ function TMain:InitFetes ()
 
   return true
 end ---- InitFetes
+
+-- Инициализация даты/времени.
+function TMain:InitDateTime ()
+  local self = self
+
+  local CfgData = self.CfgData
+  local DT_cfg = self.DT_cfg
+  --logShow(CfgData, "CfgData")
+  --logShow(DT_cfg, "DT_cfg", "w d3")
+
+  self.Date = CfgData.Date and CfgData.Date:copy() or
+              datim.newDate(1, 1, 1, DT_cfg)
+  self.Time = CfgData.Time and CfgData.Time:copy() or
+              datim.newTime(0, 0,0, DT_cfg)
+  --logShow(self.Date, "Default Date", "w d1")
+
+  return true
+end ---- InitDateTime
 
 end -- do
 ---------------------------------------- ---- Prepare
@@ -285,6 +294,13 @@ function TMain:MakeLocLen () --> (bool)
   return true
 end ---- MakeLocLen
 
+function TMain:MakeFetes ()
+  --local self = self
+  --local Custom = self.Custom
+
+  return true
+end ---- MakeFetes
+
 function TMain:MakeColors ()
 
   local menUt = require "Rh_Scripts.Utils.Menu"
@@ -320,13 +336,6 @@ function TMain:MakeColors ()
 
   return true
 end ---- MakeColors
-
-function TMain:MakeFetes ()
-  --local self = self
-  --local Custom = self.Custom
-
-  return true
-end ---- MakeFetes
 
   local max = math.max
 
@@ -401,6 +410,8 @@ function TMain:Prepare ()
 
   self:InitData()
   self:InitFetes()
+
+  self:InitDateTime()
 
   if not self:Localize() then
     self.Error = Msgs.NoLocale
@@ -920,11 +931,13 @@ function TMain:AssignEvents () --> (bool | nil)
     if VMod == 0 then
       --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
       if AKey == "Clear" or AKey == "Multiply" then
-        self:InitData()
+        self:InitDateTime()
         return MakeUpdate()
       elseif AKey == "Left"  and Data.c == 1 then
+        --Date:shd(-DT_cfg.DayPerWeek)
         if State == 0 then Date:shd(-DT_cfg.DayPerWeek) end
-      elseif AKey == "Right" and Data.c == self.WeekMax then
+      elseif AKey == "Right" and Data.c == self.WeekCols then
+        --Date:shd(DT_cfg.DayPerWeek)
         if State == 0 then Date:shd(DT_cfg.DayPerWeek) end
       elseif AKey == "Up"    and Data.r == 1 then
          Date:dec_d()
@@ -938,7 +951,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
-        self:InitData()
+        self:InitDateTime()
         return MakeUpdate()
       elseif AKey == "PgUp" then
         Date.y = (divf(Date.y, 10) - 1) * 10 + 1
@@ -962,7 +975,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
-        self:InitData()
+        self:InitDateTime()
         return MakeUpdate()
       elseif AKey == "PgUp" then
         Date.d = 1
@@ -1005,11 +1018,11 @@ function TMain:AssignEvents () --> (bool | nil)
         Date.m = Date:getYearMonths()
         Date.d = Date:getMonthDays()
       elseif AKey == "Home" then
-        Date.y = -9998
+        Date.y = self.YearMin
         Date.m = 1
         Date.d = 1
       elseif AKey == "End" then
-        Date.y = 9999
+        Date.y = self.YearMax
         Date.m = Date:getYearMonths()
         Date.d = Date:getMonthDays()
       else
