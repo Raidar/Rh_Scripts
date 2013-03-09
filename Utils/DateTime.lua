@@ -39,7 +39,7 @@ local numbers = require 'context.utils.useNumbers'
 local round = numbers.round
 
 ----------------------------------------
-local cfgTerra = require "Rh_Scripts.Utils.DateTime.Terra"
+local cfgDefault = require "Rh_Scripts.Utils.DateTime.Default"
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -49,7 +49,7 @@ local unit = {}
 function unit.newConfig (Config) --|> Config
   --logShow (Config, "Config", "wA d3")
 
-  local self = cfgTerra.newConfig(Config ~= cfgTerra.TConfig and Config)
+  local self = cfgDefault.newConfig(Config)
 
   if Config then
     return unit.fillConfig(self)
@@ -330,18 +330,7 @@ end ----
 -- Сдвиг на заданное число дней.
 function TDate:shd (count) --> (self)
   local self = self
-
-  local e = self:getEraDay()
-  local f = e + count
-  --[[
-  if e > 0 and f < 0 then
-    f = f + 1
-  elseif e < 0 and f > 0 then
-    f = f - 1
-  end
-  --]]
-
-  return self:setEraDay(f)
+  return self:setEraDay(self:getEraDay() + count)
 end ---- shd
 
 ---------------------------------------- ---- to & from
