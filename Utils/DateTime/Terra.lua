@@ -174,9 +174,10 @@ unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
   local self = Config or {}
-  self = setmetatable(self, MConfig)
 
-  return self
+  if Config and getmetatable(self) == MConfig then return self end
+
+  return setmetatable(self, MConfig)
 end ---- newConfig
 
 end -- do
@@ -194,53 +195,7 @@ function TConfig:isLeapYear (y) --> (bool)
   return y % 4 == 0 and (y % 100 ~= 0 or y % 400 == 0)
 end ----
 
--- Count extra days of leap year.
--- Количество лишних дней високосного года.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (number) - extra days in leap year.
---]]
-function TConfig:getLeapDays (y) --> (bool)
-  return self:isLeapYear(y) and 1 or 0
-end ----
-
 ---------------------------------------- ---- ---- Count
--- Count months in year.
--- Количество месяцев в годе.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (number) - month count in year.
---]]
-function TConfig:getYearMonths (y) --> (number)
-  return self.MonthPerYear
-end ---- getYearMonths
-
--- Count weeks in year.
--- Количество недель в году.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (number) - weeks count in year.
---]]
-function TConfig:getYearWeeks (y) --> (number)
-  local self = self
-  return self:getYearWeek(self:getYearLastDay(y)) -
-         self:getYearWeek(y + 1, 1, 1)
-end ---- getYearWeeks
-
--- Count days in year.
--- Количество дней в году.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (number) - days count in year.
---]]
-function TConfig:getYearDays (y) --> (number)
-  return self.BaseYear + self:getLeapDays(y)
-end ---- getYearDays
-
 -- Count days in month.
 -- Количество дней в месяце.
 --[[ @params:
@@ -278,21 +233,6 @@ function TConfig:getWeekDays (y, m) --> (number)
 end ---- getWeekDays
 
 ---------------------------------------- ---- ---- get+div
--- Get last day in year.
--- Получение последнего дня в году.
---[[ @params:
-  y (number) - year.
----- @return:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
---]]
-function TConfig:getYearLastDay (y) --> (number)
-  local self = self
-  local m = self:getYearMonths(y)
-  return y, m, self:getMonthDays(y, m)
-end ---- getYearLastDay
-
 -- Get day number in year.
 -- Получение номера дня в году.
 --[[ @params:
@@ -324,8 +264,10 @@ end ---- getYearDay
 function TConfig:divYearDay (y, r) --> (m, d)
   local self = self
 
+  local LastMonth = self:getYearMonths()
+
   if r == 0 then
-    return 12, self:getMonthDays(y, 12)
+    return LastMonth, self:getMonthDays(y, LastMonth)
   end
 
   if r < 0 then r = -r end
@@ -339,54 +281,14 @@ function TConfig:divYearDay (y, r) --> (m, d)
   end
 
   local r = r - self:getLeapDays(y)
-  for m = 12 - 1, 2, -1 do
+  for m = LastMonth - 1, 2, -1 do
     if r > YearDays[m] then
       return m + 1, r - YearDays[m]
     end
   end
 
-  return 12, self:getMonthDays(y, 12)
+  return LastMonth, self:getMonthDays(y, LastMonth)
 end ---- divYearDay
-
--- Get week number in year.
--- Получение номера недели в году.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
-  f (number) - day for week start of year: 1..7,
-               @default = YearStartWeekDay.
----- @return:
-  result (number) - week of year.
---]]
-function TConfig:getYearWeek (y, m, d, f) --> (number)
-  local self = self
-
-  local DayPerWeek = self.DayPerWeek
-  local YearStartDay = self:getWeekDay(y, 1, 1)
-  if YearStartDay == 0 then YearStartDay = DayPerWeek end
-  local YearStartShift = DayPerWeek - (f or self.YearStartWeekDay) + 1
-
-  return divf(self:getYearDay(y, m, d) - 1 +
-              DayPerWeek + YearStartDay - 1 -
-              (YearStartDay > YearStartShift and DayPerWeek or 0),
-              DayPerWeek)
-end ---- getYearWeek
-
--- Get week number in month.
--- Получение номера недели в месяце.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - week of month.
---]]
-function TConfig:getMonthWeek (y, m, d) --> (number)
-  local self = self
-
-  return self:getYearWeek(y, m, d, 1) - self:getYearWeek(y, m, 1, 1) + 1
-end ---- getMonthWeek
 
 -- Get day number of the week.
 -- Получение номера дня недели.
@@ -397,11 +299,9 @@ end ---- getMonthWeek
 ---- @return:
   result (number) - day of week.
 ---- @notes:
-  1 - Monday, 2 - Tuesday, 3 - Wednesday,
-  4 - Thursday, 5 - Friday, 6 - Saturday, 0 - Sunday.
+  1 - first weekday, ..., 0 - last weekday.
 ---- @notes:rus:
-  1 - понедельник, 2 - вторник, 3 - среда,
-  4 - четверг, 5 - пятница, 6 - суббота, 0 - воскресенье.
+  1 - первый день недели, ..., 0 - последний день недели.
 --]]
 function TConfig:getWeekDay (y, m, d) --> (number)
 
@@ -413,38 +313,6 @@ function TConfig:getWeekDay (y, m, d) --> (number)
   return (5 * (q + r) + s +
           self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
-
--- Get day from month week day.
--- Получение дня из дня недели месяца.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  mw (number) - month week.
-  wd (number) - week day.
----- @return:
-  d (number) - day.
---]]
-function TConfig:getMonthWeekDay (y, m, mw, wd) --> (number)
-  local self = self
-
-  local DayPerWeek = self.DayPerWeek
-
-  if mw < 0 then
-    local Day = self:getMonthDays(y, m)        -- LastDay
-    local WeekDay = self:getWeekDay(y, m, Day) -- LastWeekDay
-    if WeekDay == 0 then WeekDay = DayPerWeek end
-    local Shift = WeekDay >= wd and 1 or 0
-    return Day + DayPerWeek * (mw + Shift) + (wd - WeekDay)
-  else
-    local Day = 1                              -- StartDay
-    local WeekDay = self:getWeekDay(y, m, Day) -- StartWeekDay
-    if WeekDay == 0 then WeekDay = DayPerWeek end
-    local Shift = WeekDay <= wd and 1 or 0
-    return Day + DayPerWeek * (mw - Shift) + (wd - WeekDay)
-  end
-
-  return 0
-end ---- getMonthWeekDay
 
 -- Get day number of the common era.
 -- Получение номера дня нашей эры.
@@ -486,15 +354,17 @@ function TConfig:divEraDay (e) --> (y, m, d)
   end
   --local E = e -- for log only
 
-  if e <= 365 then
+  local BaseYear = self.BaseYear
+
+  if e <= BaseYear then
     if i > 0 then
-      return 1, self:divYearDay(1, e)       -- н.э.
+      return 1, self:divYearDay(1, e)                   -- н.э.
     else
-      return 0, self:divYearDay(0, 366 - e) -- до н.э.
+      return 0, self:divYearDay(0, BaseYear + 1 - e)    -- до н.э.
     end
   end
 
-  e = e - 365
+  e = e - BaseYear
 
   local p, q
   p, e = divm(e, 146097)
@@ -509,7 +379,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
 
   local y = 100 * P + R
 
-  y, e = y + 1, e + 365
+  y, e = y + 1, e + BaseYear
   local yd = self:getYearDays(y)
   if e > yd then
     y, e = y + 1, e - yd
@@ -525,159 +395,17 @@ function TConfig:divEraDay (e) --> (y, m, d)
     return y, self:divYearDay(y, e)
   else
     y = y - 1
-    return -y, self:divYearDay(y, 366 - e)
+    return -y, self:divYearDay(y, BaseYear + 1 - e)
   end
 end ---- divEraDay
 
--- Get month number of the common era.
--- Получение номера месяца нашей эры.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
----- @return:
-  result (number) - month of common era.
---]]
-function TConfig:getEraMonth (y, m) --> (number)
-  return (y - 1) * self.MonthPerYear + m
-end ---- getEraMonth
-
--- Divide month number of the common era.
--- Выделение даты из номера месяца нашей эры.
---[[ @params:
-  r (number) - month of common era.
----- @return:
-  y (number) - year.
-  m (number) - month.
---]]
-function TConfig:divEraMonth (r) --> (y, m)
-  local MonthPerYear = self.MonthPerYear
-  local y, m = divm(r, MonthPerYear)
-
-  if m ~= 0 then return y + 1, m end
-
-  return y, MonthPerYear
-end ---- divEraMonth
-
 ---------------------------------------- ---- ---- Check
--- Check date.
--- Проверка даты.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (bool) - true if date is correct.
---]]
-function TConfig:isDate (y, m, d) --> (y, m, d)
-  local self = self
-
-  return (m > 0) and (m <= self.MonthPerYear) and
-         (d > 0) and (d <= self:getMonthDays(y, m))
-end ---- isDate
-
--- Fix year for year ±1.
--- Исправление года для года ±1.
-function TConfig:fixYear (date, shift) --> (date)
-  return date
-end ---- fixYear
-
--- Fix month day for year ±1.
--- Исправление дня месяца для года ±1.
-function TConfig:fixYearMonthDay (date) --> (date)
-  local date = date
-
-  if date.d < 1 then
-    date.d = 1
-  else
-    local MonthDays = self:getMonthDays(date.y, date.m)
-
-    if date.d > MonthDays then
-      date.d = MonthDays
-    end
-  end
-
-  return date
-end ---- fixYearMonthDay
-
--- Fix year and month for month ±1.
--- Исправление месяца и года для месяца ±1.
-function TConfig:fixYearMonth (date) --> (date)
-  local self = self
-  local date = date
-  local MonthPerYear = self.MonthPerYear
-
-  if date.m == 0 then
-    date.m = MonthPerYear
-    date.y = date.y - 1
-
-    self:fixYear(date, -1)
-
-  elseif date.m == MonthPerYear + 1 then
-    date.m = 1
-    date.y = date.y + 1
-
-    self:fixYear(date, 1)
-  end
-
-  return self:fixYearMonthDay(date)
-end ---- fixYearMonth
-
--- Fix month day for day ±1.
--- Исправление дня месяца для дня ±1.
-function TConfig:fixMonthDay (date) --> (date)
-  local self = self
-  local date = date
-
-  --logShow(date, self:getMonthDays(date.y, date.m))
-
-  if date.d == 0 then
-    date.d = self.MonthDays.Max + 1 --> fixed in fixYearMonth
-    date.m = date.m - 1
-
-  elseif date.d == self:getMonthDays(date.y, date.m) + 1 then
-    date.d = 1
-    date.m = date.m + 1
-  end
-
-  return self:fixYearMonth(date)
-end ---- fixMonthDay
 
 ---------------------------------------- ---- Time
 
 ---------------------------------------- ---- ---- get+div
--- Count seconds without milliseconds.
--- Количество секунд без долей секунд.
---[[ @params:
-  h (number) - hour.
-  n (number) - minute.
-  s (number) - second.
----- @return:
-  result (number) - second count in day.
---]]
-function TConfig:getDaySec (h, n, s) --> (number)
-  --local self = self
-  return s + (n + h * self.MinPerHour) * self.SecPerMin
-end ---- getDaySec
 
 ---------------------------------------- ---- ---- Check
--- Check time.
--- Проверка времени.
---[[ @params:
-  h (number) - hour.
-  n (number) - minute.
-  s (number) - second.
-  z (number) - millisecond.
----- @return:
-  result (bool) - true if time is correct.
---]]
-function TConfig:isTime (h, n, s, z) --> (y, m, d)
-  local self = self
-
-  return (h >= 0) and (h <= self.HourPerDay) and
-         (n >= 0) and (n <= self.MinPerHour) and
-         (s >= 0) and (s <= self.SecPerHour) and
-         (not z or (z >= 0) and (z <= self.MSecPerSec))
-end ---- isTime
 
 --------------------------------------------------------------------------------
 return unit

@@ -58,8 +58,8 @@ local TConfig = {
   World         = "Pern",          -- Мир
   Type          = "Type.Pernese",  -- Тип календаря
 
-  PernMin       = 0,
-  PernMax       = 9999,
+  YearMin       = 0,
+  YearMax       = 9999,
 
   -- Turn == Year
   -- sevenday == week
@@ -84,8 +84,8 @@ local TConfig = {
   BaseYear      =  362,     -- Обычный год:     1 Base Year     = 362 Days
   LeapYear      =  363,     -- Високосный год:  1 Leap Year     = 362 + 1 Days
   --MoonMonth     =   28,   -- Лунный месяц:    1 Moon Month    = 28 Days
-  --MeanYear  =  362.1667,    -- Средний год:     1 Mean Year
-  --MeanMonth = 30.180556,    -- Средний месяц:   1 Mean Month
+  MeanYear  =  362.1667,    -- Средний год:     1 Mean Year
+  MeanMonth = 30.180556,    -- Средний месяц:   1 Mean Month
 
                             -- Множители:               час  мин  сек  мсек
   --MinPerDay     =     1440, -- Число минут в день:       24 * 60
@@ -170,6 +170,7 @@ local TConfig = {
 } ---
 unit.TConfig = TConfig
 
+--[[
 do
   local MConfig = { __index = TConfig }
 
@@ -177,12 +178,14 @@ unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
   local self = Config or {}
-  self = setmetatable(self, MConfig)
 
-  return self
+  if Config and getmetatable(self) == MConfig then return self end
+
+  return setmetatable(self, MConfig)
 end ---- newConfig
 
 end -- do
+--]]
 ---------------------------------------- ---- Date
 
 ---------------------------------------- ---- ---- Leap
@@ -216,60 +219,7 @@ function TConfig:getMonthDays (y, m) --> (number)
   end
 end ---- getMonthDays
 
--- Get week day for last day of prior month.
--- Получение дня недели для последнего дня предыдущего месяца.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
----- @return:
-  result (number) - day of week for last day of prior month.
---]]
-function TConfig:getWeekDays (y, m) --> (number)
-  return self.WeekDays[m]
-end ---- getWeekDays
-
 ---------------------------------------- ---- ---- get+div
--- Get day number in year.
--- Получение номера дня в году.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of year.
---]]
-function TConfig:getYearDay (y, m, d) --> (number)
-  return d + self.YearDays[m - 1]
-end ---- getYearDay
-
--- Divide day number in year into date.
--- Выделение даты из номера дня в году.
---[[ @params:
-  y (number) - year.
-  r (number) - day of year.
----- @return:
-  m (number) - month.
-  d (number) - day.
---]]
-function TConfig:divYearDay (y, r) --> (m, d)
-  local self = self
-
-  if r == 0 then
-    return 12, self:getMonthDays(y, 12)
-  end
-
-  if r < 0 then r = -r end
-
-  local YearDays = self.YearDays
-  for m = 12 - 1, 0, -1 do
-    if r > YearDays[m] then
-      return m + 1, r - YearDays[m]
-    end
-  end
-
-  return 12, self:getMonthDays(y, 12)
-end ---- divYearDay
-
 -- Get day number of the week.
 -- Получение номера дня недели.
 --[[ @params:
@@ -279,13 +229,12 @@ end ---- divYearDay
 ---- @return:
   result (number) - day of week.
 ---- @notes:
-  1 - Monday, 2 - Tuesday, 3 - Wednesday,
-  4 - Thursday, 5 - Friday, 6 - Saturday, 0 - Sunday.
+  1 - first weekday, ..., 0 - last weekday.
 ---- @notes:rus:
-  1 - понедельник, 2 - вторник, 3 - среда,
-  4 - четверг, 5 - пятница, 6 - суббота, 0 - воскресенье.
+  1 - первый день недели, ..., 0 - последний день недели.
 --]]
 function TConfig:getWeekDay (y, m, d) --> (number)
+  local self = self
 
   local r, s = divm(y - 1, 6)   --   6⋅r + s
 
@@ -332,15 +281,18 @@ function TConfig:divEraDay (e) --> (y, m, d)
   end
   --local E = e -- for log only
 
-  if e <= 362 then
+  local BaseYear = self.BaseYear
+  --logShow(e, BaseYear, "w d2")
+
+  if e <= BaseYear then
     if i > 0 then
-      return 1, self:divYearDay(1, e)       -- После высадки
+      return 1, self:divYearDay(1, e)                 -- После высадки
     else
-      return 0, self:divYearDay(0, 363 - e) -- До высадки
+      return 0, self:divYearDay(0, BaseYear + 1 - e)  -- До высадки
     end
   end
 
-  e = e - 362
+  e = e - BaseYear
 
   local r, s
   r, e = divm(e, 2173)
@@ -348,7 +300,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
 
   local y = 6 * r + s
 
-  y, e = y + 1, e + 362
+  y, e = y + 1, e + BaseYear
   local yd = self:getYearDays(y)
   if e > yd then
     y, e = y + 1, e - yd
@@ -364,7 +316,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
     return y, self:divYearDay(y, e)
   else
     y = y - 1
-    return -y, self:divYearDay(y, 363 - e)
+    return -y, self:divYearDay(y, BaseYear + 1 - e)
   end
 end ---- divEraDay
 
