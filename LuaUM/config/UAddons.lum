@@ -37,11 +37,26 @@ local mSeparator = {
 
 ---------------------------------------- Calendar
 function unit.TerraCalendar ()
+  local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
+  local cfgWorld = require "Rh_Scripts.Utils.DateTime.Terra"
+  --logShow(cfgWorld, "Terra Config", "w d2")
+
+  local dt = os.date("*t")
+
+  local Config = datim.newConfig(cfgWorld.TConfig)
+  local Data = {
+    Config = Config,
+    Date = datim.newDate(dt.year, dt.month, dt.day, Config),
+    Time = datim.newTime(dt.hour, dt.min, dt.sec, Config),
+    YearMin = -9998,
+    YearMax =  9999,
+  } --- Data
 
   return {
     text = L.AddonTerraCalendar,
     Function = Calendar.Execute,
+    Arguments = Data,
   } ----
 end ---- TerraCalendar
 
@@ -54,7 +69,6 @@ function unit.PernCalendar ()
   local Config = datim.newConfig(cfgWorld.TConfig)
   local Data = {
     Config = Config,
-    dt = "",
     Date = datim.newDate(2508, 1, 1, Config),
     Time = datim.newTime(0, 0, 0, Config),
     YearMin = -200,
@@ -68,6 +82,28 @@ function unit.PernCalendar ()
   } ----
 end ---- PernCalendar
 
+function unit.MilloCalendar ()
+  local datim = require "Rh_Scripts.Utils.DateTime"
+  local Calendar = require "Rh_Scripts.Common.Calendar"
+  local cfgWorld = require "Rh_Scripts.Utils.DateTime.Millo"
+  --logShow(cfgWorld, "Millo Config", "w d2")
+
+  local Config = datim.newConfig(cfgWorld.TConfig)
+  local Data = {
+    Config = Config,
+    Date = datim.newDate(2, 1, 13, Config),
+    Time = datim.newTime(3, 8, 0, Config),
+    YearMin = -999,
+    YearMax = 1000,
+  } --- Data
+
+  return {
+    text = L.AddonMilloCalendar,
+    Function = Calendar.Execute,
+    Arguments = Data,
+  } ----
+end ---- MilloCalendar
+
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts
   text = L.AddonScripts,
@@ -75,6 +111,7 @@ local mScripts = { -- Other scripts
     unit.TerraCalendar,
     mSeparator,
     unit.PernCalendar,
+    unit.MilloCalendar,
   } ---
 } --- mScripts
 

@@ -56,6 +56,7 @@ local Data = {
   AddonScripts      = "&A - Additions",
     AddonTerraCalendar  = "&C - Calendar",
     AddonPernCalendar   = "&P - Pern Calendar",
+    AddonMilloCalendar  = "&M - Milleniums' Calendar",
 
   ----------------------------------------
   -- Other scripts
