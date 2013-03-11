@@ -45,6 +45,7 @@ local KEY_EVENT = F.KEY_EVENT
 local k = 0x00
 
 --far.Message(tostring(KEY_EVENT), "AutoActions")
+--local dbg  = require "context.utils.useDebugs"
 --local flog = dbg.open("AC_test.log", "a", "")
 
 function ProcessEditorInput (rec) --> (bool)

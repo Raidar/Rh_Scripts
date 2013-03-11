@@ -36,10 +36,6 @@
 --------------------------------------------------------------------------------
 
 ----------------------------------------
-local bit = bit64
-local band = bit.band
-
-----------------------------------------
 local far = far
 local F = far.Flags
 
@@ -48,7 +44,7 @@ local EditorGetLine = editor.GetString
 local EditorSetLine = editor.SetString
 local EditorSetPos  = editor.SetPosition
 local EditorDelLine = editor.DeleteString
-local EditorSelect  = editor.Select
+--local EditorSelect  = editor.Select
 
 ----------------------------------------
 --local context = context
@@ -97,11 +93,11 @@ local UpdateLineEnd = unit.UpdateLineEnd
 function unit.TruncateLine () --> (number)
   local q = TruncateSpaces(-1)
   -- Commented as workaround for FAR3:
-  --if q == 0 then return 0 end
+  if q == 0 then return 0 end
   UpdateLineEnd()
   return q
 end ----
-local TruncateLine = unit.TruncateLine
+--local TruncateLine = unit.TruncateLine
 
 -- Truncate spaces in all text lines.
 -- Усечение пробелов во всех строках текста.
