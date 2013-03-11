@@ -167,6 +167,7 @@ local TConfig = {
 } ---
 unit.TConfig = TConfig
 
+--[[
 do
   local MConfig = { __index = TConfig }
 
@@ -181,6 +182,7 @@ function unit.newConfig (Config) --|> Config
 end ---- newConfig
 
 end -- do
+--]]
 ---------------------------------------- ---- Date
 
 ---------------------------------------- ---- ---- Leap
