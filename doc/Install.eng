@@ -20,7 +20,8 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 Additions:
   To work with Tortoise SVN menu:
 1. copy "TortoiseSVN.cfg.example" file to "TortoiseSVN.cfg" file
-   of ~scripts\Rh_Scripts\LuaPUM\config~ directory, if file is absent in it.
+   of ~%FarProfile%scripts\Rh_Scripts\LuaPUM\config~ directory,
+   if file is absent in it.
 2. Customize configuration parameters in "TortoiseSVN.cfg" file.
 
 ―――――――
