@@ -41,11 +41,11 @@ local Data = {
   YearMonth = {
     n = 3,
     [0] = {
-      "1st decade",  "2nd decade",
-      "3rd decade",  "4th decade",
-      "5th decade",  "6th decade",
-      "7th decade",  "8th decade",
-      "9th decade", "10th decade",
+      "1st century",  "2nd century",
+      "3rd century",  "4th century",
+      "5th century",  "6th century",
+      "7th century",  "8th century",
+      "9th century", "10th century",
     },
     --[[
     [1] = {
