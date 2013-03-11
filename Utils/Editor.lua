@@ -763,6 +763,7 @@ function Selection.Set (id, Info) --> (boolean)
     SelInfo.BlockHeight = SelInfo.BlockHeight + 1
     SelInfo.BlockWidth  = -Info.StartPos
   end
+  --logShow(SelInfo, "Selection.Set")
 
   --[[if Info.StartPos == Info.EndPos then
     SelInfo.BlockStartPos = SelInfo.BlockStartPos +

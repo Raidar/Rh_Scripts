@@ -167,7 +167,7 @@ local function CreateMain (ArgData)
   self.History = datas.newHistory(self.Custom.history.full)
   self.CfgData = self.History:field(self.Custom.history.field)
 
-  local CfgData = self.CfgData
+  --local CfgData = self.CfgData
   --self.Menu = CfgData.Menu or {}
   --self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
   --self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
@@ -481,9 +481,8 @@ function TMain:FillInfoPart () --> (bool)
   } -- ItemNames
 
   local Formats = DT_cfg.Formats
-  local L, Null = self.LocData, Null
-  --logShow(L, "L", "wM")
-  local wL = self.wL
+  local wL, Null = self.wL, Null
+  --logShow(wL, "wL", "wA")
   local WeekDayNames   = (wL or Null).WeekDay or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
@@ -679,9 +678,8 @@ function TMain:FillNotePart () --> (bool)
   local Formats = DT_cfg.Formats
   local DayPerWeek = DT_cfg.DayPerWeek
 
-  local L, Null = self.LocData, Null
-  --logShow(L, "L", "wM")
-  local wL = self.wL
+  local wL, Null = self.wL, Null
+  --logShow(wL, "wL", "wA")
   local WeekDayNames = (wL or Null).WeekDay or Null
   local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
 
