@@ -59,7 +59,7 @@ local TConfig = {
   Type          = "Type.Millenium", -- Тип календаря
 
   YearMin       = -9998,
-  YearMax       = 9999,
+  YearMax       =  9999,
 
   YearPerAge    =  100,     -- Век:             1 Age       =  100 Years
   MonthPerYear  =   10,     -- Год:             1 Year      =   10 Months
@@ -75,12 +75,12 @@ local TConfig = {
   MSecPerDSec   =  100,     -- Число мсек в дсек:   1 dSec  =  1000 /  10 mSecs
   MSecPerCSec   =   10,     -- Число мсек в ссек:   1 cSec  =  1000 / 100 mSecs
 
-  QuarterPerYear  =  5,     -- Квартальный год: 1 Year          = 4 Quarters
-  MonthPerQuarter =  2,     -- Квартал:         1 Quarter       = 12 / 4 Months
+  QuarterPerYear  =  5,     -- Квартальный год: 1 Year          = 5 Quarters
+  MonthPerQuarter =  2,     -- Квартал:         1 Quarter       = 10 / 5 Months
 
-  BaseYear      = 1000,     -- Обычный год:     1 Base Year     = 365 Days
-  LeapYear      = 1000,     -- Високосный год:  1 Leap Year     = 365 + 1 Days
-  MoonMonth     = 1000,     -- Лунный месяц:    1 Moon Month    = 28 Days
+  BaseYear      = 1000,     -- Обычный год:     1 Base Year     = 1000 Days
+  LeapYear      = 1000,     -- Високосный год:  1 Leap Year     = 1000 + 0 Days
+  MoonMonth     =  100,     -- Лунный месяц:    1 Moon Month    = 100 Days
   MeanYear      = 1000,     -- Средний год:     1 Mean Year
   MeanMonth     =  100,     -- Средний месяц:   1 Mean Month
 
@@ -122,8 +122,8 @@ local TConfig = {
   -- Year' days count by months.
   -- Количество дней в году по месяцам:
   YearDays = {
-    100, 200, 300, 400, 500,
-    600, 700, 800, 900,1000,
+    100,  200,  300,  400,  500,
+    600,  700,  800,  900, 1000,
     [0] = 0,
   }, -- YearDays
 
