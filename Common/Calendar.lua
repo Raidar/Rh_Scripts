@@ -349,13 +349,14 @@ function TMain:MakeProps ()
   Props.Id = Props.Id or self.Guid
   Props.HelpTopic = self.Custom.help.tlink
 
-  local L = self.LocData
-  Props.Title  = L.Calendar
+  --local L = self.LocData
+  --Props.Title  = L.Calendar
 
   local wL = self.wL
   local DT_cfg = self.DT_cfg
 
-  Props.Bottom = wL[DT_cfg.Type]
+  Props.Title = wL[DT_cfg.Type]
+  --Props.Bottom = wL[DT_cfg.Type]
   --logShow(Props.Bottom, DT_cfg.Type, "wM d1")
 
   self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
@@ -796,7 +797,7 @@ function TMain:StartInput (Date)
   local L = self.LocData
 
   self.Input = ""
-  self.Props.Bottom = L.Date
+  self.Props.Bottom = L.InputDate
   self.IsInput = true
 end ---- StartInput
 

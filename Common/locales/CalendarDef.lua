@@ -9,6 +9,10 @@ local Data = {
   Date              = "Date",
   Time              = "Time",
 
+  --
+  InputDate         = "Input date",
+  InputTime         = "Input time",
+
   ----------------------------------------
 } --- Data
 
