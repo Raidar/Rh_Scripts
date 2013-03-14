@@ -71,8 +71,6 @@ local keyUt = require "Rh_Scripts.Utils.Keys"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
 local MenuUsualColors = menUt.MenuColors()
-local FixedBG = colors.BaseColors.gray
-local MenuFixedColors = menUt.ChangeColors(nil, nil, nil, nil, FixedBG)
 local ItemTextColor = menUt.ItemTextColor
 
 ----------------------------------------
@@ -500,26 +498,16 @@ function TMenu:DefinePropInfo () --| Props
   --logShow(self.Props, "self.Props")
 
   -- Цвета меню:
-  local UsualColors = RM.Colors or {}
-  UsualColors.__index = MenuUsualColors; setmetatable(UsualColors, UsualColors)
-  local FixedColors = RM.FixedColors or {}
-  FixedColors.__index = MenuFixedColors; setmetatable(FixedColors, FixedColors)
-  self.Colors = {
-    Usual = UsualColors,
-    Fixed = FixedColors,
-
-    Text      = UsualColors.COL_MENUTEXT,
-    Border    = UsualColors.COL_MENUBOX,
-    ScrollBar = UsualColors.COL_MENUSCROLLBAR,
-    StatusBar = UsualColors.COL_MENUSTATUSBAR,
-
-    Borders   = UsualColors.Borders or Null,
-    DlgBox    = UsualColors.DlgBox or
-                dlgUt.ItemColor(-- Text + Select + Box:
-                                UsualColors.COL_MENUTEXT,
-                                UsualColors.COL_MENUHIGHLIGHT,
-                                UsualColors.COL_MENUBOX),
-  } -- Colors
+  local Colors = RM.Colors or {}
+  Colors.__index = MenuUsualColors; setmetatable(Colors, Colors)
+  self.Colors = Colors
+  Colors.Form    = Colors.Standard.normal
+  Colors.Borders = Colors.Borders or Null
+  Colors.DlgBox  = Colors.DlgBox or
+                   dlgUt.ItemColor(-- Text + Select + Box:
+                                   Colors.Standard.normal,
+                                   Colors.Standard.hlight,
+                                   Colors.Border)
 
   --logShow(self.Colors, "self.Colors", "d2 x2")
 end ---- DefinePropInfo
@@ -1979,7 +1967,7 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
     return DrawItemText(Rect, Color, Item, Options)
   -- [[
   else -- Пустое место под пункт меню:
-    return DrawClearItemText(Rect, Rect.Colors.COL_MENUTEXT)
+    return DrawClearItemText(Rect, Rect.Colors.Form)
   end -- if
   --]]
 end ---- DrawMenuItem
@@ -2024,7 +2012,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       Rect.x, Rect.w = x, xLim - x -- Заполнение пустоты:
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
-      DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT)
+      DrawClearItemText(Rect, A_Rect.Colors.Form)
     end
 
     r, y = r + 1, y + h + Data.RowSep
@@ -2034,7 +2022,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     Rect.x, Rect.w = A_Rect.xMin, A_Rect.xMax - A_Rect.xMin
     Rect.y, Rect.h = y, yLim - y -- Заполнение пустоты:
     --logShow(Rect, "Draw Spaces by y", 1)
-    DrawClearItemText(Rect, A_Rect.Colors.COL_MENUTEXT)
+    DrawClearItemText(Rect, A_Rect.Colors.Form)
   end -- if
   --logShow({ x, xLim }, "Values")
 
@@ -2103,7 +2091,7 @@ function TMenu:DrawMenu ()
   end
 
   -- Scrollable items part:
-  local A_Rect = { fixed = false,         Colors = self.Colors.Usual,
+  local A_Rect = { fixed = false,         Colors = self.Colors,
                    xMin = xMin + xInc,    yMin = yMin + yInc,
                    xMax = xMax - xDec,    yMax = yMax - yDec, }
   local A_Cell = { rMin = Base.Row,       rMax = FixRows.Max,
@@ -2177,9 +2165,8 @@ local SymsBoxChars = uChars.BoxChars
 -- Рисование рамки вокруг меню.
 function TMenu:DrawBorderLine () -- --| Border
   local self = self
-
   if self.RectMenu.BoxKind == "" then return end
-  --local Color = self.Colors.DlgBox
+
   local Color, Colors = self.Colors.Border, self.Colors.Borders
   local BoxChars = SymsBoxChars[self.RectMenu.BoxKind]
   local Zone, Rect, Titles = self.Zone, self.DlgRect, self.Titles
@@ -2373,7 +2360,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   -- ОБРАБОТЧИКИ УСТАНОВКИ ЦВЕТОВ:
   -- Установка цветов как у меню.
   local function DlgGetCtlColor (hDlg) --> (Color)
-    return _Menu.Colors.Text -- Цвет окна
+    return _Menu.Colors.Form -- Цвет окна
   end
   local function DlgGetBoxColor (hDlg) --> (Color)
     return _Menu.Colors.DlgBox -- Цвет рамки и текста на рамке

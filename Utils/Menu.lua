@@ -23,8 +23,6 @@ local pairs = pairs
 local far = far
 local F = far.Flags
 
-local farColors = far.Colors
-
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
@@ -337,60 +335,114 @@ end -- do
 
 ---------------------------------------- Menu View
 do
+  local C = far.Colors
   local IndexColor = farUt.IndexColor
   local basics = colors.BaseColors
   local make = colors.make
   local getFG, getBG = colors.getFG, colors.getBG
   local setFG, setBG = colors.setFG, colors.setBG
-
---[[ TODO: Rename colors
-  Normal
-  Hlight
-  Marked
-  Grayed
-  Disable
-  Sel + (NHMGD)
-
-  Foreground
-  Background
-  Border = box
-  DlgBox = Normal + Hlight + Border
-  Title
-  StatusBar
-  ScrollBar
-
-  --Arrows      x Normal
-  --SelArrows   x SelNormal
-  --DisArrows   x Disable
---]]
-
--- Получение всех возможных цветов меню.
+  
+-- Формирование цветов для меню.
 function unit.MenuColors () --> (table)
-  local Colors = {}
-  for k, v in pairs(farColors) do
-    if k:match("^COL%_MENU") then
-      Colors[k] = IndexColor(v)
-    end
-  end
+  local Standard = IndexColor(C.COL_MENUTEXT)
+  local Selected = IndexColor(C.COL_MENUSELECTEDTEXT)
+  local StandardBG = getBG(Standard)
+  local SelectedBG = getBG(Selected)
+  local MarkedFG = basics.lime
+  local FixedBG  = basics.gray
+  
+  local Colors = {
+    Standard = { -- Нормальный:
+      normal  = Standard,
+      hlight  = IndexColor(C.COL_MENUHIGHLIGHT),
+      marked  = make(MarkedFG, StandardBG),
+      grayed  = IndexColor(C.COL_MENUGRAYTEXT),
+      disable = IndexColor(C.COL_MENUDISABLEDTEXT),
+    }, --
+    Selected = { -- Выделенный:
+      normal  = Selected,
+      hlight  = IndexColor(C.COL_MENUSELECTEDHIGHLIGHT),
+      marked  = make(MarkedFG, SelectedBG),
+      grayed  = IndexColor(C.COL_MENUSELECTEDGRAYTEXT),
+      disable = IndexColor(C.COL_MENUDISABLEDTEXT),
+    }, --
+    Fixed = { -- Фиксированный:
+      normal  = make(getFG(Standard), FixedBG),
+      hlight  = make(getFG(IndexColor(C.COL_MENUHIGHLIGHT)), FixedBG),
+      marked  = make(MarkedFG, FixedBG),
+      grayed  = make(getFG(IndexColor(C.COL_MENUGRAYTEXT)), FixedBG),
+      disable = make(getFG(IndexColor(C.COL_MENUDISABLEDTEXT)), FixedBG),
+    }, --
 
-  local MenuBG = getBG(Colors.COL_MENUTEXT) -- Цвет фона
-  Colors.COL_MENUBGROUND    = make(basics.black,  MenuBG)
-  Colors.COL_MENUSTATUSBAR  = make(basics.silver, MenuBG)
+    Border    = IndexColor(C.COL_MENUBOX),
+    Title     = IndexColor(C.COL_MENUTITLE),
+    StatusBar = make(basics.silver, StandardBG),
+    ScrollBar = IndexColor(C.COL_MENUSCROLLBAR),
 
-  local MarkFG = basics.lime -- Цвет выделения части текста
-  local Sel_BG = getBG(Colors.COL_MENUSELECTEDTEXT)
-  Colors.COL_MARKFGROUND          = make(MarkFG, Sel_BG)
-  Colors.COL_MENUMARKTEXT         = make(MarkFG, MenuBG)
-  Colors.COL_MENUSELECTEDMARKTEXT = make(MarkFG, Sel_BG)
+    DlgBox    = false, -- Standard.normal + Standard.hlight + Border,
+  } --- Colors
+
+  Colors.Fixed.Standard = Colors.Fixed
+  Colors.Fixed.Selected = Colors.Fixed
 
   return Colors
 end ---- MenuColors
+
+-- Формирование цветов для формы.
+function unit.FormColors () --> (table)
+  local StandardFG = basics.black
+  local StandardBG = basics.silver
+  local SelectedFG = basics.blue
+  local SelectedBG = basics.white
+  local MarkedFG = basics.maroon
+  local FixedFG  = basics.white
+  local FixedBG  = basics.gray
+  
+  local Colors = {
+    Standard = { -- Нормальный:
+      normal  = make(StandardFG, StandardBG),
+      hlight  = make(getFG(IndexColor(C.COL_MENUHIGHLIGHT)), StandardBG),
+      marked  = make(MarkedFG, StandardBG),
+      grayed  = make(getFG(IndexColor(C.COL_MENUGRAYTEXT)), StandardBG),
+      disable = make(getFG(IndexColor(C.COL_MENUDISABLEDTEXT)), StandardBG),
+    }, --
+    Selected = { -- Выделенный:
+      normal  = make(SelectedFG, SelectedBG),
+      hlight  = make(getFG(IndexColor(C.COL_MENUSELECTEDHIGHLIGHT)), SelectedBG),
+      marked  = make(MarkedFG, SelectedBG),
+      grayed  = make(getFG(IndexColor(C.COL_MENUSELECTEDGRAYTEXT)), SelectedBG),
+      disable = make(getFG(IndexColor(C.COL_MENUDISABLEDTEXT)), SelectedBG),
+    }, --
+    Fixed = { -- Фиксированный:
+      normal  = make(FixedFG, FixedBG),
+      hlight  = make(getFG(IndexColor(C.COL_MENUHIGHLIGHT)), FixedBG),
+      marked  = make(MarkedFG, FixedBG),
+      grayed  = make(getFG(IndexColor(C.COL_MENUGRAYTEXT)), FixedBG),
+      disable = make(getFG(IndexColor(C.COL_MENUDISABLEDTEXT)), FixedBG),
+    }, --
+
+    Border    = make(StandardFG, StandardBG),
+    Title     = make(StandardFG, StandardBG),
+    StatusBar = make(basics.silver, StandardBG),
+    ScrollBar = make(StandardFG, StandardBG),
+
+    DlgBox    = false, -- Standard.normal + Standard.hlight + Border,
+  } --- Colors
+
+  Colors.Fixed.Standard = Colors.Fixed
+  Colors.Fixed.Selected = Colors.Fixed
+
+  return Colors
+end ---- FormColors
+
+--[[
+  local tpairs = tables.allpairs
 
 -- Изменение частей цветов меню.
 function unit.ChangeColors (Colors, OldFG, OldBG, NewFG, NewBG) --> (table)
   local Colors = Colors or unit.MenuColors()
 
-  for k, v in pairs(Colors) do
+  for k, v in tpairs(Colors) do
     local w = v
     if NewFG and (not OldFG or getFG(w) == OldFG) then
       w = setFG(w, NewFG)
@@ -403,44 +455,36 @@ function unit.ChangeColors (Colors, OldFG, OldBG, NewFG, NewBG) --> (table)
 
   return Colors
 end ---- ChangeColors
-
+--]]
 end -- do
 
 -- Цвета пунктов с учётом их вида.
 function unit.ItemColors (Colors) --> (table)
   return { -- Цвета текста пунктов меню:
     [false] = { -- Обычный пункт:
-      normal  = {
-        normal = Colors.COL_MENUTEXT,
-        hlight = Colors.COL_MENUHIGHLIGHT,
-        marked = Colors.COL_MENUMARKTEXT,
-      },
+      normal  = Colors.Standard,
       grayed  = {
-        normal = Colors.COL_MENUGRAYTEXT,
-        hlight = Colors.COL_MENUGRAYTEXT,
-        marked = Colors.COL_MENUGRAYTEXT,
+        normal = Colors.Standard.grayed,
+        hlight = Colors.Standard.grayed,
+        marked = Colors.Standard.grayed,
       },
       disable = {
-        normal = Colors.COL_MENUDISABLEDTEXT,
-        hlight = Colors.COL_MENUDISABLEDTEXT,
-        marked = Colors.COL_MENUDISABLEDTEXT,
+        normal = Colors.Standard.disable,
+        hlight = Colors.Standard.disable,
+        marked = Colors.Standard.disable,
       },
     },
     [true] = { -- Выделенный пункт:
-      normal  = {
-        normal = Colors.COL_MENUSELECTEDTEXT,
-        hlight = Colors.COL_MENUSELECTEDHIGHLIGHT,
-        marked = Colors.COL_MENUSELECTEDMARKTEXT,
-      },
+      normal  = Colors.Selected,
       grayed  = {
-        normal = Colors.COL_MENUSELECTEDGRAYTEXT,
-        hlight = Colors.COL_MENUSELECTEDGRAYTEXT,
-        marked = Colors.COL_MENUSELECTEDGRAYTEXT,
+        normal = Colors.Selected.grayed,
+        hlight = Colors.Selected.grayed,
+        marked = Colors.Selected.grayed,
       },
       --disable = {
-      --  normal = Colors.COL_MENUDISABLEDTEXT,
-      --  hlight = Colors.COL_MENUDISABLEDTEXT,
-      --  marked = Colors.COL_MENUSELECTEDMARKTEXT,
+      --  normal = Colors.Selected.disable,
+      --  hlight = Colors.Selected.disable,
+      --  marked = Colors.Selected.disable,
       --},
     },
   } --- TextColors
@@ -459,7 +503,7 @@ function unit.ItemTextColor (Item, Selected, Colors) --> (color, color)
                    Item.grayed and "grayed" or "normal"
   local Colors = Colors and unit.ItemColors(Colors) or TextColors
 
-  return (Colors)[Selected or false][ItemKind]
+  return Colors[Selected or false][ItemKind]
 end ---- ItemTextColor
 
 end -- do

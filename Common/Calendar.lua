@@ -304,35 +304,8 @@ end ---- MakeFetes
 function TMain:MakeColors ()
 
   local menUt = require "Rh_Scripts.Utils.Menu"
-  local colors = require 'context.utils.useColors'
-  local basics = colors.BaseColors
-  local make = colors.make
 
-  local Colors = menUt.MenuColors()
-  local t = Colors
-  -- Обычный день
-  local v = Colors.COL_MENUTEXT
-  t = menUt.ChangeColors(t,
-                         colors.getFG(v),   colors.getBG(v),
-                         basics.black,      basics.silver)
-  -- Выделенный день
-  v = Colors.COL_MENUSELECTEDTEXT
-  t.COL_MENUSELECTEDTEXT = make(basics.blue, colors.getBG(v), type(v))
-  -- Выходной день
-  v = Colors.COL_MENUMARKTEXT
-  t.COL_MENUMARKTEXT = make(basics.maroon, colors.getBG(v), type(v))
-  v = Colors.COL_MENUSELECTEDMARKTEXT
-  t.COL_MENUSELECTEDMARKTEXT = make(basics.maroon, colors.getBG(v), type(v))
-  t = menUt.ChangeColors(t,
-                         nil, colors.getBG(Colors.COL_MENUSELECTEDTEXT),
-                         nil, basics.white)
-  self.UsualColors = t
-
-  t = tables.copy(t, false, pairs, true)
-  t = menUt.ChangeColors(t,
-                         basics.black,      nil,
-                         basics.white,      basics.gray)
-  self.FixedColors = t
+  self.Colors = menUt.FormColors()
 
   return true
 end ---- MakeColors
@@ -391,8 +364,7 @@ function TMain:MakeProps ()
       [2] = self.TextMax,
     }, -- textMax
 
-    Colors = self.UsualColors,
-    FixedColors = self.FixedColors,
+    Colors = self.Colors,
 
   } --- RM_Props
   Props.RectMenu = RM_Props

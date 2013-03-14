@@ -65,8 +65,6 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
 local menUt = require "Rh_Scripts.Utils.Menu"
 
-local Colors = menUt.MenuColors()
-
 ----------------------------------------
 --local fkeys = require "far2.keynames"
 --local InputRecordToName = fkeys.InputRecordToName
@@ -107,10 +105,12 @@ unit.DefOptions = {
 } -- DefOptions
 
 ---------------------------------------- ---- Config
-local SelBGColor = colors.Colors.navy
-local AngleColor = colors.make(colors.getFG(Colors.COL_MENUTEXT),
-                               colors.getFG(Colors.COL_MENUDISABLEDTEXT),
-                               type(Colors.COL_MENUTEXT) )
+local SelectedBG = colors.Colors.navy
+local Colors = menUt.MenuColors()
+local StdColors = Colors.Standard
+local AngleColor = colors.make(colors.getFG(StdColors.normal),
+                               colors.getFG(StdColors.disable) )
+                               --type(StdColors.normal) )
 
 unit.DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
@@ -145,7 +145,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
   ActionAlt = true,  -- Использование Alt для дополнительных действий.
   EmptyList  = false, -- Возможность пустого списка.
   EmptyStart = false, -- Возможность пустого начального списка.
-  SelBGColor = SelBGColor, -- Цвет фона выделенного элемента списка.
+  SelectedBG = SelectedBG, -- Цвет фона выделенного элемента списка.
   AngleColor = AngleColor, -- Цвет угла списка у позиции курсора.
   -- Свойства завершения слова:
   Trailers = ",:;.?!",-- Символы-завершители.
@@ -182,7 +182,7 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
   ActionAlt = false,
   EmptyList  = false,
   EmptyStart = false,
-  SelBGColor = SelBGColor,
+  SelectedBG = SelectedBG,
   AngleColor = AngleColor,
   -- Свойства завершения слова:
   Trailers = "",
@@ -232,7 +232,7 @@ unit.CodeCfgData = { -- Конфигурация для кодо-режима:
   ActionAlt = false,
   EmptyList  = false,
   EmptyStart = false,
-  SelBGColor = SelBGColor,
+  SelectedBG = SelectedBG,
   AngleColor = AngleColor,
   -- Свойства завершения слова:
   Trailers = "",
@@ -627,7 +627,6 @@ end ---- Localize
 
 end -- do
 do
-  --local Colors = menUt.MenuColors()
   local setBG = colors.setBG
   local HighlightOff = menUt.HighlightOff
 
@@ -654,11 +653,17 @@ function TMain:MakeProps ()
   RM_Props.Shadowed = false
   --RM_Props.MenuOnly = true
 
-  local SelBGColor = Cfg.SelBGColor
+  local SelectedBG = Cfg.SelectedBG
+  local SelColors = Colors.Selected
   RM_Props.Colors = {
-    COL_MENUSELECTEDTEXT      = setBG(Colors.COL_MENUSELECTEDTEXT, SelBGColor),
-    COL_MENUSELECTEDMARKTEXT  = setBG(Colors.COL_MENUSELECTEDMARKTEXT, SelBGColor),
-    COL_MENUSELECTEDHIGHLIGHT = setBG(Colors.COL_MENUSELECTEDHIGHLIGHT, SelBGColor),
+    Selected = {
+      normal  = setBG(SelColors.normal, SelectedBG),
+      hlight  = setBG(SelColors.hlight, SelectedBG),
+      marked  = setBG(SelColors.marked, SelectedBG),
+      grayed  = setBG(SelColors.grayed, SelectedBG),
+      disable = setBG(SelColors.disable, SelectedBG),
+    }, --
+
     BorderAngle = Cfg.AngleColor or nil,
   } -- RM_Props.Colors
 
