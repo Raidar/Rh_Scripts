@@ -438,8 +438,8 @@ end ---- Split
 --[[
   -- @params:
   block (s|t|nil) - line or block of lines.
-  left  (s|n|nil) - left "quote": @default = '"'.
-  right (s|n|nil) - right "quote": @default = '"'.
+  left  (s|n|nil) - left "quote" (@default = '"').
+  right (s|n|nil) - right "quote" (@default = '"').
   -- @return:
   block (s|t|nil) - processed line or block of lines.
 --]]
@@ -483,8 +483,8 @@ end ---- Enquote
 --[[
   -- @params:
   block (s|t|nil) - line or block of lines.
-  left  (s|n|nil) - left "quote" or its length: @default = '"'.
-  right (s|n|nil) - right "quote" or its length: @default = '"'.
+  left  (s|n|nil) - left "quote" or its length (@default = '"').
+  right (s|n|nil) - right "quote" or its length (@default = '"').
   -- @return:
   block (s|t|nil) - processed line or block of lines.
 --]]
@@ -644,7 +644,7 @@ end ---- SubBlock
   -- @params:
   block  (s|t|nil) - line or block of lines.
   pattern (string) - string to find: @see string.gsub.
-  include   (bool) - include pattern: @default = false.
+  include   (bool) - include pattern (@default = false).
   -- @return:
   block (s|t|nil) - processed line or block of lines.
 --]]
@@ -917,10 +917,10 @@ end ---- CopyColumn
 --[[
   -- @params:
   Info  (nil|table) - info about editor state.
-  Type (nil|string) - block type for action:
-                      @default = nil - as in Info,
-                      "stream" - as stream block,
-                      "column" - as column block.
+  Type (nil|string) - block type for action (@default = nil):
+                      nil       - as in Info,
+                      "stream"  - as stream block,
+                      "column"  - as column block.
   ToPos  (nil|bool) - flag to restore position after action.
   -- @return:
   @1:

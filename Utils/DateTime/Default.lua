@@ -333,8 +333,8 @@ end ---- divYearDay
   y (number) - year.
   m (number) - month.
   d (number) - day.
-  f (number) - day for week start of year: 1..DayPerWeek,
-               @default = YearStartWeekDay.
+  f (number) - day for week start of year
+               (@default = YearStartWeekDay): 1..DayPerWeek.
 ---- @return:
   result (number) - week of year.
 --]]

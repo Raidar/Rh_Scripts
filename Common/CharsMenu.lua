@@ -95,7 +95,7 @@ unit.DefActionKeys = {
   SVKeyFuncs.A,  SVKeyFuncs.AS,
   SVKeyFuncs.CA, SVKeyFuncs.CAS,
 } --- DefActionKeys
-unit.DefDoubleKeys = { unit.DefActionKeys, unit.DefActionKeys }
+unit.DefDoubleKeys = { unit.DefActionKeys, unit.DefActionKeys, }
 
 local DefKeyOrder = { [0] = ""; "" }
 unit.DefKeyOrder = DefKeyOrder
@@ -226,7 +226,8 @@ local MakeHeadItem = unit.MakeHeadItem
              (table) - массив таблиц-"шаблонов" содержимого. Поля:
     [1]       (string) - plain-текст содержимого.
     [2]       (string) - название пункта-"символа" меню.
-  Keys      (string) - тип назначаемых клавиш (@default = "AccelKey").
+  Keys      (string) - тип назначаемых клавиш (@default = "AccelKey"):
+                       "None", "AccelKey".
              (table) - таблица функций формирования клавиш.
               (bool) - = "AccelKey" с использованием порядка KeyOrder.
                        KeyOrder должен быть стандартного вида.

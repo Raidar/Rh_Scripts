@@ -516,7 +516,7 @@ unit.FarAreaTypes = {
 -- Тип заданной/текущей области.
 --[[
   -- @params:
-  pos (n|nil) - area number: @default = (nil | -1) - current area.
+  pos (n|nil) - area number (@default = (nil | -1) - current area).
 --]]
 function unit.GetAreaType (pos) --> (string)
   return unit.FarAreaTypes[unit.GetWindowInfo(pos).Type]
