@@ -501,7 +501,9 @@ function TMenu:DefinePropInfo () --| Props
   local Colors = RM.Colors or {}
   Colors.__index = MenuUsualColors; setmetatable(Colors, Colors)
   self.Colors = Colors
+  -- TODO: Завести поле-цвет clear!
   Colors.Form    = Colors.Standard.normal
+  Colors.Fixed.Form = Colors.Form
   Colors.Borders = Colors.Borders or Null
   Colors.DlgBox  = Colors.DlgBox or
                    dlgUt.ItemColor(-- Text + Select + Box:
@@ -1990,6 +1992,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     x = 0, y = 0,
     w = 0, h = 0,
   } ---
+  local ClearColor = A_Rect.Colors.Form
 
   while y < yLim and r <= A_Cell.rMax do
     local h = self.RowHeight[r]
@@ -2012,7 +2015,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       Rect.x, Rect.w = x, xLim - x -- Заполнение пустоты:
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
-      DrawClearItemText(Rect, A_Rect.Colors.Form)
+      DrawClearItemText(Rect, ClearColor)
     end
 
     r, y = r + 1, y + h + Data.RowSep
@@ -2022,7 +2025,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     Rect.x, Rect.w = A_Rect.xMin, A_Rect.xMax - A_Rect.xMin
     Rect.y, Rect.h = y, yLim - y -- Заполнение пустоты:
     --logShow(Rect, "Draw Spaces by y", 1)
-    DrawClearItemText(Rect, A_Rect.Colors.Form)
+    DrawClearItemText(Rect, ClearColor)
   end -- if
   --logShow({ x, xLim }, "Values")
 
