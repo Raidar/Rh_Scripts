@@ -49,7 +49,7 @@ local unit = {}
 ---------------------------------------- Fields
 -- Копирование полей t.
 local function copyFields (t) --|> (t)
-  return tables.copy(t, true, tables.allpairs, true)
+  return tables.clone(t, true, tables.allpairs, true)
 end --
 
 -- Обновление полей t значениями полей из u.
