@@ -17,36 +17,35 @@ if rawget(_G, 'context') == nil then
 end
 
 ----------------------------------------
-local ext = ""
-if context.use.LFVer < 3 then ext = ".lua" end
+rawset(_G, 'Rh_Scripts', {})
 
 ---------------------------------------- Items
 local ScriptsPath = "scripts\\Rh_Scripts\\"
 local EditorPath  = ScriptsPath.."Editor\\"
 local SamplesPath = ScriptsPath.."Samples\\"
-local EditorHandActions = EditorPath.."HandActions"..ext
+local EditorHandActions = EditorPath.."HandActions"
 
 -- Rh_Scripts pack configurator.
-AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig"..ext)
+AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig")
 
 AddToMenu("evpc", ":sep:User Menus")
 -- LUM for Editor.
-AddToMenu("e", "LU&M for Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext)
-AddToMenu("c", "LUM for &Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Config")
+AddToMenu("e", "LU&M for Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM")
+AddToMenu("c", "LUM for &Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM", "Config")
   -- Template insert assigned to key.
-AddToMenu("e", nil, "Ctrl+J", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Insert")
+AddToMenu("e", nil, "Ctrl+J", ScriptsPath.."LuaEUM\\LuaEUM", "Insert")
   -- Characters kit assigned to key.
-AddToMenu("e", nil, "Ctrl+Shift+H", ScriptsPath.."LuaEUM\\LuaEUM"..ext, "Characters")
+AddToMenu("e", nil, "Ctrl+Shift+H", ScriptsPath.."LuaEUM\\LuaEUM", "Characters")
 -- LUM for Panels.
-AddToMenu("p", "LU&M for Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext)
-AddToMenu("c", "LUM for &Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM"..ext, "Config")
+AddToMenu("p", "LU&M for Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM")
+AddToMenu("c", "LUM for &Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM", "Config")
 -- LUM for farlua scripts.
-AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS"..ext)
-AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS"..ext, "Config")
+AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS")
+AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS", "Config")
 
 AddToMenu("evpc", ":sep:User Scripts")
   -- Void Truncater.
-AddToMenu("e", nil, "Ctrl+T", EditorPath.."VoidTruncate"..ext, "TruncateFileText")
+AddToMenu("e", nil, "Ctrl+T", EditorPath.."VoidTruncate", "TruncateFileText")
   -- Word Completion.
 AddToMenu("e", nil, "Ctrl+Space", EditorHandActions, "WC:Execute")
 AddToMenu("c", "&Word Completion", nil, EditorHandActions, "WC:Config")
@@ -58,8 +57,9 @@ AddToMenu("c", "A&uto Templates", nil, EditorHandActions, "TT:AutoCfg")
 AddToMenu("c", "Update Templates", nil, EditorHandActions, "TT:Update")
 
   -- Keys information.
-AddToMenu("evp", "&Keys information", nil, SamplesPath.."KeysInfo"..ext)
+AddToMenu("evp", "&Keys information", nil, SamplesPath.."KeysInfo")
 
 ---------------------------------------- Residents
+
 
 --------------------------------------------------------------------------------

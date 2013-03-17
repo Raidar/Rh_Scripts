@@ -670,6 +670,10 @@ if rawget(_G, 'context') == nil then
   farError(SInstallError:format"LuaFAR context is required!")
   return false
 end
+
+----------------------------------------
+rawset(_G, 'Rh_Scripts', {})
+
 ]==]--_UM.Start
 ----------------------------------------
 _UM.End = [==[
@@ -679,21 +683,19 @@ _UM.End = [==[
 ----------------------------------------
 _UM.MenuItems = [==[
 
-----------------------------------------
-local ext = ""
-if context.use.LFVer < 3 then ext = ".lua" end
-
 ---------------------------------------- Items
 local ScriptsPath = "scripts\\Rh_Scripts\\"
 local EditorPath  = ScriptsPath.."Editor\\"
 local SamplesPath = ScriptsPath.."Samples\\"
-local EditorHandActions = EditorPath.."HandActions"..ext
+local EditorHandActions = EditorPath.."HandActions"
 
 ]==]--_UM.MenuItems
 ----------------------------------------
+--MakeResident("Rh_Scripts.Common.Resident")
 _UM.Residents = [==[
 
 ---------------------------------------- Residents
+
 ]==]--_UM.Residents
 ----------------------------------------
 _UM.AddSepItem  = 'AddToMenu("%s", ":sep:%s")\n'
@@ -701,7 +703,7 @@ _UM.AddMenuItem = 'AddToMenu("%s", %s, %s, %s..%s, %s, %s)'
 _UM.MakeResItem = 'MakeResident(%s..%s)'
 _UM.rhsConfig = [==[
 -- Rh_Scripts pack configurator.
-AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig"..ext)
+AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig")
 ]==]--_UM.rhsConfig
 
 ---------------------------------------- Main make
@@ -712,7 +714,7 @@ end --
 
 -- Name parameter.
 local function p (s) --> (string)
-  return (s and s ~= " ") and ('"%s"..ext'):format(s) or ''
+  return (s and s ~= " ") and ('"%s"'):format(s) or ''
 end --
 
 -- Fix wrong fields args.
