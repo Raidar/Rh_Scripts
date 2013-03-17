@@ -494,9 +494,12 @@ do
   local require = require
 
 -- Require module in "user" mode.
+--unit.urequire = require
+-- [[
 function unit.urequire (modname)
   return unit.usercall(nil, require, modname)
 end
+--]]
 
 end -- do
 

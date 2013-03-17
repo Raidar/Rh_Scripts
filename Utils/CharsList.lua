@@ -22,9 +22,6 @@ local io_open = io.open
 local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
-local strings = require 'context.utils.useStrings'
-
-local capital = strings.capital
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -32,6 +29,16 @@ local unit = {}
 ----------------------------------------
 local Names = {} -- Таблица-список названий
 unit.Names = Names
+
+-- Преобразование в читаемый формат
+local lower = unicode.utf8.lower
+local function _easy (head, tail) --> (string)
+  return head..lower(tail)
+end --
+
+local function easy (s) --> (string)
+  return s:gsub("(%w)(%w+)", _easy)
+end -- easy
 
 -- Make and return subtable for t[k].
 local function subTable (t, k) --> (table)
@@ -90,7 +97,7 @@ do
       --if cp > 0xFFFF then break end -- DEBUG only
       last, data = cp, Names[cp]
       data.code = code
-      data.name = name:sub(1, 1) == '<' and name or capital(name)
+      data.name = name:sub(1, 1) == '<' and name or easy(name)
     end
 
     --[[

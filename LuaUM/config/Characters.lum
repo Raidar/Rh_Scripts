@@ -14,22 +14,32 @@ local logShow = context.ShowInfo
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
+local Rh_Scripts = Rh_Scripts
+
 local CharsMenu -- require in unit.MakeMenu
 --local CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
 --------------------------------------------------------------------------------
 local unit = {}
 
+---------------------------------------- Main data
+unit.ScriptName = "Characters"
+unit.ScriptPath = "Rh_Scripts.LuaUM.config"
+
+unit.ScriptData = Rh_Scripts[unit.ScriptPath] or {}
+Rh_Scripts[unit.ScriptPath] = unit.ScriptData
+
 ---------------------------------------- Custom
-local Custom = {
+local DefCustom = {
   label = "Chars",
   name = "lum",
-  path = "Rh_Scripts.LuaUM.config.",
+  path = unit.ScriptPath..".",
+
   locale = { kind = 'require', },
-} ---
+} --- DefCustom
 
 ---------------------------------------- Locale
-local L, e1, e2 = locale.localize(Custom)
+local L, e1, e2 = locale.localize(DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
 end
@@ -47,16 +57,16 @@ unit.KitGroups = {
 
 -- Данные о наборах.
 unit.KitsData = {
-  UnicodeTable = { Group = "All",   Hot = "_", text = 0, Title = 0, },
-  CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
-  CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
-  MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
-  MathsScripts = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
-  MathsIndexes = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
-  PunctSymbols = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
-  PunctSpaHyps = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
-  Techs_Arrows = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
-  Draws_Boxing = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
+  CharacterMap  = { Group = "All",   Hot = "_", text = 0, Title = 0, },
+  Chars_Greeks  = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
+  Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
+  MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
+  MathsScripts  = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
+  MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
+  PunctSymbols  = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
+  Punct_Spaces  = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
+  Techs_Arrows  = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
+  Draws_Boxing  = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
 } -- KitsData
 
 do
@@ -163,14 +173,28 @@ do
   Chars.LF = U(0x000A)
   Chars.CR = U(0x000D)
 end -- do
----------------------------------------- Letters etc
 
----------------------------------------- ---- Testing
-function unit.UnicodeTable ()
+---------------------------------------- CharacterMap
+function unit.CharacterMap ()
+  local Name = "CharacterMap"
+  local Menu = unit.ScriptData[Name]
+  --logShow(Menu, Name, "w d0")
+  if Menu then
+    --[[
+    if type(Menu) == 'function' then
+      Menu = Menu()
+      unit.ScriptData[Name] = Menu
+    elseif type(Menu) == 'table' and
+           type(Menu.Items) == 'function' then
+      Menu.Items = Menu.Items()
+    end
+    --]]
+    return Menu
+  end
 
   local Order = "0123456789ABCDEF"
 
-  local MaxCode = 0xFFFF
+  local MaxCode = 0xFFFD
   local U = unicode.utf8.char
 
   local Datas = {
@@ -200,7 +224,7 @@ function unit.UnicodeTable ()
     },
   } ---
 
-  local Cfg = unit.MakeKindConfig('UnicodeTable', false)
+  local Cfg = unit.MakeKindConfig(Name, false)
   Cfg.LazyMake = true -- Отложенное формирование меню
   --Cfg.TextMark = true -- Выделение символов в пунктах меню
 
@@ -221,11 +245,17 @@ function unit.UnicodeTable ()
     --logShow(Cfg.Colors, "Colors", "w d2 xv8")
   end -- do
 
-  return unit.MakeKindMenu(Cfg, Props, Datas, "None")
-end ---- UnicodeTable
+  Menu = unit.MakeKindMenu(Cfg, Props, Datas, "None")
+  unit.ScriptData[Name] = Menu
 
----------------------------------------- ---- Greek and extended
-function unit.CharsGreekEx ()
+  return Menu
+end ---- CharacterMap
+
+---------------------------------------- Letters etc
+function unit.Chars_Greeks ()
+  local Name = "Chars_Greeks"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
   local Datas = -- Char + Shift
@@ -244,15 +274,19 @@ function unit.CharsGreekEx ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.MakeKindMenu('CharsGreekEx', Props, Datas, "AccelKey")
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
   unit.CompactMenu(Menu)
-  --logShow(Menu, "CharsGreekEx", 3)
+  --logShow(Menu, Name, 3)
+  unit.ScriptData[Name] = Menu
 
   return Menu
-end ---- CharsGreekEx
----------------------------------------- ---- Cyrillic slavic
-function unit.CharsCyrSlav ()
+end ---- Chars_Greeks
+
+function unit.Chars_Cyrils ()
+  local Name = "Chars_Cyrils"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
   local Datas = -- Char + Shift
@@ -274,17 +308,20 @@ function unit.CharsCyrSlav ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.MakeKindMenu('CharsCyrSlav', Props, Datas, "AccelKey")
-  --logShow(Menu, "CharsCyrSlav", 2)
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
+  --logShow(Menu, "Chars_Cyrils", 2)
   unit.UseSpace(Menu)
   unit.CompactMenu(Menu)
-
+  unit.ScriptData[Name] = Menu
+  
   return Menu
-end ---- CharsCyrSlav
----------------------------------------- Mathematics
+end ---- Chars_Cyrils
 
----------------------------------------- ---- Sub-/superscripts
+---------------------------------------- Mathematics
 function unit.MathsScripts ()
+  local Name = "MathsScripts"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = [[1234567890=-`[]ijk/\ ]]
   local Datas = -- Char + Shift
@@ -311,14 +348,18 @@ function unit.MathsScripts ()
     SVKeyFuncs.CS,          SVKeyFuncs.CAS,
   } --- Keys
 
-  local Menu = unit.MakeKindMenu('MathsScripts', Props, Datas, Keys)
+  Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
   unit.UseSpace(Menu)
-  --logShow(Menu, "MathsScripts", 3)
+  --logShow(Menu, Name, 3)
+  unit.ScriptData[Name] = Menu
 
   return Menu
 end ---- MathsScripts
----------------------------------------- ---- Other indexes
+
 function unit.MathsIndexes ()
+  local Name = "MathsIndexes"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = "aijklmnprstuvxy"
   local Datas = -- Char + Shift
@@ -335,22 +376,40 @@ function unit.MathsIndexes ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.MakeKindMenu('MathsIndexes', Props, Datas, "AccelKey")
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
+  unit.ScriptData[Name] = Menu
 
   return Menu
 end ---- MathsIndexes
+
 ---------------------------------------- Technology
+function unit.Techs_Arrows ()
+  local Name = "Techs_Arrows"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
----------------------------------------- ---- Arrows
-function unit.TechsArrows ()
+  local Order = "aijklmnprstuvxy"
+  local Datas = -- Char + Shift
+                "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
+                "ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ"..
+                -- Ctrl + Shift
+                "               "..
+                "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
+                -- Alt + Shift
+                --"               "
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+  } ---
 
-  local Menu = unit.MakeKindMenu('TechsArrows', Props, Datas, "AccelKey")
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
+  unit.ScriptData[Name] = Menu
 
   return Menu
 end ---- TechsArrows
----------------------------------------- Punctuation
 
----------------------------------------- ---- Symbols
+---------------------------------------- Punctuation
 --[[
 /   - dot/point
 a   - acute
@@ -359,6 +418,9 @@ qw  - quote
 b   - bullet
 --]]
 function unit.PunctSymbols ()
+  local Name = "PunctSymbols"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = [[/opqwb`1234567890-\ ]]
   local Datas = -- Char + Shift
@@ -397,13 +459,17 @@ function unit.PunctSymbols ()
     Heading = "Both",
   } ---
 
-  local Menu = unit.MakeKindMenu('PunctSymbols', Props, Datas, "AccelKey")
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
+  unit.ScriptData[Name] = Menu
 
   return Menu
 end ---- PunctSymbols
----------------------------------------- ---- Space & Hyphen
-function unit.PunctSpaHyps ()
+
+function unit.Punct_Spaces ()
+  local Name = "Punct_Spaces"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
 
   local Order = {
     { '   " "', ' ', 'Multiply', }, { ' "-"/Num-', '-', 'Subtract', },
@@ -438,13 +504,14 @@ function unit.PunctSpaHyps ()
     --___ = true, -- DEBUG
   } ---
 
-  local Cfg = unit.MakeKindConfig('PunctSpaHyps', false)
+  local Cfg = unit.MakeKindConfig(Name, false)
   --local Menu = unit.MakeKindMenu(Cfg, Props, Datas, "DupleKey")
-  local Menu = unit.MakeKindMenu(Cfg, Props, Datas, CharsMenu.DefDoubleKeys)
-  --logShow(Menu, "PunctSpaHyps", "w d3")
+  Menu = unit.MakeKindMenu(Cfg, Props, Datas, CharsMenu.DefDoubleKeys)
+  --logShow(Menu, Name, "w d3")
+  unit.ScriptData[Name] = Menu
 
   return Menu
-end ---- PunctSpaHyps
+end ---- Punct_Spaces
 
 --------------------------------------------------------------------------------
 
@@ -462,12 +529,12 @@ function unit.MakeMenu ()
 
     --Inherit = false,
 
-    --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.CharsGreekEx, },
+    --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.Chars_Greeks, },
     Items = {
-      unit.UnicodeTable,
+      unit.CharacterMap,
 
       { text = gL.Chars, separator = true, },
-      unit.CharsGreekEx, unit.CharsCyrSlav,
+      unit.Chars_Greeks, unit.Chars_Cyrils,
 
       { text = gL.Maths, separator = true, },
       unit.MathsScripts, unit.MathsIndexes,
@@ -476,7 +543,7 @@ function unit.MakeMenu ()
       --unit.Techs_Arrows,
 
       { text = gL.Punct, separator = true, },
-      unit.PunctSymbols, unit.PunctSpaHyps,
+      unit.PunctSymbols, unit.Punct_Spaces,
 
     }, -- Items
 
