@@ -47,6 +47,7 @@ unit.KitGroups = {
 
 -- Данные о наборах.
 unit.KitsData = {
+  UnicodeTable = { Group = "All",   Hot = "_", text = 0, Title = 0, },
   CharsGreekEx = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   CharsCyrSlav = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
   MathsSymbols = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
@@ -76,7 +77,8 @@ end --
 for k, v in pairs(KitsData) do
   local text = L["Chs"..k] or k
   v.text  = textFmt:format(v.Hot, text)
-  v.Title = titleFmt:format(gL[v.Group], text)
+  local gl = gL[v.Group]
+  v.Title = gl and titleFmt:format(gl, text) or text
 end --
 
 end -- do
@@ -142,12 +144,12 @@ end ----
 
 -- Использовать компактное меню для умещения на экране.
 function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
-  local RectMenu = Menu.Props.RectMenu
-  --RectMenu.BoxKind = ""
-  --RectMenu.Shadowed = false
-  --RectMenu.MenuEdgeH = 0
-  RectMenu.CompactText = true
-  RectMenu.Separators = "V"
+  local RM_Props = Menu.Props.RectMenu
+  --RM_Props.BoxKind = ""
+  --RM_Props.Shadowed = false
+  --RM_Props.MenuEdgeH = 0
+  RM_Props.CompactText = true
+  RM_Props.Separators = "V"
 end ---- CompactMenu
 
 ---------------------------------------- Characters ----
@@ -162,6 +164,65 @@ do
   Chars.CR = U(0x000D)
 end -- do
 ---------------------------------------- Letters etc
+
+---------------------------------------- ---- Testing
+function unit.UnicodeTable ()
+
+  local Order = "0123456789ABCDEF"
+
+  local MaxCode = 0xFFFF
+  local U = unicode.utf8.char
+
+  local Datas = {
+    " ",
+  } ---
+  for k = 1, MaxCode do
+    Datas[#Datas + 1] = U(k)
+  end
+
+  local strings = require 'context.utils.useStrings'
+  local uCP = strings.ucp2s
+
+  local KeyOrder = { [0] = "────" }
+  for k = 0, MaxCode, 0x10 do
+    KeyOrder[#KeyOrder + 1] = uCP(k, true)
+  end
+
+  local Props = {
+    Order = Order,
+    KeyOrder = KeyOrder,
+    Serial = true,
+    --Heading = "Order",
+    Heading = "Both",
+
+    RectMenu = {
+      TextMark = true,
+    },
+  } ---
+
+  local Cfg = unit.MakeKindConfig('UnicodeTable', false)
+  Cfg.LazyMake = true -- Отложенное формирование меню
+  --Cfg.TextMark = true -- Выделение символов в пунктах меню
+
+  do
+    local colors = require 'context.utils.useColors'
+    local basics = colors.BaseColors
+    local Basis = {
+      StandardFG  = basics.navy,
+      MarkedFG    = basics.black,
+      BorderFG    = basics.black,
+      TitleFG     = basics.black,
+      --StatusBarFG = basics.black,
+      ScrollBarFG = basics.black,
+    } --- Basis
+
+    local menUt = require "Rh_Scripts.Utils.Menu"
+    Cfg.Colors = menUt.FormColors(Basis)
+    --logShow(Cfg.Colors, "Colors", "w d2 xv8")
+  end -- do
+
+  return unit.MakeKindMenu(Cfg, Props, Datas, "None")
+end ---- UnicodeTable
 
 ---------------------------------------- ---- Greek and extended
 function unit.CharsGreekEx ()
@@ -403,7 +464,9 @@ function unit.MakeMenu ()
 
     --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.CharsGreekEx, },
     Items = {
-      --{ text = gL.Chars, separator = true, },
+      unit.UnicodeTable,
+
+      { text = gL.Chars, separator = true, },
       unit.CharsGreekEx, unit.CharsCyrSlav,
 
       { text = gL.Maths, separator = true, },

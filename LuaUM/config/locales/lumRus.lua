@@ -37,6 +37,8 @@ local Data = {
   -- Character kits
   CharacterKits     = "Наборы символов",
   ChsKitItem        = "&H - Наборы символов",
+  
+  ChsUnicodeTable   = "Таблица символов",
 
   ChsChars          = "Буквы",
     ChsCharsGreekEx     = "Греческие буквы",

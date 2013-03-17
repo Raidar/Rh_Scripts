@@ -343,13 +343,13 @@ do
   local setFG, setBG = colors.setFG, colors.setBG
   
 -- Формирование цветов для меню.
-function unit.MenuColors () --> (table)
-  local Standard = IndexColor(C.COL_MENUTEXT)
-  local Selected = IndexColor(C.COL_MENUSELECTEDTEXT)
-  local StandardBG = getBG(Standard)
-  local SelectedBG = getBG(Selected)
-  local MarkedFG = basics.lime
-  local FixedBG  = basics.gray
+function unit.MenuColors (MarkedFG, FixedBG) --> (table)
+  local Standard    = IndexColor(C.COL_MENUTEXT)
+  local Selected    = IndexColor(C.COL_MENUSELECTEDTEXT)
+  local StandardBG  = getBG(Standard)
+  local SelectedBG  = getBG(Selected)
+  local MarkedFG    = MarkedFG or basics.lime
+  local FixedBG     = FixedBG or basics.gray
   
   local Colors = {
     Standard = { -- Нормальный:
@@ -389,14 +389,15 @@ function unit.MenuColors () --> (table)
 end ---- MenuColors
 
 -- Формирование цветов для формы.
-function unit.FormColors () --> (table)
-  local StandardFG = basics.black
-  local StandardBG = basics.silver
-  local SelectedFG = basics.blue
-  local SelectedBG = basics.white
-  local MarkedFG = basics.maroon
-  local FixedFG  = basics.white
-  local FixedBG  = basics.gray
+function unit.FormColors (Basis) --> (table)
+  local Basis = Basis or {}
+  local StandardFG  = Basis.StandardFG or basics.black
+  local StandardBG  = Basis.StandardBG or basics.silver
+  local SelectedFG  = Basis.SelectedFG or basics.blue
+  local SelectedBG  = Basis.SelectedBG or basics.white
+  local MarkedFG    = Basis.MarkedFG or basics.maroon
+  local FixedFG     = Basis.FixedFG or basics.white
+  local FixedBG     = Basis.FixedBG or basics.gray
   
   local Colors = {
     Standard = { -- Нормальный:
@@ -421,10 +422,10 @@ function unit.FormColors () --> (table)
       disable = make(getFG(IndexColor(C.COL_MENUDISABLEDTEXT)), FixedBG),
     }, --
 
-    Border    = make(StandardFG, StandardBG),
-    Title     = make(StandardFG, StandardBG),
-    StatusBar = make(basics.silver, StandardBG),
-    ScrollBar = make(StandardFG, StandardBG),
+    Border    = make(Basis.BorderFG or StandardFG, StandardBG),
+    Title     = make(Basis.TitleFG  or StandardFG, StandardBG),
+    StatusBar = make(Basis.StatusBarFG or basics.black, StandardBG),
+    ScrollBar = make(Basis.ScrollBarFG or StandardFG, StandardBG),
 
     DlgBox    = false, -- Standard.normal + Standard.hlight + Border,
   } --- Colors

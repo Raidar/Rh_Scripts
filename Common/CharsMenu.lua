@@ -143,15 +143,15 @@ end ---- MakeItemText
 -- Формирование клавиши обработки для пункта.
 local function MakeItemKey (item, Keys, key, char)
   local keys = Keys[key]
-  if keys then
-    local key = item.AccelKey
-    if not key then
-      item.AccelKey = keys(char)
-    elseif type(key) == 'string' then
-      item.AccelKey = { item.AccelKey, keys(char) }
-    elseif type(key) == 'table' then
-      key[#key + 1] = keys(char)
-    end
+  if not keys then return end
+
+  local key = item.AccelKey
+  if not key then
+    item.AccelKey = keys(char)
+  elseif type(key) == 'string' then
+    item.AccelKey = { item.AccelKey, keys(char) }
+  elseif type(key) == 'table' then
+    key[#key + 1] = keys(char)
   end
 end -- MakeItemKey
 unit.MakeItemKey = MakeItemKey
@@ -169,7 +169,7 @@ unit.MakeItemKey = MakeItemKey
 
 -- Make menu item.
 -- Формирование пункта меню.
-function unit.MakeCharItem (text, Keys, key, char, hint) --> (table)
+function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   local text = text
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
@@ -177,16 +177,20 @@ function unit.MakeCharItem (text, Keys, key, char, hint) --> (table)
   local t = {
     text = text,
     Plain = x,
+    RectMenu = Props.RectMenu,
   } ---
   --if text == "" or text == " " then t.grayed = true end
   if text == "" or text == " " then t.disable = true end
-  if hint == true then
+
+  local Hint = Props.Hint
+  if Hint == true then
     if x:len() == 1 then
       local u = u_byte(x)
-      hint = CharNameFmt:format(uCP(u, true), uCPname(u))
+      t.Hint = CharNameFmt:format(uCP(u, true), uCPname(u))
     end
+  elseif Hint then
+    t.Hint = Hint
   end
-  if hint then t.Hint = hint end
 
   local char = char
   x = type(char) ~= 'table'
@@ -257,14 +261,18 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
                 tp == 'string' and dLen / Size or dLen or 1
   if Count < 1 then Count = 1 end
 
-  local Serial = Properties.Serial
-  local KeyOrder = Properties.KeyOrder or DefKeyOrder
-  local Hint = Properties.Hint
-  if Hint == nil then Hint = true end
+  local ItemProps = {
+    Hint = Properties.Hint == nil and true or Properties.Hint,
+    RectMenu = Properties.RectMenu or {},
+  } --- ItemProps
+
   local Heading = Properties.Heading or "Order"
 
-  -- Клавиши быстрого выбора:
+  -- Порядок клавиш
+  local KeyOrder = Properties.KeyOrder or DefKeyOrder
   KeyOrder[0] = KeyOrder[0] or ""
+
+  -- Клавиши быстрого выбора:
   local Keys = Keys or "AccelKey"
   local kk = type(Keys)
   if kk == 'boolean' then
@@ -276,7 +284,11 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
     end
     --logShow({ tp, Keys }, "Used Keys", "#qd1")
   elseif kk == 'string' then
-    Keys = unit.DefActionKeys
+    if Keys == "None" then
+      Keys = { Kind = "None" }
+    else
+      Keys = unit.DefActionKeys
+    end
   end -- if
 
   -- Функция извлечения текста из Order
@@ -297,7 +309,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
     t[#t+1] = MakeHeadItem(KeyOrder[0]) -- Angle Head
   end
 
-  if Serial then -- Последовательная выборка
+  if Properties.Serial then -- Последовательная выборка
 
     if Heading ~= "Keys" then
       local i, j = 1, 1
@@ -325,7 +337,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ text(i), Order:sub(j, j) }, "Char Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t+1] = MakeCharItem(s, Keys, k, capt(j), Hint)
+          t[#t+1] = MakeCharItem(s, Keys, k, capt(j), ItemProps)
         end
         i, j = i + iLen, j + 1
       end
@@ -361,7 +373,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         --logShow({ s, d }, "Char Loop", "#qd1")
         if s ~= "" then
-          t[#t+1] = MakeCharItem(s, Keys, k, d, Hint)
+          t[#t+1] = MakeCharItem(s, Keys, k, d, ItemProps)
         end
         i, k = i + iLen, k + 1
       end
@@ -421,7 +433,7 @@ end ---- SetKeyItemsField
 
 ---------------------------------------- main
 do
-  local tcopy = tables.copy
+  local tcopy = tables.clone --copy
   local DefMenuAlign = "CM"
   --local DefFixedRows = { HeadRows = 1 }
   --local DefFixedCols = { HeadCols = 1 }
@@ -444,23 +456,22 @@ local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 --local InsText = editor.InsertText
 local InsText = farUt.InsertText
 
-function unit.MakeMenu (MenuConfig, Props, Data, Keys) --> (table)
-  local MenuConfig = MenuConfig or {}
-  local Fixed = MenuConfig.Fixed or DefFixedBoth
+function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
+  local Config = Config or {}
 
-  local mItems = unit.MakeItems(Props, Data, Keys)
-
-  --[[
   local mItems
 
-  -- Deferred make items.
+  -- Lazy make items.
   -- Отложенное формирование пунктов.
   local function MakeItems ()
     mItems = unit.MakeItems(Props, Data, Keys)
     --logShow(mItems, "mItems", "w d2")
     return mItems
   end --
-  --]]
+
+  if not Config.LazyMake then
+    mItems = unit.MakeItems(Props, Data, Keys)
+  end
 
   local Area = farUt.GetAreaType()
 
@@ -486,16 +497,21 @@ function unit.MakeMenu (MenuConfig, Props, Data, Keys) --> (table)
     return true
   end -- ChooseItem
 
+  local Fixed = Config.Fixed or DefFixedBoth
+
   local Properties = {
     Id = Guid,
-    Bottom = MenuConfig.Bottom,
+    Bottom = Config.Bottom,
 
     RectMenu = {
       Cols = (Props.Size or length(Props.Order)) +
              (Fixed == DefFixedBoth and 1 or 0),
       MenuAlign = DefMenuAlign,
-      MenuEdge = 2,
-      Fixed = Fixed,
+      MenuEdge  = 2,
+      Fixed     = Fixed,
+
+      Colors    = Config.Colors,
+      TextMark  = Config.TextMark,
 
       OnChooseItem = ChooseItem,
     }, --
@@ -503,34 +519,33 @@ function unit.MakeMenu (MenuConfig, Props, Data, Keys) --> (table)
 
   --[[
   if Props.___ then
-    logShow({ Props = Properties, Cfg = MenuConfig }, "ChUMenu", 3)
+    logShow({ Props = Properties, Cfg = Config }, "ChUMenu", 3)
   --]]
-  if set__index(Properties, MenuConfig.Props) then
-    set__index(Properties.RectMenu, MenuConfig.Props.RectMenu)
+  if set__index(Properties, Config.Props) then
+    set__index(Properties.RectMenu, Config.Props.RectMenu)
   end
 
   local CfgData = { UMenu = tcopy(DefUMenu, false, pairs, false) }
-  if set__index(CfgData, MenuConfig.CfgData) then
-    set__index(CfgData.UMenu, MenuConfig.CfgData.UMenu)
+  if set__index(CfgData, Config.CfgData) then
+    set__index(CfgData.UMenu, Config.CfgData.UMenu)
   end
   --[[
   if Props.___ then
-    logShow({ Menu = MenuConfig, Props = Properties, Cfg = CfgData }, "ChUMenu", 3)
+    logShow({ Menu = Config, Props = Properties, Cfg = CfgData }, "ChUMenu", 3)
   end
   --]]
 
   return {
-    Name  = MenuConfig.Name,
-    text  = MenuConfig.text,
-    Title = MenuConfig.Title,
+    Name  = Config.Name,
+    text  = Config.text,
+    Title = Config.Title,
     MenuView = "RectMenu",
 
     Props = Properties,
 
     CfgData = CfgData,
 
-    Items = mItems,
-    --Items = MakeItems,
+    Items = Config.LazyMake and MakeItems or mItems,
   } ----
 end ---- MakeMenu
 
