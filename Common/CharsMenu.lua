@@ -177,7 +177,7 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   local t = {
     text = text,
     Plain = x,
-    RectMenu = Props.RectMenu,
+    RectMenu = Props.RectItem,
   } ---
   --if text == "" or text == " " then t.grayed = true end
   if text == "" or text == " " then t.disable = true end
@@ -437,7 +437,10 @@ do
   local DefMenuAlign = "CM"
   --local DefFixedRows = { HeadRows = 1 }
   --local DefFixedCols = { HeadCols = 1 }
-  local DefFixedBoth = { HeadRows = 1, HeadCols = 1 }
+  local DefFixedBoth = {
+    HeadRows = 1,
+    HeadCols = 1,
+  } ---
   local DefUMenu = { TextNamedKeys = false }
 
   local function set__index (t, u)
@@ -499,22 +502,20 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
 
   local Fixed = Config.Fixed or DefFixedBoth
 
+  local RM_Props = Props.RectMenu or {}
+  RM_Props.Cols         = (Props.Size or length(Props.Order)) +
+                          (Fixed == DefFixedBoth and 1 or 0)
+  RM_Props.MenuAlign    = DefMenuAlign
+  RM_Props.MenuEdge     = 2
+  RM_Props.Fixed        = Fixed
+  RM_Props.OnChooseItem = ChooseItem
+  ----- RM_Props
+  
   local Properties = {
     Id = Guid,
     Bottom = Config.Bottom,
 
-    RectMenu = {
-      Cols = (Props.Size or length(Props.Order)) +
-             (Fixed == DefFixedBoth and 1 or 0),
-      MenuAlign = DefMenuAlign,
-      MenuEdge  = 2,
-      Fixed     = Fixed,
-
-      Colors    = Config.Colors,
-      TextMark  = Config.TextMark,
-
-      OnChooseItem = ChooseItem,
-    }, --
+    RectMenu = RM_Props,
   } --- Properties
 
   --[[
