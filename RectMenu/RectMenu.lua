@@ -50,7 +50,6 @@ local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
-local colors = require 'context.utils.useColors'
 
 local newFlag, isFlag = utils.newFlag, utils.isFlag
 
@@ -806,20 +805,16 @@ function TMenu:DefineZoneInfo () --| Zone
   local MaxHeight = RM.MaxHeight or self.Area.Height
   local MinWidth  = min2(RM.MinWidth  or 1, self.Area.Width)
   local MinHeight = min2(RM.MinHeight or 1, self.Area.Height)
-  --[[
-  Width  = (Width < 10 and 10 or Width) - Zone.EdgeH - 1
-  Height = (Height < 5 and 5 or Height) - Zone.EdgeV - 1
-  Zone.Width, Zone.Height = Width, Height
-  --]]
-  Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH + 1) - Zone.EdgeH - 1
-  Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV + 1) - Zone.EdgeV - 1
+  Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH) - Zone.EdgeH
+  Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV) - Zone.EdgeV
+  --Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH + 1) - Zone.EdgeH - 1
+  --Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV + 1) - Zone.EdgeV - 1
   -- Отображаемые кол-во рядов и реальные размеры.
   Zone.Cols, Zone.Width  = self:VisibleColCount(1)
   Zone.Rows, Zone.Height = self:VisibleRowCount(1)
   Zone.MenuWidth  = max2(Zone.Width,  MinWidth)
   Zone.MenuHeight = max2(Zone.Height, MinHeight)
-  --Zone.LastX = Zone.HomeX + Zone.Width  - 1
-  --Zone.LastY = Zone.HomeY + Zone.Height - 1
+  --Zone.LastX and Zone.LastY is defined in DefineDBoxInfo
   --logShow(self.Zone, "self.Zone")
 
   -- Показываемая часть пунктов меню.

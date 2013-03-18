@@ -138,8 +138,8 @@ $ #Menu window properties#: RectMenu
     ¦Following values are used by default for window field:
       min. width  = \37(MinWidth  or 10)\- characters,
       min. height = \37(MinHeight or  5)\- characters,
-      max. width  = \37(MaxWidth or 80)\- characters,
-      max. height = \37(MaxHeight or 25) + 1\- characters.
+      max. width  = \37(MaxWidth  or 80)\- characters,
+      max. height = \37(MaxHeight or 25)\- characters.
 
   #Colors#      (table) — Table of menu colors for usual items.
   #FixedColors# (table) — Table of menu colors for fixed items.
