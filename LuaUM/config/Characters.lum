@@ -178,8 +178,8 @@ end -- do
 function unit.CharacterMap ()
   local Name = "CharacterMap"
   local Menu = unit.ScriptData[Name]
-  --logShow(Menu, Name, "w d0")
   if Menu then
+    --logShow(Menu, Name, "w d0")
     --[[
     if type(Menu) == 'function' then
       Menu = Menu()
@@ -220,13 +220,18 @@ function unit.CharacterMap ()
     Heading = "Both",
 
     RectMenu = {
+      MaxHeight = 2 + 1 + 0x10 + 2 + 0,
+
+      --TextMark = true,
+    },
+
+    RectItem = {
       TextMark = true,
     },
   } ---
 
   local Cfg = unit.MakeKindConfig(Name, false)
   Cfg.LazyMake = true -- Отложенное формирование меню
-  --Cfg.TextMark = true -- Выделение символов в пунктах меню
 
   do
     local colors = require 'context.utils.useColors'
@@ -241,9 +246,20 @@ function unit.CharacterMap ()
     } --- Basis
 
     local menUt = require "Rh_Scripts.Utils.Menu"
-    Cfg.Colors = menUt.FormColors(Basis)
+    Props.RectMenu.Colors = menUt.FormColors(Basis)
     --logShow(Cfg.Colors, "Colors", "w d2 xv8")
   end -- do
+
+  --[[
+  local function MakeMenu ()
+    Menu = unit.MakeKindMenu(Cfg, Props, Datas, "None")
+    unit.ScriptData[Name] = Menu
+
+    return Menu
+  end -- MakeMenu
+
+  return MakeMenu
+  --]]
 
   Menu = unit.MakeKindMenu(Cfg, Props, Datas, "None")
   unit.ScriptData[Name] = Menu
