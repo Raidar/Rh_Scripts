@@ -303,9 +303,20 @@ end ---- MakeFetes
 
 function TMain:MakeColors ()
 
-  local menUt = require "Rh_Scripts.Utils.Menu"
+  local colors = require 'context.utils.useColors'
+  local basics = colors.BaseColors
+  local Basis = {
+    --StandardFG  = basics.black,
+    SelectedFG  = basics.blue,
+    MarkedFG    = basics.maroon,
+    --BorderFG    = basics.black,
+    --TitleFG     = basics.black,
+    --StatusBarFG = basics.black,
+    --ScrollBarFG = basics.black,
+  } --- Basis
 
-  self.Colors = menUt.FormColors()
+  local menUt = require "Rh_Scripts.Utils.Menu"
+  self.Colors = menUt.FormColors(Basis)
 
   return true
 end ---- MakeColors
