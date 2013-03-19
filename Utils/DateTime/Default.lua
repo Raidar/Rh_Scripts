@@ -64,6 +64,7 @@ local TConfig = {
   YearPerAge    =  100,     -- Век:             1 Age       =  100 Years
   MonthPerYear  =   13,     -- Год:             1 Year      =   12 Months
   DayPerWeek    =    7,     -- Неделя:          1 Week      =    7 Days
+  OutPerWeek    =    0,     --                              +    0 Outweek days
   HourPerDay    =   24,     -- День:            1 Day       =   24 Hours
   MinPerHour    =   60,     -- Час:             1 Hour      =   60 Minutes
   SecPerMin     =   60,     -- Минута:          1 Minute    =   60 Seconds
@@ -143,6 +144,12 @@ local TConfig = {
     0, 0, 0,
     0, 0, 0,
   }, -- WeekDays
+
+  -- Outweek days with "outweekday" number.
+  -- Вненедельные дни с номерами дней "вненедели".
+  WeekOuts = {
+    --{ m = 12, d = 32 } = 8,
+  }, -- WeekOuts
 
   -- Formats to output.
   -- Форматы для вывода.

@@ -55,8 +55,8 @@ end
 --]]
 ---------------------------------------- Config class
 local TConfig = {
-  World         = "Millo",          -- Мир
-  Type          = "Type.Millenium", -- Тип календаря
+  World         = "Millo",
+  Type          = "Type.Millenium",
 
   YearMin       = -9998,
   YearMax       =  9999,
@@ -64,6 +64,7 @@ local TConfig = {
   YearPerAge    =  100,     -- Век:             1 Age       =  100 Years
   MonthPerYear  =   10,     -- Год:             1 Year      =   10 Months
   DayPerWeek    =   10,     -- Неделя:          1 Week      =   10 Days
+  --OutPerWeek    =    0,     --                              +    0 Outweek days
   HourPerDay    =   12,     -- День:            1 Day       =   12 Hours
   MinPerHour    =   30,     -- Час:             1 Hour      =   30 Minutes
   SecPerMin     =   24,     -- Минута:          1 Minute    =   24 Seconds
@@ -92,22 +93,16 @@ local TConfig = {
   MSecPerHour   =   720000, -- Число миллисекунд в час:       30 * 24 * 1000
   MSecPerDay    =  8640000, -- Число миллисекунд в день: 12 * 30 * 24 * 1000
   
-  -- TODO: Учёт отсчёта начала недели.
   --WeekStartDay     = 2, -- Первый день недели:         понедельник
-  -- Учёт отсчёта недели года.
   YearStartWeekDay = 1, -- День первой недели года:    01.01 = in US
   --YearStartWeekDay = 4, -- День первой недели года:    04.01 = ISO 8601
   --YearStartWeekDay = 7, -- День первой недели года:    07.01 = Полная неделя!
 
-  -- Rest week days.
-  -- Выходные дни недели.
   RestWeekDays = {
     [0] = true,
     [5] = true,
   }, -- RestWeekDays
 
-  -- Months' days count.
-  -- Количество дней в месяцах.
   MonthDays = {
     100, 100, 100, 100, 100,
     100, 100, 100, 100, 100,
@@ -119,25 +114,20 @@ local TConfig = {
     WeekMax = 10 + 1,
   }, -- MonthDays
 
-  -- Year' days count by months.
-  -- Количество дней в году по месяцам:
   YearDays = {
     100,  200,  300,  400,  500,
     600,  700,  800,  900, 1000,
     [0] = 0,
   }, -- YearDays
 
-  -- Numbers of week days for last days of previous months
-  -- (provided that last day of previous year is Sunday).
-  -- Номера дней недели для последних дней предыдущих месяцев
-  -- (при условии, что последний день предыдущего года — воскресенье).
   WeekDays = {
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
   }, -- WeekDays
 
-  -- Formats to output.
-  -- Форматы для вывода.
+  WeekOuts = {
+  }, -- WeekOuts
+
   Formats = {
     World   = "%s",
     Type    = "%s",

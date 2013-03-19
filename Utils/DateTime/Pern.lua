@@ -55,18 +55,19 @@ end
 --]]
 ---------------------------------------- Config class
 local TConfig = {
-  World         = "Pern",          -- Мир
-  Type          = "Type.Pernese",  -- Тип календаря
+  World         = "Pern",
+  Type          = "Type.Pernese",
 
   YearMin       = 0,
   YearMax       = 9999,
 
-  -- Turn == Year
-  -- sevenday == week
+  -- Year = "Turn"
+  -- week = "sevenday"
 
   --YearPerAge    =  100,   -- Век:             1 Age       =  100 Years
   MonthPerYear  =   12,     -- Год:             1 Year      =   12 Months
   --DayPerWeek    =    7,   -- Неделя:          1 Week      =    7 Days
+  --OutPerWeek    =    2,     --                              +    0 Outweek days
   --HourPerDay    =   24,   -- День:            1 Day       =   24 Hours
   --MinPerHour    =   60,   -- Час:             1 Hour      =   60 Minutes
   --SecPerMin     =   60,   -- Минута:          1 Minute    =   60 Seconds
@@ -95,21 +96,15 @@ local TConfig = {
   --MSecPerHour   =  3600000, -- Число миллисекунд в час:       60 * 60 * 1000
   --MSecPerDay    = 86400000, -- Число миллисекунд в день: 24 * 60 * 60 * 1000
 
-  -- TODO: Учёт отсчёта начала недели.
   --WeekStartDay     = 2, -- Первый день недели:         понедельник
-  -- Учёт отсчёта недели года.
   YearStartWeekDay = 1, -- День первой недели года:    01.01 = first day
   --YearStartWeekDay = 4, -- День первой недели года:    04.01 = ISO 8601
   --YearStartWeekDay = 7, -- День первой недели года:    07.01 = Полная неделя!
 
-  -- Rest week days.
-  -- Выходные дни недели.
   RestWeekDays = {
     [0] = true,
   }, -- RestWeekDays
 
-  -- Months' days count.
-  -- Количество дней в месяцах.
   MonthDays = {
     30, 30, 30,
     30, 30, 30,
@@ -123,8 +118,6 @@ local TConfig = {
     WeekMax = 5 + 1,
   }, -- MonthDays 
 
-  -- Year' days count by months.
-  -- Количество дней в году по месяцам:
   YearDays = {
      30,  60,  90,
     120, 150, 180,
@@ -133,10 +126,6 @@ local TConfig = {
     [0] = 0,
   }, -- YearDays
 
-  -- Numbers of week days for last days of previous months
-  -- (provided that last day of previous year is Sunday).
-  -- Номера дней недели для последних дней предыдущих месяцев
-  -- (при условии, что последний день предыдущего года — воскресенье).
   --WeekDays = false,
   WeekDays = {
     0, 2, 4,
@@ -145,8 +134,11 @@ local TConfig = {
     4, 6, 1,
   }, -- WeekDays
 
-  -- Formats to output.
-  -- Форматы для вывода.
+  WeekOuts = {
+    --{ m = 12, d = 31 } = 8,
+    --{ m = 12, d = 32 } = 9,
+  }, -- WeekOuts
+
   Formats = {
     World   = "%s",
     Type    = "%s",
