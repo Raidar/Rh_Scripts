@@ -44,7 +44,7 @@ local Exist = function () return PluginExist(guids.LF4Ed) end
 Macro {
   area = "Shell Editor Viewer",
   key = "CtrlL",
-  flags = "DisableOutput",
+  flags = "",
   description = "LF4Ed: Menu",
   condition = Exist,
   action = function ()
@@ -56,7 +56,7 @@ Macro {
 Macro {
   area = "Shell Editor Viewer",
   key = "AltShiftF2",
-  flags = "DisableOutput",
+  flags = "",
   description = "LUM: Lua User Menu",
   condition = Exist,
   action = function ()
@@ -68,7 +68,7 @@ Macro {
 Macro {
   area = "Shell Editor Viewer",
   key = "CtrlAltShiftF2",
-  flags = "DisableOutput",
+  flags = "",
   description = "LUM: Tortoise SVN",
   condition = Exist,
   action = function ()
@@ -82,7 +82,7 @@ Macro {
 Macro {
   area = "Editor",
   key = "CtrlJ",
-  flags = "DisableOutput",
+  flags = "",
   description = "LUM: Template Insert",
   condition = Exist,
   action = function ()
