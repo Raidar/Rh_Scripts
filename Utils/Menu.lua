@@ -343,13 +343,14 @@ do
   local setFG, setBG = colors.setFG, colors.setBG
   
 -- Формирование цветов для меню.
-function unit.MenuColors (MarkedFG, FixedBG) --> (table)
+function unit.MenuColors (Basis) --> (table)
+  local Basis = Basis or {}
   local Standard    = IndexColor(C.COL_MENUTEXT)
   local Selected    = IndexColor(C.COL_MENUSELECTEDTEXT)
   local StandardBG  = getBG(Standard)
   local SelectedBG  = getBG(Selected)
-  local MarkedFG    = MarkedFG or basics.lime
-  local FixedBG     = FixedBG or basics.gray
+  local MarkedFG    = Basis.MarkedFG or basics.lime
+  local FixedBG     = Basis.FixedBG or basics.gray
   
   local Colors = {
     Standard = { -- Нормальный:
@@ -424,7 +425,7 @@ function unit.FormColors (Basis) --> (table)
 
     Border    = make(Basis.BorderFG or StandardFG, StandardBG),
     Title     = make(Basis.TitleFG  or StandardFG, StandardBG),
-    StatusBar = make(Basis.StatusBarFG or basics.black, StandardBG),
+    StatusBar = make(Basis.StatusBarFG or StandardFG, StandardBG),
     ScrollBar = make(Basis.ScrollBarFG or StandardFG, StandardBG),
 
     DlgBox    = false, -- Standard.normal + Standard.hlight + Border,
