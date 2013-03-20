@@ -258,21 +258,22 @@ function TConfig:divYearDay (y, r) --> (m, d)
 
   local LastMonth = self:getYearMonths()
 
-  if r == 0 then
-    return LastMonth, self:getMonthDays(y, LastMonth)
-  end
+  --if r == 0 then
+  --  return LastMonth, self:getMonthDays(y, LastMonth)
+  --end
 
   if r < 0 then r = -r end
 
   local YearDays = self.YearDays
+  local LeapDays = self:getLeapDays(y)
 
   if r <= YearDays[1] then
     return 1, r
-  elseif r <= YearDays[2] then
+  elseif r <= YearDays[2] + LeapDays then
     return 2, r - YearDays[1]
   end
 
-  local r = r - self:getLeapDays(y)
+  local r = r - LeapDays
   for m = LastMonth - 1, 2, -1 do
     if r > YearDays[m] then
       return m + 1, r - YearDays[m]
