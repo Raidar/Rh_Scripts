@@ -295,7 +295,11 @@ function TMain:MakeLocLen () --> (bool)
 end ---- MakeLocLen
 
 function TMain:MakeFetes ()
-  --local self = self
+  local self = self
+
+  local Fetes = self.Fetes
+  if not Fetes then return end
+
   --local Custom = self.Custom
 
   return true
@@ -547,32 +551,41 @@ function TMain:FillMainPart () --> (bool)
   --logShow(Start, MonthDays, "w d2")
   local StartYearWeek = Start:getYearWeek()
 
-  local YearWeekCount = Start:getYearWeeks()
+  local YearWeekCount  = Start:getYearWeeks()
   local MonthWeekCount = Start:getMonthWeeks()
 
   local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
   if StartWeekDay == 0 then
     StartWeekDay = DayPerWeek
+
   elseif StartWeekDay < divf(DayPerWeek, 2) then
     StartWeekShift = 1
     StartWeekDay = StartWeekDay + DayPerWeek
   end
   --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
 
+  -- Первый видимый день предыдущего месяца
   local Prev = Start:copy()
-  Prev:shd(-StartWeekDay)
+  Prev:shd(-1)
   --logShow({ Prev, Start }, StartWeekDay, "w d2")
+  Prev:setMonthWeekDay(-1 +
+                       (StartWeekDay == DayPerWeek + 1 and 1 or 0) -
+                       StartWeekShift, 1)
+  --logShow({ StartWeekDay, StartWeekShift, Prev, Start }, StartWeekDay, "w d2")
+
+  -- Первый видимый день следующего месяца
   local Next = Start:copy()
   Next:shd(MonthDays)
+  --Next:setMonthWeekDay(1 - StartWeekShift, 1)
 
   local MonthDayFmt = Formats.MonthDay
 
   -- Дни месяца:
   local t = self.Items
-  local d = 0       -- День текущего месяца
-  local p = Prev.d  -- День предыдущего месяца
-  local q = 0       -- День следующего месяца
-  local SelIndex    -- Индекс пункта с текущей датой
+  local d = 0           -- День текущего месяца
+  local p = Prev.d - 1  -- День предыдущего месяца
+  local q = Next.d - 1  -- День следующего месяца
+  local SelIndex        -- Индекс пункта с текущей датой
 
   local k = self.FirstDayIndex - 1
   local EndRows = self.InfoRows - self.WeekRows
