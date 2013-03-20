@@ -200,7 +200,7 @@ function unit.newDate (y, m, d, config) --> (object)
 end -- newDate
 
 end -- do
----------------------------------------- ---- handling
+---------------------------------------- ---- Basic
 function TDate:data () --> (d, m, y, config)
   local self = self
   return self.y, self.m, self.d, self.config
@@ -210,6 +210,7 @@ function TDate:copy () --> (object)
   return unit.newDate(self:data())
 end ----
 
+---------------------------------------- ---- Count
 function TDate:getYearMonths () --> (number)
   --local self = self
   return self.config:getYearMonths(self.y)
@@ -235,6 +236,12 @@ function TDate:getMonthDays () --> (number)
   return self.config:getMonthDays(self.y, self.m)
 end ----
 
+function TDate:getWeekDays () --> (number)
+  local self = self
+  return self.config:getWeekDays(self.y, self.m)
+end ----
+
+---------------------------------------- ---- get+set
 function TDate:getYearDay () --> (bool)
   local self = self
   return self.config:getYearDay(self.y, self.m, self.d)
@@ -263,6 +270,16 @@ end ----
 function TDate:getWeekDay () --> (number)
   local self = self
   return self.config:getWeekDay(self.y, self.m, self.d)
+end ----
+
+function TDate:getMonthWeekDay (mw, wd) --> (number)
+  local self = self
+  return self.config:getMonthWeekDay(self.y, self.m, mw, wd)
+end ----
+
+function TDate:setMonthWeekDay (mw, wd) --> (number)
+  local self = self
+  self.d = self.config:getMonthWeekDay(self.y, self.m, mw, wd)
 end ----
 
 function TDate:getEraDay () --> (number)
@@ -296,6 +313,7 @@ function TDate:setEraMonth (r) --> (y, m)
   return self.config:fixYearMonthDay(self)
 end ---- setEraMonth
 
+---------------------------------------- ---- Check
 function TDate:fixMonth () --> (self)
   local self = self
   local m = self.m
@@ -322,6 +340,7 @@ function TDate:fixDay () --> (self)
   return self
 end ---- fixDay
 
+---------------------------------------- ---- Short
 function TDate:ymd () --> (number)
   return self:getEraDay()
 end ----
@@ -460,7 +479,7 @@ function unit.newTime (h, n, s, z, config) --> (object)
 end -- newTime
 
 end -- do
----------------------------------------- ---- handling
+---------------------------------------- ---- Basic
 function TTime:data () --> (h, n, s, z, config)
   local self = self
   return self.h, self.n, self.s, self.z, self.config
@@ -470,11 +489,13 @@ function TTime:copy () --> (object)
   return unit.newTime(self:data())
 end ----
 
+---------------------------------------- ---- get+set
 function TTime:getDaySec () --> (number)
   local self = self
   return self.config:getDaySec(self.h, self.n, self.s)
 end ----
 
+---------------------------------------- ---- Short
 function TTime:hns () --> (number)
   return self:getDaySec()
 end ----
