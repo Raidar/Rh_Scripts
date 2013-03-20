@@ -641,9 +641,10 @@ function unit.Execute ()
 
   if _Main.CfgData.Path ~= "" and
      not utils.fexists(_Main.CfgData.Path.._Main.CfgData.Status) then
-    _Main:Localize()
-    local L = _Main.LocData
-    utils.warning(L.eError, L.ePathNotFound)
+    -- TODO: Посмотреть, что делать когда настройки TortoiseSVN не найдены.
+    --_Main:Localize()
+    --local L = _Main.LocData
+    --utils.warning(L.eError, L.ePathNotFound)
     return
   end
 
@@ -668,7 +669,7 @@ local Menu, SError = unit.Execute()
 local Data = {
   Menu = Menu,
 
-  ["tSVN"] = Menu.Items[1],
+  ["tSVN"] = Menu and Menu.Items[1],
 } ---
 
 return Data
