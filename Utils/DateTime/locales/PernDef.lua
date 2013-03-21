@@ -4,7 +4,7 @@
 local Data = {
   ----------------------------------------
   Name = "Pern",
-  ["Type.Pernese"] = "Pernese Calendar",
+  ["Type.Pernese"] = "Pernese calendar",
 
   ----------------------------------------
   WeekDay = {
