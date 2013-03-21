@@ -4,7 +4,8 @@
 local Data = {
   ----------------------------------------
   Name = "Earth",
-  ["Type.Gregorean"] = "Gregorean Calendar",
+  ["Type.Gregorean"]    = "Gregorean calendar",
+  ["Type.Hexadecimal"]  = "Hexadecimal calendar",
 
   ----------------------------------------
   WeekDay = {
