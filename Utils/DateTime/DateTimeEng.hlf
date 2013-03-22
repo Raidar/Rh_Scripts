@@ -1,0 +1,45 @@
+﻿.Language=English,English
+.PluginContents=Configurations
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Configurations# of date and time for calendars
+    ~Gregorean calendar~@Terra_Gregorean@
+    ~Milleniums' calendar~@Terra_Millenium@
+    ~Hexadecimal calendar~@Terra_Hexadecimal@
+    ~Pernese calendar~@Pern_Pernese@
+
+  Links:
+    ~Handling date and time~@<..\>DateTime@
+    ~Calendar for one month~@<..\..\Common\>Calendar@
+
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
+
+@Help
+ ~Configurations~@Contents@
+
+@Terra_Gregorean
+$ #Gregorean calendar#
+  Gregorean calendar is a time notation on planet Earth.
+
+ ~Configurations~@Contents@
+
+@Terra_Millenium
+$ #Milleniums' calendar#
+  Milleniums' calendar is a years notation by milleniums.
+
+ ~Configurations~@Contents@
+
+@Terra_Hexadecimal
+$ #Hexadecimal calendar#
+  Hexadecimal calendar is a calendar in a radix‑16.
+
+ ~Configurations~@Contents@
+
+@Pern_Pernese
+$ #Pernese calendar#
+  Pernese calendar is a time notation on planet Pern (P.E.R.N.).
+
+ ~Configurations~@Contents@
