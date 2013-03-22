@@ -67,3 +67,14 @@ if an amount of lines before this position doesn't change.
   — Escape‑sequences of Lua (\n, \t etc.) are supported.
 
  ~Script files~@Utl_ScriptFiles@
+
+@DateTime
+$ #Handling date and time# (DateTime.lua)
+  Classes:
+  \37TConfig\-      — ¦Configuration.
+  \37TDate\-        — ¦Class for Date.
+  \37TTime\-        — ¦Class for Time.
+
+    ~Configurations~@<DateTime\>Contents@ of date and time for calendars
+
+ ~Script files~@Utl_ScriptFiles@

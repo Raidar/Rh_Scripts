@@ -191,7 +191,9 @@ These properties@TM_Props@ is similar to properties of user menu display
 $ #Calendar for one month# (Calendar)
   Calendar is a script to output calendar for one month.
 
- ~Содержание~@Contents@
+    Implemented ~configurations~@<..\Utils\DateTime\>Contents@
+
+ ~Contents~@Contents@
 
 @rhsConfig
 $ #Rh_Scripts pack configurator# (rhsConfig)
