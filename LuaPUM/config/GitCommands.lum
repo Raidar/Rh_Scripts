@@ -105,12 +105,19 @@ local mItems = {
   { text = "&Commit… w/add",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit -a -m ""', },
-  { text = "Commit… onl&y",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git commit -m ""', },
   { text = "P&ush to origin…",
     Function = FillCmdLine,
     Arguments = "git push origin master", },
+  mSeparator,
+  { text = "&Add to index…",
+    Function = FillCmdLine,
+    Arguments = "git add ", },
+  { text = "Remove from index…",
+    Function = FillCmdLine,
+    Arguments = "git rm ", },
+  { text = "Commit… onl&y",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git commit -m ""', },
   mSeparator,
   { text = "&Diff w/previous",
     CmdLine = "edit:<git diff HEAD", },
@@ -250,15 +257,64 @@ local mItems = {
   { text = "Del for ignore…",
     Function = FillCmdLine,
     Arguments = "git rm --cached ", },
-  { text = "Move…        &n",
+  { text = "Move/re&name…",
     Function = FillCmdLine,
     Arguments = "git mv ", },
   mSeparator,
-  { text = "&Tag…",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git tag -a -m ""', },
-  { text = "Tag list     &5",
-    CmdLine = "git tag -l", },
+
+
+  { text = "&Tag",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        MinWidth = 25, -- Hint:len()
+      }, -- RectMenu
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+      },
+    }, -- CfgData
+
+    Items = {
+      { text = "&Tag…",
+        Function = FillCmdLine,
+        Arguments = "git tag ", },
+      { text = "&Annotated tag…",
+        Function = FillCmdLineWithBack,
+        Arguments = 'git tag -a -m ""', },
+      { text = "Tag &list",
+        CmdLine = "git tag -l", },
+      mSeparator,
+      { text = "P&ush tag…",
+        Function = FillCmdLine,
+        Arguments = "git push origin ", },
+      { text = "Push all tags…",
+        Function = FillCmdLine,
+        Arguments = "git push origin master --tags", },
+      { text = "&Fetch tags…",
+        Function = FillCmdLine,
+        Arguments = "git fetch --tags", },
+      mSeparator,
+      { text = "&Delete tag…",
+        Function = FillCmdLine,
+        Arguments = "git tag -d ", },
+      { text = "&Remote delete tag…",
+        Function = FillCmdLine,
+        Arguments = "git push origin :refs/tags/", },
+    }, -- Items
+  },
+
   { text = "Branches     &6",
     CmdLine = "git branch -a", },
   { text = "New branch   &^",
@@ -289,9 +345,6 @@ local mItems = {
   { text = "&Blame…",
     Function = FillCmdLine,
     Arguments = "git blame -w ", },
-  { text = "&Add…",
-    Function = FillCmdLine,
-    Arguments = "git add ", },
   { text = "Clone git…",
     Function = FillCmdLine,
     Arguments = "git clone ", },
@@ -312,6 +365,8 @@ local mItems = {
   mSeparator,
   { text = "Status       &1",
     CmdLine = "git status", },
+  { text = "Status view  &2",
+    CmdLine = "edit:<git status", },
 } --- mItems
 
 ---------------------------------------- Menu
