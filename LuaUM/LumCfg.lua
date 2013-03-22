@@ -90,6 +90,8 @@ local DefCfgData = {
     KeysAlignText = true, -- Выравнивание названий комбо-клавиш по правому краю.
     ShowErrorMsgs = true, -- Показ окна с сообщением при ошибке вызова LUM.
     ReturnToUMenu = false,-- Возврат в текущее меню после выполнения действия.
+    UseMenuTexter = true, -- Использование формирователя текста MenuTexter
+                          -- для формирования текста и заголовков меню.
   }, -- UMenu
 } --- DefCfgData
 

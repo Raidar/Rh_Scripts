@@ -441,7 +441,10 @@ do
     HeadRows = 1,
     HeadCols = 1,
   } ---
-  local DefUMenu = { TextNamedKeys = false }
+  local DefUMenu = {
+    TextNamedKeys = false,
+    UseMenuTexter = false,
+  } ---
 
   local function set__index (t, u)
     if u then

@@ -994,9 +994,11 @@ function TMenu:ShowLoop ()
 
     -- Формирование текста пунктов меню.
     -- TODO: Add new params! Therefore copy is used.
-    Props.Texter = copyFields(self.CurData.UMenu)
-    MenuTexter(Props, self.RunMenu, nil, false)
-    --logShow(self.RunMenu, "self.RunMenu", 2)
+    if self.CurData.UMenu.UseMenuTexter then
+      Props.Texter = copyFields(self.CurData.UMenu)
+      MenuTexter(Props, self.RunMenu, nil, false)
+      --logShow(self.RunMenu, "self.RunMenu", 2)
+    end
 
     self.ActItem, self.ItemPos = self:ShowMenu(Props, self.RunMenu)
 

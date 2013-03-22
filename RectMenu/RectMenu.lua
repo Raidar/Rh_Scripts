@@ -312,7 +312,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
 
     HKeys = 0, AKeys = 0, BKeys = 0, -- Быстрые клавиши (hot, accel, break)
 
-    textMax = 0, lineMax = 0,
+    TextMax = 0, LineMax = 0,
     ColWidth = 0, RowHeight = 0,
     FixedRows = 0, FixedCols = 0,
     SelectIndex = 0, SelIndex = 0,
@@ -353,19 +353,11 @@ local LFVer = context.use.LFVer -- FAR23
 -- Создание формы окна диалога с меню.
 function TMenu:DialogForm () --> (dialog)
   local Zone = self.Zone
-  if LFVer >= 3 then -- FAR23
   return { { F.DI_USERCONTROL,
              Zone.HomeX, Zone.HomeY,
              Zone.LastX + b2n(Zone.EmbScrollV),
              Zone.LastY + b2n(Zone.EmbScrollH),
              0, 0, 0, 0, "" } }
-  else
-  return { { F.DI_USERCONTROL,
-             Zone.HomeX, Zone.HomeY,
-             Zone.LastX + b2n(Zone.EmbScrollV),
-             Zone.LastY + b2n(Zone.EmbScrollH),
-             1, 0, 0, 0, "" } } -- FAR2
-  end
 end ---- DialogForm
 
 -- Отображение окна диалога меню.
@@ -543,8 +535,8 @@ function TMenu:DefineListInfo () --| List
       List[k] = Item
 
       -- Свойства пункта:
-      Item.RectMenu = Item.RectMenu or {}
-      local RI = Item.RectMenu
+      local RI = Item.RectMenu or {}
+      Item.RectMenu = RI
       RI.TextMark   = RI.TextMark or RM.TextMark -- Маркировка
       RI.TextAlign  = RI.TextAlign or "LT" -- Выравнивание
 
@@ -646,77 +638,82 @@ function TMenu:DefineSpotInfo () --| Zone
   local MultiLine = RM.MultiLine -- Многострочность текста пункта
 
   -- Используемые размеры пункта меню.
-  local textMax = valtotab(RM.textMax)
-  local lineMax = valtotab(RM.lineMax)
+  local TextMax = valtotab(RM.TextMax)
+  local LineMax = valtotab(RM.LineMax)
 
   local Count, ColCount, RowCount = Data.Count, Data.Cols, Data.Rows
   local Hot = not isFlag(self.Flags, F.FMENU_SHOWAMPERSAND) and '&'
 
-  -- Функция расчёта длины текста по столбцам:
-  local function textLen (Item, Index, Selex, Col) --> (bool)
-    local _, j = Idx2Cell(Selex, Data)
-    if j ~= Col then return 0 end
-
-    local s = Item.text -- Длина текста
-    if not Item.RectMenu.MultiLine then
-      return ViewItemText(s, Hot):len()
-    else
-      return slinemax(ViewItemText(s, Hot))
-    end
-  end -- textLen
-
   -- Определение длины текста по столбцам.
   do
+    -- Функция расчёта длины текста по столбцам:
+    local function textLen (Item, Index, Selex, Col) --> (bool)
+      local _, j = Idx2Cell(Selex, Data)
+      if j ~= Col then return 0 end
+
+      local s = Item.text -- Длина текста
+      if not Item.RectMenu.MultiLine then
+        return ViewItemText(s, Hot):len()
+      else
+        return slinemax(ViewItemText(s, Hot))
+      end
+    end -- textLen
+
+    local DefTextMax = TextMax[0]
+    if DefTextMax == 0 then DefTextMax = false end
     for k = 1, ColCount do -- Макс. длина текста:
-      if not textMax[k] then
-        textMax[k] = FieldMax(List, Count, nil, textLen, k)
+      if not TextMax[k] then
+        TextMax[k] = DefTextMax or FieldMax(List, Count, nil, textLen, k)
       end
     end
   end
-  --logShow(textMax, "textMax", "w d2")
-  if not textMax[0] or textMax[0] == 0 then
-    textMax[0] = farUt.t_imax(textMax) or 0
+  --logShow(TextMax, "TextMax", "w d2")
+  if not TextMax[0] or TextMax[0] == 0 then
+    TextMax[0] = farUt.t_imax(TextMax) or 0
   end
-  --logShow(textMax, "textMax")
-
-  -- Функция расчёта высоты текста по строкам:
-  local function lineLat (Item, Index, Selex, Row) --> (bool)
-    local i = Idx2Cell(Selex, Data)
-    if i ~= Row then return 0 end
-    local s = Item.text -- Высота текста
-    if not Item.RectMenu.MultiLine then
-      return 1 -- Одна линия
-    else
-      return slinecount(ViewItemText(s, Hot))
-    end
-  end -- lineLat
+  --logShow(TextMax, "TextMax")
 
   -- Определение высоты текста по строкам.
   if MultiLine == nil then
-    lineMax[0] = 1
-    tables.fillwith(lineMax, RowCount, lineMax[0])
+    LineMax[0] = 1
+    tables.fillwith(LineMax, RowCount, LineMax[0])
+
   else
+    -- Функция расчёта высоты текста по строкам:
+    local function lineLat (Item, Index, Selex, Row) --> (bool)
+      local i = Idx2Cell(Selex, Data)
+      if i ~= Row then return 0 end
+      local s = Item.text -- Высота текста
+      if not Item.RectMenu.MultiLine then
+        return 1 -- Одна линия
+      else
+        return slinecount(ViewItemText(s, Hot))
+      end
+    end -- lineLat
+
+    local DefLineMax = LineMax[0]
+    if DefLineMax == 0 then DefLineMax = false end
     for k = 1, RowCount do -- Макс. высота текста:
-      if not lineMax[k] then
-        lineMax[k] = FieldMax(List, Count, nil, lineLat, k)
+      if not LineMax[k] then
+        LineMax[k] = DefLineMax or FieldMax(List, Count, nil, lineLat, k)
       end
     end
   end
-  --logShow(lineMax, "lineMax", "w d2")
-  if not lineMax[0] or lineMax[0] == 0 then
-    lineMax[0] = farUt.t_imax(lineMax) or 0
+  --logShow(LineMax, "LineMax", "w d2")
+  if not LineMax[0] or LineMax[0] == 0 then
+    LineMax[0] = farUt.t_imax(LineMax) or 0
   end
-  --logShow(lineMax, "lineMax")
+  --logShow(LineMax, "LineMax")
 
-  self.textMax, self.lineMax = textMax, lineMax
+  self.TextMax, self.LineMax = TextMax, LineMax
   -- Максимальные размеры пункта меню.
-  self.ColWidth, self.RowHeight = {}, lineMax -- {}
+  self.ColWidth, self.RowHeight = {}, LineMax -- {}
   for k = 0, ColCount do
-    self.ColWidth[k] = textMax[k] + b2n(Data.checked) +
+    self.ColWidth[k] = TextMax[k] + b2n(Data.checked) +
                        (RM.CompactText and 0 or 2) -- (L+R Space)
-    --self.RowHeight[k] = lineMax[k] + 0 -- (U+D Space)
+    --self.RowHeight[k] = LineMax[k] + 0 -- (U+D Space)
   end
-  --logShow({ self.textMax, self.lineMax, self.ColWidth, self.RowHeight }, "Spot", 2)
+  --logShow({ self.TextMax, self.LineMax, self.ColWidth, self.RowHeight }, "Spot", 2)
 end ---- DefineSpotInfo
 
 end -- do
@@ -1954,8 +1951,8 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
     -- Вывод пункта (не разделителя):
     local Options = {
       Row = Row, Col = Col,         -- Координаты ячейки
-      textMax = self.textMax[Col],  -- Макс. длина текста
-      lineMax = self.lineMax[Row],  -- Макс. ширина текста
+      TextMax = self.TextMax[Col],  -- Макс. длина текста
+      LineMax = self.LineMax[Row],  -- Макс. ширина текста
       isHot   = self.Props.isHot,   -- Признак использования горячих букв
       checked = self.Data.checked,  -- Признак отмеченных пунктов
       Props   = self.RectMenu,      -- Свойства RectMenu

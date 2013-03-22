@@ -31,13 +31,20 @@ local mInsert = {
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
   MenuView = "RectMenu",
+
   Props = {
     RectMenu = {
       Cols = 2,
       MenuAlign = "CM",
     },
-  },
-  CfgData = { UMenu = { TextNamedKeys = false, }, },
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+  }, -- CfgData
 
   Items = {
     -- A -- 

@@ -375,7 +375,7 @@ function TMain:MakeProps ()
     --MenuEdge = 2,
     MenuAlign = "CM",
 
-    textMax = {
+    TextMax = {
       [2] = self.TextMax,
     }, -- textMax
 

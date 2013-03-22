@@ -220,15 +220,18 @@ function unit.CharacterMap ()
     Heading = "Both",
 
     RectMenu = {
-      MaxHeight = 2 + 1 + 0x10 + 2 + 0,
+      LineMax = 1,
+      TextMax = { [0] = 1; 4, },
 
       --TextMark = true,
+
+      MaxHeight = 2 + 1 + 0x10 + 2 + 0,
     },
 
     RectItem = {
       TextMark = true,
     },
-  } ---
+  } --- Props
 
   local Cfg = unit.MakeKindConfig(Name, false)
   Cfg.LazyMake = true -- Отложенное формирование меню

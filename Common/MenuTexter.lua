@@ -88,9 +88,10 @@ end ----
 function TMenu:isFullRectMenu ()
   local RM = self.Props.RectMenu
   if not RM then return false end
+
   return RM.Rows and RM.Rows == 0 or
          RM.Cols and RM.Cols ~= 1
-end ----
+end ---- isFullRectMenu
 
 do
   local ClearHotText = farUt.ClearHotText
@@ -127,7 +128,7 @@ function TMenu:DefineCaption () --| (self.Items)
   for i = 1, self.Count do
     self:DefineItemCaption(Menu[i])
   end
-end ----
+end ---- DefineCaption
 
 end -- do
 
@@ -240,7 +241,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
     end
   end
   --logShow({ textMax - skeyMax, skeyMax }, "2 + ")
-end ---- DefineMenuText
+end ---- DefineText
 
 end -- do
 

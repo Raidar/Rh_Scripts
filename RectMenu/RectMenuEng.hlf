@@ -188,10 +188,10 @@ $ #Menu handling properties#: RectMenu
 
 @RM_Props_MenuItems
 $ #Menu items properties#: RectMenu
-  #textMax# (number) — Maximal length of menu item text.
+  #TextMax# (number) — Maximal length of menu item text.
     ¦It is used for creating a menu with equal width columns.
 
-  #lineMax# (number) — Maximal amount of lines for menu item text.
+  #LineMax# (number) — Maximal amount of lines for menu item text.
     ¦It is used for creating a menu with equal height rows.
 
   #ShowChecked# (bool) — Show check sign for menu items.

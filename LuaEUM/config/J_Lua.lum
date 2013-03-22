@@ -40,12 +40,20 @@ local mInsert = {
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
   MenuView = "RectMenu",
+
   Props = {
-    RectMenu = { Cols = 5,
-      Fixed = { HeadRows = 1, HeadCols = 1 },
+    RectMenu = {
+      Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1 ,},
     }, -- RectMenu
   }, -- Props
-  CfgData = { UMenu = { TextNamedKeys = false } },
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+  }, -- CfgData
 
   Items = {
     -- Header --
