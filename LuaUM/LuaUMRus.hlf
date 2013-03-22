@@ -115,7 +115,6 @@ $ #Примеры меню#: LUM
 
     ~LUM для Редактора~@<..\LuaEUM\>Contents@ (LuaEUM)
     ~LUM для  Панелей ~@<..\LuaPUM\>Contents@ (LuaPUM)
-    ~LUM для  SVN ~@<..\LumSVN\>Contents@ (LumSVN)
     ~LUM для fl_scripts~@<..\LumFLS\>Contents@ (LumFLS)
 
   См. также ~Собственные меню~@LUM_OwnMenus@.

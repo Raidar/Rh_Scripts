@@ -15,7 +15,7 @@ $ #Lua User Menu# (~LUM~)
 
       ~Menu control~@LUM_Control@
       ~Menu structure~@LUM_Structure@
-      ~Own menus creation~@LUM_OwnMenus@
+      ~Own menus creation~@LUM_OwnMenus@
 
     ~Menu formation~@LUM_Formation@
       ~Binding type to menu~@LUM_MenuBinds@
@@ -97,7 +97,6 @@ member of which is a current file of active panel.
 
     ~LUM for  Editor ~@<..\LuaEUM\>Contents@ (LuaEUM)
     ~LUM for  Panels ~@<..\LuaPUM\>Contents@ (LuaPUM)
-    ~LUM for  SVN ~@<..\LumSVN\>Contents@ (LumSVN)
     ~LUM for fl_scripts~@<..\LumFLS\>Contents@ (LumFLS)
 
   See also ~Own menus~@LUM_OwnMenus@.
