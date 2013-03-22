@@ -15,6 +15,10 @@
 [*] EQuoting.lum, J_*.lum, Characters.lum: UseMenuTexter = false.
 [*] Characters.lum:
     Предустановка TextMax для исключения лишних вычислений в RectMenu.
+  GitCommands.lum:
+[*] Реорганизация меню:
+    — добавление подменю для управления тегами,
+    — перегруппировка пунктов управления индексом.
   RectMenu:
 [*] Использование TextMax[0] и LineMax[0] для исключения лишних вычислений.
   Help:
