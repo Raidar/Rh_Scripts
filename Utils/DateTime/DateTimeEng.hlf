@@ -7,8 +7,11 @@
 @Contents
 $ #Configurations# of date and time for calendars
     ~Gregorean calendar~@Terra_Gregorean@
+
     ~Milleniums' calendar~@Terra_Millenium@
     ~Hexadecimal calendar~@Terra_Hexadecimal@
+    ~Minimum project of calendar~@Terra_Minimum@
+
     ~Pernese calendar~@Pern_Pernese@
 
   Links:
@@ -22,24 +25,30 @@ $ #Configurations# of date and time for calendars
 
 @Terra_Gregorean
 $ #Gregorean calendar#
-  Gregorean calendar is a time notation on planet Earth.
+  A Gregorean calendar is a time notation on planet Earth.
 
  ~Configurations~@Contents@
 
 @Terra_Millenium
 $ #Milleniums' calendar#
-  Milleniums' calendar is a years notation by milleniums.
+  A Milleniums' calendar is a years notation by milleniums.
 
  ~Configurations~@Contents@
 
 @Terra_Hexadecimal
 $ #Hexadecimal calendar#
-  Hexadecimal calendar is a calendar in a radix‑16.
+  A Hexadecimal calendar is a calendar in a radix‑16.
+
+ ~Configurations~@Contents@
+
+@Terra_Minimum
+$ #Minimum project of calendar#
+  A Minimum project of permanent worldwide calendar (N.V. Volodomonov).
 
  ~Configurations~@Contents@
 
 @Pern_Pernese
 $ #Pernese calendar#
-  Pernese calendar is a time notation on planet Pern (P.E.R.N.).
+  A Pernese calendar is a time notation on planet Pern (P.E.R.N.).
 
  ~Configurations~@Contents@
