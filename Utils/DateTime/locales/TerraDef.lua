@@ -6,6 +6,7 @@ local Data = {
   Name = "Earth",
   ["Type.Gregorean"]    = "Gregorean calendar",
   ["Type.Hexadecimal"]  = "Hexadecimal calendar",
+  ["Type.Minimum"]      = "Minimum project of calendar",
 
   ----------------------------------------
   WeekDay = {
@@ -14,23 +15,31 @@ local Data = {
       [0] = "Sunday",
       "Monday",     "Tuesday",  "Wednesday",
       "Thursday",   "Friday",   "Saturday",
+      [-1] = "Extra.1",
+      [-2] = "Extra.2",
     },
     --[[
     [1] = {
       [0] = "7",
       "1", "2", "3",
       "4", "5", "6",
+      [-1] = "-1",
+      [-2] = "-2",
     },
     --]]
     [2] = {
       [0] = "Su",
       "Mo", "Tu", "We",
       "Th", "Fr", "Sa",
+      [-1] = "X1",
+      [-2] = "X2",
     },
     [3] = {
       [0] = "Sun",
       "Mon", "Tue", "Wed",
       "Thu", "Fri", "Sat",
+      [-1] = "X.1",
+      [-2] = "X.2",
     },
   }, -- WeekDay
 
