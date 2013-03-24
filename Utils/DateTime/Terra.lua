@@ -176,26 +176,13 @@ end -- do
 ---------------------------------------- ---- Date
 
 ---------------------------------------- ---- ---- Leap
--- Check an year for leap year.
--- Проверка на високосный год.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (bool) - true if year is a leap year.
---]]
+
 function TConfig:isLeapYear (y) --> (bool)
   return y % 4 == 0 and (y % 100 ~= 0 or y % 400 == 0)
 end ----
 
 ---------------------------------------- ---- ---- Count
--- Count days in month.
--- Количество дней в месяце.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
----- @return:
-  result (number) - day count in month.
---]]
+
 function TConfig:getMonthDays (y, m) --> (number)
   local self = self
 
@@ -206,14 +193,6 @@ function TConfig:getMonthDays (y, m) --> (number)
   end
 end ---- getMonthDays
 
--- Get week day for last day of prior month.
--- Получение дня недели для последнего дня предыдущего месяца.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
----- @return:
-  result (number) - day of week for last day of prior month.
---]]
 function TConfig:getWeekDays (y, m) --> (number)
   local self = self
 
@@ -224,16 +203,12 @@ function TConfig:getWeekDays (y, m) --> (number)
   end
 end ---- getWeekDays
 
+function TConfig:getWeekMonthDays (y, m) --> (number)
+  return self:getMonthDays(y, m)
+end ---- getWeekMonthDays
+
 ---------------------------------------- ---- ---- get+div
--- Get day number in year.
--- Получение номера дня в году.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of year.
---]]
+
 function TConfig:getYearDay (y, m, d) --> (number)
   if m == 1 then
     return d
@@ -244,15 +219,6 @@ function TConfig:getYearDay (y, m, d) --> (number)
   return d + self.YearDays[m - 1] + self:getLeapDays(y)
 end ---- getYearDay
 
--- Divide day number in year into date.
--- Выделение даты из номера дня в году.
---[[ @params:
-  y (number) - year.
-  r (number) - day of year.
----- @return:
-  m (number) - month.
-  d (number) - day.
---]]
 function TConfig:divYearDay (y, r) --> (m, d)
   local self = self
 
@@ -283,19 +249,6 @@ function TConfig:divYearDay (y, r) --> (m, d)
   return LastMonth, self:getMonthDays(y, LastMonth)
 end ---- divYearDay
 
--- Get day number of the week.
--- Получение номера дня недели.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of week.
----- @notes:
-  1 - first weekday, ..., 0 - last weekday.
----- @notes:rus:
-  1 - первый день недели, ..., 0 - последний день недели.
---]]
 function TConfig:getWeekDay (y, m, d) --> (number)
 
   local P, R = divm(y - 1, 100) -- 100⋅P + R
@@ -307,15 +260,6 @@ function TConfig:getWeekDay (y, m, d) --> (number)
           self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 
--- Get day number of the common era.
--- Получение номера дня нашей эры.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of common era.
---]]
 function TConfig:getEraDay (y, m, d) --> (number)
 
   local P, R = divm(y - 1, 100) -- 100⋅P + R
@@ -329,15 +273,6 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
--- Divide day number of the common era into date.
--- Выделение даты из номера дня нашей эры.
---[[ @params:
-  e (number) - day of common era.
----- @return:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
---]]
 function TConfig:divEraDay (e) --> (y, m, d)
   local self = self
 

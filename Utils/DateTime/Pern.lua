@@ -181,26 +181,13 @@ end -- do
 ---------------------------------------- ---- Date
 
 ---------------------------------------- ---- ---- Leap
--- Check an year for leap year.
--- Проверка на високосный год.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (bool) - true if year is a leap year.
---]]
+
 function TConfig:isLeapYear (y) --> (bool)
   return y % 6 == 0
 end ----
 
 ---------------------------------------- ---- ---- Count
--- Count days in month.
--- Количество дней в месяце.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
----- @return:
-  result (number) - day count in month.
---]]
+
 function TConfig:getMonthDays (y, m) --> (number)
   --local self = self
 
@@ -211,20 +198,12 @@ function TConfig:getMonthDays (y, m) --> (number)
   end
 end ---- getMonthDays
 
+function TConfig:getWeekMonthDays (y, m) --> (number)
+  return self:getMonthDays(y, m)
+end ---- getWeekMonthDays
+
 ---------------------------------------- ---- ---- get+div
--- Get day number of the week.
--- Получение номера дня недели.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of week.
----- @notes:
-  1 - first weekday, ..., 0 - last weekday.
----- @notes:rus:
-  1 - первый день недели, ..., 0 - последний день недели.
---]]
+
 function TConfig:getWeekDay (y, m, d) --> (number)
   local self = self
 
@@ -235,15 +214,6 @@ function TConfig:getWeekDay (y, m, d) --> (number)
           self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 
--- Get day number of the common era.
--- Получение номера дня нашей эры.
---[[ @params:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
----- @return:
-  result (number) - day of common era.
---]]
 function TConfig:getEraDay (y, m, d) --> (number)
 
   local r, s = divm(y - 1, 6)   --   6⋅r + s
@@ -253,17 +223,6 @@ function TConfig:getEraDay (y, m, d) --> (number)
          self:getYearDay(y, m, d)
 end ---- getEraDay
 
---local abs, sign = math.abs, numbers.sign
-
--- Divide day number of the common era into date.
--- Выделение даты из номера дня нашей эры.
---[[ @params:
-  e (number) - day of common era.
----- @return:
-  y (number) - year.
-  m (number) - month.
-  d (number) - day.
---]]
 function TConfig:divEraDay (e) --> (y, m, d)
   local self = self
 

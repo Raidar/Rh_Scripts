@@ -170,13 +170,7 @@ end -- do
 ---------------------------------------- ---- Date
 
 ---------------------------------------- ---- ---- Leap
--- Check an year for leap year.
--- Проверка на високосный год.
---[[ @params:
-  y (number) - year.
----- @return:
-  result (bool) - true if year is a leap year.
---]]
+
 function TConfig:isLeapYear (y) --> (bool)
   return false
 end ----
