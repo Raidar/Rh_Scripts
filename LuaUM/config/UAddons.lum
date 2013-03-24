@@ -36,7 +36,7 @@ local mSeparator = {
 } ---
 
 ---------------------------------------- Calendar
-function unit.TerraCalendar ()
+function unit.CalendarTerra ()
   local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
   local cfgWorld = require "Rh_Scripts.Utils.DateTime.Terra"
@@ -54,13 +54,13 @@ function unit.TerraCalendar ()
   } --- Data
 
   return {
-    text = L.AddonTerraCalendar,
+    text = L.AdnCalendarTerra,
     Function = Calendar.Execute,
     Arguments = Data,
   } ----
-end ---- TerraCalendar
+end ---- CalendarTerra
 
-function unit.MilloCalendar ()
+function unit.CalendarMillo ()
   local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
   local cfgWorld = require "Rh_Scripts.Utils.DateTime.Millo"
@@ -76,17 +76,17 @@ function unit.MilloCalendar ()
   } --- Data
 
   return {
-    text = L.AddonMilloCalendar,
+    text = L.AdnCalendarMillo,
     Function = Calendar.Execute,
     Arguments = Data,
   } ----
-end ---- MilloCalendar
+end ---- CalendarMillo
 
-function unit.HeksoCalendar ()
+function unit.CalendarHekso ()
   local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
   local cfgWorld = require "Rh_Scripts.Utils.DateTime.Hekso"
-  --logShow(cfgWorld, "Millo Config", "w d2")
+  --logShow(cfgWorld, "Hekso Config", "w d2")
   
   local dt = os.date("*t")
 
@@ -100,13 +100,37 @@ function unit.HeksoCalendar ()
   } --- Data
 
   return {
-    text = L.AddonHeksoCalendar,
+    text = L.AdnCalendarHekso,
     Function = Calendar.Execute,
     Arguments = Data,
   } ----
-end ---- HeksoCalendar
+end ---- CalendarHekso
 
-function unit.PernCalendar ()
+function unit.CalendarMinimum ()
+  local datim = require "Rh_Scripts.Utils.DateTime"
+  local Calendar = require "Rh_Scripts.Common.Calendar"
+  local cfgWorld = require "Rh_Scripts.Utils.DateTime.Minimum"
+  --logShow(cfgWorld, "Minimum Config", "w d2")
+  
+  local dt = os.date("*t")
+
+  local Config = datim.newConfig(cfgWorld.TConfig)
+  local Data = {
+    Config = Config,
+    Date = datim.newDate(dt.year, dt.month, dt.day, Config),
+    Time = datim.newTime(dt.hour, dt.min, dt.sec, Config),
+    YearMin = -9998,
+    YearMax =  9999,
+  } --- Data
+
+  return {
+    text = L.AdnCalendarMinimum,
+    Function = Calendar.Execute,
+    Arguments = Data,
+  } ----
+end ---- CalendarMinimum
+
+function unit.CalendarPern ()
   local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
   local cfgWorld = require "Rh_Scripts.Utils.DateTime.Pern"
@@ -122,21 +146,31 @@ function unit.PernCalendar ()
   } --- Data
 
   return {
-    text = L.AddonPernCalendar,
+    text = L.AdnCalendarPern,
     Function = Calendar.Execute,
     Arguments = Data,
   } ----
-end ---- PernCalendar
+end ---- CalendarPern
+
+---------------------------------------- Calendars
+local mCalendars = {
+  text = L.AdnCalendars,
+  Items = {
+    unit.CalendarMillo,
+    unit.CalendarHekso,
+    unit.CalendarMinimum,
+    mSeparator,
+    unit.CalendarPern,
+  } ---
+} --- mCalendars
 
 ---------------------------------------- Items/Menu
-local mScripts = { -- Other scripts
+local mScripts = {
   text = L.AddonScripts,
   Items = {
-    unit.TerraCalendar,
-    unit.MilloCalendar,
+    unit.CalendarTerra,
     mSeparator,
-    unit.HeksoCalendar,
-    unit.PernCalendar,
+    mCalendars,
   } ---
 } --- mScripts
 

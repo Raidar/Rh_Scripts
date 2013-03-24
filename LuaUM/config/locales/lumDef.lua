@@ -56,10 +56,13 @@ local Data = {
   ----------------------------------------
   -- Addon scripts
   AddonScripts      = "&A - Additions",
-    AddonTerraCalendar  = "&C - Calendar",
-    AddonMilloCalendar  = "&M - Milleniums' calendar",
-    AddonHeksoCalendar  = "&H - Hexadecimal calendar",
-    AddonPernCalendar   = "&P - Pern calendar",
+
+  AdnCalendars      = "&K - Calendars",
+    AdnCalendarTerra    = "&C - Calendar",
+    AdnCalendarMillo    = "&M - Milleniums' calendar",
+    AdnCalendarHekso    = "&H - Hexadecimal calendar",
+    AdnCalendarMinimum  = "&I - Minimum project",
+    AdnCalendarPern     = "&P - Pern calendar",
 
   ----------------------------------------
   -- Other scripts
