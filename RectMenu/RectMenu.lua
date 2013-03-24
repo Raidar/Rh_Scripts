@@ -658,7 +658,7 @@ function TMenu:DefineSpotInfo () --| Zone
       local _, j = Idx2Cell(Selex, Data)
       if j ~= Col then return 0 end
 
-      local s = Item.text -- Длина текста
+      local s = Item.text -- Длина текста:
       if not Item.RectMenu.MultiLine then
         return ViewItemText(s, Hot):len()
       else
@@ -690,7 +690,8 @@ function TMenu:DefineSpotInfo () --| Zone
     local function lineLat (Item, Index, Selex, Row) --> (bool)
       local i = Idx2Cell(Selex, Data)
       if i ~= Row then return 0 end
-      local s = Item.text -- Высота текста
+
+      local s = Item.text -- Высота текста:
       if not Item.RectMenu.MultiLine then
         return 1 -- Одна линия
       else
