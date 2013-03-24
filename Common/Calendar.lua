@@ -204,7 +204,7 @@ function TMain:InitData ()
   --self.YearMin = CfgData.YearMin or 1
   self.YearMin  = CfgData.YearMin or DT_cfg.YearMin or -9998
   self.YearMax  = CfgData.YearMax or DT_cfg.YearMax or  9999
-  self.WeekRows = DT_cfg.DayPerWeek
+  self.WeekRows = DT_cfg.DayPerWeek + DT_cfg.OutPerWeek
   self.WeekCols = DT_cfg.MonthDays.WeekMax
 
   return true
@@ -533,6 +533,7 @@ function TMain:FillInfoPart () --> (bool)
 end ---- FillInfoPart
 
 -- Заполнение основной части.
+-- TODO: Переделать под отдельный вывод месяцев с учётом вненедельных дат!
 function TMain:FillMainPart () --> (bool)
   local self = self
 
@@ -542,47 +543,50 @@ function TMain:FillMainPart () --> (bool)
   local DT_cfg = Date.config
   local Formats = DT_cfg.Formats
   local DayPerWeek = DT_cfg.DayPerWeek
+  local OutPerWeek = DT_cfg.OutPerWeek
   
-  --local CurrentDay = Date.d
-  local Start = Date:copy()
-  Start.d = 1
-  --logShow(Start, Date.d, "w d2")
-  local MonthDays = Start:getMonthDays()
-  --logShow(Start, MonthDays, "w d2")
-  local StartYearWeek = Start:getYearWeek()
+  local Real = Date:copy()
+  Real.d = 1
+  --logShow(Real, Date.d, "w d2")
+  local MonthDays = Real:getWeekMonthDays()
+  --logShow(Real, MonthDays, "w d2")
+  local StartYearWeek = Real:getYearWeek()
 
-  local YearWeekCount  = Start:getYearWeeks()
-  local MonthWeekCount = Start:getMonthWeeks()
+  local YearWeekCount  = Real:getYearWeeks()
+  local MonthWeekCount = Real:getMonthWeeks()
 
-  local StartWeekDay, StartWeekShift = Start:getWeekDay(), 0
-  if StartWeekDay == 0 then
-    StartWeekDay = DayPerWeek
-
-  elseif StartWeekDay < divf(DayPerWeek, 2) then
+  local StartWeekShift = 0
+  local StartWeekDay   = Real:getWeekNumDay()
+  if StartWeekDay < divf(DayPerWeek, 2) then
     StartWeekShift = 1
     StartWeekDay = StartWeekDay + DayPerWeek
   end
   --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
+  
+  --Real.StartWeekNumber = StartWeekShift + 1
+  --Real.StartWeekNumDay = StartWeekDay - StartWeekShift * DayPerWeek
 
   -- Первый видимый день предыдущего месяца
-  local Prev = Start:copy()
+  local Prev = Real:copy()
   Prev:shd(-1)
   --logShow({ Prev, Start }, StartWeekDay, "w d2")
-  Prev:setMonthWeekDay(-1 +
-                       (StartWeekDay == DayPerWeek + 1 and 1 or 0) -
-                       StartWeekShift, 1)
+  Prev.LastWeekNumber = 1 + StartWeekShift -
+                        (StartWeekDay == DayPerWeek + 1 and 1 or 0)
+  Prev.LastWeekNumDay = StartWeekDay - 1
+  Prev:setMonthWeekDay(-Prev.LastWeekNumber, 1)
   --logShow({ StartWeekDay, StartWeekShift, Prev, Start }, StartWeekDay, "w d2")
 
   -- Первый видимый день следующего месяца
-  local Next = Start:copy()
-  Next:shd(MonthDays)
+  local Next = Real:copy()
+  --Next:shd(MonthDays)
   --Next:setMonthWeekDay(1 - StartWeekShift, 1)
+  Next:shd(Real:getMonthDays())
 
   local MonthDayFmt = Formats.MonthDay
 
   -- Дни месяца:
   local t = self.Items
-  local d = 0           -- День текущего месяца
+  local d = Real.d - 1  -- День текущего месяца
   local p = Prev.d - 1  -- День предыдущего месяца
   local q = Next.d - 1  -- День следующего месяца
   local SelIndex        -- Индекс пункта с текущей датой
@@ -602,18 +606,33 @@ function TMain:FillMainPart () --> (bool)
       local State = 0
       if i < 3 then
         if (i - 1) * DayPerWeek + j < StartWeekDay then
-          if p > 0 then p = p + 1 end
+          if p > 0 then
+            p = p + 1
+            --Prev.d = p
+          end
+
           State = -1
         end
+
       elseif d >= MonthDays then
+        if d == MonthDays then
+          Real.LastWeekNumber  = i
+          Real.LastWeekNumDay  = j
+          --Next.StartWeekNumber = j == DayPerWeek and i + 1 or i
+          --Next.StartWeekNumDay = j == DayPerWeek and 1 or j + 1
+        end
+
         p = false
         q = q + 1
+        --Next.d = q
+
         State = 1
       end
 
       local Text = ""
       if State == 0 then
         d = d + 1
+        --Real.d = d
         Text = MonthDayFmt:format(d)
 
         if not SelIndex and d == Date.d then
@@ -638,12 +657,53 @@ function TMain:FillMainPart () --> (bool)
         c = i,
         State = State,
         [-1] = Prev,
-        [ 0] = Date,
+        [ 0] = Real,
         [ 1] = Next,
-        Start = Start,
         d = (State == 0 and d or
              p and p <= 0 and 0 or p or q),
       } --
+    end -- for
+
+    -- Вненедельные дни:
+    if OutPerWeek > 0 then
+      local Outs = 0
+      local Curr = i == Prev.LastWeekNumber and Prev or
+                   i == Real.LastWeekNumber and Real or false
+      if Curr then Outs = Curr:getWeekMonthOuts() end
+
+      if Curr and Outs > 0 then
+        local State = 0
+        if i == Prev.LastWeekNumber then
+          State = -1
+        end
+
+        for j = 1, OutPerWeek do
+
+          k = k + 1
+          local u = t[k]
+
+          -- TODO: Алгоритм просмотра вненедельных дат!
+
+          --[[
+          u.text = MonthDayFmt:format(d)
+          u.grayed = (State ~= 0)
+          u.RectMenu = {
+            TextMark = DT_cfg.RestWeekDays[-j],
+          } --
+          u.Data = {
+            r = DayPerWeek + j,
+            c = i,
+            State = State,
+            [-1] = Prev,
+            [ 0] = Real,
+            [ 1] = Next,
+            d = 0,
+          } --
+          --]]
+        end
+      else
+        k = k + OutPerWeek -- Просто пропуск
+      end
     end
 
     -- Номер недели года:
@@ -674,6 +734,7 @@ function TMain:FillNotePart () --> (bool)
   local DT_cfg = self.Date.config
   local Formats = DT_cfg.Formats
   local DayPerWeek = DT_cfg.DayPerWeek
+  local OutPerWeek = DT_cfg.OutPerWeek
 
   local wL, Null = self.wL, Null
   --logShow(wL, "wL", "wA")
@@ -695,6 +756,17 @@ function TMain:FillNotePart () --> (bool)
       TextMark = DT_cfg.RestWeekDays[w % DayPerWeek],
     } --
   end
+
+  for w = 1, OutPerWeek do
+    k = k + 1
+    local u = t[k]
+
+    u.text = WeekDayShort[-w] or WeekDayFmt:format(-w)
+    u.RectMenu = {
+      --TextMark = true,
+    } --
+  end
+  
   k = k + 1
   t[k].separator = true
 
@@ -751,7 +823,7 @@ function TMain:LimitDate (Date)
   elseif Date.y > self.YearMax then
     Date.y = self.YearMax
     Date.m = Date:getYearMonths()
-    Date.d = Date:getMonthDays()
+    Date.d = Date:getWeekMonthDays()
   end
 
   return Date
@@ -936,7 +1008,7 @@ function TMain:AssignEvents () --> (bool | nil)
         if State == 0 then Date:shd(DT_cfg.DayPerWeek) end
       elseif AKey == "Up"    and Data.r == 1 then
          Date:dec_d()
-      elseif AKey == "Down"  and Data.r == DT_cfg.DayPerWeek then
+      elseif AKey == "Down"  and Data.r >= DT_cfg.DayPerWeek then
         --logShow({ Date, Date:inc_d() }, AKey)
          --logShow(Date:inc_d(), AKey)
          Date:inc_d()
@@ -955,7 +1027,7 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "PgDn" then
         Date.y = (divf(Date.y, 10) + 1) * 10
         Date.m = Date:getYearMonths()
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       elseif AKey == "Home" then
         Date.y = (divf(Date.y, 100) - 1) * 100 + 1
         Date.m = 1
@@ -963,7 +1035,7 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "End" then
         Date.y = (divf(Date.y, 100) + 1) * 100
         Date.m = Date:getYearMonths()
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       else
         isUpdate = false
       end
@@ -975,7 +1047,7 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "PgUp" then
         Date.d = 1
       elseif AKey == "PgDn" then
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       elseif AKey == "Home" then
         if Date.m == 1 and Date.d == 1 then
           Date.y = Date.y - 1
@@ -984,11 +1056,11 @@ function TMain:AssignEvents () --> (bool | nil)
         Date.d = 1
       elseif AKey == "End" then
         if Date.m == Date:getYearMonths() and
-           Date.d == Date:getMonthDays() then
+           Date.d == Date:getWeekMonthDays() then
           Date.y = Date.y + 1
         end
         Date.m = Date:getYearMonths()
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       else
         isUpdate = false
       end
@@ -998,7 +1070,7 @@ function TMain:AssignEvents () --> (bool | nil)
         if Date.y == 1 and Date.m == 1 and Date.d == 1 then
           Date.y = 1
           Date.m = Date:getYearMonths()
-          Date.d = Date:getMonthDays()
+          Date.d = Date:getWeekMonthDays()
         else
           Date.y = 1
           Date.m = 1
@@ -1011,7 +1083,7 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "PgDn" then
         Date.y = (divf(Date.y, 1000) + 1) * 1000
         Date.m = Date:getYearMonths()
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       elseif AKey == "Home" then
         Date.y = self.YearMin
         Date.m = 1
@@ -1019,7 +1091,7 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "End" then
         Date.y = self.YearMax
         Date.m = Date:getYearMonths()
-        Date.d = Date:getMonthDays()
+        Date.d = Date:getWeekMonthDays()
       else
         isUpdate = false
       end
