@@ -511,6 +511,8 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   RM_Props.MenuAlign    = DefMenuAlign
   RM_Props.MenuEdge     = 2
   RM_Props.Fixed        = Fixed
+  if RM_Props.ItemItself == nil then RM_Props.ItemItself = true end
+
   RM_Props.OnChooseItem = ChooseItem
   ----- RM_Props
   
