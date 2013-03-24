@@ -616,8 +616,7 @@ function TMain:FillMainPart () --> (bool)
 
       elseif d >= MonthDays then
         if d == MonthDays then
-          Real.LastWeekNumber  = i
-          Real.LastWeekNumDay  = j
+          d = d + 1
           --Next.StartWeekNumber = j == DayPerWeek and i + 1 or i
           --Next.StartWeekNumDay = j == DayPerWeek and 1 or j + 1
         end
@@ -637,6 +636,11 @@ function TMain:FillMainPart () --> (bool)
 
         if not SelIndex and d == Date.d then
           SelIndex = k + 1
+        end
+
+        if d == MonthDays then
+          Real.LastWeekNumber  = i
+          Real.LastWeekNumDay  = j
         end
 
       else
@@ -677,15 +681,20 @@ function TMain:FillMainPart () --> (bool)
           State = -1
         end
 
-        for j = 1, OutPerWeek do
+        local b = Curr:getWeekMonthDays()
+
+        for j = 1, Outs do
+
+          b = b + 1
+          if not SelIndex and State == 0 and b == Date.d then
+            SelIndex = k + 1
+          end
 
           k = k + 1
           local u = t[k]
 
-          -- TODO: Алгоритм просмотра вненедельных дат!
-
-          --[[
-          u.text = MonthDayFmt:format(d)
+          -- CHECK: Алгоритм просмотра вненедельных дат!
+          u.text = MonthDayFmt:format(b)
           u.grayed = (State ~= 0)
           u.RectMenu = {
             TextMark = DT_cfg.RestWeekDays[-j],
@@ -697,12 +706,13 @@ function TMain:FillMainPart () --> (bool)
             [-1] = Prev,
             [ 0] = Real,
             [ 1] = Next,
-            d = 0,
+            d = b,
           } --
-          --]]
-        end
+        end -- for
+
+        k = k + OutPerWeek - Outs -- Пропуск остальных пунктов
       else
-        k = k + OutPerWeek -- Просто пропуск
+        k = k + OutPerWeek -- Просто пропуск вненедельных пунктов
       end
     end
 
@@ -994,6 +1004,8 @@ function TMain:AssignEvents () --> (bool | nil)
     Date.d = Data.d
     --logShow({ AKey, VMod, Data }, ItemPos, "w d2")
 
+    local isOuts = DT_cfg.OutPerWeek > 0
+
     local isUpdate = true
     if VMod == 0 then
       --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
@@ -1006,9 +1018,13 @@ function TMain:AssignEvents () --> (bool | nil)
       elseif AKey == "Right" and Data.c == self.WeekCols then
         --Date:shd(DT_cfg.DayPerWeek)
         if State == 0 then Date:shd(DT_cfg.DayPerWeek) end
-      elseif AKey == "Up"    and Data.r == 1 then
+      elseif AKey == "Up"    and 
+             ( Data.r == 1 or isOuts and
+               (Date.d == 1 or Data.r >= DT_cfg.DayPerWeek) ) then
          Date:dec_d()
-      elseif AKey == "Down"  and Data.r >= DT_cfg.DayPerWeek then
+      elseif AKey == "Down"  and 
+             (Data.r >= DT_cfg.DayPerWeek or
+              isOuts and Date.d == Date:getWeekMonthDays()) then
         --logShow({ Date, Date:inc_d() }, AKey)
          --logShow(Date:inc_d(), AKey)
          Date:inc_d()
