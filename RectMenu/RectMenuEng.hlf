@@ -188,6 +188,9 @@ $ #Menu handling properties#: RectMenu
 
 @RM_Props_MenuItems
 $ #Menu items properties#: RectMenu
+  #ItemItself# (bool) — Using items directly (without wrapping).
+    ¦It allows to use directly menu items themselves.
+
   #TextMax# (number) — Maximal length of menu item text.
     ¦It is used for creating a menu with equal width columns.
 

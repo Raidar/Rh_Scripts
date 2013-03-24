@@ -515,16 +515,23 @@ function TMenu:DefineListInfo () --| List
   local Items = self.Menu.Items
   local List, RM = self.List, self.RectMenu
   --local Data, List, RM = self.Data, self.List, self.RectMenu
+  local ItemItself = RM.ItemItself
   local checked = RM.ShowChecked
 
   local j, k = 0, 0 -- Счётчики скрытых и видимых пунктов
   for i = 1, #Items do -- Выборка только выводимых пунктов:
-    local Item = {
-      Index = i,
-      Shift = j,
-      __index = Items[i],
-    } ---
-    setmetatable(Item, Item) -- ^-- i = k + j + 1
+    local Item = Items[i]
+    if ItemItself then
+      Item.Index = i
+      Item.Shift = j
+    else
+      Item = {
+        Index = i,
+        Shift = j,
+        __index = Item,
+      } ---
+      setmetatable(Item, Item) -- ^-- i = k + j + 1
+    end
 
     if isItemPicked(Item) then
       j = j + 1 -- is Special!
