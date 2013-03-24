@@ -210,6 +210,10 @@ function TDate:copy () --> (object)
   return unit.newDate(self:data())
 end ----
 
+function TDate:is (Date) --> (bool)
+  return self.y == Date.y and self.m == Date.m and self.d == Date.d
+end ----
+
 ---------------------------------------- ---- Count
 function TDate:getYearMonths () --> (number)
   --local self = self
@@ -241,6 +245,16 @@ function TDate:getWeekDays () --> (number)
   return self.config:getWeekDays(self.y, self.m)
 end ----
 
+function TDate:getWeekMonthDays () --> (number)
+  local self = self
+  return self.config:getWeekMonthDays(self.y, self.m)
+end ---- getWeekMonthDays
+
+function TDate:getWeekMonthOuts () --> (number)
+  local self = self
+  return self.config:getWeekMonthOuts(self.y, self.m)
+end ---- getWeekMonthOuts
+
 ---------------------------------------- ---- get+set
 function TDate:getYearDay () --> (bool)
   local self = self
@@ -270,6 +284,11 @@ end ----
 function TDate:getWeekDay () --> (number)
   local self = self
   return self.config:getWeekDay(self.y, self.m, self.d)
+end ----
+
+function TDate:getWeekNumDay () --> (number)
+  local self = self
+  return self.config:getWeekNumDay(self.y, self.m, self.d)
 end ----
 
 function TDate:getMonthWeekDay (mw, wd) --> (number)
@@ -487,6 +506,11 @@ end ----
 
 function TTime:copy () --> (object)
   return unit.newTime(self:data())
+end ----
+
+function TTime:is (Time) --> (bool)
+  return self.h == Time.h and self.n == Time.n and
+         self.s == Time.s and self.z == Time.z
 end ----
 
 ---------------------------------------- ---- get+set

@@ -119,8 +119,7 @@ local TConfig = {
 
     Min = 28,
     Max = 28,
-    WeekMin = 4 + 2,
-    WeekMax = 4 + 2,
+    WeekMin = 4 + 2,             WeekMax = 4 + 2,
   }, -- MonthDays
 
   -- Year' days count by months.
@@ -134,9 +133,9 @@ local TConfig = {
     [0] = 0,
   }, -- YearDays
 
-  -- Numbers of week days for last days of previous months
-  -- (provided that last day of previous year is Sunday).
-  -- Номера дней недели для последних дней предыдущих месяцев
+  -- Week days for last days of previous months
+  -- (providing that last day of previous year is Sunday).
+  -- Дни недели для последних дней предыдущих месяцев
   -- (при условии, что последний день предыдущего года — воскресенье).
   WeekDays = {
     0, 0, 0,
@@ -148,7 +147,7 @@ local TConfig = {
   -- Outweek days with "outweekday" number.
   -- Вненедельные дни с номерами дней "вненедели".
   WeekOuts = {
-    --{ m = 12, d = 32 } = 8,
+    --{ m = 12, d = 32, od = 1, },
   }, -- WeekOuts
 
   -- Formats to output.
@@ -275,6 +274,30 @@ function TConfig:getWeekDays (y, m) --> (number)
   return self.WeekDays[m]
 end ---- getWeekDays
 
+-- Count days in month for weekdays.
+-- Количество дней в месяце для дней недели.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+---- @return:
+  result (number) - day count in month.
+--]]
+function TConfig:getWeekMonthDays (y, m) --> (number)
+  return self.MonthDays[m]
+end ---- getWeekMonthDays
+
+-- Count days in month for weekouts.
+-- Количество дней в месяце для вненедельных дней.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+---- @return:
+  result (number) - day count in month.
+--]]
+function TConfig:getWeekMonthOuts (y, m) --> (number)
+  return 0
+end ---- getWeekMonthOuts
+
 ---------------------------------------- ---- ---- get+div
 -- Get last day in year.
 -- Получение последнего дня в году.
@@ -349,8 +372,7 @@ function TConfig:getYearWeek (y, m, d, f) --> (number)
   local self = self
 
   local DayPerWeek = self.DayPerWeek
-  local YearStartDay = self:getWeekDay(y, 1, 1)
-  if YearStartDay == 0 then YearStartDay = DayPerWeek end
+  local YearStartDay = self:getWeekNumDay(y, 1, 1)
   local YearStartShift = DayPerWeek - (f or self.YearStartWeekDay) + 1
 
   return divf(self:getYearDay(y, m, d) - 1 +
@@ -391,6 +413,21 @@ function TConfig:getWeekDay (y, m, d) --> (number)
   return (self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 
+-- Get day number of the week in 1..DayPerWeek range.
+-- Получение номера дня недели в диапазоне 1..DayPerWeek.
+--[[ @params:
+  y (number) - year.
+  m (number) - month.
+  d (number) - day.
+---- @return:
+  result (number) - day of week as 1..DayPerWeek.
+--]]
+function TConfig:getWeekNumDay (y, m, d) --> (number)
+  local self = self
+  local wday = self:getWeekDay(y, m, d)
+  return wday == 0 and self.DayPerWeek or wday
+end ---- getWeekNumDay
+
 -- Get day from month week day.
 -- Получение дня из дня недели месяца.
 --[[ @params:
@@ -402,21 +439,21 @@ end ---- getWeekDay
   d (number) - day.
 --]]
 -- WARN: Не упрощать, т.к. универсальный алгоритм!
+-- TODO: Учесть OutPerWeek и вненедельные дни!
+-- Посмотреть, что лучше: -1 или DeyPerWeek + 1 !
 function TConfig:getMonthWeekDay (y, m, mw, wd) --> (number)
   local self = self
 
   local DayPerWeek = self.DayPerWeek
 
   if mw < 0 then
-    local Day = self:getMonthDays(y, m)        -- LastDay
-    local WeekDay = self:getWeekDay(y, m, Day) -- LastWeekDay
-    if WeekDay == 0 then WeekDay = DayPerWeek end
+    local Day = self:getWeekMonthDays(y, m)       -- LastDay
+    local WeekDay = self:getWeekNumDay(y, m, Day) -- LastWeekDay
     local Shift = WeekDay >= wd and 1 or 0
     return Day + DayPerWeek * (mw + Shift) + (wd - WeekDay)
   else
-    local Day = 1                              -- StartDay
-    local WeekDay = self:getWeekDay(y, m, Day) -- StartWeekDay
-    if WeekDay == 0 then WeekDay = DayPerWeek end
+    local Day = 1                                 -- StartDay
+    local WeekDay = self:getWeekNumDay(y, m, Day) -- StartWeekDay
     local Shift = WeekDay <= wd and 1 or 0
     return Day + DayPerWeek * (mw - Shift) + (wd - WeekDay)
   end
