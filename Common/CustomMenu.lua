@@ -793,18 +793,10 @@ end ---- RunScript
     --logShow(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
     -- Учёт возврата LF4Ed в меню
     if LF4Ed_Cfg and LF4Ed_Cfg.ReturnToMainMenu then
-      if context.use.LFVer >= 3 then -- FAR23
       return runUt.LuaMacro("if Area.Menu then Keys'Esc' end")
-      else
-      return "$If(Menu) Esc $End "
-      end
 
     else
-      if context.use.LFVer >= 3 then -- FAR23
       return true
-      else
-      return ""
-      end
     end
   end -- EscapeFromMainMenu
 
@@ -820,11 +812,7 @@ function TMenu:MakeAction ()
 
     LuaMacro = function () -- Выполнение макроса FAR'а
       local Macro = ActItem.LuaMacro
-      if context.use.LFVer >= 3 then -- FAR23
       EscapeFromMainMenu()
-      else
-      Macro = EscapeFromMainMenu()..Macro
-      end
       return runUt.LuaMacro(Macro, ActItem.Flags)
     end, --
 

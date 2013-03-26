@@ -155,19 +155,17 @@ function unit.Dialog ()
   -- Обработчик событий диалога.
   local function DlgProc (hDlg, msg, param1, param2)
     if msg == F.DN_CONTROLINPUT then
-      --logShow{ "VirKey", param2 }
-      local VirKey = far.ParseInput(param2) -- FAR23
-      if type(VirKey) ~= 'table' then return end 
-      --logShow{ "VirKey", VirKey }
+      local Input = param2
+      --logShow{ Input = Input }
 
-      local EventType = VirKey.EventType
+      local EventType = Input.EventType
       if EventType ~= F.KEY_EVENT and
          EventType ~= F.FARMACRO_KEY_EVENT then
         return
       end
 
-      local StrKey = far.InputRecordToName(VirKey) or ""
-      --logShow{ "VirKey", StrKey, VirKey }
+      local StrKey = far.InputRecordToName(Input) or ""
+      --logShow{ StrKey = StrKey, Input = Input }
 
       -- Выход по ENTER / ESC:
       if StrKey == "Esc" then

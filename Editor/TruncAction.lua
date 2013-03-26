@@ -73,8 +73,6 @@ local BT_Stream, BT_Column = F.BTYPE_STREAM, F.BTYPE_COLUMN
 --local flog = dbg.open("Trunc_test.log", "a", "")
 
 function ProcessEditorInput (rec) --> (bool)
-  --if rec.wVirtualKeyCode == 'END' then logShow(rec, "rec", "xv4") end
-  far.RepairInput(rec)
   --if rec.VirtualKeyCode == VK_END then logShow(rec, "rec", "xv4") end
 
   local EType = rec.EventType

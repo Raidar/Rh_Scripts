@@ -348,7 +348,6 @@ function TMenu:isShow (t) --> (bool | nil)
 end ----
 
 ---------------------------------------- Menu dialog
-local LFVer = context.use.LFVer -- FAR23
 
 -- Создание формы окна диалога с меню.
 function TMenu:DialogForm () --> (dialog)
@@ -2441,9 +2440,8 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработчик нажатия клавиши / кнопки:
   local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
-    local Input = far.ParseInput(Input) -- FAR23
-    --logShow(Input, "Event", "d1 x8")
 
+    --logShow(Input, "Event", "d1 x8")
     local EventType = Input.EventType
 
     if EventType == F.MOUSE_EVENT then
@@ -2458,7 +2456,6 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработчик предобработки нажатия кнопки мыши.
   local function DlgPredInput (hDlg, ProcItem, MouseRec) --> (bool)
-    far.RepairInput(MouseRec)
     --local Zone = _Menu.Zone
     --local X, Y = MouseRec.MousePositionX, MouseRec.MousePositionY
     if isFlag(MouseRec.ButtonState or 0, F.FROM_LEFT_1ST_BUTTON_PRESSED) then
@@ -2493,9 +2490,6 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     [F.DN_INITDIALOG] = DlgInit,
     --[F.DN_CLOSE] = DlgClose,
   } --- Procs
-    if LFVer < 3 then
-      Procs[F.DN_MOUSECLICK] = DlgCtrlInput
-    end
 
   -- Обработчик событий диалога.
   local function DlgProc (hDlg, msg, param1, param2)

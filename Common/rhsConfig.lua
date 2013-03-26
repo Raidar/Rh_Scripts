@@ -48,10 +48,6 @@ local addNewData = tables.extend
 --------------------------------------------------------------------------------
 local unit = {}
 
-----------------------------------------
-local ext = ""
-if context.use.LFVer < 3 then ext = ".lua" end
-
 ---------------------------------------- Main data
 unit.ScriptName = "rhsConfig"
 unit.PluginPath = utils.PluginPath

@@ -46,12 +46,9 @@ local unit = {}
 local SendDlgMessage = far.SendDlgMessage
 local GetDlgItem = far.GetDlgItem
 
-local LFVer = context.use.LFVer -- FAR23
-
 ---------------------------------------- Dialog
 -- Названия полей элементов диалога и их номера. -- from far2.dialog
-if LFVer >= 3 then -- FAR23
-unit.DlgItem = {
+local DlgItem = {
   Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5,
   Selected = 6, ListItems = 6,
   VBuf = 6,
@@ -61,17 +58,7 @@ unit.DlgItem = {
   MaxLen = 11,
   UserData = 12,
 } -- DlgItem
-else
-unit.DlgItem = {
-  Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5, --Focus = 6,
-  Selected = 7, ListItems = 7, --ListPos = 7,
-  History = 7, Mask = 7,
-  VBuf = 7,
-  Flags = 8, --DefaultButton = 9,
-  Data = 10, --Ptr = 10,
-} -- DlgItem
-end
-local DlgItem = unit.DlgItem
+unit.DlgItem = DlgItem
 
 local diSelected  = DlgItem.Selected
 local diListItems = DlgItem.ListItems
@@ -295,39 +282,21 @@ end ---- SaveDlgData
   Hi_Hi (number) - зарезервирован.
 --]]
 function unit.ItemColor (Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
-  if LFVer >= 3 or type(Hi_Hi) == 'table' then -- FAR23
   --logShow({ Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }, "ItemColor", "d3 x2")
   return { Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }
-  else
-  return bor(bshl(Hi_Hi or 0, 0x18),
-             bshl(Hi_Lo or 0, 0x10),
-             bshl(Lo_Hi or 0, 0x08),
-                  Lo_Lo or 0 ) -- FAR2
-  end
 end ---- ItemColor
 
 -- Change item+box draw color.
 -- Изменение цвета отрисовки элемента+рамки.
 function unit.ChangeColor (Color, Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
-  if LFVer >= 3 or type(Color) == 'table' then -- FAR23
   return { Lo_Lo or Color[1], Lo_Hi or Color[2],
            Hi_Lo or Color[3], Hi_Hi or Color[4], }
-  else
-  return bor(bshl(Hi_Hi or band(bshr(Color, 0x18), 0xFF), 0x18),
-             bshl(Hi_Lo or band(bshr(Color, 0x10), 0xFF), 0x10),
-             bshl(Lo_Hi or band(bshr(Color, 0x08), 0xFF), 0x08),
-                  Lo_Lo or band(     Color,        0xFF) ) -- FAR2
-  end
 end ---- ChangeColor
 
 -- Get draw color for item text.
 -- Получение цвета отрисовки для текста элемента.
 function unit.GetTextColor (Color) --> (table)
-  if LFVer >= 3 or type(Color) == 'table' then -- FAR23
   return Color[1]
-  else
-  return band(Color, 0xFF) -- FAR2
-  end
 end ---- GetTextColor
 
 -- Получение "прямоугольника" окна.

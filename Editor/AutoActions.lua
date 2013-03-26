@@ -50,7 +50,6 @@ local k = 0x00
 
 function ProcessEditorInput (rec) --> (bool)
   if rec.EventType == KEY_EVENT then
-    far.RepairInput(rec)
     --flog:logtab(rec, "rec", "xv4")
     if rec.KeyDown then
       --k = rec.VirtualKeyCode

@@ -29,8 +29,6 @@ local logShow = context.ShowInfo
 --local utils = require 'context.utils.useUtils'
 --local tables = require 'context.utils.useTables'
 
---local far23 = context.use.far23
-
 --[[
 local debugs = require "context.utils.useDebugs"
 local hex = debugs.hex8
