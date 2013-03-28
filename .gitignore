@@ -1,0 +1,16 @@
+.svn
+Rh_Scripts.bat
+um_Restore.bat
+Rh_Scripts.exc
+_selfmenu.lua
+_usermenu.lua
+_usermenu.lua.default
+GUIDs.rdm
+TODO.rdm
+*.WinMerge
+*.cfg
+data/*
+Editor/TextTemplate/*.lua
+Fields/*
+Testing/*
+UniUtf/*
