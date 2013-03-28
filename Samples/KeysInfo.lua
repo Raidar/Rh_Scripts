@@ -175,23 +175,23 @@ function unit.Dialog ()
       --logShow{ "FarKey", hex(FarKey) }
 
       -- USED KEY NAME
-      local mCode = VirKey.VirtualKeyCode
+      local mCode = Input.VirtualKeyCode
       SendText(hDlg, D.KCode.id, hex(mCode))
       SendText(hDlg, D.KName.id, StrKey)
       SendText(hDlg, D.VKey.id, VK_KeyToName(mCode) or "")
-      SendText(hDlg, D.fName.id, fkeys.InputRecordToName(VirKey))
+      SendText(hDlg, D.fName.id, fkeys.InputRecordToName(Input))
 
-      local mState = VirKey.ControlKeyState
+      local mState = Input.ControlKeyState
       SendText(hDlg, D.CCode.id, hex(mState))
       SendText(hDlg, D.CName.id, VK_StateToName(mState) or "")
-      local mChar = VirKey.UnicodeChar or ""
+      local mChar = Input.UnicodeChar or ""
       if type(mChar) == 'number' then
         mChar = ("").char(mChar)
         --mChar = unicode.utf8.char(mChar)
       end
       SendText(hDlg, D.KChar.id, '"'..(mChar or "")..'"')
 
-      local mScan = VirKey.VirtualScanCode
+      local mScan = Input.VirtualScanCode
       SendText(hDlg, D.SCode.id, hex(mScan))
       local k = tfind(VScans, mScan)
       SendText(hDlg, D.SName.id, k and VK_KeyToName(k) or "")
