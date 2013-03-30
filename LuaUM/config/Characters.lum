@@ -241,6 +241,7 @@ function unit.CharacterMap ()
     local basics = colors.BaseColors
     local Basis = {
       StandardFG  = basics.navy,
+      --MarkedFG    = basics.red,
       MarkedFG    = basics.black,
       BorderFG    = basics.black,
       TitleFG     = basics.black,
@@ -441,6 +442,7 @@ function unit.PunctSymbols ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
+--[=[
   local Order = [[/opqwb`1234567890-\ ]]
   local Datas = -- Char + Shift
                 [[…‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
@@ -451,7 +453,8 @@ function unit.PunctSymbols ()
                 -- Alt + Shift
                 [[ ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
                 [[ ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
---[=[
+--]=]
+-- [=[
   local Order = [[/aopqwb`1234567890-\ ]]
   local Datas = -- Char + Shift
                 [[…́‵′‟”•´‼⁇§¨°ˆ¸˙«»-, ]]..
@@ -462,6 +465,7 @@ function unit.PunctSymbols ()
                 -- Alt + Shift
                 [[ ̍ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃ ⁀‿‒  ]]..
                 [[ ̎ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅⁓⁐⁔   ]]
+--[=[
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:
   ʹ - Greek Numeral Sign (Dexia keraia)
