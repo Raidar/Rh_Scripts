@@ -448,11 +448,11 @@ function TMenu:DefinePropInfo () --| Props
   --logShow(self.Area, "self.Area")
 
   -- Заданные свойства меню:
-  local Props = tables.copy(self.Menu.Props, true, pairs, false) -- MAYBE: true?!
+  local Props = tables.copy(self.Menu.Props, true, pairs, false) -- MAYBE: clone + true?!
   self.Props = Props -- Свойства
 
-  self.RectMenu = Props.RectMenu or {}
-  local RM = self.RectMenu
+  local RM = Props.RectMenu or {}
+  self.RectMenu = RM
 
   --local MenuOnly = RM.MenuOnly -- Только меню
 
@@ -488,8 +488,14 @@ function TMenu:DefinePropInfo () --| Props
   --logShow(self.Props, "self.Props")
 
   -- Цвета меню:
-  local Colors = RM.Colors or {}
-  Colors.__index = MenuUsualColors; setmetatable(Colors, Colors)
+  local Colors = RM.Colors
+  if RM.ReuseProps then
+    Colors = Colors or MenuUsualColors
+  else
+    Colors = Colors or {}
+    Colors.__index = MenuUsualColors
+    setmetatable(Colors, Colors)
+  end
   self.Colors = Colors
   -- TODO: Завести поле-цвет clear!
   Colors.Form    = Colors.Standard.normal
@@ -514,13 +520,13 @@ function TMenu:DefineListInfo () --| List
   local Items = self.Menu.Items
   local List, RM = self.List, self.RectMenu
   --local Data, List, RM = self.Data, self.List, self.RectMenu
-  local ItemItself = RM.ItemItself
+  local ReuseItems = RM.ReuseItems
   local checked = RM.ShowChecked
 
   local j, k = 0, 0 -- Счётчики скрытых и видимых пунктов
   for i = 1, #Items do -- Выборка только выводимых пунктов:
     local Item = Items[i]
-    if ItemItself then
+    if ReuseItems then
       Item.Index = i
       Item.Shift = j
     else

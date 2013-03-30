@@ -118,12 +118,14 @@ and a value of second is calculated according to previous condition.
 A choice of specified field is dependent from a menu shape.
 
   #Fixed# (table) — Information about fixed rows and columns.
-    It specifies a number of unscrollable rows and columns of menu.
-  Fields:
+  — ¦It specifies a number of unscrollable rows and columns of menu:
     — #HeadRows# — ¦a number of rows on the top.
     — #FootRows# — ¦a number of rows on the bottom.
     — #HeadCols# — ¦a number of columns on the left.
     — #FootCols# — ¦a number of columns on the right.
+
+  #ReuseProps# (bool) — Reusing menu properties.
+  — ¦It allows to use directly menu properties themselves (without wrapping).
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
 
@@ -135,7 +137,7 @@ $ #Menu window properties#: RectMenu
 
   #MinWidth# & #MinHeight#,
   #MaxWidth# & #MaxHeight# (number) — Constraints for menu output area.
-    ¦Following values are used by default for window field:
+  — ¦Following values are used by default for window field:
       min. width  = \37(MinWidth  or 10)\- characters,
       min. height = \37(MinHeight or  5)\- characters,
       max. width  = \37(MaxWidth  or 80)\- characters,
@@ -143,7 +145,7 @@ $ #Menu window properties#: RectMenu
 
   #Colors#      (table) — Table of menu colors for usual items.
   #FixedColors# (table) — Table of menu colors for fixed items.
-    ¦They allow to specify colors used for RectMenu output.
+  — ¦They allow to specify colors used for RectMenu output.
 
   #MenuOnly# (bool) — Output of menu only: without box, indent and titles.
   — ¦It allows to use RectMenu for creating a simple list of items.
@@ -167,12 +169,13 @@ $ #Menu window properties#: RectMenu
   — ¦Values for vertical (according to priority):
     \37"T"\- — top, \37"B"\- — bottom, \37"M"\- — middle.
 
-  #BoxKind# (string) — Kind of box around menu:
-  — \37false\- — no box at all, \37""\-  — "empty" box,
+  #BoxKind# (string) — Kind of box around menu.
+  — ¦Accepted values:
+    \37false\- — no box at all, \37""\-  — "empty" box,
     \37"S"\-   — single box,    \37"D"\- — double box (by default).
 
   #BoxScroll# (bool) — Output of scroll bars on menu box.
-    ¦It controls a position of scroll bars:
+  — ¦It controls a position of scroll bars:
       \37true\-  — ¦show always on box.
       \37false\- — ¦show never on box but show inside box area.
       \37nil\-   — ¦show on box if titles are not present only.
@@ -182,35 +185,35 @@ $ #Menu window properties#: RectMenu
 @RM_Props_MenuHandle
 $ #Menu handling properties#: RectMenu
   #AltHotOnly# (bool) — Handling hot chars by \37Alt\- pressed only.
-    ¦It allows to use character keys without modifiers for other objectives.
+  — ¦It allows to use character keys without modifiers for other objectives.
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
 
 @RM_Props_MenuItems
 $ #Menu items properties#: RectMenu
-  #ItemItself# (bool) — Using items directly (without wrapping).
-    ¦It allows to use directly menu items themselves.
+  #ReuseItems# (bool) — Reusing menu items.
+  — ¦It allows to use directly menu items themselves (without wrapping).
 
   #TextMax# (number) — Maximal length of menu item text.
-    ¦It is used for creating a menu with equal width columns.
+  — ¦It is used for creating a menu with equal width columns.
 
   #LineMax# (number) — Maximal amount of lines for menu item text.
-    ¦It is used for creating a menu with equal height rows.
+  — ¦It is used for creating a menu with equal height rows.
 
   #ShowChecked# (bool) — Show check sign for menu items.
-    ¦It controls a show of check sign for menu items:
+  — ¦It controls a show of check sign for menu items:
       \37true\-  — show always.
       \37false\- — show never.
       \37nil\-   — show if only checked items exists.
 
   #CheckedChar# (string) — Character used for checked items.
-    ¦It allows to specify common character for all checked items.
+  — ¦It allows to specify common character for all checked items.
 
   #UncheckedChar# (string) — Character used for unchecked items.
-    ¦It allows to specify common character for all unchecked items.
+  — ¦It allows to specify common character for all unchecked items.
 
   #CompactText# (bool) — Compact outpout of text.
-    ¦It allows to output item text without first and last spaces.
+  — ¦It allows to output item text without first and last spaces.
 
   #TextMark# — corresponds to the same ~particular item property~@RM_Props_ItemPart@
 
@@ -223,9 +226,9 @@ $ #Particular item properties#: RectMenu
   — ¦It outputs when menu edge is present (see ~MenuOnly & MenuEdge~@RM_Props_MenuWindow@).
 
   #TextMark# (table) — Selection of text part for menu item.
-    Format:
+  — ¦Format:
     \37{ \-<Pattern for find>\37, \-<Start position>\37, \-<Plain find flag> \37}\-
-  or
+    or
     \37{ \-<Start position of selection>\37, \-<End position of selection> \37}\-.
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
