@@ -263,7 +263,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   local ItemProps = {
     Hint = Properties.Hint == nil and true or Properties.Hint,
-    RectMenu = Properties.RectMenu or {},
+    RectItem = Properties.RectItem or {},
   } --- ItemProps
 
   local Heading = Properties.Heading or "Order"
