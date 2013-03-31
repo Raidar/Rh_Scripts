@@ -1268,7 +1268,7 @@ do
 
   local KeyActions = macUt.Actions.editor.plain
 
-function TMain:AssignKeyPress () --> (bool | nil)
+function TMain:AssignEvents () --> (bool | nil)
 
   local Cfg = self.CfgData
   local Menu, Popup = self.Menu, self.Popup
@@ -1373,7 +1373,7 @@ function TMain:AssignKeyPress () --> (bool | nil)
   -- Назначение обработчика:
   local RM_Props = self.Props.RectMenu
   RM_Props.OnKeyPress = KeyPress
-end -- AssignKeyPress
+end -- AssignEvents
 
 end --
 do
@@ -1436,7 +1436,7 @@ end -- do
 ---------------------------------------- ---- Run
 function TMain:Run () --> (bool | nil)
 
-  self:AssignKeyPress()
+  self:AssignEvents()
 
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
 
