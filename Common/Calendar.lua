@@ -365,6 +365,7 @@ function TMain:MakeProps ()
     Order = "V",
     Rows = self.RowCount,
     --Cols = self.ColCount,
+
     Fixed = {
       HeadRows = 1,
       FootRows = self.RowCount - 1 - self.WeekRows,
@@ -813,12 +814,12 @@ function TMain:MakeMenu () --> (table)
 end -- MakeMenu
 
 -- Формирование календаря.
-function TMain:MakeCalendar () --> (table)
+function TMain:Make () --> (table)
 
   self.Items = false -- Сброс меню (!)
 
   return self:MakeMenu()
-end -- MakeCalendar
+end -- Make
 
 end -- do
 ---------------------------------------- ---- Utils
@@ -938,7 +939,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   local function MakeUpdate () -- Обновление!
     farUt.RedrawAll()
-    self:MakeCalendar()
+    self:Make()
     --logShow(self.Items, "MakeUpdate")
     if not self.Items then return nil, CloseFlag end
     --logShow(ItemPos, hex(FKey))
@@ -1175,7 +1176,7 @@ function TMain:Show () --> (bool | nil)
 
   --local Cfg = self.CfgData
 
-  self:MakeCalendar()
+  self:Make()
   if self.Error then return nil, self.Error end
 
   if useprofiler then profiler.stop() end
