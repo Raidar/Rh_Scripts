@@ -74,14 +74,15 @@ end ----
 end -- do
 
 do
-  local CmdFlags = 0
+  local CmdFlags = F.KMFLAGS_DISABLEOUTPUT
+  local EscapeMenu = "if Area.Menu then Keys'Esc' end\nKeys'Enter'"
   --far.Message(CmdFlags, "CmdFlags")
 
 -- Run command from FAR command line.
 -- Запуск команды из командной строки FAR.
 function Run.CmdLine (Command) --> (integer)
   if panel.SetCmdLine(-1, Command) then
-    return Run.LuaMacro("if Area.Menu then Keys'Esc' end\nKeys'Enter'", CmdFlags)
+    return Run.LuaMacro(EscapeMenu, CmdFlags)
   end
 end ----
 

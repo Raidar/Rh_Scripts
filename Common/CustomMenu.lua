@@ -302,9 +302,14 @@ end -- do
 
 -- Настройка пункта-lua-макроса.
 function TMenu:DefineLuaMacro (Item) --| Item
-  if Item.LuaMacro then
-    return true
+  if not Item.LuaMacro then return end
+
+  -- Флаги по умолчанию:
+  if not Item.Flags then
+    Item.Flags = F.KMFLAGS_DISABLEOUTPUT
   end
+
+  return true
 end ---- DefineLuaMacro
 
 -- Определение полей пункта меню.
