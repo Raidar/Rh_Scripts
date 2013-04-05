@@ -124,13 +124,6 @@ function unit.EnquoteItems ()
     { hot = "xml ", pad = " ", left = "<!--", right = "-->", },
     { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
     --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
-    --[=[
-    { hot = "d", left = "{ ", right = " }", note = "    (data)", },
-    { hot = "p", left = "(*", right = "*)", note = "    (pascal)", },
-    { hot = "c", left = "/* ", right = " */", note = "  (c/c++)", },
-    { hot = "h", left = "<!--", right = "-->", note = " (x/html)", },
-    { hot = "l", left = "--[[ ", right = " ]]--", note = " (lua)", },
-    --]=]
     mSeparator,
     mSeparator,
     --mSeparator,
