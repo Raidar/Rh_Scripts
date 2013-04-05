@@ -54,11 +54,11 @@ local mCommands = {
       separator = true },
     -- FAR description --
     { text = L.CmdFarDescExec,
-      Command = '""%FarHome%\\File_id.diz""' },
+      Command = 'start "" ""%FarHome%\\File_id.diz""' },
     { text = L.CmdFarDescProg,
-      Program = '""%FarHome%\\File_id.diz""' },
+      Program = 'start "" ""%FarHome%\\File_id.diz""' },
     { text = L.CmdFarDescLine,
-      CmdLine = '"%FarHome%\\File_id.diz"' },
+      CmdLine = 'start "" "%FarHome%\\File_id.diz"' },
   } ---
 } --- mCommands
 
