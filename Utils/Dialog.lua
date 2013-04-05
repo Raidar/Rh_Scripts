@@ -316,9 +316,9 @@ end ---- DialogRect
 -- Обновление элементов диалога.
 function unit.UpdateItems (hDlg, Items) --| (Items)
   for k, u in ipairs(Items) do
-    local w = GetDlgItem(hDlg, k - 1)
+    local w = GetDlgItem(hDlg, k)
     if type(u[diListItems]) == 'table' then
-      local Pos = far.SendDlgMessage(hDlg, F.DM_LISTGETCURPOS, k - 1, 0)
+      local Pos = far.SendDlgMessage(hDlg, F.DM_LISTGETCURPOS, k, 0)
       u[diListItems].SelectIndex = (Pos or Null).SelectPos
     else
       u[diListItems] = w[diListItems]
