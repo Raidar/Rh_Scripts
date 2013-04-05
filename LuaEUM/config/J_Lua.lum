@@ -190,10 +190,10 @@ local mInsert = {
     -- I -- if-then/else
     { text = "I", Label = true },
     { text = "if-then",
-      Macro = "if @Here then end@Back",
+      Macro = "if @Here then@IndEnterend@Back",
       AccelStr = "I" },
     { text = "if-else",
-      Macro = "if @Here then@IndEnterelse end@Back",
+      Macro = "if @Here then@IndEnterelse@IndEnterend@Back",
       AccelStr = "S+I" },
     { text = "full if",
       Macro = "if @Here then@IndEnterelse@IndEnterend -- if@Back",
