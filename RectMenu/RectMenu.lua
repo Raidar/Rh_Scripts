@@ -2384,7 +2384,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     return _Menu:DoMenuDraw(GetRect(hDlg))
   end -- DlgItemDraw
 
---[[ 2.2. Обработка реакции меню ]]
+--[[ 2.2. Обработка реакции меню ]] --> AssignEvents
 
   --local NoDlgClose -- Нет выбора пункта меню для спец. действий.
   local InputRecordToName = (require "far2.keynames").InputRecordToName

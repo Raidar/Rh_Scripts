@@ -739,7 +739,7 @@ function TMain:SearchTextWords () --> (table)
   local Trimmed = Cfg.FindKind == "trimmable"
 
   -- Таблица слов с дополнительной информацией:
-  local t = { Stat = {}, Link = { Line = CurCfg.CurLine } }
+  local t = { Stat = {}, Link = { Line = CurCfg.CurLine }, }
   local Stat = t.Stat -- Статистика встречаемости
   local Link = t.Link -- "Ссылочная" информация
 
@@ -748,8 +748,12 @@ function TMain:SearchTextWords () --> (table)
   local BasePat = ("(%s%s+)"):format(SlabPat, self.Ctrl.CharsSet)
   local StartPat = '^'..BasePat
   local MatchPat = self.Ctrl.SeparSet..BasePat
-  self.Pattern = { Slab = SlabPat, Base = BasePat,
-                   Start = StartPat, Match = MatchPat }
+  self.Pattern = {
+    Slab = SlabPat,
+    Base = BasePat,
+    Start = StartPat,
+    Match = MatchPat,
+  } --
   --logShow(self.Pattern, "SearchWords Patterns")
 
   -- Поиск слов в строке.
@@ -768,7 +772,7 @@ function TMain:SearchTextWords () --> (table)
         t[#t+1] = w
         -- Информация для frequency-сортировки:
         -- число повторений, номер строки + место по порядку:
-        Stat[w] = { Count = 1, Line = Line, Slot = k }
+        Stat[w] = { Count = 1, Line = Line, Slot = k, }
       end
     end -- MakeWord
 
@@ -1072,6 +1076,7 @@ function TMain:MakePopupMenu () --> (table)
     Pos.y = Pos.y - Height
     Pos.angle = "B"
   end
+  -- Warning: "<" & "+1" instead of "<=" because editor may have scroll bar.
   if Pos.x + Width + 1 < Info.WindowSizeX then
     --Pos.x = Pos.x 
     Pos.angle = Pos.angle.."L"
@@ -1079,20 +1084,12 @@ function TMain:MakePopupMenu () --> (table)
     Pos.x = Pos.x - Width - 1
     Pos.angle = Pos.angle.."R"
   end
-  -- Warning: "<" & "+1" instead of "<=" because editor may have scroll bar.
   RM_Props.Position = Pos
 
   local Colors = RM_Props.Colors
   if Colors.BorderAngle then
     Colors.Borders = { [Pos.angle] = Colors.BorderAngle, }
   end
-  --[[
-  local Rect, Pos = farUt.GetFarRect(), far.AdvControl(F.ACTL_GETCURSORPOS)
-  logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
-  if Pos.X + Width  >= Rect.Width  then Pos.X = Pos.X - Width - 1 end
-  if Pos.Y + Height >= Rect.Height then Pos.Y = Pos.Y - Height else Pos.Y = Pos.Y + 1 end
-  RM_Props.Position = { x = Pos.X, y = Pos.Y }
-  --]]
   --logShow(RM_Props.Position, "RectMenu Position")
   --logShow(Items, "Items")
 
@@ -1122,8 +1119,8 @@ function TMain:MakeWordsList () --> (table)
 
   -- Получение слова под курсором (CurPos is 0-based):
   local CurCfg = self.Current
-  CurCfg.Line = EditorGetStr(nil, -1, 2) or ""
-  CurCfg.Pos  = Info.CurPos + 1 -- 0-based!
+  CurCfg.Line = EditorGetStr(nil, 0, 2) or ""
+  CurCfg.Pos  = Info.CurPos -- 1-based!
   CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   --logShow(CurCfg) -- Проверка на выход:
   if not self.Ctrl:isWordUse(CurCfg.Word, CurCfg.Slab) then return end
@@ -1142,7 +1139,7 @@ function TMain:MakeWordsList () --> (table)
 
   -- Информация для работы со строками файла (Line number is 0-based):
   CurCfg.CurLine, CurCfg.MaxLine = Info.CurLine, Info.TotalLines
-  CurCfg.GetLine = function (n) return EditorGetStr(nil, n or -1, 2) end
+  CurCfg.GetLine = function (n) return EditorGetStr(nil, n or 0, 2) end
 
   -- Поиск подходящих слов в строках файла:
   local Words = self:SearchWords(); self.Words = Words
@@ -1236,9 +1233,9 @@ do
   --local LuaCardsSet = lua.regex.CardsSet
 
   -- Флаги.
-  local CompleteFlags = { isRedraw = false, isRedrawAll = true }
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
+  local CompleteFlags = { isRedraw = false, isRedrawAll = true }
 
   -- Символы спец. клавиш:
   local SpecKeyChars = {

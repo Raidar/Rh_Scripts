@@ -98,23 +98,23 @@ local EditorPlainActions = { -- Функции выполнения просты
   end,
 
   left  = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, max(Info.CurPos - 1, 0))
+    return farEdit.SetPos(Info.EditorID, 0, max(Info.CurPos - 1, 1))
   end, --- left
   right = function (Info)
-    return farEdit.SetPos(Info.EditorID, -1, Info.CurPos + 1)
+    return farEdit.SetPos(Info.EditorID, 0, Info.CurPos + 1)
   end, --- right
   up    = function (Info)
-    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - 1, 0))
+    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - 1, 1))
   end, --- up
   down  = function (Info)
     return farEdit.SetPos(Info.EditorID, Info.CurLine + 1)
   end, --- down
 
   home    = function (Info)
-    return farEdit.LineHome(Info.EditorID, -1)
+    return farEdit.LineHome(Info.EditorID, 0)
   end, --- home
   ["end"] = function (Info)
-    return farEdit.LineEnd(Info.EditorID, -1)
+    return farEdit.LineEnd(Info.EditorID, 0)
   end, --- end
 
   del  = farEdit.DelPos,
@@ -181,9 +181,9 @@ end ---- NewLine
 function Use.DelLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local id = Info.EditorID
-  local Len = farEdit.GetLength(id, -1)
+  local Len = farEdit.GetLength(id, 0)
 
-  for _ = 1, min(Count, Len - Info.CurPos) do
+  for _ = 1, min(Count, Len - Info.CurPos + 1) do
     if not farEdit.Del(id) then return end
   end
 
@@ -206,9 +206,9 @@ end ---- DelCharText
 function Use.BackLineText (Info, Count)
   local Info = Info or farEdit.GetInfo()
   local id = Info.EditorID
-  local Len = farEdit.GetLength(id, -1)
-  local Count = min(Count, Len, Info.CurPos)
-  if not farEdit.SetPos(id, -1, Info.CurPos - Count) then
+  local Len = farEdit.GetLength(id, 0)
+  local Count = min(Count, Len, Info.CurPos - 1)
+  if not farEdit.SetPos(id, 0, Info.CurPos - Count) then
     return
   end
 
@@ -221,10 +221,10 @@ function Use.BackCharText (Info, Count)
   local k = Count
   while k > 0 do
     local CurPos = Info.CurPos
-    if CurPos > 0 then
+    if CurPos > 1 then
       local NewPos = CurPos - k
-      if NewPos >= 0 then
-        if not farEdit.SetPos(Info.EditorID, -1, NewPos) then
+      if NewPos >= 1 then
+        if not farEdit.SetPos(Info.EditorID, 0, NewPos) then
           return
         end
         k = 0
@@ -232,11 +232,11 @@ function Use.BackCharText (Info, Count)
         if not farEdit.LineEnd(Info.EditorID, Info.CurLine - 1) then
           return
         end
-        k = k - CurPos - 1
+        k = k - CurPos
         Info = farEdit.GetInfo()
       end
 
-    else--if Info.CurLine > 0 then
+    else--if Info.CurLine > 1 then
       if not farEdit.CharLeft(Info) then
         return
       end
@@ -266,15 +266,15 @@ local EditorCycleActions = {
 
   left  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID, -1, max(Info.CurPos - Count, 0))
+    return farEdit.SetPos(Info.EditorID, 0, max(Info.CurPos - Count, 1))
   end,
   right = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID, -1, Info.CurPos + Count)
+    return farEdit.SetPos(Info.EditorID, 0, Info.CurPos + Count)
   end,
   up    = function (Info, Count)
     local Info = Info or farEdit.GetInfo()
-    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - Count, 0))
+    return farEdit.SetPos(Info.EditorID, max(Info.CurLine - Count, 1))
   end,
   down  = function (Info, Count)
     local Info = Info or farEdit.GetInfo()

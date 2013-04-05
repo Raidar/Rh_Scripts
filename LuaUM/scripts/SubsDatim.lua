@@ -43,6 +43,7 @@ local unit = {}
 
 ---------------------------------------- information
 local TplKit = { -- Информация о шаблонах:
+
   sub_default = {
     -- Позиции захвата времени в линии:
     start = 0, -- для начального времени
@@ -57,7 +58,8 @@ local TplKit = { -- Информация о шаблонах:
     -- функции преобразования:
     parse = false,  -- разбор строки со временем в класс-время
     spell = false,  -- сбор строки со временем из класса-времени
-    },
+  }, -- sub_default
+
   sub_assa  = {
     start = 2,
     stop  = 4,
@@ -70,7 +72,8 @@ local TplKit = { -- Информация о шаблонах:
 
     parse = false,
     spell = false,
-    },
+  }, -- sub_assa
+
   sub_srt   = {
     start = 1,
     stop  = 3,
@@ -83,8 +86,9 @@ local TplKit = { -- Информация о шаблонах:
 
     parse = false,
     spell = false,
-  },
-} ---
+  }, -- sub_srt
+
+} --- TplKit
 unit.TplKit = TplKit
 
 do
@@ -201,12 +205,13 @@ do
 
 -- Получение данных по линии файла (по умолчанию).
 local function DefGetLineData (tp, line, shift) --> (data)
-  local line = (line or 0) + (shift and 0 or -1)
+  local line = (line or 1) + (shift and 0 or -1)
   local shift = shift or 1
   local data
+
   repeat
     line = line + shift
-    if line < 0 then break end
+    if line <= 0 then break end
 
     local s = EditorGetStr(nil, line, 2)
     if s == nil then break end

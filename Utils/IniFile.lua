@@ -239,7 +239,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
   local f = io_open(Name, 'r')
   local Info = {
     Table = Table or {},    -- Таблица
-    LineCtr = 0,            -- Номер текущей строки
+    LineCtr = 1,            -- Номер текущей строки
     ContFlag = false,       -- Признак продолжения строки
     Sec = nil, Key = nil, Value = nil, -- Начальные значения
   } --- Info
@@ -284,7 +284,7 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
 
   local Info = {
     Table = Table or {},    -- Таблица
-    LineCtr = 0,            -- Номер текущей строки
+    LineCtr = 1,            -- Номер текущей строки
     ContFlag = false,       -- Признак продолжения строки
     Sec = nil, Key = nil, Value = nil, -- Начальные значения
   } --- Info

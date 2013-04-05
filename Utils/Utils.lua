@@ -438,13 +438,13 @@ end ----
 -- Get information about window.
 -- Получение информации об окне.
 function unit.GetWindowInfo (pos) --> (table)
-  return farAdvControl(F.ACTL_GETWINDOWINFO, pos or -1)
+  return farAdvControl(F.ACTL_GETWINDOWINFO, pos or 0)
 end ----
 
 -- Switch to specified FAR window.
 -- Переключение на конкретное окно FAR.
 function unit.SetCurrentWindow (pos) --> (bool)
-  local isOk = farAdvControl(F.ACTL_SETCURRENTWINDOW, pos or 0)
+  local isOk = farAdvControl(F.ACTL_SETCURRENTWINDOW, pos or 1)
   if isOk then return farAdvControl(F.ACTL_COMMIT) end
 end ----
 
@@ -455,7 +455,9 @@ function unit.SwitchToPanels (CmdLine) --> (bool | nil, error)
     return nil, "No panels window"
   end
 
-  local Info = farAdvControl(F.ACTL_GETWINDOWINFO, -1)
+  local Info = farAdvControl(F.ACTL_GETWINDOWINFO, 0)
+  if not Info then return nil, "No window info" end
+
   if Info.Type ~= F.WTYPE_PANELS then
     if not unit.SetCurrentWindow() then
       return nil, "No switch to panels window"
@@ -519,7 +521,7 @@ unit.FarAreaTypes = {
 -- Тип заданной/текущей области.
 --[[
   -- @params:
-  pos (n|nil) - area number (@default = (nil | -1) - current area).
+  pos (n|nil) - area number (@default = (nil | 0) - current area).
 --]]
 function unit.GetAreaType (pos) --> (string)
   return unit.FarAreaTypes[unit.GetWindowInfo(pos).Type]

@@ -144,26 +144,26 @@ end ---- SetLength
 -- Переход на позицию из Info.
 function unit.Goto (Info)
   if type(Info) ~= 'table' then return end
-  if Info.CurPos > 0 then Info.CurTabPos = -1 end
+  if Info.CurPos >= 1 then Info.CurTabPos = -1 end
   return unit.SetPos(Info.EditorID, Info)
 end -- Goto
 
 -- Set position to home of line.
 -- Установка позиции в начало линии.
 function unit.LineHome (id, line)
-  if line and line >= 0 then
+  if line and line >= 1 then
     if not unit.SetPos(id, line) then return end
   end
-  return unit.SetPos(id, -1, 0)
+  return unit.SetPos(id, 0, 1)
 end -- LineHome
 
 -- Set position to end of line.
 -- Установка позиции в конец линии.
 function unit.LineEnd (id, line)
-  if line and line >= 0 then
+  if line and line >= 1 then
     if not unit.SetPos(id, line) then return end
   end
-  return unit.SetPos(id, -1, unit.GetLength(id, -1))
+  return unit.SetPos(id, 0, unit.GetLength(id, 0))
 end -- LineEnd
 
 -- Set position to left of current one within file.
@@ -172,9 +172,9 @@ function unit.CharLeft (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
 
-  if Info.CurPos > 0 then
-    return unit.SetPos(id, -1, Info.CurPos - 1)
-  elseif Info.CurLine > 0 then
+  if Info.CurPos > 1 then
+    return unit.SetPos(id, 0, Info.CurPos - 1)
+  elseif Info.CurLine > 1 then
     return unit.LineEnd(id, Info.CurLine - 1)
   end
 end -- CharLeft
@@ -185,9 +185,9 @@ function unit.CharRight (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
 
-  if Info.CurPos < unit.GetLength(id, -1) then
-    return unit.SetPos(id, -1, Info.CurPos + 1)
-  elseif Info.CurLine < Info.TotalLines - 1 then
+  if Info.CurPos < unit.GetLength(id, 0) then
+    return unit.SetPos(id, 0, Info.CurPos + 1)
+  elseif Info.CurLine < Info.TotalLines then
     return unit.LineHome(Info.EditorID, Info.CurLine + 1)
   end
 end -- CharRight
@@ -199,7 +199,7 @@ function unit.DelPos (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
 
-  if Info.CurPos >= unit.GetLength(id, -1) then return true end
+  if Info.CurPos > unit.GetLength(id, 0) then return true end
 
   return unit.Del(id)
 end -- DelPos
@@ -210,9 +210,9 @@ function unit.BackPos (Info)
   local Info = Info or unit.GetInfo()
   local id = Info.EditorID
 
-  if Info.CurPos == 0 then return true end
+  if Info.CurPos == 1 then return true end
 
-  if not unit.SetPos(id, -1, Info.CurPos - 1) then
+  if not unit.SetPos(id, 0, Info.CurPos - 1) then
     return
   end
 
@@ -313,22 +313,22 @@ function Text.Dequote (Info, left, right) --> (bool)
   local left, l_len, right, r_len = DefineDequote(left, right)
 
   local id, Pos = Info.EditorID, Info.CurPos
-  local s = unit.GetLine(id, -1, 2) or ""
-  if Pos >= l_len then
-    if not left or s:sub(Pos - l_len + 1, Pos) == left then
-      s = (s:sub(1, Pos - l_len) or "")..(s:sub(Pos + 1, -1) or "")
+  local s = unit.GetLine(id, 0, 2) or ""
+  if Pos > l_len then
+    if not left or s:sub(Pos - l_len, Pos - 1) == left then
+      s = (s:sub(1, Pos - l_len - 1) or "")..(s:sub(Pos, -1) or "")
       Pos = Pos - l_len
     end
   end
   local len = s:len()
   if Pos + r_len <= len then
-    if not right or s:sub(Pos + 1, Pos + r_len) == right then
-      s = (s:sub(1, Pos) or "")..(s:sub(Pos + r_len + 1, -1) or "")
+    if not right or s:sub(Pos, Pos + r_len - 1) == right then
+      s = (s:sub(1, Pos - 1) or "")..(s:sub(Pos + r_len, -1) or "")
     end
   end
-  if not unit.SetLine(id, -1, s) then return end
+  if not unit.SetLine(id, 0, s) then return end
 
-  return unit.SetPos(id, -1, Pos)
+  return unit.SetPos(id, 0, Pos)
 end -- Dequote
 
 ---------------------------------------- Block
@@ -759,7 +759,7 @@ function Selection.Set (id, Info) --> (boolean)
   } ---
 
   -- TODO: Учесть Info.EndPos < 0 - нужно учесть и выделить следующую строку.
-  if Info.EndPos < 0 then
+  if Info.EndPos <= 0 then
     SelInfo.BlockHeight = SelInfo.BlockHeight + 1
     SelInfo.BlockWidth  = -Info.StartPos
   end
@@ -803,16 +803,16 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     local go, pos = LineInfo.SelStart, LineInfo.SelEnd
 
     if pos > 0 and pos <= len then
-      return s:sub(go + 1, pos)
+      return s:sub(go, pos)
     end
 
     return {
       Type = "stream",
       Count = 2,
-      FromStart = (go == 0),
+      FromStart = (go == 1),
       BeyondEnd = (pos > 0),
 
-      s:sub(go + 1, -1)..spaces[pos - len], -- line
+      s:sub(go, -1)..spaces[pos - len], -- line
       "" -- with last EOL
     } ----
   end
@@ -823,10 +823,10 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   local t = {
     Type = "stream",
     Count = last - first + 1,
-    FromStart = (go == 0),
+    FromStart = (go == 1),
     BeyondEnd = false,
 
-    s:sub(go + 1, -1), -- first
+    s:sub(go, -1), -- first
   } ---
 
   for line = first + 1, last - 1 do
@@ -885,11 +885,11 @@ function Selection.CopyColumn (Info, ToPos) --> (nil|string|table)
     local pos = LineInfo.SelEnd
     --[[
     if pos < 0 then
-      return s:sub(LineInfo.SelStart + 1, -1)
+      return s:sub(LineInfo.SelStart, -1)
     end
     --]]
 
-    return s:sub(LineInfo.SelStart + 1, pos)..spaces[pos - s:len()]
+    return s:sub(LineInfo.SelStart, pos)..spaces[pos - s:len()]
   end
 
   -- Несколько выделенных cтрок
@@ -897,12 +897,12 @@ function Selection.CopyColumn (Info, ToPos) --> (nil|string|table)
   local t = {
     Type = "column",
     Count = last - first + 1,
-    FromStart = (go == 0),
+    FromStart = (go == 1),
     --BeyondEnd = nil, -- don't use
   } ---
   for line = first, last do
     local s = unit.GetLine(id, line, 2) or ""
-    t[#t+1] = s:sub(go + 1, pos)..spaces[pos - s:len()]
+    t[#t+1] = s:sub(go, pos)..spaces[pos - s:len()]
   end
 
   if ToPos or ToPos == nil then unit.Goto(Info) end
@@ -1157,17 +1157,17 @@ do
 function Selection.next (count, line) --> (number, table)
   if not count then return nil, nil end
 
-  if count >= 0 then
-    local line = (line or -1) + 1
+  if count >= 1 then
+    local line = (line or 0) + 1
     if line < count then
       local s = EditorGetLine(nil, line, 1)
       if s.SelEnd ~= 0 then return line, s end
     end
 
-  elseif line >= 0 then
-    return -1, EditorGetLine(nil, line, 1)
+  elseif line >= 1 then
+    return 0, EditorGetLine(nil, line, 1)
   end
-end ---- nextEditorSelect
+end ---- next
 
   local next = Selection.next
 
@@ -1175,14 +1175,14 @@ function Selection.pairs (line) --> (iterator, count, line)
   local Info = EditorGetInfo()
 
   if line then
-    return next, -1, line == -1 and Info.CurLine
+    return next, 0, line == 0 and Info.CurLine
   end
   if Info.BlockType ~= BlockTypes.None then
     return next, Info.TotalLines, Info.BlockStartLine - 1
   end
 
   return next, nil, nil
-end ---- pairsEditorSelect
+end ---- pairs
 
 end -- do
 

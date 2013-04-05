@@ -589,7 +589,7 @@ function TMain:ApplyTemplate ()
 
   if RunTpl then
     if not Tpl.add then -- Замена
-      EditorSetPos(nil, -1, CurCfg.Frag:len() - DelLen)
+      EditorSetPos(nil, 0, CurCfg.Frag:len() - DelLen)
       --logShow({ res, CurCfg.Frag:len(), DelLen }, "RunTpl")
       if not DelText(nil, DelLen) then return end
     end
@@ -637,8 +637,8 @@ function TMain:Run () --> (bool | nil)
 
   -- Получение слова под курсором (CurPos is 0-based):
   local CurCfg = self.Current
-  CurCfg.Line = EditorGetStr(nil, -1, 2) or ""
-  CurCfg.Pos  = Info.CurPos + 1 -- 0-based!
+  CurCfg.Line = EditorGetStr(nil, 0, 2) or ""
+  CurCfg.Pos  = Info.CurPos -- 1-based!
   CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   -- Проверки: внутри слова, вне слова, мин. число символов:
   --logShow(CurCfg) -- Проверка на выход:

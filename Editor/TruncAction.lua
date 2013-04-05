@@ -96,7 +96,7 @@ function ProcessEditorInput (rec) --> (bool)
       --]]
       --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
 
-      EditorSetPos(nil, Info.TotalLines - 1)
+      EditorSetPos(nil, Info.TotalLines)
       TruncateLine()
 
       --if CState == 0 then UpdateLineEnd() end
@@ -110,7 +110,7 @@ function ProcessEditorInput (rec) --> (bool)
         SelInfo.StartLine = SelInfo.StartLine or Info.CurLine
         SelInfo.StartPos  = SelInfo.StartPos  or Info.CurPos
         SelInfo.EndLine   = Info.TotalLines
-        SelInfo.EndPos    = (EditorGetLine(nil, -1, 2) or ""):len()
+        SelInfo.EndPos    = (EditorGetLine(nil, 0, 2) or ""):len()
 
         EditorSetSel(nil, SelInfo)
         --]]
@@ -118,10 +118,10 @@ function ProcessEditorInput (rec) --> (bool)
         EditorSelect(nil,
                      band(CState, ALT) ~= 0 and BT_Column or BT_Stream,
                      Info.CurLine, Info.CurPos,
-                     (EditorGetLine(nil, -1, 2) or ""):len() - Info.CurPos,
+                     (EditorGetLine(nil, 0, 2) or ""):len() - Info.CurPos,
                      Info.TotalLines - Info.CurLine)
                      --SelInfo.StartLine, SelInfo.StartPos,
-                     --(EditorGetLine(nil, -1, 2) or ""):len() - SelInfo.StartPos,
+                     --(EditorGetLine(nil, 0, 2) or ""):len() - SelInfo.StartPos,
                      --Info.TotalLines - SelInfo.StartLine)
       end
 
@@ -154,7 +154,7 @@ function ProcessEditorInput (rec) --> (bool)
                             SelInfo.StartPos or SelInfo.EndPos or
                             Info.CurPos
         SelInfo.EndLine   = Info.CurLine
-        SelInfo.EndPos    = (EditorGetLine(nil, -1, 2) or ""):len()
+        SelInfo.EndPos    = (EditorGetLine(nil, 0, 2) or ""):len()
         --logShow({ CState, Info, SelInfo }, "State", "w d2")
 
         EditorSetSel(nil, SelInfo)

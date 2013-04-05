@@ -83,15 +83,15 @@ local TruncateSpaces = unit.TruncateSpaces
 function unit.UpdateLineEnd ()
   local Info = EditorGetInfo()
   local p = Info.CurPos
-  local l = (EditorGetLine(nil, -1, 2) or ""):len()
-  EditorSetPos(nil, -1, p > l and l or p)
+  local l = (EditorGetLine(nil, 0, 2) or ""):len()
+  EditorSetPos(nil, 0, p > l and l or p)
 end ----
 local UpdateLineEnd = unit.UpdateLineEnd
 
 -- Truncate spaces in current line.
 -- Усечение пробелов в текущей линии.
 function unit.TruncateLine () --> (number)
-  local q = TruncateSpaces(-1)
+  local q = TruncateSpaces(0)
   -- Commented as workaround for FAR3:
   if q == 0 then return 0 end
   UpdateLineEnd()
@@ -103,7 +103,7 @@ end ----
 -- Усечение пробелов во всех строках текста.
 function unit.TruncateText () --> (number)
   local Info, q = EditorGetInfo(), 0
-  for k = Info.TotalLines - 1, 0, -1 do
+  for k = Info.TotalLines, 1, -1 do
     q = q + TruncateSpaces(k)
   end
   EditorSetPos(nil, Info)
@@ -121,7 +121,7 @@ local TruncateText = unit.TruncateText
 function unit.TruncateFile (keep) --> (number)
   local keep = keep or 1
   local Info = EditorGetInfo()
-  local l = Info.TotalLines - 1
+  local l = Info.TotalLines
   EditorSetPos(nil, l)
 
   -- Проверка на пустоту линий:
@@ -138,7 +138,7 @@ function unit.TruncateFile (keep) --> (number)
 
   -- Отсечение пустых линий:
   q = 0
-  for k = l - keep, 0, -1 do
+  for k = l - keep, 1, -1 do
     local s = EditorGetLine(nil, k, 2)
     if s and s:find(EmptyTruncPat) then
       EditorDelLine()
