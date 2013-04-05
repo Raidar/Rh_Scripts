@@ -744,7 +744,7 @@ do
 local function DialogInsertText (hDlg, s)
   local hDlg = hDlg
   if not hDlg then
-    local Info = farAdvControl(F.ACTL_GETWINDOWINFO, -1)
+    local Info = farAdvControl(F.ACTL_GETWINDOWINFO, 0)
     if Info.Type ~= F.WTYPE_DIALOG then return false end
     hDlg = Info.Id
   end
