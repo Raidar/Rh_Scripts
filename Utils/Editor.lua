@@ -163,7 +163,7 @@ function unit.LineEnd (id, line)
   if line and line >= 1 then
     if not unit.SetPos(id, line) then return end
   end
-  return unit.SetPos(id, 0, unit.GetLength(id, 0))
+  return unit.SetPos(id, 0, unit.GetLength(id, 0) + 1)
 end -- LineEnd
 
 -- Set position to left of current one within file.
