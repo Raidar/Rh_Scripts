@@ -84,7 +84,7 @@ function unit.UpdateLineEnd ()
   local Info = EditorGetInfo()
   local p = Info.CurPos
   local l = (EditorGetLine(nil, 0, 2) or ""):len()
-  EditorSetPos(nil, 0, p > l and l or p)
+  EditorSetPos(nil, 0, p > l and l + 1 or p)
 end ----
 local UpdateLineEnd = unit.UpdateLineEnd
 
