@@ -137,8 +137,8 @@ local function CreateMain (ArgData)
     Items     = false,    -- Список пунктов меню
     Props     = false,    -- Свойства меню
 
-    CharRows  = 0x08,     -- Количество строк символов
-    --CharRows  = 0x10,     -- Количество строк символов
+    --CharRows  = 0x08,     -- Количество строк символов
+    CharRows  = 0x10,     -- Количество строк символов
     CharCols  = 0x10,     -- Количество столбцов символов
     CharCount = 0x100,    -- Количество всех символов
 
@@ -358,9 +358,9 @@ function TMain:FillMenu () --> (table)
   local b = self.CharBase
   for k = 1, CharRows do
     p = p + ColCount
-    local s = uCP(b, true)
-    t[p + 1].text        = s
-    t[p + ColCount].text = s
+    --local s = uCP(b, true)
+    t[p + 1].text        = uCP(b, true)
+    t[p + ColCount].text = uCP(b + CharCols - 1, true)
     b = b + CharCols
   end
 
@@ -743,6 +743,6 @@ function unit.Execute (Data) --> (bool | nil)
 end ---- Execute
 
 --------------------------------------------------------------------------------
---return unit
-return unit.Execute()
+return unit
+--return unit.Execute()
 --------------------------------------------------------------------------------
