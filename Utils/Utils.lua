@@ -537,7 +537,7 @@ unit.FarIsBasicAreaType = {
 
 -- Type of basic (for specified/current) area.
 -- Тип основной (для заданной/текущей) области.
-function unit.GetBasicAreaType (pos)
+function unit.GetBasicAreaType (pos) --> (string)
   local Result = unit.GetAreaType(pos)
   if unit.FarIsBasicAreaType[Result] then
     return Result
@@ -574,7 +574,7 @@ function unit.GetAreaSize (Type, pos) --> (table | nil)
   if unit.FarGetAreaSize[Type] then
     return unit.FarGetAreaSize[Type]()
   end
-end ----
+end ---- GetAreaSize
 
 ---------------------------------------- FAR item
 unit.FarGetAreaItemName = {
@@ -726,7 +726,7 @@ function unit.VText (X, Y, Color, Str)
     far_Text(X, Y, Color, Str:sub(k, k))
     Y = Y + 1
   end
-end ----
+end ---- VText
 
 end -- do
 
@@ -767,9 +767,8 @@ unit.FarInsertText = {
 -- Insert text in specified FAR area.
 -- Вставка текста в заданной области.
 function unit.InsertText (Area, Text) --> (bool | number)
-  if unit.FarInsertText[Area] then
-    return unit.FarInsertText[Area](Text)
-  end
+  local Insert = unit.FarInsertText[Area or unit.GetAreaType()]
+  return Insert(Text)
 end ---- InsertText
 
 end -- do
