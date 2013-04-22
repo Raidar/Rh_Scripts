@@ -557,7 +557,6 @@ function unit.MakeMenu ()
 
     --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.Chars_Greeks, },
     Items = {
-      unit.CharacterMap,
 
       { text = gL.Chars, separator = true, },
       unit.Chars_Greeks, unit.Chars_Cyrils,
@@ -571,6 +570,8 @@ function unit.MakeMenu ()
       { text = gL.Punct, separator = true, },
       unit.PunctSymbols, unit.Punct_Spaces,
 
+      { separator = true, },
+      unit.CharacterMap,
     }, -- Items
 
   } ----
