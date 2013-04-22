@@ -35,6 +35,16 @@ local mSeparator = {
   separator = true,
 } ---
 
+---------------------------------------- CharsMap
+function unit.CharactersMap ()
+  local CharsMap = require "Rh_Scripts.Common.CharsMap"
+
+  return {
+    text = L.AdnCharactersMap,
+    Function = CharsMap.Execute,
+  } ----
+end ---- CharactersMap
+
 ---------------------------------------- Calendar
 function unit.CalendarTerra ()
   local datim = require "Rh_Scripts.Utils.DateTime"
@@ -168,6 +178,7 @@ local mCalendars = {
 local mScripts = {
   text = L.AddonScripts,
   Items = {
+    unit.CharactersMap,
     unit.CalendarTerra,
     mSeparator,
     mCalendars,

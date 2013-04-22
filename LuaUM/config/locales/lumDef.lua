@@ -56,6 +56,8 @@ local Data = {
   ----------------------------------------
   -- Addon scripts
   AddonScripts      = "&A - Additions",
+  
+  AdnCharactersMap  = "&H - Characters",
 
   AdnCalendars      = "&K - Calendars",
     AdnCalendarTerra    = "&C - Calendar",

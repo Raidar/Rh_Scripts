@@ -58,6 +58,8 @@ local Data = {
   -- Addon scripts
   AddonScripts      = "&A - Дополнения",
 
+  AdnCharactersMap  = "&H - Символы",
+
   AdnCalendars      = "&K - Календари",
     AdnCalendarTerra    = "&C - Календарь",
     AdnCalendarMillo    = "&M - Календарь тысячелетий",
