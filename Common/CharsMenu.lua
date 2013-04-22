@@ -25,9 +25,6 @@ local logShow = context.ShowInfo
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 
-local u_byte = strings.u8byte
---local u_char, u_byte = strings.u8char, strings.u8byte
-
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 
@@ -35,7 +32,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local CharsList = require "Rh_Scripts.Utils.CharsList"
-local CharNames = CharsList.Names
+local uCharName = CharsList.uCharName
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -156,17 +153,6 @@ local function MakeItemKey (item, Keys, key, char)
 end -- MakeItemKey
 unit.MakeItemKey = MakeItemKey
 
-  local CharNameFmt = "U+%s — %s" -- utf-8 string
-
-  -- Представление кодовой точки символа в виде строки.
-  local uCP = strings.ucp2s
-
-  -- Получение имени символа по её кодовой точке.
-  local function uCPname (c) --> (string)
-    local c = CharNames[c]
-    return c and c.name or ""
-  end --
-
 -- Make menu item.
 -- Формирование пункта меню.
 function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
@@ -185,8 +171,7 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   local Hint = Props.Hint
   if Hint == true then
     if x:len() == 1 then
-      local u = u_byte(x)
-      t.Hint = CharNameFmt:format(uCP(u, true), uCPname(u))
+      t.Hint = uCharName(x)
     end
   elseif Hint then
     t.Hint = Hint

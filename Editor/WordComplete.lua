@@ -1407,7 +1407,7 @@ function TMain:ShowLoop () --> (bool | nil)
         if Popup.PressKey then EditorProcKey(nil, Popup.PressKey) end
         return false
       end -- Отмена по Esc
-      editor.Select(nil, { BlockType = "BTYPE_NONE" }) -- Снятие выделения
+      editor.Select(nil, F.BTYPE_NONE) -- Снятие выделения
     end
 
     -- Выполнение выбранного действия --

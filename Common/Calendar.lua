@@ -92,7 +92,7 @@ unit.DefOptions = {
 } -- DefOptions
 
 --[[
-local L, e1, e2 = locale.localize(nil, unit.DefCustom)
+local L, e1, e2 = locale.localize(unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
 end
@@ -144,6 +144,12 @@ local function CreateMain (ArgData)
 
     WeekRows  = false,    -- Число строк для дней в неделе
     WeekCols  = false,    -- Число столбцов для недель в месяце
+
+    InfoRows = false,     -- Количество строк с информацией
+    InfoCols = false,     -- Количество столбцов с информацией
+    RowLimit = false,     -- Ограничение на количество строк
+    RowCount = false,     -- Количество строк меню
+    ColCount = false,     -- Количество стобцов меню
 
     Fetes     = false,    -- Даты событий
 

@@ -22,9 +22,15 @@ local io_open = io.open
 local logShow = context.ShowInfo
 
 local utils = require 'context.utils.useUtils'
+local strings = require 'context.utils.useStrings'
 
 --------------------------------------------------------------------------------
 local unit = {}
+
+----------------------------------------
+local PluginPath = utils.PluginPath
+local DataPath = "scripts\\Rh_Scripts\\data\\"
+local DataName = "NamesList.txt"
 
 ----------------------------------------
 local Names = {} -- Таблица-список названий
@@ -40,6 +46,37 @@ local function easy (s) --> (string)
   return s:gsub("(%w)(%w+)", _easy)
 end -- easy
 
+---------------------------------------- Naming
+do
+  local CharNames = unit.Names
+  
+-- Получение имени символа по её кодовой точке.
+local function uCPname (c) --> (string)
+  local c = CharNames[c]
+  return c and c.name or ""
+end -- uCPname
+unit.uCPname = uCPname
+
+-- Представление кодовой точки символа в виде строки.
+local uCP = strings.ucp2s
+unit.uCP = uCP
+
+local CharNameFmt = "U+%s — %s" -- utf-8 string
+unit.CharNameFmt = CharNameFmt
+
+local function uCodeName (u)
+  return CharNameFmt:format(uCP(u, true), uCPname(u))
+end ---- uCodeName
+unit.uCodeName = uCodeName
+
+  local u_byte = strings.u8byte
+
+function unit.uCharName (c)
+  return uCodeName(u_byte(c))
+end ---- uCharName
+
+end --
+---------------------------------------- __index
 -- Make and return subtable for t[k].
 local function subTable (t, k) --> (table)
   local u = {
@@ -50,11 +87,6 @@ local function subTable (t, k) --> (table)
   return u
 end
 Names.__index = subTable; setmetatable(Names, Names)
-
-----------------------------------------
-local PluginPath = utils.PluginPath
-local DataPath = "scripts\\Rh_Scripts\\data\\"
-local DataName = "NamesList.txt"
 
 ---------------------------------------- main
 do

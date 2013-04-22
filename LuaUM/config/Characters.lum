@@ -194,13 +194,16 @@ function unit.CharacterMap ()
 
   local Order = "0123456789ABCDEF"
 
-  local MaxCode = 0xFFFD
+  local CharRows  = 0x10     -- Количество строк символов
+  local CharCols  = 0x10     -- Количество столбцов символов
+  local CharMin   = 0x0000   -- Минимальный символ
+  local CharMax   = 0xFFFD   -- Максимальный символ
   local U = unicode.utf8.char
 
   local Datas = {
     " ",
   } ---
-  for k = 1, MaxCode do
+  for k = 1, CharMax do
     Datas[#Datas + 1] = U(k)
   end
 
@@ -208,7 +211,7 @@ function unit.CharacterMap ()
   local uCP = strings.ucp2s
 
   local KeyOrder = { [0] = "────" }
-  for k = 0, MaxCode, 0x10 do
+  for k = CharMin, CharMax, CharCols do
     KeyOrder[#KeyOrder + 1] = uCP(k, true)
   end
 
@@ -225,7 +228,7 @@ function unit.CharacterMap ()
 
       --TextMark = true,
 
-      MaxHeight = 2 + 1 + 0x10 + 2 + 0,
+      MaxHeight = 2 + 1 + CharRows + 2 + 0,
     },
 
     RectItem = {
