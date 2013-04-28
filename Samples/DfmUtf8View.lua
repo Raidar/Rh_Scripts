@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Просмотр Utf8-текста из dfm-файла Delphi 6–7.
-  -- Viewer of Utf8-text from dfm-file for Delphi 6–7.
+  -- РџСЂРѕСЃРјРѕС‚СЂ Utf8-С‚РµРєСЃС‚Р° РёР· dfm-С„Р°Р№Р»Р° Delphi 6-7.
+  -- Viewer of Utf8-text from dfm-file for Delphi 6-7.
 --]]
 ----------------------------------------
 --[[ uses:
