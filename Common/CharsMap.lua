@@ -44,6 +44,7 @@ local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
 local divf = numbers.divf
+--local divf, divm = numbers.divf, numbers.divm
 
 local uCP = strings.ucp2s
 
@@ -137,10 +138,11 @@ local function CreateMain (ArgData)
     Items     = false,    -- Список пунктов меню
     Props     = false,    -- Свойства меню
 
-    --CharRows  = 0x08,     -- Количество строк символов
-    CharRows  = 0x10,     -- Количество строк символов
-    CharCols  = 0x10,     -- Количество столбцов символов
-    CharCount = 0x100,    -- Количество всех символов
+    --CharRows  = 0x08,     -- Количество видимых строк символов
+    CharRows  = 0x10,     -- Количество видимых строк символов
+    CharCols  = 0x10,     -- Количество видимых столбцов символов
+    CharCount = 0x100,    -- Количество всех видимых символов
+    CharPass  = 0x1000,   -- Количество символов для быстрой прокрутки
 
     CharMin   = 0x0000,   -- Минимальный символ
     CharMax   = 0xFFFD,   -- Максимальный символ
@@ -633,8 +635,27 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    --elseif IsModAlt(VMod) then -- ALT
-
+    elseif IsModAlt(VMod) then -- ALT
+      if AKey == "Clear" or AKey == "Multiply" then
+        self.Char = self.DefChar
+      elseif AKey == "Left" then
+        self.Char = Data.Char - self.CharCount
+      elseif AKey == "Right" then
+        self.Char = Data.Char + self.CharCount
+      elseif AKey == "Up" then
+        self.Char = Data.Char - self.CharPass
+      elseif AKey == "Down" then
+        self.Char = Data.Char + self.CharPass
+      elseif AKey == "PgUp" then
+        local Base = divf(Data.Char, self.CharPass) * self.CharPass
+        self.Char = Base + (Data.Char - self.CharBase) - self.CharPass
+      elseif AKey == "PgDn" then
+        local Base = divf(Data.Char, self.CharPass) * self.CharPass
+        self.Char = Base + (Data.Char - self.CharBase) + self.CharPass
+      else
+        isUpdate = false
+      end
+    
     --elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
 
     else
