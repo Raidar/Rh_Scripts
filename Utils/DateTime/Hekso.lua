@@ -73,7 +73,7 @@ TConfig.Formats = {
   TimeLen =  8,
 
   YearDay   = "%03x",
-  YearWeek  = "%02x",
+  YearWeek  = " %02x",
   MonthDay  = "%02x",
   MonthWeek = "%1x",
   WeekDay   = "<%1x>",

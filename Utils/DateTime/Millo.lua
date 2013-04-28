@@ -139,7 +139,7 @@ local TConfig = {
     TimeLen =  9,
 
     YearDay   = "%04d",
-    YearWeek  = "%03d",
+    YearWeek  = " %03d",
     MonthDay  = "%03d",
     MonthWeek = "%02d",
     WeekDay   = "<%02d>",
