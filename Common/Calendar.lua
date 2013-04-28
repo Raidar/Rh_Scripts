@@ -350,7 +350,7 @@ function TMain:MakeProps ()
   local DT_cfg = self.DT_cfg
 
   Props.Title = wL[DT_cfg.Type]
-  --Props.Bottom = wL[DT_cfg.Type]
+  --Props.Bottom = wL[DT_cfg.Type] -- MAYBE: Keys list?
   --logShow(Props.Bottom, DT_cfg.Type, "wM d1")
 
   self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
