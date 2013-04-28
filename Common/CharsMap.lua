@@ -262,7 +262,7 @@ function TMain:MakeProps ()
   Props.HelpTopic = self.Custom.help.tlink
 
   local L = self.LocData
-  Props.Title  = L.CharsMap
+  Props.Title  = L.Caption
   --Props.Bottom = L.CharsMapKeys
 
   -- Свойства RectMenu:
@@ -318,9 +318,9 @@ function TMain:Prepare ()
   self:InitChar()
 
   if not self:Localize() then
-    --self.Error = Msgs.NoLocale
-    --return
-    self.LocData = {} -- DEBUG only
+    self.Error = Msgs.NoLocale
+    return
+    --self.LocData = {} -- DEBUG only
   end
   
   self:MakeColors()
