@@ -77,6 +77,7 @@ TConfig.Formats = {
   MonthDay  = "%02x",
   MonthWeek = "%1x",
   WeekDay   = "<%1x>",
+  DayWeek   = "%02x",
 } -- Formats
 
 TConfig.LocData = L

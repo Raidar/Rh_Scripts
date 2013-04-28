@@ -728,7 +728,7 @@ function TMain:FillMainPart () --> (bool)
 
     k = k + 1
     t[k].text = week > 0 and week <= YearWeekCount and
-                Formats.YearWeek:format(week) or ""
+                Formats.DayWeek:format(week) or ""
 
     if EndRows > 0 then k = k + EndRows end -- Пропуск
     --[[

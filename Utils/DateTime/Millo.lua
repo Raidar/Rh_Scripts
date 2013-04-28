@@ -143,6 +143,7 @@ local TConfig = {
     MonthDay  = "%03d",
     MonthWeek = "%02d",
     WeekDay   = "<%02d>",
+    DayWeek   = "%03d",
   }, -- Formats
 
   LocData = L,
