@@ -16,7 +16,6 @@
 --------------------------------------------------------------------------------
 
 local type = type
-local pairs = pairs
 local setmetatable = setmetatable
 
 ----------------------------------------
@@ -46,7 +45,7 @@ local locale = require 'context.utils.useLocale'
 local divf = numbers.divf
 --local divf, divm = numbers.divf, numbers.divm
 
-local Null = tables.Null
+--local Null = tables.Null
 local addNewData = tables.extend
 
 ----------------------------------------
@@ -56,7 +55,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
-local IsModCtrlAlt = keyUt.IsModCtrlAlt
+--local IsModCtrlAlt = keyUt.IsModCtrlAlt
 
 ----------------------------------------
 local CharsList = require "Rh_Scripts.Utils.CharsList"
@@ -358,7 +357,7 @@ function TMain:FillMenu () --> (table)
 
   local p = 0
   local b = self.CharBase
-  for k = 1, CharRows do
+  for _ = 1, CharRows do
     p = p + ColCount
     --local s = uCP2s(b, true)
     t[p + 1].text        = uCP2s(b, true)
