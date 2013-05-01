@@ -58,14 +58,14 @@ end -- uCPname
 unit.uCPname = uCPname
 
 -- Представление кодовой точки символа в виде строки.
-local uCP = strings.ucp2s
-unit.uCP = uCP
+local uCP2s = strings.ucp2s
+unit.uCP = uCP2s
 
 local CharNameFmt = "U+%s — %s" -- utf-8 string
 unit.CharNameFmt = CharNameFmt
 
 local function uCodeName (u)
-  return CharNameFmt:format(uCP(u, true), uCPname(u))
+  return CharNameFmt:format(uCP2s(u, true), uCPname(u))
 end ---- uCodeName
 unit.uCodeName = uCodeName
 

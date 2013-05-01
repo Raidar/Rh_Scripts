@@ -208,11 +208,11 @@ function unit.CharacterMap ()
   end
 
   local strings = require 'context.utils.useStrings'
-  local uCP = strings.ucp2s
+  local uCP2s = strings.ucp2s
 
   local KeyOrder = { [0] = "────" }
   for k = CharMin, CharMax, CharCols do
-    KeyOrder[#KeyOrder + 1] = uCP(k, true)
+    KeyOrder[#KeyOrder + 1] = uCP2s(k, true)
   end
 
   local Props = {
