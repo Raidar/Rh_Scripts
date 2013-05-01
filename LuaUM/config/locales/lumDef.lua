@@ -63,8 +63,8 @@ local Data = {
     AdnCalendarTerra    = "&C - Calendar",
     AdnCalendarMillo    = "&M - Milleniums' calendar",
     AdnCalendarHekso    = "&H - Hexadecimal calendar",
-    AdnCalendarMinimum  = "&I - Minimum project",
-    AdnCalendarPern     = "&P - Pern calendar",
+    AdnCalendarMinimum  = "&I - Min-project of calendar",
+    AdnCalendarPern     = "&P - Pernese calendar",
 
   ----------------------------------------
   -- Other scripts

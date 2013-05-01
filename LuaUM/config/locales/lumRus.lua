@@ -64,7 +64,7 @@ local Data = {
     AdnCalendarTerra    = "&C - Календарь",
     AdnCalendarMillo    = "&M - Календарь тысячелетий",
     AdnCalendarHekso    = "&H - 16-ричный календарь",
-    AdnCalendarMinimum  = "&I - Проект-минимум",
+    AdnCalendarMinimum  = "&I - Проект-минимум календаря",
     AdnCalendarPern     = "&P - Пернский календарь",
 
   ----------------------------------------
