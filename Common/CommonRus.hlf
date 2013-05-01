@@ -18,15 +18,16 @@ $ #Общие скрипты#
 
 @Cmn_ScriptFiles
 $ #Файлы скриптов#: Общие скрипты
-    \37CustomMenu.lua\-     — ¦~Настраиваемое меню~@CustomMenu@.
-    \37FilterMenu.lua\-     — ¦~Фильтрационное меню~@FilterMenu@.
-    \37MenuCaller.lua\-     — ¦~Вызыватель меню~@MenuCaller@ выбранного вида.
-    \37MenuTexter.lua\-     — ¦~Формирователь текста~@MenuTexter@ пунктов меню.
+    \37CustomMenu.lua\-     — ¦~Настраиваемое меню~@CustomMenu@.
+    \37FilterMenu.lua\-     — ¦~Фильтрационное меню~@FilterMenu@.
+    \37MenuCaller.lua\-     — ¦~Вызыватель меню~@MenuCaller@ выбранного вида.
+    \37MenuTexter.lua\-     — ¦~Формирователь текста~@MenuTexter@ пунктов меню.
 
-    \37Calendar.lua\-       — ¦~Календарь на один месяц~@Calendar@.
-    \37CharsMenu.lua\-      — ¦Меню из пунктов для вывода символов@CharsMenu@.
+    \37Calendar.lua\-       — ¦~Календарь на один месяц~@Calendar@.
+    \37CharsMap.lua\-       — ¦~Таблица символов~@CharsMap@.
+    \37CharsMenu.lua\-      — ¦Меню из пунктов для вывода символов@CharsMenu@.
 
-    \37rhsConfig.lua\-      — ¦~Конфигуратор~@rhsConfig@ пакета Rh_Scripts.
+    \37rhsConfig.lua\-      — ¦~Конфигуратор~@rhsConfig@ пакета Rh_Scripts.
 
  ~Содержание~@Contents@
 
@@ -187,9 +188,15 @@ $ #Формирователь текста пунктов меню# (MenuTexter)
 
  ~Содержание~@Contents@
 
+@CharsMap
+$ #Таблица символов# (CharsMap)
+  CharsMap — скрипт для отображения таблицы символов.
+
+ ~Содержание~@Contents@
+
 @Calendar
 $ #Календарь на один месяц# (Calendar)
-  Calendar — скрипт для вывода календаря на один месяц.
+  Calendar — скрипт для отображения календаря на один месяц.
 
   Слева отображается область с информацией о дате, слева — собственно календарь.
   В области с информацией о дате слева от полного названия дня недели

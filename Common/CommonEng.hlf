@@ -23,7 +23,8 @@ $ #Script files#: Common scripts
     \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
     \37MenuTexter.lua\-     — ¦~Text-maker~@MenuTexter@ of menu items.
 
-    \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
+    \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
+    \37CharsMap.lua\-       — ¦~Characters map~@CharsMap@.
     \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
@@ -187,9 +188,15 @@ These properties@TM_Props@ is similar to properties of user menu display
 
  ~Contents~@Contents@
 
+@CharsMap
+$ #Characters map# (CharsMap)
+  CharsMap is a script to display characters map.
+
+ ~Contents~@Contents@
+
 @Calendar
 $ #Calendar for one month# (Calendar)
-  Calendar is a script to output calendar for one month.
+  Calendar is a script to display calendar for one month.
 
     Implemented ~configurations~@<..\Utils\DateTime\>Contents@
 
