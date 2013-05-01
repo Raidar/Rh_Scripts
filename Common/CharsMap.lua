@@ -46,8 +46,6 @@ local locale = require 'context.utils.useLocale'
 local divf = numbers.divf
 --local divf, divm = numbers.divf, numbers.divm
 
-local uCP = strings.ucp2s
-
 local Null = tables.Null
 local addNewData = tables.extend
 
@@ -112,8 +110,8 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
 ---------------------------------------- Main class
 local TMain = {
-  --Guid       = win.Uuid(""),
-  --ConfigGuid = win.Uuid(""),
+  Guid       = win.Uuid("19500a29-1a9b-4b1b-833c-693d58669963"),
+  ConfigGuid = win.Uuid("1991fe2b-e919-480e-8b0a-90b7c960d113"),
 }
 local MMain = { __index = TMain }
 
@@ -142,7 +140,7 @@ local function CreateMain (ArgData)
     CharRows  = 0x10,     -- Количество видимых строк символов
     CharCols  = 0x10,     -- Количество видимых столбцов символов
     CharCount = 0x100,    -- Количество всех видимых символов
-    CharPass  = 0x1000,   -- Количество символов для быстрой прокрутки
+    CharPass  = 0x1000,   -- Количество символов в блоке для быстрой прокрутки
 
     CharMin   = 0x0000,   -- Минимальный символ
     CharMax   = 0xFFFD,   -- Максимальный символ
@@ -333,6 +331,8 @@ end ---- Prepare
 end -- do
 ---------------------------------------- ---- Menu
 do
+  local uCP2s = strings.ucp2s
+
 -- Заполнение меню.
 function TMain:FillMenu () --> (table)
   local self = self
@@ -360,9 +360,9 @@ function TMain:FillMenu () --> (table)
   local b = self.CharBase
   for k = 1, CharRows do
     p = p + ColCount
-    --local s = uCP(b, true)
-    t[p + 1].text        = uCP(b, true)
-    t[p + ColCount].text = uCP(b + CharCols - 1, true)
+    --local s = uCP2s(b, true)
+    t[p + 1].text        = uCP2s(b, true)
+    t[p + ColCount].text = uCP2s(b + CharCols - 1, true)
     b = b + CharCols
   end
 
@@ -439,74 +439,19 @@ end -- Make
 
 end -- do
 ---------------------------------------- ---- Utils
+do
+  local max, min = math.max, math.min
 
+-- Limit character.
+-- Ограничение символа.
+function TMain:LimitChar ()
+  self.Char = min(max(self.Char, self.CharMin), self.CharMax)
+  self.CharBase = divf(self.Char, self.CharCount) * self.CharCount
+end ---- LimitChar
+
+end -- do
 ---------------------------------------- ---- Input
 do
---[[
-  local tonumber = tonumber
-  local InputFmtY   = "^(%d+)"
-  local InputFmtYM  = "^(%d+)%-(%d+)"
-  local InputFmtYMD = "^(%d+)%-(%d+)%-(%d+)"
-
-function TMain:ParseInput ()
-  local self = self
-  local Date = self.Date:copy()
-
-  local Input = self.Input or ""
-  local _, Count = Input:gsub("-", "")
-
-  if Count == 0 then
-    local y = Input:match(InputFmtY)
-    y = tonumber(y) or 1
-    Date.y, Date.m, Date.d = y, 1, 1
-  elseif Count == 1 then
-    local y, m = Input:match(InputFmtYM)
-    y, m = tonumber(y) or 1, tonumber(m) or 1
-    Date.y, Date.m, Date.d = y, m, 1
-  else
-    local y, m, d = Input:match(InputFmtYMD)
-    y, m, d = tonumber(y) or 1, tonumber(m) or 1, tonumber(d) or 1
-    --logShow({ Count, y, m, d }, Input)
-    Date.y, Date.m, Date.d = y, m, d
-  end
-
-  return Date:fixMonth():fixDay()
-end ---- ParseInput
-
-function TMain:StartInput (Date)
-  local self = self
-  local L = self.LocData
-
-  self.Input = ""
-  self.Props.Bottom = L.InputDate
-  self.IsInput = true
-end ---- StartInput
-
-function TMain:StopInput (Date)
-  local self = self
-
-  self.IsInput = false
-  self.Props.Bottom = ""
-  self.Date = self:ParseInput() or Date
-end ---- StopInput
-
-function TMain:EditInput (SKey)
-  local self = self
-
-  local Input = self.Input
-  if SKey == "BS" then
-    if Input ~= "" then Input = Input:sub(1, -2) end
-  else
-    if SKey == "Subtract" then SKey = "-" end
-
-    Input = Input..SKey
-  end
-
-  self.Input = Input
-  self.Props.Bottom = Input
-end ---- EditInput
---]]
-
 -- Вывод символа.
 function TMain:PrintChar (Data)
   --logShow(Data, "PrintChar")
@@ -531,7 +476,7 @@ do
   local CancelFlag = { isCancel = true }
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }
 
-  local max, min = math.max, math.min
+  local u8byte, u8char = strings.u8byte, strings.u8char
 
 function TMain:AssignEvents () --> (bool | nil)
   local self = self
@@ -545,52 +490,55 @@ function TMain:AssignEvents () --> (bool | nil)
     return { self.Props, self.Items, self.Keys }, CompleteFlags
   end -- MakeUpdate
 
---[[
   -- Обработчик нажатия клавиш.
   local function KeyPress (VirKey, ItemPos)
     local SKey = VirKey.Name --or InputRecordToName(VirKey)
     if SKey == "Esc" then return nil, CancelFlag end
-    --logShow(SKey, "SKey")
+    --if SKey == "Enter" then return end
+    --logShow(VirKey, SKey)
 
-    --local DT_cfg = self.DT_cfg
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
-    local Date = Data[Data.State]
-    if Data.d <= 0 then return end
-    Date.d = Data.d
+    -- TODO: Поддержка перехода на символ:
+    -- - при нажатии комбинации клавиш, соответствующих символу
+    --   (см. макросы для вставки символов в редактор) - через config!
 
     local isUpdate = true
-    local Action = DateActions[SKey]
-    if Action then
-      Date[Action](Date)
-
-    elseif SKey == "Divide" then
-      if self.IsInput then
-        self:StopInput(Date)
-        return MakeUpdate()
+    if SKey == "CtrlV" then
+      local s = far.PasteFromClipboard()
+      if type(s) == 'string' then
+        self.Char = u8byte(s:sub(1, 1))
       else
-        self:StartInput(Date)
+        isUpdate = false
       end
-
-    elseif self.IsInput and InputActions[SKey] then
-      self:EditInput(SKey)
-
+    elseif SKey == "CtrlAltX" then
+      local s = u8char(Data.Char)
+      local Char = far.XLat(s, 1, 1)
+      Char = Char and Char ~= s and u8byte(Char:sub(1, 1)) or 0x0000
+      if Char ~= 0x0000 then
+        self.Char = Char
+      else
+        isUpdate = false
+      end
     else
-      isUpdate = false
+      local Char = u8byte(VirKey.UnicodeChar or 0x0000)
+      if Char ~= 0x0000 and
+         (VirKey.StateName == "" or
+          VirKey.StateName == "Shift") then
+        self.Char = Char
+      else
+        isUpdate = false
+      end
     end
 
-    self.Time = false
-
     if isUpdate then
-      --self.Date = Date
-      self.Date = self:LimitDate(Date)
+      self:LimitChar()
       return MakeUpdate()
     end
 
     return
   end -- KeyPress
---]]
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
@@ -663,10 +611,7 @@ function TMain:AssignEvents () --> (bool | nil)
     end
 
     if isUpdate then
-      -- TODO: Выделить в отдельную функцию !!! для кода ниже и в InitData
-      self.Char = min(max(self.Char, self.CharMin), self.CharMax)
-      self.CharBase = divf(self.Char, self.CharCount) * self.CharCount
-
+      self:LimitChar()
       return MakeUpdate()
     end
 
@@ -700,7 +645,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Назначение обработчиков:
   local RM_Props = self.Props.RectMenu
-  --RM_Props.OnKeyPress = KeyPress
+  RM_Props.OnKeyPress = KeyPress
   RM_Props.OnNavKeyPress = NavKeyPress
   --RM_Props.OnSelectItem = SelectItem
   RM_Props.OnChooseItem = ChooseItem
