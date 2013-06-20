@@ -249,7 +249,13 @@ function TLang:FillData () --| Language
     for _, v in ipairs(l.Vocal) do t[#t + 1] = c..v end
   end -- do
 
-  do -- Заполнение Yonal
+  do -- Заполнение Jocal
+    local t = l.Jocal
+    local c = l.Hemal._Jocal_
+    for _, v in ipairs(l.Vocal) do t[#t + 1] = v..c end
+  end -- do
+
+  do -- Заполнение Jonal
     local t = l.Jonal
     local c = l.Hemal._Jonal_
     for _, v in ipairs(l.Konal) do t[#t + 1] = v..c end

@@ -3,6 +3,7 @@ local Data
 do local t = {}; Data = t
   t.Formo = {}
   t.Hemal = {
+    _Jocal_ = "j",
     _Jonal_ = "j",
     _Lawel_ = "w",
     _Yocal_ = "y",
@@ -11,6 +12,9 @@ do local t = {}; Data = t
     "j",  "y",  "w", 
 
     j = 1,  w = 3,  y = 2, 
+  }
+  t.Jocal = {
+    "aj", "ej", "ij", "oj", "uj",
   }
   t.Jonal = {
     "bj", "dj", "vj", "qj", "zj", "gj",
