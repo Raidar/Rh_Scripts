@@ -50,18 +50,17 @@ unit.ScriptName = "MorfoGener"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Others\\"
 
 ---------------------------------------- ---- Custom
-local DefCustom = {
+unit.DefCustom = {
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
-  label = "MORF",
-  file = "MorfoGen",
+  label = unit.ScriptName,
 
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', },
 } --- DefCustom
 
-local DefOptions = {
+unit.DefOptions = {
   KitName  = "LangData",
   --BaseDir  = nil,
   WorkDir  = "",
@@ -71,73 +70,88 @@ local DefOptions = {
 } ---
 
 ---------------------------------------- ---- Config
-local DefCfgData = { -- Конфигурация по умолчанию:
+unit.DefCfgData = { -- Конфигурация по умолчанию:
   Enabled = true,
 } --- DefCfgData
-unit.DefCfgData = DefCfgData
 
 ---------------------------------------- ---- Types
-local DlgTypes = { -- Типы элементов диалогов:
-} --- DlgTypes
+--unit.DlgTypes = { -- Типы элементов диалогов:
+--} --- DlgTypes
 
----------------------------------------- Configure
--- Обработка конфигурации.
-local function Configure (ArgData)
+---------------------------------------- Main class
+local TMain = { -- Информация по умолчанию:
+  --Guid       = win.Uuid(""),
+  --ConfigGuid = win.Uuid(""),
+} --- TMain
+local MMain = { __index = TMain }
 
-  local ArgData = addNewData(ArgData, DefCfgData)
-  ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
-  --logShow(ArgData, "ArgData")
-  local Custom = datas.customize(ArgData.Custom, DefCustom)
-  addNewData(Custom.options, DefOptions)
+local FullNameFmt = "%s%s.%s"
 
-  local History = datas.newHistory(Custom.history.full)
-  --logShow(History, "History")
-  local CfgData = History:field(Custom.history.field)
+-- Создание объекта основного класса.
+local function CreateMain (ArgData) --> (object)
+  local self = {
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
 
-  setmetatable(CfgData, { __index = ArgData })
-  --logShow(CfgData, "CfgData")
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    CfgData   = false,
+    DlgTypes  = unit.DlgTypes,
+    LocData   = false,
 
-  -- Конфигурация:
-  local Config = {
-    Custom = Custom,
-    History = History,
-    DlgTypes = DlgTypes,
-    CfgData = CfgData,
-    ArgData = ArgData,
-    --DefCfgData = DefCfgData,
-  } ---
+    -- Текущее состояние:
+    Language  = false,
+  } --- self
 
-  locale.customize(Config.Custom) -- Инфо локализации
-  --logShow(Config.Custom, "Custom")
+  self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
+  --logShow(self.ArgData, "ArgData")
+  self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
+  self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
-  return Config
-end -- Configure
+  self.History = datas.newHistory(self.Custom.history.full)
+  self.CfgData = self.History:field(self.Custom.history.field)
 
----------------------------------------- Locale
-local LocData -- Данные локализации
-local L -- Класс сообщений локализации
+  setmetatable(self.CfgData, { __index = self.ArgData })
+  --logShow(self.CfgData, "CfgData")
+
+  locale.customize(self.Custom)
+  --logShow(self.Custom, "Custom")
+
+  local Custom = self.Custom
+  local Options = self.Options
+  Options.FullDir = ("%s%s"):format(Custom.base, Custom.path)
+  Options.SourceFile = FullNameFmt:format(Options.FullDir,
+                                          Options.SourceName,
+                                          Options.FileExt)
+  Options.ResultFile = FullNameFmt:format(Options.FullDir,
+                                          Options.ResultName,
+                                          Options.FileExt)
+
+  return setmetatable(self, MMain)
+end -- CreateMain
 
 ---------------------------------------- Dialog
-local dialog = require "far2.dialog"
-local dlgUt = require "Rh_Scripts.Utils.Dialog"
+do
+  local dialog = require "far2.dialog"
+  local dlgUt = require "Rh_Scripts.Utils.Dialog"
 
-local DI = dlgUt.DlgItemType
-local DIF = dlgUt.DlgItemFlag
---local ListItems = dlgUt.ListItems
+  local DI = dlgUt.DlgItemType
+  local DIF = dlgUt.DlgItemFlag
+  local ListItems = dlgUt.ListItems
 
--- Диалог конфигурации.
-local function Dlg (Config) --> (dialog)
-  local DBox = Config.DBox
-  local isSmall = DBox.Flags and utils.isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
+function TMain:ConfigForm () --> (dialog)
+  local DBox = self.DBox
+  local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
 
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
   local H = DBox.Height - (isSmall and 1 or 2)
   local W = DBox.Width  - (isSmall and 0 or 2)
-  --local M = bshr(W, 1) -- Medium -- Width/2
-  --local Q = bshr(M, 1) -- Quarta -- Width/4
+  local M = bshr(W, 1) -- Medium -- Width/2
+  local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
-  --local A, B = I + 2, M + 2
+  local A, B = I + 2, M + 2
 
+  local L = self.L
   local D = dialog.NewDialog() -- Форма окна:
                     -- 1          2     3    4   5  6  7  8  9  10
                     -- Type      X1    Y1   X2  Y2  L  H  M  F  Data
@@ -145,78 +159,105 @@ local function Dlg (Config) --> (dialog)
 
   -- Кнопки управления:
   D.sep           = {DI.Text,     0,  H-2,   0,  0, 0, 0, 0, DIF.SeparLine, ""}
-  --D.chkEnabled    = {DI.Check,    A,  H-1,   M,  0, 0, 0, 0, 0, L:config"Enabled"}
+  D.chkEnabled    = {DI.Check,    A,  H-1,   M,  0, 0, 0, 0, 0, L:config"Enabled"}
   D.btnOk         = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
-end -- Dlg
+end -- ConfigForm
 
-local ConfigGuid = win.Uuid("")
+function TMain:ConfigBox ()
 
--- Настройка конфигурации.
-function unit.ConfigDlg (Data)
-  -- Конфигурация:
-  local Config = Configure(Data)
-  local HelpTopic = Config.Custom.help.tlink
-  -- Локализация:
-  LocData = locale.getData(Config.Custom)
-  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
-  if not LocData then return end
-  L = locale.make(Config.Custom, LocData)
-  -- Конфигурация:
-  local isSmall = Config.Custom.isSmall
+  local isSmall = self.Custom.isSmall
   if isSmall == nil then isSmall = true end
-  -- Подготовка:
-  Config.DBox = {
-    Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
-    Width = 0, Height = 0,
-  } --
-  local DBox = Config.DBox
+
+  -- Область:
+  local DBox = {
+
+    Width     = 0,
+    Height    = 0,
+    Flags     = isSmall and F.FDLG_SMALLDIALOG or nil,
+  } -- DBox
+  self.DBox = DBox
+
   DBox.Width  = 2 + 36*2 -- Edge + 2 columns
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 5*2 + -- group empty lines + group item lines
-                DBox.cSlab + DBox.cFind + DBox.cSort + DBox.cList + DBox.cCmpl
+                0--DBox.cSlab + DBox.cFind + DBox.cSort + DBox.cList + DBox.cCmpl
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
 
-  -- Настройка:
-  local D = Dlg(Config)
-  local cData, aData, Types = Config.CfgData, Config.ArgData, Config.DlgTypes
-  dlgUt.LoadDlgData(cData, aData, D, Types) -- Загрузка конфигурации
-  local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
+  return DBox
+end ---- ConfigBox
+
+function unit.ConfigDlg (Data)
+
+  local _Main = CreateMain(Data)
+  if not _Main then return end
+
+  _Main:Localize() -- Локализация
+
+  local DBox = _Main:ConfigBox()
+  if not DBox then return end
+
+  local HelpTopic = _Main.Custom.help.tlink
+
+  local D = _Main:ConfigForm()
+  dlgUt.LoadDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+  local iDlg = dlgUt.Dialog(_Main.ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
-  --logShow(D, "D", "d3")
+  --logShow(D, "D", 3)
   if D.btnOk and iDlg == D.btnOk.id then
-    dlgUt.SaveDlgData(cData, aData, D, Types) -- Сохранение конфигурации
-    --logShow(Config, "Config", "d3")
-    --Config.History:save() -- Внимание: пока не сохранять, только загружать?!
+    dlgUt.SaveDlgData(_Main.CfgData, _Main.ArgData, D, _Main.DlgTypes)
+    --logShow(_Main, "Config", 3)
+    _Main.History:save()
 
     return true
   end
 end ---- ConfigDlg
 
----------------------------------------- Lang class
-local TLang = { -- Информация по умолчанию:
-} --- TLang
-local MLang = { __index = TLang }
+end -- do
+---------------------------------------- Main making
 
--- Создание объекта класса язык.
-local function CreateLang (Config) --> (object)
-  local self = {
-    Config    = Config,
-    Language  = false,
-  } --- self
+---------------------------------------- ---- Prepare
+do
+-- Localize data.
+-- Локализация данных.
+function TMain:Localize ()
+  self.LocData = locale.getData(self.Custom)
+  -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
+  if not self.LocData then return end
 
-  return setmetatable(self, MLang)
-end -- CreateLang
+  self.L = locale.make(self.Custom, self.LocData)
 
----------------------------------------- Lang making
-local tconcat = table.concat
+  return self.L
+end ---- Localize
+
+end -- do
+
+local Msgs = {
+  NoLocale      = "No localization",
+} ---
+
+-- Подготовка.
+-- Preparing.
+function TMain:Prepare ()
+
+  if not self:Localize() then
+    self.Error = Msgs.NoLocale
+    return
+  end
+
+  return
+end -- Prepare
+
+---------------------------------------- ---- Work
+do
+  local tconcat = table.concat
 
 -- Формирование данных в подтаблицах таблицы Language.
-function TLang:FillSubData (Kind) --| Language
+function TMain:FillSubData (Kind) --| Language
   local t, l = self.Language[Kind], self.Language.Liter
   if type(t) ~= 'table' or
      type(t[1]) ~= 'string' then
@@ -237,8 +278,10 @@ function TLang:FillSubData (Kind) --| Language
   end
 end ---- FillSubData
 
+end -- do
+
 -- Заполнение Language с учётом имеющихся в нём данных.
-function TLang:FillData () --| Language
+function TMain:FillData () --| Language
 
   local l = self.Language
 
@@ -299,26 +342,34 @@ function TLang:FillData () --| Language
 end ---- FillData
 
 -- Генерация морфов.
-function TLang:Generate ()
+function TMain:Generate ()
+
+  local l = self.Language
+  local F = l.Formo
   -- TODO
 end ---- Generate
 
----------------------------------------- Lang load/save
+-- Формирование данных.
+function TMain:Make () --> (table)
+
+  self:FillData()
+
+  return self:Generate()
+end -- Make
+
+---------------------------------------- ---- Load/Save
 -- Загрузка.
-function TLang:Load ()
+function TMain:Load ()
   local Options = self.Config.Custom.options
 
   self.Language = datas.load(Options.SourceFile, nil, 'change')
-end ---- GenerateFormo
+end ---- Load
 
 -- Сохранение.
-function TLang:Save ()
+function TMain:Save ()
   local Options = self.Config.Custom.options
 
   local sortkind = {
-    --compare = sortcompare,
-    --pairs = ipairs, -- TEST: array fields
-    --pairs = tables.hpairs, -- TEST: hash fields
     pairs = pairs, -- TEST: array + hash fields
     --pairs = allpairs, -- TEST: all fields including from metas
   } ---
@@ -329,13 +380,7 @@ function TLang:Save ()
     astable = true,
     --nesting = 0,
 
-    -- TEST: for simple values:
-    --numwidth = 1,
-    --strlong = 80,
-
-    --pairs = allpairs, -- TEST: all pairs
     pairs = tables.sortpairs, -- TEST: sort pairs
-    --pargs = {},
     pargs = { sortkind },
 
     -- Параметры линеаризации
@@ -345,38 +390,18 @@ function TLang:Save ()
 
     alimit = 60,
     acount = 5,
-    --[[
-    acount = function (n, t) --> (number)
-               local l = #t
-               return l > 17 and l / 3 or l > 9 and l / 2 or l
-             end,--]]
     awidth = 4,
     --avalth = 4,
     --avarth = 4,
+
     zeroln = true,
     hstrln = true,
---[[
-  01..09 --> 1..9
-  10..17 --> 5..8
-  18..30 --> 6..10
---]]
 
     hlimit = 60,
     hcount = 5,
-    --[[
-    hcount = function (n, t) --> (number)
-               local l = #t
-               return l > 14 and l / 3 or l > 5 and l / 2 or l
-             end,--]]
     --hwidth = 6,
     hkeyth = 2,
     hvalth = 2,
---[[
-  01..05 --> 1..5
-  06..14 --> 3..7
-  15..30 --> 5..10
---]]
-
     --[[ TEST: extended pretty write
     KeyToStr = serial.KeyToText,
     ValToStr = serial.ValToText,
@@ -389,49 +414,41 @@ function TLang:Save ()
   return datas.save(Options.ResultFile, "Data", self.Language, kind)
 end ---- Save
 
----------------------------------------- main
-local FullNameFmt = "%s%s.%s"
+---------------------------------------- ---- Run
+function TMain:Run () --> (bool | nil)
 
-function unit.Execute (Data) --> (bool | nil)
---[[ 1. Разбор параметров ]]
-  -- Конфигурация:
-  local Config = Configure(Data)
-  local CfgData = Config.CfgData
-  --logShow(Data, "Data", "d2")
-  --logShow(Config, "Config", "d2 _")
-  --logShow(CfgData, "CfgData", "d2")
-  --logShow(CfgData.Language, "Language", "d2")
-  --logShow(Config.ArgData, "ArgData", "d2")
-  --logShow(CfgData.Enabled, "CfgData.Enabled")
+  self:Load()
 
-  if not CfgData.Enabled then return end
+  self:Make()
 
-  local Custom = Config.Custom
-  local Options = Custom.options
-  Options.FullDir = ("%s%s"):format(Custom.base, Custom.path)
-  Options.SourceFile = FullNameFmt:format(Options.FullDir,
-                                          Options.SourceName,
-                                          Options.FileExt)
-  Options.ResultFile = FullNameFmt:format(Options.FullDir,
-                                          Options.ResultName,
-                                          Options.FileExt)
-  --logShow(Options, "Options", "d2")
-
---[[ 2. Конфигурирование меню ]]
-  local _Lang = CreateLang(Config)
-
---[[ 3. Вызов с параметрами ]]
-  _Lang:Load() -- Загрузка исходных данных
-  --logShow(_Lang.Language, "Language", "d2")
-  _Lang:FillData() -- Заполнение автогенерируемых полей
-  --logShow(_Lang.Language, "Language", "d2")
-  _Lang:Generate() -- Формирование морфов
-  _Lang:Save() -- Сохранение результатов
+  self:Save()
 
   --logShow(_Lang.Language, "w")
+
+  return
+end -- Run
+
+---------------------------------------- main
+
+function unit.Execute (Data) --> (bool | nil)
+
+  --logShow(Data, "Data", "w d2")
+
+  local _Main = CreateMain(Data)
+  if not _Main then return end
+
+  --logShow(Data, "Data", "w d2")
+  --logShow(_Main, "Config", "w _d2")
+  --logShow(_Main.CfgData, "CfgData", "w d2")
+  --if not _Main.CfgData.Enabled then return end
+
+  _Main:Prepare()
+  if _Main.Error then return nil, _Main.Error end
+
+  return _Main:Run()
 end ---- Execute
 
 --------------------------------------------------------------------------------
-unit.Execute(nil)
 --return unit
+return unit.Execute()
 --------------------------------------------------------------------------------
