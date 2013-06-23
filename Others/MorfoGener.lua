@@ -216,50 +216,86 @@ end -- CreateLang
 local tconcat = table.concat
 
 -- Формирование данных в подтаблицах таблицы Language.
-function TLang:MakeSubData (Kind) --| Language
+function TLang:FillSubData (Kind) --| Language
   local t, l = self.Language[Kind], self.Language.Liter
-  l[Kind] = tconcat(t) -- Строка букв
+  if type(t) ~= 'table' or
+     type(t[1]) ~= 'string' then
+    return
+  end
 
   -- Список с позициями букв в массиве
-  for k, v in ipairs(t) do t[v] = k end
-end ---- MakeSubData
+  local Len = 0
+  for k, v in ipairs(t) do
+    t[v] = k
+    local len = v:len()
+    if len > Len then Len = len end
+  end
+  t[0] = Len
+
+  if Len == 1 then
+    l[Kind] = tconcat(t) -- Строка букв
+  end
+end ---- FillSubData
 
 -- Заполнение Language с учётом имеющихся в нём данных.
 function TLang:FillData () --| Language
 
   local l = self.Language
 
-  do -- Заполнение Konal
+  do -- Заполнение монофтонгов
+    local o = l.Order
+    local t = l.Vokal
+    for _, b in ipairs(o.Vokal) do
+      for _, v in ipairs(l[b]) do t[#t + 1] = v end
+      self:FillSubData(b)
+    end
+    self:FillSubData("Vokal")
+
     local t = l.Konal
-    for _, v in ipairs(l.Sonor) do t[#t + 1] = v end
-    for _, v in ipairs(l.Sinel) do t[#t + 1] = v end
+    for _, b in ipairs(o.Konal) do
+      for _, v in ipairs(l[b]) do t[#t + 1] = v end
+      self:FillSubData(b)
+    end
+    self:FillSubData("Konal")
+
+    self:FillSubData("Binal")
   end -- do
 
-  do -- Формирование данных
-    self:MakeSubData("Vocal")
-    self:MakeSubData("Konal")
-    self:MakeSubData("Sonor")
-    self:MakeSubData("Sinel")
-    self:MakeSubData("Hemil")
+  do -- Формирование мультифтонгов
+
+    -- Формирование дифтонгов
+    for n, b in pairs(l.Binal_D) do
+      local t = l[n]
+      local c = b.Liter
+
+      if b.Flang == "R" then
+        for _, v in ipairs(l[b.Kombo]) do t[#t + 1] = v..c end
+      else--if b.Flang == "L" then
+        for _, v in ipairs(l[b.Kombo]) do t[#t + 1] = c..v end
+      end
+
+      self:FillSubData(n)
+    end --
+
+    -- Формирование трифтонгов -- TODO:
   end -- do
 
-  do -- Заполнение Yocal
-    local t = l.Yocal
-    local c = l.Hemal._Yocal_
-    for _, v in ipairs(l.Vocal) do t[#t + 1] = c..v end
+  do -- Заполнение букв
+    local o = l.Order
+    local t = l.Vokali
+    for _, b in ipairs(o.Vokali) do
+      for _, v in ipairs(l[b]) do t[#t + 1] = v end
+    end
+    self:FillSubData("Vokali")
+
+    local o = l.Order
+    local t = l.Konali
+    for _, b in ipairs(o.Konali) do
+      for _, v in ipairs(l[b]) do t[#t + 1] = v end
+    end
+    self:FillSubData("Konali")
   end -- do
 
-  do -- Заполнение Jocal
-    local t = l.Jocal
-    local c = l.Hemal._Jocal_
-    for _, v in ipairs(l.Vocal) do t[#t + 1] = v..c end
-  end -- do
-
-  do -- Заполнение Jonal
-    local t = l.Jonal
-    local c = l.Hemal._Jonal_
-    for _, v in ipairs(l.Konal) do t[#t + 1] = v..c end
-  end -- do
 end ---- FillData
 
 -- Генерация морфов.
@@ -288,19 +324,14 @@ function TLang:Save ()
   } ---
 
   local kind = {
-    --localret = true, -- TEST: local + return instead of global
-    --tnaming = true, -- TEST: temporary name of table to access fields
-    --astable = true, -- TEST: serialize as one table
-    --nesting = 0, -- TEST: serialize data with max nesting level
+    --localret = true,
+    --tnaming = true,
+    astable = true,
+    --nesting = 0,
 
     -- TEST: for simple values:
-    --numwidth = 2, -- TEST: min number value width
-    --keyhex = 2, -- TEST: hex width for integer key
-    --valhex = 2, -- TEST: hex width for integer value
-    --valhex = true, -- TEST: hex width for integer value
-    --keyfloat = true, -- TEST: using pretty float for key
-    valfloat = true, -- TEST: using pretty float for value
-    --strlong = 80, -- TEST: long bracket strings
+    --numwidth = 1,
+    --strlong = 80,
 
     --pairs = allpairs, -- TEST: all pairs
     pairs = tables.sortpairs, -- TEST: sort pairs
@@ -311,29 +342,35 @@ function TLang:Save ()
     lining = "all",
     --lining = "array",
     --lining = "hash",
-    --alimit = 33,
-    alimit = 60, -- TEST: length limit for line
-    --acount = 5, -- TEST: max field count on line
-    -- [[ TEST: max field count on line
+
+    alimit = 60,
+    acount = 5,
+    --[[
     acount = function (n, t) --> (number)
                local l = #t
                return l > 17 and l / 3 or l > 9 and l / 2 or l
              end,--]]
-    awidth = 4, -- TEST: min field width on line
+    awidth = 4,
+    --avalth = 4,
+    --avarth = 4,
+    zeroln = true,
+    hstrln = true,
 --[[
   01..09 --> 1..9
   10..17 --> 5..8
   18..30 --> 6..10
 --]]
 
-    hlimit = 60, -- TEST: length limit for line
-    -- [[ TEST: max field count on line
+    hlimit = 60,
+    hcount = 5,
+    --[[
     hcount = function (n, t) --> (number)
                local l = #t
                return l > 14 and l / 3 or l > 5 and l / 2 or l
              end,--]]
-    hwidth = 3, -- TEST: min field width on line
-    --hwidth = 5, -- TEST: min field width on line -- for hex
+    --hwidth = 6,
+    hkeyth = 2,
+    hvalth = 2,
 --[[
   01..05 --> 1..5
   06..14 --> 3..7
