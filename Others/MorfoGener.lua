@@ -64,9 +64,12 @@ unit.DefOptions = {
   KitName  = "LangData",
   --BaseDir  = nil,
   WorkDir  = "",
-  SourceName = "LangSource",
-  ResultName = "LangResult",
-  FileExt = "dat",
+
+  AbecoName = "Abeco",
+  MorfoName = "Morfo",
+
+  ResultName = "Result",
+  FileExt = "lud",
 } ---
 
 ---------------------------------------- ---- Config
@@ -100,7 +103,7 @@ local function CreateMain (ArgData) --> (object)
     LocData   = false,
 
     -- Текущее состояние:
-    Language  = false,
+    Language  = {},
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -120,12 +123,16 @@ local function CreateMain (ArgData) --> (object)
   local Custom = self.Custom
   local Options = self.Options
   Options.FullDir = ("%s%s"):format(Custom.base, Custom.path)
-  Options.SourceFile = FullNameFmt:format(Options.FullDir,
-                                          Options.SourceName,
-                                          Options.FileExt)
+  Options.AbecoFile = FullNameFmt:format(Options.FullDir,
+                                         Options.AbecoName,
+                                         Options.FileExt)
+  Options.MorfoFile = FullNameFmt:format(Options.FullDir,
+                                         Options.MorfoName,
+                                         Options.FileExt)
   Options.ResultFile = FullNameFmt:format(Options.FullDir,
                                           Options.ResultName,
                                           Options.FileExt)
+  --logShow(self.Options, "Options")
 
   return setmetatable(self, MMain)
 end -- CreateMain
@@ -245,7 +252,7 @@ local Msgs = {
 function TMain:Prepare ()
 
   if not self:Localize() then
-    self.Error = Msgs.NoLocale
+    --self.Error = Msgs.NoLocale
     return
   end
 
@@ -257,8 +264,9 @@ do
   local tconcat = table.concat
 
 -- Формирование данных в подтаблицах таблицы Language.
-function TMain:FillSubData (Kind) --| Language
-  local t, l = self.Language[Kind], self.Language.Liter
+function TMain:FillSubData (Kind) --| Abeco
+  local a = self.Language.Abeco
+  local t, l = a[Kind], a.Liter
   if type(t) ~= 'table' or
      type(t[1]) ~= 'string' then
     return
@@ -280,63 +288,67 @@ end ---- FillSubData
 
 end -- do
 
--- Заполнение Language с учётом имеющихся в нём данных.
-function TMain:FillData () --| Language
+-- Заполнение монофтонгов заданного вида.
+function TMain:FillMonoSet (Kind) --| Abeco
+  local a = self.Language.Abeco
+  local o, t = a.Order, a[Kind]
 
-  local l = self.Language
+  for _, b in ipairs(o[Kind]) do
+    for _, v in ipairs(a[b]) do t[#t + 1] = v end
+    self:FillSubData(b)
+  end
+
+  self:FillSubData(Kind)
+end -- FillMonoSet
+
+-- Формирование сочетаний с диграфными.
+function TMain:FillBinoSets () --| Abeco
+  local a = self.Language.Abeco
+
+  for n, b in pairs(a.Binal_D) do
+    local t = a[n]
+    local l = b.liter
+
+    if b.flang == "R" then
+      for _, v in ipairs(a[b.kombo]) do t[#t + 1] = v..l end
+    else--if b.flang == "L" then
+      for _, v in ipairs(a[b.kombo]) do t[#t + 1] = l..v end
+    end
+
+    self:FillSubData(n)
+  end --
+end -- FillBinoSets
+
+-- Заполнение букв.
+function TMain:FillLiterSet (Kind) --| Abeco
+  local a = self.Language.Abeco
+  local o, t = a.Order, a[Kind]
+
+  for _, b in ipairs(o[Kind]) do
+    for _, v in ipairs(a[b]) do t[#t + 1] = v end
+  end
+  self:FillSubData(Kind)
+end -- FillLiterSet
+
+-- Заполнение Language с учётом имеющихся в нём данных.
+function TMain:FillData () --| Abeco
+
+  local a = self.Language.Abeco
 
   do -- Заполнение монофтонгов
-    local o = l.Order
-    local t = l.Vokal
-    for _, b in ipairs(o.Vokal) do
-      for _, v in ipairs(l[b]) do t[#t + 1] = v end
-      self:FillSubData(b)
-    end
-    self:FillSubData("Vokal")
-
-    local t = l.Konal
-    for _, b in ipairs(o.Konal) do
-      for _, v in ipairs(l[b]) do t[#t + 1] = v end
-      self:FillSubData(b)
-    end
-    self:FillSubData("Konal")
-
-    self:FillSubData("Binal")
+    self:FillMonoSet("Vokal")
+    self:FillMonoSet("Konal")
+    self:FillMonoSet("Binal")
   end -- do
 
   do -- Формирование мультифтонгов
-
-    -- Формирование дифтонгов
-    for n, b in pairs(l.Binal_D) do
-      local t = l[n]
-      local c = b.Liter
-
-      if b.Flang == "R" then
-        for _, v in ipairs(l[b.Kombo]) do t[#t + 1] = v..c end
-      else--if b.Flang == "L" then
-        for _, v in ipairs(l[b.Kombo]) do t[#t + 1] = c..v end
-      end
-
-      self:FillSubData(n)
-    end --
-
-    -- Формирование трифтонгов -- TODO:
+    self:FillBinoSets() -- Формирование дифтонгов
+     -- MAYBE -- Формирование трифтонгов
   end -- do
 
   do -- Заполнение букв
-    local o = l.Order
-    local t = l.Vokali
-    for _, b in ipairs(o.Vokali) do
-      for _, v in ipairs(l[b]) do t[#t + 1] = v end
-    end
-    self:FillSubData("Vokali")
-
-    local o = l.Order
-    local t = l.Konali
-    for _, b in ipairs(o.Konali) do
-      for _, v in ipairs(l[b]) do t[#t + 1] = v end
-    end
-    self:FillSubData("Konali")
+    self:FillLiterSet("Vokali")
+    self:FillLiterSet("Konali")
   end -- do
 
 end ---- FillData
@@ -344,8 +356,10 @@ end ---- FillData
 -- Генерация морфов.
 function TMain:Generate ()
 
-  local l = self.Language
-  local F = l.Formo
+  local D = self.Language
+  local a = D.Abeco
+  local m = D.Morfo
+  local F = D.Formo
   -- TODO
 end ---- Generate
 
@@ -360,14 +374,17 @@ end -- Make
 ---------------------------------------- ---- Load/Save
 -- Загрузка.
 function TMain:Load ()
-  local Options = self.Config.Custom.options
+  local Options = self.Options
 
-  self.Language = datas.load(Options.SourceFile, nil, 'change')
+  self.Language.Abeco = datas.load(Options.AbecoFile, nil, 'change')
+  --logShow(self.Language.Abeco, "Abeco")
+  self.Language.Morfo = datas.load(Options.MorfoFile, nil, 'change')
+  --logShow(self.Language.Morfo, "Morfo")
 end ---- Load
 
 -- Сохранение.
 function TMain:Save ()
-  local Options = self.Config.Custom.options
+  local Options = self.Options
 
   local sortkind = {
     pairs = pairs, -- TEST: array + hash fields
@@ -379,6 +396,7 @@ function TMain:Save ()
     --tnaming = true,
     astable = true,
     --nesting = 0,
+    strlong = 80,
 
     pairs = tables.sortpairs, -- TEST: sort pairs
     pargs = { sortkind },
@@ -395,7 +413,7 @@ function TMain:Save ()
     --avarth = 4,
 
     zeroln = true,
-    hstrln = true,
+    --hstrln = true,
 
     hlimit = 60,
     hcount = 5,
@@ -417,6 +435,8 @@ end ---- Save
 ---------------------------------------- ---- Run
 function TMain:Run () --> (bool | nil)
 
+  --logShow(self, "TMain")
+
   self:Load()
 
   self:Make()
@@ -435,6 +455,7 @@ function unit.Execute (Data) --> (bool | nil)
   --logShow(Data, "Data", "w d2")
 
   local _Main = CreateMain(Data)
+  --logShow(_Main, "_Main")
   if not _Main then return end
 
   --logShow(Data, "Data", "w d2")
