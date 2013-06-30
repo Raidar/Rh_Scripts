@@ -20,16 +20,34 @@ Liter   -- Строки букв
 ]], -- Abc_Order
 
   Order = {
-    Liter = { 'Vokal', 'Konal', 'Binal', },
+    Liter = {
+      'Vokal', 'Konal', 'Binal',
+      Liter = true, YeuPat = true, NeuPat = true,
+    }, --
 
-    Vokal = { 'Vokal_A' },
-    Konal = { 'Konal_Z', 'Konal_S', 'Konal_N', 'Konal_H', },
-    Binal = { 'Binal_A' },
+    Vokal = {
+      'Vokal_A',
+      Liter = true, YeuPat = true, NeuPat = true,
+    },
+    Konal = {
+      'Konal_Z', 'Konal_S', 'Konal_N', 'Konal_H',
+      Liter = true, YeuPat = true, NeuPat = true,
+    },
+    Binal = {
+     'Binal_A',
+      Liter = true, YeuPat = true, NeuPat = true,
+    },
 
-    Konali = { 'Konal', 'Konal_Cj', },
-    Vokali = { 'Vokal', 'Vokal_Oj', 'Vokal_Yo', 'Vokal_Oy', },
+    Konali = {
+      'Konal', 'Konal_Cj',
+      Liter = true, YeuPat = true, NeuPat = true,
+    },
+    Vokali = {
+      'Vokal', 'Vokal_Oj', 'Vokal_Yo', 'Vokal_Oy',
+      Liter = true, YeuPat = true, NeuPat = true,
+    },
 
-  }, --
+  }, -- Order
 
   Vokal = {}, -- Гласные
   Konal = {}, -- Согласные
@@ -124,28 +142,6 @@ Liter   -- Строки букв
   Vokal_Oj = {},
   Vokal_Yo = {},
   Vokal_Oy = {},
-
----------------------------------------- Строки букв
-  Liter = {
-    Vokal = true,
-    Vokal_A = true,
-
-    Konal = true,
-    Konal_Z = true,
-    Konal_S = true,
-    Konal_N = true,
-    Konal_H = true,
-    
-    Binal = true,
-    Binal_A = true,
-    --Konal_Cj = true,
-    --Vokal_Oj = true,
-    --Vokal_Yo = true,
-    --Vokal_Oy = true,
-
-    --Vokali = true,
-    --Konali = true,
-  }, -- Liter
 
 } --- Data
 

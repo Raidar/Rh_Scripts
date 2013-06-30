@@ -264,7 +264,7 @@ do
   local tconcat = table.concat
 
 -- Формирование данных в подтаблицах таблицы Language.
-function TMain:FillSubData (Kind) --| Abeco
+function TMain:FillSubDataPos (Kind) --| Abeco
   local a = self.Language.Abeco
   local t, l = a[Kind], a.Liter
   if type(t) ~= 'table' or
@@ -272,19 +272,41 @@ function TMain:FillSubData (Kind) --| Abeco
     return
   end
 
-  -- Список с позициями букв в массиве
-  local Len = 0
+  -- Store positions of letters:
+  local Len = 0 -- Max length of sounds
   for k, v in ipairs(t) do
     t[v] = k
     local len = v:len()
     if len > Len then Len = len end
   end
   t[0] = Len
+end ---- FillSubDataPos
+
+local sformat = string.format
+
+-- Формирование строк из подтаблиц таблицы Language.
+function TMain:FillSubDataStr (Kind) --| Abeco
+  local a = self.Language.Abeco
+  local t, o = a[Kind], a.Order[Kind]
+  if type(t) ~= 'table' or
+     type(t[1]) ~= 'string' then
+    return
+  end
+
+  if not o then
+    o = { Liter = true, YeuPat = true, NeuPat = true, }
+    a.Order[Kind] = o
+  end
+
+  local Len = t[0]
 
   if Len == 1 then
-    l[Kind] = tconcat(t) -- Строка букв
+    o.Liter = tconcat(t) -- String of letters
+    -- TODO: Добавить формирование как в useLua:
+    o.YeuPat = sformat("[%s]", o.Liter)
+    o.NeuPat = sformat("[^%s]", o.Liter)
   end
-end ---- FillSubData
+end ---- FillSubDataStr
 
 end -- do
 
@@ -295,10 +317,12 @@ function TMain:FillMonoSet (Kind) --| Abeco
 
   for _, b in ipairs(o[Kind]) do
     for _, v in ipairs(a[b]) do t[#t + 1] = v end
-    self:FillSubData(b)
+    self:FillSubDataPos(b)
+    self:FillSubDataStr(b)
   end
 
-  self:FillSubData(Kind)
+  self:FillSubDataPos(Kind)
+  self:FillSubDataStr(Kind)
 end -- FillMonoSet
 
 -- Формирование сочетаний с диграфными.
@@ -308,14 +332,16 @@ function TMain:FillBinoSets () --| Abeco
   for n, b in pairs(a.Binal_D) do
     local t = a[n]
     local l = b.liter
+    local f = b.flang
 
-    if b.flang == "R" then
+    if f == "R" then
       for _, v in ipairs(a[b.kombo]) do t[#t + 1] = v..l end
-    else--if b.flang == "L" then
+    else--if f == "L" then
       for _, v in ipairs(a[b.kombo]) do t[#t + 1] = l..v end
     end
 
-    self:FillSubData(n)
+    self:FillSubDataPos(n)
+    --self:FillSubDataStr(n, b)
   end --
 end -- FillBinoSets
 
@@ -327,7 +353,9 @@ function TMain:FillLiterSet (Kind) --| Abeco
   for _, b in ipairs(o[Kind]) do
     for _, v in ipairs(a[b]) do t[#t + 1] = v end
   end
-  self:FillSubData(Kind)
+
+  --self:FillSubDataPos(Kind)
+  self:FillSubDataStr(Kind)
 end -- FillLiterSet
 
 -- Заполнение Language с учётом имеющихся в нём данных.
@@ -413,7 +441,7 @@ function TMain:Save ()
     --avarth = 4,
 
     zeroln = true,
-    --hstrln = true,
+    hstrln = true,
 
     hlimit = 60,
     hcount = 5,

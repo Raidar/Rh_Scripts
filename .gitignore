@@ -11,6 +11,6 @@ TODO.rdm
 *.cfg
 data/*
 Editor/TextTemplate/*.lua
-Fields/*
+Others/Result.lud
 Testing/*
 UniUtf/*
