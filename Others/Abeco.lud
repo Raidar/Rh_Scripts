@@ -22,36 +22,51 @@ Liter   -- Строки букв
   Order = {
     Liter = {
       'Vokal', 'Konal', 'Binal',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
+    }, --
+
+    Vokon = {
+      'Vokal', 'Konal',
+      Literi = true, YeuPat = true, NeuPat = true,
     }, --
 
     Vokal = {
       'Vokal_A',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
     },
     Konal = {
       'Konal_Z', 'Konal_S', 'Konal_N', 'Konal_H',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
     },
     Binal = {
      'Binal_A',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
     },
 
     Konali = {
       'Konal', 'Konal_Cj',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
     },
     Vokali = {
       'Vokal', 'Vokal_Oj', 'Vokal_Yo', 'Vokal_Oy',
-      Liter = true, YeuPat = true, NeuPat = true,
+      Literi = true, YeuPat = true, NeuPat = true,
     },
+
+    Binali = {
+      Konal_Cj = { liter = 'j', kombo = 'Konal', flang = 'R', },
+      Vokal_Oj = { liter = 'j', kombo = 'Vokal', flang = 'R', },
+
+      Vokal_Yo = { liter = 'y', kombo = 'Vokal', flang = 'L', },
+      Vokal_Oy = { liter = 'y', kombo = 'Vokal', flang = 'R', },
+    }, -- Binali
 
   }, -- Order
 
   Vokal = {}, -- Гласные
   Konal = {}, -- Согласные
   Binal = {}, -- Диграфные
+  Vokon = {}, -- Гласные + Согласные
+  Liter = {}, -- Все буквы
 
   Vokali = {}, -- Все гласные звуки
   Konali = {}, -- Все согласные звуки
@@ -128,14 +143,6 @@ Liter   -- Строки букв
 ]],
 
   Binal_A = { 'j', 'y', }, -- Диграфные
-
-  Binal_D = { -- Данные по сочетаниям с диграфными:
-    Konal_Cj = { liter = 'j', kombo = 'Konal', flang = 'R', },
-    Vokal_Oj = { liter = 'j', kombo = 'Vokal', flang = 'R', },
-
-    Vokal_Yo = { liter = 'y', kombo = 'Vokal', flang = 'L', },
-    Vokal_Oy = { liter = 'y', kombo = 'Vokal', flang = 'R', },
-  }, -- Binal_D
 
   -- Сочетания с диграфными:
   Konal_Cj = {},

@@ -287,24 +287,34 @@ local sformat = string.format
 -- Формирование строк из подтаблиц таблицы Language.
 function TMain:FillSubDataStr (Kind) --| Abeco
   local a = self.Language.Abeco
-  local t, o = a[Kind], a.Order[Kind]
+  local o = a.Order
+  local t, u = a[Kind], o[Kind]
   if type(t) ~= 'table' or
      type(t[1]) ~= 'string' then
     return
   end
 
-  if not o then
-    o = { Liter = true, YeuPat = true, NeuPat = true, }
-    a.Order[Kind] = o
+  if not u then
+    u = { Liter = true, YeuPat = true, NeuPat = true, }
+    o[Kind] = u
   end
 
   local Len = t[0]
 
   if Len == 1 then
-    o.Liter = tconcat(t) -- String of letters
-    -- TODO: Добавить формирование как в useLua:
-    o.YeuPat = sformat("[%s]", o.Liter)
-    o.NeuPat = sformat("[^%s]", o.Liter)
+    -- String of letters:
+    u.Literi = tconcat(t)
+    -- Patterns with letters:
+    u.YeuPat = sformat("[%s]", u.Literi)
+    u.NeuPat = sformat("[^%s]", u.Literi)
+  else
+    -- MAYBE:
+    --[[local b = o.Binali[Kind]
+    if b then
+      --logShow(b, Kind)
+      --logShow({ b, o[b.kombo], o.Vokon }, Kind)
+    end
+    --]]
   end
 end ---- FillSubDataStr
 
@@ -328,8 +338,9 @@ end -- FillMonoSet
 -- Формирование сочетаний с диграфными.
 function TMain:FillBinoSets () --| Abeco
   local a = self.Language.Abeco
+  local o = a.Order
 
-  for n, b in pairs(a.Binal_D) do
+  for n, b in pairs(o.Binali) do
     local t = a[n]
     local l = b.liter
     local f = b.flang
@@ -341,7 +352,7 @@ function TMain:FillBinoSets () --| Abeco
     end
 
     self:FillSubDataPos(n)
-    --self:FillSubDataStr(n, b)
+    self:FillSubDataStr(n)
   end --
 end -- FillBinoSets
 
@@ -367,6 +378,9 @@ function TMain:FillData () --| Abeco
     self:FillMonoSet("Vokal")
     self:FillMonoSet("Konal")
     self:FillMonoSet("Binal")
+
+    self:FillMonoSet("Vokon")
+    self:FillMonoSet("Liter")
   end -- do
 
   do -- Формирование мультифтонгов
