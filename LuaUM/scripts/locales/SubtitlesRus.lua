@@ -17,6 +17,7 @@ local Data = {
     cap_CurClauseData   = "Данные по текущей строке",
 
   CurrentClause     = "&C - Текущая фраза",
+    cap_CurClauseAll    = "Текущая фраза",
     --hot_CurClauseLen    = "D",
     cap_CurClauseLen    = "Длительность фразы",
     --hot_CurClauseGap    = "W",

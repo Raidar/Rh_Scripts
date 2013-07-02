@@ -94,15 +94,17 @@ function unit.CurClauseData () --| (window)
 end ----
 
 -- Показ данных по разнице как времени.
-function unit.getClauseShowData (dif) --> (table, table)
+function unit.getClauseShowData (dif, lines) --> (table, table)
   local dif = dif or 0
   local time = newTime():from_z(dif)
 
+  local lines = lines == nil and 4 or lines
+
   local show = {
     L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
-    L.TimeLenDataFmt:format(time:data()),
-    L.TimeLenMsecFmt:format(n2s(dif)),
-    L.TimeLenTextFmt:format(time:data()),
+    lines >= 1 and L.TimeLenDataFmt:format(time:data()) or nil,
+    lines >= 2 and L.TimeLenMsecFmt:format(n2s(dif)) or nil,
+    lines >= 2 and L.TimeLenTextFmt:format(time:data()) or nil,
   } ---
   local kind = {
     ShowLineNumber = false,
@@ -113,28 +115,82 @@ function unit.getClauseShowData (dif) --> (table, table)
 end ---- getClauseShowData
 
 -- Показ длины отрезка времени на линии файла.
-function unit.CurClauseLen () --| (window)
+function unit.CurClauseLen (lines) --| (window)
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
   local dif = SubsDatim.getClauseLen(tp)
 
-  local show, kind = unit.getClauseShowData(dif)
+  local show, kind = unit.getClauseShowData(dif, lines)
 
   return datShow(show, L.cap_CurClauseLen, kind)
-end ----
+end ---- CurClauseLen
 
 -- Показ длины паузы перед отрезком времени на линии файла.
-function unit.CurClauseGap () --| (window)
+function unit.CurClauseGap (lines) --| (window)
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
   local dif = SubsDatim.getClauseGap(tp)
 
-  local show, kind = unit.getClauseShowData(dif)
+  local show, kind = unit.getClauseShowData(dif, lines)
 
   return datShow(show, L.cap_CurClauseLen, kind)
-end ----
+end ---- CurClauseGap
+
+local unpack = unpack
+
+function unit.ShowClauseAll (title, ...)
+  local args = {...}
+
+  local items = {}
+
+  for a = 1, #args do
+    local t = args[a]
+
+    if type(t) == 'table' then
+      for k = 1, #t do
+        items[#items + 1] = { text = t[k], }
+      end
+    else
+      items[#items + 1] = { text = t, separator = true, }
+    end
+  end -- for
+
+  local props = {
+    Title = title,
+    Flags = 'FMENU_SHOWAMPERSAND',
+  } ---
+
+  dbgs = dbgs or require "context.utils.useDebugs"
+
+  return far.Menu(props, items, dbgs.BKeys)
+end -- ShowClauseAll
+
+-- Показ длины отрезка времени на линии файла и паузы перед ним.
+function unit.CurClauseAll () --| (window)
+  local tp = SubsDatim.getFileType()
+  if not tp then return end
+
+  local difLen = SubsDatim.getClauseLen(tp)
+  local difGap = SubsDatim.getClauseGap(tp)
+
+  local showLen       = unit.getClauseShowData(difLen, 0)
+  local showGap, kind = unit.getClauseShowData(difGap, 0)
+
+  return unit.ShowClauseAll(L.cap_CurClauseAll,
+                            L.cap_CurClauseLen, showLen,
+                            L.cap_CurClauseGap, showGap)
+  --[[
+  local show = {}
+  show[#show + 1] = L.cap_CurClauseLen
+  for k = 1, #showLen do show[#show + 1] = showLen[k] end
+  show[#show + 1] = L.cap_CurClauseGap
+  for k = 1, #showLen do show[#show + 1] = showGap[k] end
+
+  return datShow(show, L.cap_CurClauseAll, kind)
+  --]]
+end ---- CurClauseAll
 
 --------------------------------------------------------------------------------
 return unit

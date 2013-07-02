@@ -15,6 +15,8 @@ local Data = {
     cap_CurClauseData   = "Current line data",
 
   CurrentClause     = "&C - Current clause",
+    hot_CurClauseAll    = "_",
+    cap_CurClauseAll    = "Current clause",
     hot_CurClauseLen    = "D",
     cap_CurClauseLen    = "Clause duration",
     hot_CurClauseGap    = "W",
