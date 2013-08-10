@@ -19,8 +19,10 @@ local Data = {
   tSVN_commit       = "&Commit…",               -- c
   hSVN_commit       = "Commits your changes to the repository",
 
-  tSVN_diff         = "&Diff w/previous",       -- d -- &Diff with previous
-  hSVN_diff         = "Diffs the working copy file with the one before the last commit",
+  tSVN_diff         = "Diff w&/commited",       -- /
+  hSVN_diff         = "Diffs the working copy file with the one in the last commit",
+  tSVN_prevdiff     = "&Diff w/previous",       -- d -- &Diff with previous
+  hSVN_prevdiff     = "Diffs the working copy file with the one before the last commit",
   tSVN_log          = "Show &log",              -- l
   hSVN_log          = "Shows the log for the selected file/folder",
   tSVN_browse       = "&Repo-browser",          -- r

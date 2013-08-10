@@ -17,7 +17,7 @@ M — Merge       / =
 N — reName      / move
 O — resOlve     / —
 P — Patch       / Pull
-Q —
+Q —             / =
 R — Repo        / Reset / revert
 S — Settings    / —
 T — branch+Tag  / Tag
@@ -74,7 +74,7 @@ _ —
 < —
 > —
 
-/ — —           / diff w/commited
+/ — =           / diff w/commited
 \ —             / diff w\current
 ? — about       / =
 | —

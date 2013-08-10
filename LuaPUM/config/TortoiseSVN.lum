@@ -348,7 +348,8 @@ unit.AllOperations = {
   { command = "update",         checked = "↶", },
   { command = "commit",         checked = "↗", },
   { separator = true },
-  { command = "diff",           checked = "♒", },
+  { command = "prevdiff",       checked = "≋", },
+  { command = "diff",           checked = "≈", },
   { command = "log",            checked = "☞", },
   { command = "repobrowser",    checked = "♀", name = "browse", },
   { command = "repobrowser",    checked = "☿", name = "browseto", nopath = true, },
@@ -378,7 +379,7 @@ unit.AllOperations = {
   { command = "ignore",         checked = "×", },
   { separator = true },
   { command = "createpatch",    checked = "✗", name = "patch", },
-  { name    = "applypatch",     checked = "✘", name = "patching", },
+  { command = "applypatch",     checked = "✘", name = "patching", },
   { command = "properties",     checked = "☝", name = "props", },
   { separator = true },
   { command = "settings",       checked = "⚗", },
@@ -422,6 +423,7 @@ unit.Kinds = {
       [true] = { -- is subversioned item
         update    = true,
         commit    = true,
+        prevdiff  = true,
         diff      = true,
         log       = true,
         browse    = true,
@@ -649,6 +651,7 @@ function unit.Execute ()
   end
 
   _Main:Prepare()
+  --_Main:Localize()
   if _Main.Error then return nil, _Main.Error end
 
   local function MakeMenu ()
