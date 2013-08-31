@@ -183,9 +183,16 @@ function TMenu:Prepare () --> (bool | nil, error)
   if (self.Scope.BaseName or "") ~= "" then
     self.BaseName = self.Scope.BaseName -- Подменю как базовое меню
   end
+  if not self.BaseName then
+    self.Error = "Menu not found"
+    return
+  end
 
   self.BaseMenu = self.Menus[self.BaseName]
-  if not self.BaseMenu then
+  if type(self.BaseMenu) == 'function' then
+    self.BaseMenu = self.BaseMenu()
+  end
+  if type(self.BaseMenu) ~= 'table' then
     self.Error = self.BaseName
     return -- Нет главного меню
   end
