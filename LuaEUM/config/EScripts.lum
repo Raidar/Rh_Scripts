@@ -98,7 +98,7 @@ function Clear.SqueezeEmptyLines ()
 
   local function SqueezeEmptyLines (block) --> (block)
     -- Очистка строк только с пробельными символами
-    local t = farBlock.SubLines(block, "^\s-$", "")
+    local t = farBlock.SubLines(block, "^%s-$", "")
     if not t then return end
 
     return farBlock.SubText(t, "(\n\n)\n+", "%1")
