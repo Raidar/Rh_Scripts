@@ -352,9 +352,8 @@ local mInsert = {
     { text = "Division",
       Macro = PairTag("div"),
       AccelStr = "C+P" },
-    { text = "",
-      --Macro = PairTag(""),
-      separator = true,
+    { text = "Reverse Para",
+      Macro = QuoteText("</p>", "<p>"),
       AccelStr = "A+P" },
     -- Q -- quote chars
     { text = "Q", Label = true },
