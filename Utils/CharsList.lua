@@ -27,27 +27,125 @@ local strings = require 'context.utils.useStrings'
 --------------------------------------------------------------------------------
 local unit = {}
 
-----------------------------------------
+---------------------------------------- Main data
+unit.ScriptName = "CharsList"
+unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 local PluginPath = utils.PluginPath
 local DataPath = "scripts\\Rh_Scripts\\data\\"
 local DataName = "NamesList.txt"
 
+---------------------------------------- ---- Custom
+--[==[
+unit.DefCustom = {
+  name = unit.ScriptName,
+  path = unit.ScriptPath,
+
+  label = "CsL",
+
+  help   = { topic = unit.ScriptName, },
+  locale = { kind = 'load', },
+} -- DefCustom
+
+----------------------------------------
+--unit.DefOptions = {
+--} -- DefOptions
+
+---------------------------------------- ---- Config
+
+unit.DefCfgData = { -- Конфигурация по умолчанию:
+  FileName = "NamesList.txt",
+  FilePath = "scripts\\Rh_Scripts\\data\\",
+} -- DefCfgData
+
+---------------------------------------- ---- Types
+--unit.DlgTypes = {
+--} -- DlgTypes
+
+---------------------------------------- Main class
+local TMain = {
+  Guid       = win.Uuid(""),
+  ConfigGuid = win.Uuid(""),
+}
+local MMain = { __index = TMain }
+
+-- Создание объекта основного класса.
+local function CreateMain (ArgData)
+
+  local self = {
+    ArgData   = addNewData(ArgData, unit.DefCfgData),
+
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    CfgData   = false,
+    --DlgTypes  = unit.DlgTypes,
+    LocData   = false,
+
+    -- Текущее состояние:
+    Current   = false,    -- Текущие данные
+    Names     = {},       -- Список названий
+    --Groups    = false,    --
+  } --- self
+
+  self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
+  --logShow(self.ArgData, "ArgData")
+  self.Custom = datas.customize(self.ArgData.Custom, unit.DefCustom)
+  self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
+
+  self.History = datas.newHistory(self.Custom.history.full)
+  self.CfgData = self.History:field(self.Custom.history.field)
+
+  setmetatable(self.CfgData, { __index = self.ArgData })
+  --logShow(self.CfgData, "CfgData")
+
+  locale.customize(self.Custom)
+  --logShow(self.Custom, "Custom")
+
+  do
+    -- Make and return subtable for t[k].
+    local function subTable (t, k) --> (table)
+      local u = {
+        code = "0000",
+        name = "",
+      } ---
+      t[k] = u
+      return u
+    end -- subTable
+
+    local Names = self.Names
+    Names.__index = subTable; setmetatable(Names, Names)
+  end
+
+  return setmetatable(self, MMain)
+end -- CreateMain
+--]==]
 ----------------------------------------
 local Names = {} -- Таблица-список названий
 unit.Names = Names
 
--- Преобразование в читаемый формат
-local lower = unicode.utf8.lower
-local function _easy (head, tail) --> (string)
-  return head..lower(tail)
-end --
-
-local function easy (s) --> (string)
-  return s:gsub("(%w)(%w+)", _easy)
-end -- easy
+-- Make and return subtable for t[k].
+local function subTable (t, k) --> (table)
+  local u = {
+    code = "0000",
+    name = "",
+  } ---
+  t[k] = u
+  return u
+end
+Names.__index = subTable; setmetatable(Names, Names)
 
 ---------------------------------------- Naming
-do
+do --- Преобразование в читаемый формат
+
+  local lower = unicode.utf8.lower
+  local function _EasyName (head, tail) --> (string)
+    return head..lower(tail)
+  end --
+
+function unit.EasyName (s) --> (string)
+  return s:gsub("(%w)(%w+)", _EasyName)
+end -- EasyName
+
   local CharNames = unit.Names
   
 -- Получение имени символа по её кодовой точке.
@@ -76,24 +174,14 @@ function unit.uCharName (c)
 end ---- uCharName
 
 end --
----------------------------------------- __index
--- Make and return subtable for t[k].
-local function subTable (t, k) --> (table)
-  local u = {
-    code = "0000",
-    name = "",
-  } ---
-  t[k] = u
-  return u
-end
-Names.__index = subTable; setmetatable(Names, Names)
-
 ---------------------------------------- main
-do
+
+function unit.Execute (Data) --> (bool | nil)
+
   local FileName = string.format("%s%s%s", PluginPath, DataPath, DataName)
 
   local f = io_open(FileName, 'r')
-  if f == nil then return unit end
+  if f == nil then return end
   --[[
   local f, SError = io_open(FileName, 'r')
   if SError then logShow(SError, "NamesList.txt") end
@@ -102,6 +190,9 @@ do
   -- Цикл по строкам файла:
 
   local last, data = 0, 0
+
+  local Names = unit.Names
+  local EasyName = unit.EasyName
 
   local s = "@"
   --local sn = 0
@@ -129,7 +220,7 @@ do
       --if cp > 0xFFFF then break end -- DEBUG only
       last, data = cp, Names[cp]
       data.code = code
-      data.name = name:sub(1, 1) == '<' and name or easy(name)
+      data.name = name:sub(1, 1) == '<' and name or EasyName(name)
     end
 
     --[[
@@ -147,7 +238,13 @@ do
   until s == nil
 
   f:close()
-end -- do
+
+  return unit
+end -- Execute
+
+if not rawget(Names, 0) then
+  unit.Execute()
+end
 
 --logShow(Names, "Char Names", 2)
 
