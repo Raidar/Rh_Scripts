@@ -23,10 +23,10 @@ local Data = {
   --[[Templates]]-- Шаблоны:
 
   -- New line sequence:
-  { find = "[`ё]\\[nNтТ]", plain = '\\N' },
+  { find = "[`ё][,\\][nNтТ]", plain = '\\N' },
   -- Alignment sequence:
-  { find = "[`ё]\\([1-9])",     plain = '\\an%1' },
-  { find = "[`ё][`ё]\\([1-9])", plain = '%{\\an%1%}' },
+  { find = "[`ё][,\\]([1-9])",     plain = '\\an%1' },
+  { find = "[`ё][`ё][,\\]([1-9])", plain = '%{\\an%1%}' },
   -- Style sequences:
   { find = "[`ё][iш]([01])",  plain = '%{\\i%1%}' },
   { find = "[`ё][bи]([01])",  plain = '%{\\b%1%}' },

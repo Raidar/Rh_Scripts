@@ -8,9 +8,9 @@
 --]]
 --------------------------------------------------------------------------------
 
----------------------------------------- Keywords base
-local Keywords1 = {
-  -- Some keywords:
+---------------------------------------- Keywords Key
+local KeywordsKey = {
+  -- Key keywords:
   a = 'array',
   b = 'begin',
   c = 'case',
@@ -25,41 +25,41 @@ local Keywords1 = {
   l = 'boolean',
   --m = '',
   n = 'number',
-  --o = '',
+  o = 'bool',
   p = 'procedure',
   q = 'continue',
   r = 'return',
   s = 'string',
   t = 'table',
   u = 'unit',
-  --v = '',
+  v = 'value',
   w = 'while',
   x = 'class',
   y = 'property',
   --z = '',
 
-  -- Some variables:
+  -- Key variables:
   C = 'Count',
   D = 'Default',
   E = 'Error',
   J = 'Index',
   R = 'Result',
   V = 'Value',
-} --- Keywords1
+} --- KeywordsKey
 
-local function Keyword1 (Cfg)
+local function KeywordKey (Cfg)
   local s = Cfg.Template.Result
   local sn = s:match("`(%w-)$")
 
-  s = Keywords1[sn]
+  s = KeywordsKey[sn]
   if s then return s end
 
   return false
-end -- Keyword1
+end -- KeywordKey
 
----------------------------------------- Keywords adds
-local Keywords2 = {
-  -- Some keywords:
+---------------------------------------- Keywords Add
+local KeywordsAdd = {
+  -- Additonal keywords:
   a = 'abstract',
   --b = '',
   c = 'switch',
@@ -70,13 +70,13 @@ local Keywords2 = {
   h = 'inherited',
   i = 'implementation',
   j = 'include',
-  --k = '',
+  k = 'require',
   l = 'overload',
   m = 'message',
   n = 'extended',
   o = 'override',
   p = 'pointer',
-  --q = '',
+  q = 'format',
   r = 'repeat',
   s = 'strict',
   t = 'true',
@@ -87,22 +87,69 @@ local Keywords2 = {
   --y = '',
   --z = '',
 
-  -- Other words:
+  -- Additional (key)words:
   --F = 'for @Here do@Back',
   X = 'except',
   Y = 'finally',
   Z = 'then',
-} --- Keywords2
+} --- KeywordsAdd
 
-local function Keyword2 (Cfg)
+local function KeywordAdd (Cfg)
   local s = Cfg.Template.Result
   local sn = s:match("``(%w-)$")
 
-  s = Keywords2[sn]
+  s = KeywordsAdd[sn]
   if s then return s end
 
   return false
-end -- Keyword2
+end -- KeywordAdd
+
+---------------------------------------- Keywords @
+local KeywordsAt = {
+  -- @ keywords:
+  a = 'author',
+  b = 'debug',
+  c = 'class',
+  d = 'default',
+  --e = '',
+  f = 'field',
+  --g = '',
+  --h = '',
+  i = 'info',
+  --j = '',
+  k = 'local',
+  l = 'locals',
+  m = 'meta',
+  n = 'notes',
+  --o = '',
+  p = 'param',
+  q = 'params',
+  r = 'return',
+  s = 'see',
+  t = 'test',
+  u = 'usage',
+  v = 'version',
+  --w = '',
+  --x = '',
+  --y = '',
+  z = 'release',
+
+  -- @ (key)words:
+  C = 'copyright',
+  D = 'description',
+  --F = '',
+  N = 'name',
+} --- KeywordsAt
+
+local function KeywordAt (Cfg)
+  local s = Cfg.Template.Result
+  local sn = s:match("@`(%w-)$")
+
+  s = KeywordsAt[sn]
+  if s then return '@'..s end
+
+  return false
+end -- KeywordAt
 
 --------------------------------------------------------------------------------
 
@@ -115,8 +162,9 @@ local Data = {
   --[[Templates]]-- Шаблоны:
 
   -- Keywords:
-  { find = "`%w",  apply = Keyword1, as = "plain" },
-  { find = "``%w", apply = Keyword2, as = "plain" },
+  { find = "`%w",   apply = KeywordKey, as = "plain" },
+  { find = "``%w",  apply = KeywordAdd, as = "plain" },
+  { find = "@`%w",  apply = KeywordAt,  as = "plain" },
 } --- Data
 
 return Data
