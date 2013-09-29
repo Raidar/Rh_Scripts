@@ -149,6 +149,54 @@ local mTruncate = {
   } ---
 } --- mTruncate
 
+---------------------------------------- CharScript
+local CharScript = {
+} --- CharScript
+
+local CharSuper = {
+  ['1'] = '¹', ['2'] = '²', ['3'] = '³', ['4'] = '⁴', ['5'] = '⁵',
+  ['6'] = '⁶', ['7'] = '⁷', ['8'] = '⁸', ['9'] = '⁹', ['0'] = '⁰',
+  ['+'] = '⁺', ['-'] = '⁻', ['='] = '⁼', ['('] = '⁽', [')'] = '⁾',
+  i = 'ⁱ', j = 'ʲ', k = 'ᵏ',
+} --- CharSuper
+
+local CharSuber = {
+  ['1'] = '₁', ['2'] = '₂', ['3'] = '₃', ['4'] = '₄', ['5'] = '₅',
+  ['6'] = '₆', ['7'] = '₇', ['8'] = '₈', ['9'] = '₉', ['0'] = '₀',
+  ['+'] = '₊', ['-'] = '₋', ['='] = '₌', ['('] = '₍', [')'] = '₎',
+  i = 'ᵢ', j = 'ⱼ', k = 'ₖ',
+} --- CharSuber
+
+function CharScript.Super ()
+
+  local function _Super (block) --> (block)
+    return farBlock.SubLines(block, ".",
+                             function (s) return CharSuper[s] or s end)
+  end --
+
+  return farSelect.Process(false, _Super)
+end ---- Super
+
+function CharScript.Suber ()
+
+  local function _Suber (block) --> (block)
+    return farBlock.SubLines(block, ".",
+                             function (s) return CharSuber[s] or s end)
+  end --
+
+  return farSelect.Process(false, _Suber)
+end ---- Suber
+
+local mCharScript = {
+  text = L.LuaCharScript,
+  Items = {
+    { text = L.LuaCharScriptSuper,
+      Function = CharScript.Super, },
+    { text = L.LuaCharScriptSuber,
+      Function = CharScript.Suber, },
+  } ---
+} --- mCharScript
+
 ---------------------------------------- Items/Menu
 local mScripts = {
   text = L.LuaScripts,
@@ -156,6 +204,7 @@ local mScripts = {
   Items = {
     mClear,     -- Чистка текста
     mTruncate,  -- Усечение текста
+    mCharScript,-- Индекс текста
   } -- Items
 } --- mScripts
 

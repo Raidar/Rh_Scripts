@@ -46,6 +46,10 @@ local Data = {
     LuaTruncEndLines    = "&Empty lines at end",
     LuaTruncFileText    = "File end and &text",
 
+  LuaCharScript     = "&= - Character script",
+      LuaCharScriptSuper    = "&= - Superscript",
+      LuaCharScriptSuber    = "&- - Subscript",
+
   ----------------------------------------
 } --- Data
 

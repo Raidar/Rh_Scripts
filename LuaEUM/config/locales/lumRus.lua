@@ -47,6 +47,10 @@ local Data = {
     LuaTruncEndLines    = "&E - Пустой конец файла",
     LuaTruncFileText    = "&T - Текст и конец файла",
 
+  LuaCharScript     = "&= - Индекс символов",
+      LuaCharScriptSuper    = "&= - Верхний индекс",
+      LuaCharScriptSuber    = "&- - Нижний индекс",
+
   ----------------------------------------
 } --- Data
 
