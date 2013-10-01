@@ -472,12 +472,12 @@ function TMain:FindTemplates () --> (table)
 
     if noSkip then
       local q = 0 -- (!)
-      local D_rex = Kit.regex
+      local K_rex = Kit.regex
       -- Цикл поиска по всем шаблонам:
       for k, v in ipairs(Kit) do
         local f = v.find
         local regex = (v.regex == nil or
-                       v.regex == true) and D_rex or
+                       v.regex == true) and K_rex or
                       (v.regex or "none")
         if regex == "none" then f = makeplain(f) end -- plain!
         f = f.."$"
@@ -509,7 +509,8 @@ function TMain:FindTemplates () --> (table)
         end -- if p
       end -- for
     end -- if noSkip
-    tp = cfgNextType(tp, Kits._KitCfg_)
+
+    tp = Kit.inherit ~= false and cfgNextType(tp, Kits._KitCfg_)
   end -- while
 
   --logShow(tLast, "FindTemplates Last")
