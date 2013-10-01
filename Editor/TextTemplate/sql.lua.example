@@ -1,0 +1,90 @@
+--[[ TT: sql ]]--
+
+----------------------------------------
+--[[ description:
+  -- Templates for 'sql'
+     (Structured Query Language code).
+  -- Шаблоны для 'sql'.
+--]]
+--------------------------------------------------------------------------------
+
+---------------------------------------- Keywords Key
+local KeywordsKey = {
+  -- Key keywords:
+  a = 'alter',
+  b = 'BEGIN',
+  c = 'create',
+  d = 'default',
+  e = 'END',
+  f = 'function',
+  g = 'group by',
+  h = '',
+  i = 'insert',
+  --j = 'join',
+  k = 'local',
+  l = 'boolean',
+  m = 'from',
+  n = 'number',
+  o = 'order by',
+  p = 'procedure',
+  q = 'select',
+  r = 'return',
+  s = 'varchar2',
+  t = 'table',
+  u = 'update',
+  v = 'value',
+  w = 'where',
+  x = 'EXCEPTION',
+  --y = 'connect',
+  z = 'with',
+
+  jn = 'join',
+  ji = 'inner join',
+  -- outer joins:
+  jl = 'left join',
+  jr = 'right join',
+  
+  yy = 'connect by',
+  ys = 'start with',
+  yn = 'nocycle',
+  yp = 'connect by prior',
+
+  -- Key variables:
+  --C = '',
+  --D = '',
+  --E = '',
+  --J = '',
+  R = 'select t.rowid, t.* from ',
+  S = 'select * from ',
+  --V = '',
+} --- KeywordsKey
+
+local function KeywordKey (Cfg)
+  local s = Cfg.Template.Result
+  local sn = s:match("`(%w-)$")
+
+  s = KeywordsKey[sn]
+  if s then return s end
+
+  return false
+end -- KeywordKey
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Data
+local Data = {
+  --[[DO]]--
+
+  inherit = false,
+
+  regex  = "lua";
+
+  --[[Templates]]-- Шаблоны:
+
+  -- Keywords:
+  { find = "`%w",   apply = KeywordKey, as = "plain" },
+  { find = "`%w%w", apply = KeywordKey, as = "plain" },
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------
