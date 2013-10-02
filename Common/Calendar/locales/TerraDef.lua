@@ -19,6 +19,8 @@ local Data = {
     -- Start of the Great Patriotic War
   GPW_MemorialDay           = "Memorial Day",               -- M-day  -- 06-22
 
+  RussiaObscurantismDay     = "Russia Obscurantism Day"               -- 09-18
+
   -- Professional days:
     -- International Day of Human Space Flight
   WorldCosmonauticsDay      = "World Cosmonautics Day",               -- 04-12
