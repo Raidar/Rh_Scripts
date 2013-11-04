@@ -355,7 +355,7 @@ function unit.MathsScripts ()
                 [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  AIJKLMNPRSTUVXY‒ ]]..
                 -- Alt + Shift
                 [[ ⅔¾⅘⅚ ⅞                       /\ ]]..
-                [[ ⅖⅗ ⅝  ⅜       ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  ?| ]]
+                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  ?| ]]
   local Props = {
     Order = Order,
     Serial = true,
