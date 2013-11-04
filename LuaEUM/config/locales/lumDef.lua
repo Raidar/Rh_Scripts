@@ -49,6 +49,7 @@ local Data = {
   LuaCharScript     = "&= - Character script",
       LuaCharScriptSuper    = "&= - Superscript",
       LuaCharScriptSuber    = "&- - Subscript",
+      LuaCharScriptRefer    = "&0 - Refer-note",
 
   ----------------------------------------
 } --- Data

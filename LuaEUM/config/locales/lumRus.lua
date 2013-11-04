@@ -50,6 +50,7 @@ local Data = {
   LuaCharScript     = "&= - Индекс символов",
       LuaCharScriptSuper    = "&= - Верхний индекс",
       LuaCharScriptSuber    = "&- - Нижний индекс",
+      LuaCharScriptRefer    = "&0 - Ссылка-сноска",
 
   ----------------------------------------
 } --- Data
