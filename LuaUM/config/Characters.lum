@@ -62,7 +62,7 @@ unit.KitsData = {
   Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
   MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
   MathsScripts  = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
-  MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
+  --MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
   PunctSymbols  = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
   Punct_Spaces  = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
   Techs_Arrows  = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
@@ -346,16 +346,16 @@ function unit.MathsScripts ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[1234567890=-`[]ijk/\ ]]
+  local Order = [[1234567890=-`[]aijklmnprstuvxy/\ ]]
   local Datas = -- Char + Shift
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ᵢⱼₖ,  ]]..
-                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ⁱʲᵏ, ]]..Chars.BS..
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ ,  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ, ]]..Chars.BS..
                 -- Ctrl + Shift                
-                [[1234567890+−=()ijk °]]..Chars.CR..
-                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄     ‒ ]]..
+                [[1234567890+−=()aijklmnprstuvxy °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  AIJKLMNPRSTUVXY‒ ]]..
                 -- Alt + Shift
-                [[ ⅔¾⅘⅚ ⅞        ᴵᴶᴷ/\ ]]..
-                [[ ⅖⅗ ⅝  ⅜          ?| ]]
+                [[ ⅔¾⅘⅚ ⅞                       /\ ]]..
+                [[ ⅖⅗ ⅝  ⅜       ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  ?| ]]
   local Props = {
     Order = Order,
     Serial = true,
@@ -373,37 +373,12 @@ function unit.MathsScripts ()
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
   unit.UseSpace(Menu)
+  unit.CompactMenu(Menu)
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
   return Menu
 end ---- MathsScripts
-
-function unit.MathsIndexes ()
-  local Name = "MathsIndexes"
-  local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
-
-  local Order = "aijklmnprstuvxy"
-  local Datas = -- Char + Shift
-                "ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ "..
-                "ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ"..
-                -- Ctrl + Shift
-                "               "..
-                "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
-                -- Alt + Shift
-                --"               "
-  local Props = {
-    Order = Order,
-    Serial = true,
-    Heading = "Both",
-  } ---
-
-  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
-  unit.ScriptData[Name] = Menu
-
-  return Menu
-end ---- MathsIndexes
 
 ---------------------------------------- Technology
 function unit.Techs_Arrows ()
@@ -549,7 +524,7 @@ function unit.MakeMenu ()
       unit.Chars_Greeks, unit.Chars_Cyrils,
 
       { text = gL.Maths, separator = true, },
-      unit.MathsScripts, unit.MathsIndexes,
+      unit.MathsScripts, --unit.MathsIndexes,
 
       --{ text = gL.Techs, separator = true, },
       --unit.Techs_Arrows,
