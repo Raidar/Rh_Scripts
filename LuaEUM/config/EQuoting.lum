@@ -187,6 +187,7 @@ function unit.EnquoteItems ()
           text = format(QuoteTextFmt, v.hot,
                         v.pad or "", v.left,
                         v.right, v.note or ""),
+          Hint = v.hint,
           Function = Text.Enquote,
           Arguments = { v.left, v.right, true, },
         } ---

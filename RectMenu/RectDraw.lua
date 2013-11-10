@@ -127,7 +127,7 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   MarkB, MarkE = MarkB or 0, MarkE or 0
   if MarkB <= 0 or MarkB > MarkE then
     return {
-      0, -- for prefix
+      0, -- for MarginB
       { text = TextB, color = Color.normal, },
       { text = TextH, color = Color.hlight, },
       { text = TextE, color = Color.normal, },
@@ -135,7 +135,7 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
   end
 
   local t = {
-    0, -- for prefix
+    0, -- for MarginB
     { text = "",    color = Color.normal, },
     { text = "",    color = Color.marked, },
     { text = "",    color = Color.normal, },
