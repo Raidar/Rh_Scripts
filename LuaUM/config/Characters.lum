@@ -60,7 +60,7 @@ unit.KitsData = {
   CharacterMap  = { Group = "All",   Hot = "_", text = 0, Title = 0, },
   Chars_Greeks  = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
-  MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, }, -- TODO
+  MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, },
   MathsScripts  = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
   --MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
   PunctSymbols  = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
@@ -341,6 +341,49 @@ function unit.Chars_Cyrils ()
 end ---- Chars_Cyrils
 
 ---------------------------------------- Mathematics
+function unit.MathsSymbols ()
+  local Name = "MathsSymbols"
+  local Menu = unit.ScriptData[Name]
+  if Menu then return Menu end
+
+  local Order = [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]
+  local Datas = -- Char + Shift
+                [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]..
+                [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()+_~{}:"<>?|]]..Chars.BS..
+                -- Ctrl + Shift
+                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮          ⋜⋝≈±∼≺≻×∕≤≥/́]]..Chars.CR..
+                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ          ≉∓≁⊀⊁⋆ ≰≱\§ ]]..
+                -- Alt + Shift
+                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃        ⋞⋟≡−≃≼≽⋅ ≲≳/\ ]]..
+                [[∀ ⊄∆⅀   ∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅          ≢≂≄⋠⋡∗ ≴≵?| ]]..
+                -- Ctrl + Alt
+                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭ ∖⊽ ¬ ⊇        ≪≫≣≍∽≾≿∘∣⋦⋧…― ]]..
+                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉          ≠≭⋍⋨⋩∙∤≮≯&‾ ]]
+  local Props = {
+    Order = Order,
+    Serial = true,
+    Heading = "Both",
+  } ---
+
+  local SVKeyFuncs = CharsMenu.SVKeyFuncs
+  local Keys = {
+    Kind = "AccelKey";
+    CharsMenu.SVKeyValue,   SVKeyFuncs.S,
+    SVKeyFuncs.C,           SVKeyFuncs.CS,
+    SVKeyFuncs.A,           SVKeyFuncs.AS,
+    SVKeyFuncs.CA,          SVKeyFuncs.CAS,
+  } --- Keys
+
+  Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
+  unit.UseSpace(Menu)
+  --unit.CompactMenu(Menu)
+  Menu.Props.RectMenu.CompactText = true
+  --logShow(Menu, Name, 3)
+  unit.ScriptData[Name] = Menu
+
+  return Menu
+end ---- MathsSymbols
+
 function unit.MathsScripts ()
   local Name = "MathsScripts"
   local Menu = unit.ScriptData[Name]
@@ -348,7 +391,7 @@ function unit.MathsScripts ()
 
   local Order = [[1234567890=-`[]aijklmnprstuvxy/\ ]]
   local Datas = -- Char + Shift
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ ,  ]]..
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ .  ]]..
                 [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ, ]]..Chars.BS..
                 -- Ctrl + Shift                
                 [[1234567890+−=()aijklmnprstuvxy °]]..Chars.CR..
@@ -368,7 +411,7 @@ function unit.MathsScripts ()
     CharsMenu.SVKeyValue,   SVKeyFuncs.S,
     SVKeyFuncs.C,           SVKeyFuncs.CS,
     SVKeyFuncs.A,           SVKeyFuncs.AS,
-    SVKeyFuncs.CS,          SVKeyFuncs.CAS,
+    SVKeyFuncs.CA,          SVKeyFuncs.CAS,
   } --- Keys
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
@@ -524,7 +567,8 @@ function unit.MakeMenu ()
       unit.Chars_Greeks, unit.Chars_Cyrils,
 
       { text = gL.Maths, separator = true, },
-      unit.MathsScripts, --unit.MathsIndexes,
+      unit.MathsSymbols, unit.MathsScripts,
+      --unit.MathsIndexes,
 
       --{ text = gL.Techs, separator = true, },
       --unit.Techs_Arrows,

@@ -76,12 +76,15 @@ local SVKeyFuncs = {
 } ---
 unit.SVKeyFuncs = SVKeyFuncs
 
-for k, m in ipairs(SKeyModifs) do
+for k = 1, #SKeyModifs do
+  local m = SKeyModifs[k]
   SVKeyFuncs[m] = function (s)
     --return SModifKey(s, UsedModifs[k], SVKeyValue)
     return SModKeyPat:format(UsedModifs[k], SVKeyValue(s))
   end
 end
+
+--logShow(SVKeyFuncs)
 
 ---------------------------------------- ---- Action keys
 -- Вид клавиш обработки:

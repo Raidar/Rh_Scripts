@@ -43,6 +43,7 @@ local Data = {
     ChsChars_Greeks     = "Greek characters",
     ChsChars_Cyrils     = "Cyrillic chars",
   ChsMaths          = "Mathematics",
+    ChsMathsSymbols     = "Math symbols",
     ChsMathsScripts     = "Sub-/superscripts",
     --ChsMathsIndexes     = "Other used indexes",
   ChsPunct          = "Punctuation",

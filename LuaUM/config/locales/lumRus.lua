@@ -44,6 +44,7 @@ local Data = {
     ChsChars_Greeks     = "Греческие буквы",
     ChsChars_Cyrils     = "Буквы кириллицы",
   ChsMaths          = "Математика",
+    ChsMathsSymbols     = "Математ. символы",
     ChsMathsScripts     = "Основные индексы",
     --ChsMathsIndexes     = "Остальные индексы",
   ChsPunct          = "Пунктуация",
