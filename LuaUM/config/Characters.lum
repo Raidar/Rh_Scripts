@@ -389,16 +389,16 @@ function unit.MathsScripts ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[1234567890=-`[]aijklmnprstuvxy/\ ]]
+  local Order = [[1234567890=-`[]aehijklmnoprstuvxy/\ ]]
   local Datas = -- Char + Shift
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐᵢⱼₖₗₘₙₚᵣₛₜᵤᵥₓ .  ]]..
-                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃⁱʲᵏˡᵐⁿᵖʳˢᵗᵘᵛˣʸ, ]]..Chars.BS..
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ .  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃᵉʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛˣʸ, ]]..Chars.BS..
                 -- Ctrl + Shift                
-                [[1234567890+−=()aijklmnprstuvxy °]]..Chars.CR..
-                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  AIJKLMNPRSTUVXY‒ ]]..
+                [[1234567890+−=()aehijklmnoprstuvxy °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  AEHIJKLMNOPRSTUVXY‒ ]]..
                 -- Alt + Shift
-                [[ ⅔¾⅘⅚ ⅞                       /\ ]]..
-                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  ?| ]]
+                [[ ⅔¾⅘⅚ ⅞                          /\ ]]..
+                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴱᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿ ᵀᵁⱽ  ?| ]]
   local Props = {
     Order = Order,
     Serial = true,
