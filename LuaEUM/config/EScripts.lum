@@ -321,7 +321,7 @@ end -- DoChangeChar
 local mChangeChar = {
   text = L.LuaChangeChar,
   Items = {
-    { text = L.LuaChangeCharTypos,
+    { text = L.LuaChangeCharTyper,
       Function = DoChangeChar"Typer", },
     { text = "", separator = true, },
     { text = L.LuaChangeCharSuper,
