@@ -598,6 +598,8 @@ end ---- SubText
 function Block.SubLines (block, pattern, replace) --> (block)
   if not block then return end
 
+  --logShow({ block, pattern, replace }, "SubLines")
+
   if type(block) == 'string' then
     return block:gsub(pattern, replace)
   end
