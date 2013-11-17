@@ -75,7 +75,13 @@ $ #Использование макросов#: RectMenu
 Поэтому в макросах нужна проверка типа элемента диалога.
 
     \1FСхема проверки:\-
-  \37$If(Dlg.ItemType!=255) \-<Действия>\37 $Else $AKey $End\-
+  \3Flocal\37 F = far.Flags\-
+  ...
+  \3Fif\37 Dlg.ItemType != F.DI_USERCONTROL \3Fthen\-
+    <Действия>
+  \3Felse\-
+    \37Keys"AKey"\-
+  \3Fend\-
 
  ~Содержание~@Contents@     ~Подробности о меню~@RM_Details@
 

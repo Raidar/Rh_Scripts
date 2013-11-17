@@ -46,13 +46,20 @@ $ #Details of menu#: RectMenu
 
 @RM_Macros
 $ #Using macros#: RectMenu
-  Keys in RectMenu menu don't work, if macros was assigned to them,
+  In RectMenu menu keys don't work, if macros was assigned to them,
 and this macros are specified in common area (\37Common\-).
-  Keys for macros in dialog area (\37Dialog\-) work,
+  Keys for macros in dialog area (\37Dialog\-) may work,
 if they allows, that RectMenu menu is a user‑defined control.
-  Therefore checking type of dialog control is required in macros.
-    \1FA check scheme:\-
-  \37$If(Dlg.ItemType!=255) \-<Actions>\37 $Else $AKey $End\-
+  Therefore in macros checking type of dialog control is required.
+
+    \1FA check scheme:\-
+  \3Flocal\37 F = far.Flags\-
+  ...
+  \3Fif\37 Dlg.ItemType != F.DI_USERCONTROL \3Fthen\-
+    <Actions>
+  \3Felse\-
+    \37Keys"AKey"\-
+  \3Fend\-
 
  ~Contents~@Contents@       ~Details of menu~@RM_Details@
 
