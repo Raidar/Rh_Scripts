@@ -389,16 +389,16 @@ function unit.MathsScripts ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[1234567890=-`[]aehijklmnoprstuvxy/\ ]]
+  local Order = [[1234567890=-`[]abcdefghijklmnopqrstuvwxyz/\ ]]
   local Datas = -- Char + Shift
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ .  ]]..
-                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃᵉʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛˣʸ, ]]..Chars.BS..
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
                 -- Ctrl + Shift                
-                [[1234567890+−=()aehijklmnoprstuvxy °]]..Chars.CR..
-                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  AEHIJKLMNOPRSTUVXY‒ ]]..
+                [[1234567890+−=()abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
                 -- Alt + Shift
-                [[ ⅔¾⅘⅚ ⅞                          /\ ]]..
-                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴱᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿ ᵀᵁⱽ  ?| ]]
+                [[ ⅔¾⅘⅚ ⅞                                  /\ ]]..
+                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
   local Props = {
     Order = Order,
     Serial = true,
@@ -416,7 +416,8 @@ function unit.MathsScripts ()
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
   unit.UseSpace(Menu)
-  unit.CompactMenu(Menu)
+  --unit.CompactMenu(Menu)
+  Menu.Props.RectMenu.CompactText = true
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
