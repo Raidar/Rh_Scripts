@@ -34,13 +34,13 @@ local Data = {
   LuaScripts        = "&S - Lua scripts",
   LuaScripting      = "Lua-scripts samples",
 
-  LuaClearText      = "&Clear text",
+  LuaClearText      = "&C - Clear text",
       LuaClearDeleteAllSpaces       = "Delete a&ll spaces",
       LuaClearSqueezeSpaceChars     = "S&queeze space chars",
       LuaClearDeleteAllEmptys       = "Delete all &empties",
       LuaClearSqueezeEmptyLines     = "Squee&ze empty lines",
 
-  LuaTruncateVoid   = "&Truncate void",
+  LuaTruncateVoid   = "&T - Truncate void",
     LuaTruncCurLine     = "&Current line",
     LuaTruncAllLines    = "&All text lines",
     LuaTruncEndLines    = "&Empty lines at end",
@@ -51,6 +51,8 @@ local Data = {
       LuaChangeCharSuber    = "&- - Subscript",
       LuaChangeCharRefer    = "&0 - Refer-note",
       LuaChangeCharTyper    = "&Q - Typograph",
+
+  LuaTranscript     = "&X - Transcript text",
 
   ----------------------------------------
 } --- Data

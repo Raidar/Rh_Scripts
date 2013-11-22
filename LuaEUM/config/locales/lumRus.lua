@@ -53,6 +53,8 @@ local Data = {
       LuaChangeCharRefer    = "&0 - Ссылка-сноска",
       LuaChangeCharTyper    = "&Q - Типографика",
 
+  LuaTranscript     = "&X - Транскрибирование",
+
   ----------------------------------------
 } --- Data
 

@@ -244,9 +244,11 @@ end -- Execute
 
 if not rawget(Names, 0) then
   unit.Execute()
+  Names.__index = nil
+  setmetatable(Names, nil)
 end
 
---logShow(Names, "Char Names", 2)
+--logShow(Names, "Char Names", "d1")
 
 --------------------------------------------------------------------------------
 return unit

@@ -242,7 +242,7 @@ function TMain:InitDateTime ()
   self.Date = CfgData.Date and CfgData.Date:copy() or
               datim.newDate(1, 1, 1, DT_cfg)
   self.Time = CfgData.Time and CfgData.Time:copy() or
-              datim.newTime(0, 0,0, DT_cfg)
+              datim.newTime(0, 0, 0, DT_cfg)
   --logShow(self.Date, "Default Date", "w d1")
 
   return true
