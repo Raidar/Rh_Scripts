@@ -321,7 +321,7 @@ function TMain:Prepare ()
     return
     --self.LocData = {} -- DEBUG only
   end
-  
+
   self:MakeColors()
 
   return self:MakeProps()
@@ -390,7 +390,7 @@ function TMain:FillMenu () --> (table)
         c = j,
         --p = p + j,
       } --
-      
+
       if not SelIndex and b == SelChar then
         SelIndex = p + j
       end
@@ -451,6 +451,53 @@ end ---- LimitChar
 end -- do
 ---------------------------------------- ---- Input
 do
+  local tonumber = tonumber
+
+function TMain:ParseInput ()
+  --local self = self
+
+  local Input = self.Input or ""
+  if Input == "" then return end
+
+  return tonumber(Input, 16)
+end ---- ParseInput
+
+function TMain:StartInput (Data)
+  local self = self
+  local L = self.LocData
+
+  self.Input = ""
+  self.Props.Bottom = L.InputCodePoint
+  self.IsInput = true
+end ---- StartInput
+
+function TMain:StopInput (Data)
+  local self = self
+
+  self.IsInput = false
+  self.Props.Bottom = ""
+  self.Char = self:ParseInput() or Data.Char
+end ---- StopInput
+
+function TMain:EditInput (SKey)
+  local self = self
+
+  local Input = self.Input
+  if SKey == "BS" then
+    if Input ~= "" then Input = Input:sub(1, -2) end
+  else
+    if Input:len() < 4 then
+      Input = Input..SKey
+    end
+  end
+
+  self.Input = Input
+  self.Props.Bottom = Input
+end ---- EditInput
+
+end -- do
+---------------------------------------- ---- Output
+do
 -- Вывод символа.
 function TMain:PrintChar (Data)
   --logShow(Data, "PrintChar")
@@ -477,9 +524,50 @@ do
 
   local u8byte, u8char = strings.u8byte, strings.u8char
 
+  local InputActions = {
+    ["1"] = true,
+    ["2"] = true,
+    ["3"] = true,
+    ["4"] = true,
+    ["5"] = true,
+    ["6"] = true,
+    ["7"] = true,
+    ["8"] = true,
+    ["9"] = true,
+    ["0"] = true,
+    ["A"] = true,
+    ["B"] = true,
+    ["C"] = true,
+    ["D"] = true,
+    ["E"] = true,
+    ["F"] = true,
+    ["BS"] = true,
+  } --- InputActions
+
+  local tonumber = tonumber
+
+  local AlterActions = {
+    Alt1 = true,
+    Alt2 = true,
+    Alt3 = true,
+    Alt4 = true,
+    Alt5 = true,
+    Alt6 = true,
+    Alt7 = true,
+    Alt8 = true,
+    Alt9 = true,
+    Alt0 = true,
+    AltA = true,
+    AltB = true,
+    AltC = true,
+    AltD = true,
+    AltE = true,
+    AltF = true,
+  } --- AlterActions
+
 function TMain:AssignEvents () --> (bool | nil)
   local self = self
-  
+
   local function MakeUpdate () -- Обновление!
     farUt.RedrawAll()
     self:Make()
@@ -511,6 +599,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
+
     elseif SKey == "CtrlAltX" then
       local s = u8char(Data.Char)
       local Char = far.XLat(s, 1, 1)
@@ -520,6 +609,24 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
+
+    elseif SKey == "Divide" then
+      if self.IsInput then
+        self:StopInput(Data)
+        --return MakeUpdate()
+      else
+        self:StartInput(Data)
+      end
+
+    elseif self.IsInput then
+      if InputActions[SKey] then
+        self:EditInput(SKey)
+      end
+
+    elseif AlterActions[SKey] then
+      self.Char = tonumber(VirKey.UnicodeChar.."000", 16)
+      --logShow(self.Char, SKey)
+
     else
       local Char = u8byte(VirKey.UnicodeChar or 0x0000)
       if Char ~= 0x0000 and
@@ -529,7 +636,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-    end
+    end -- KeyPress
 
     if isUpdate then
       self:LimitChar()
@@ -541,6 +648,8 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
+    --if self.IsInput then return end
+
     local AKey, VMod = AKey, VMod
 
     local Data = self.Items[ItemPos].Data
@@ -602,7 +711,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-    
+
     --elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
 
     else
@@ -636,6 +745,13 @@ function TMain:AssignEvents () --> (bool | nil)
   local function ChooseItem (Kind, ItemPos)
     local Data = self.Items[ItemPos].Data
     if not Data then return end
+
+    if self.IsInput and Kind == "Enter" then
+      self:StopInput(Data)
+
+      self:LimitChar()
+      return MakeUpdate()
+    end
 
     self:SaveData(Data)
 

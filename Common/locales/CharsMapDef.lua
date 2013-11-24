@@ -5,6 +5,9 @@ local Data = {
   ----------------------------------------
   Caption = "Characters map",
 
+  --
+  InputCodePoint    = "Input code point",
+
   ----------------------------------------
 } --- Data
 
