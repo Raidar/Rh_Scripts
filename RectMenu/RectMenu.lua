@@ -400,7 +400,8 @@ local function Close (hDlg, id)
 end --
 
 local function CloseDialog (hDlg)
-  Close(hDlg); return true
+  Close(hDlg)
+  return true
 end --
 
 local function GetRect (hDlg)
@@ -593,7 +594,9 @@ function TMenu:DefineDataInfo () --| Data
   --logShow({ Data.Count, Idx2Cell(SelIndex, Data) }, SelIndex)
   if Data.Count > 0 then
     local List, k = self.List, 1 -- Учёт скрытых пунктов:
-    while k < Data.Count and List[k].Index < SelIndex do k = k + 1 end
+    while k < Data.Count and List[k].Index < SelIndex do
+      k = k + 1
+    end
     self.SelectIndex = k
   else
     self.SelectIndex = nil
@@ -810,7 +813,7 @@ function TMenu:DefineZoneInfo () --| Zone
   --Zone.EdgeH, Zone.EdgeV = 2*Zone.HomeX, 2*Zone.HomeY
   Zone.EdgeH, Zone.EdgeV = bshl(Zone.HomeX, 1), bshl(Zone.HomeY, 1)
 
-  -- Размеры поля меню окна диалога.
+  -- Размеры меню окна диалога.
   local MaxWidth  = RM.MaxWidth  or self.Area.Width
   local MaxHeight = RM.MaxHeight or self.Area.Height
   local MinWidth  = min2(RM.MinWidth  or 1, self.Area.Width)
