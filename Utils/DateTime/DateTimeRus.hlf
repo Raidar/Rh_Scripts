@@ -60,8 +60,7 @@ $ #Шестнадцатеричный календарь#
  ――――――――
   Ссылки:
  — ¦~Вам календарик 2013~@http://habrahabr.ru/post/164419/@.
- — ¦~Делаем календари
-в разных системах счисления~@http://habrahabr.ru/post/133036/@.
+ — ¦~Делаем календари в разных системах счисления~@http://habrahabr.ru/post/133036/@.
  ――――――――
 
  ~Конфигурации~@Contents@
@@ -104,6 +103,16 @@ $ #Пернский календарь#
   \37getYearDay\-   — ¦~Получение номера дня Оборота~@Pern_getYearDay@.
   \37getWeekDay\-   — ¦~Получение номера дня седьмицы~@Pern_getWeekDay@.
   \37getEraDay\-    — ¦~Получение номера дня После Высадки~@Pern_getEraDay@.
+
+ ――――――――
+  Литература:
+ — ¦~Sarielʼs Guide to Pern~@http://pern.srellim.org/@
+{Руководство Сэриэла по Перну}:
+  ⋅ ¦~Timeline of Major Events on Pern~@http://pern.srellim.org/time.htm@
+{Хронология основных событий на Перне}.
+    ⋅ ¦~Where the dates come from?~@http://pern.srellim.org/time_date.htm@
+{Откуда взяты даты для Хронологии?}.
+ ――――――――
 
  ~Конфигурации~@Contents@
 
@@ -290,12 +299,5 @@ $ #Получение номера дня После Высадки#: Перн
         \37Ny = 363⋅Nl + 362⋅Nb = 2173⋅r + 362⋅s\-.
   Подставляя полученное значение \37Ny\- в формулу для \37N\-,
 получаем требуемое.
-
- ――――――――
-  Литература:
- — ¦~Sariel's Guid to Pern~@http://pern.srellim.org/@ :
-  ⋅ ¦~Where the dates come from~@http://pern.srellim.org/time.htm@ .
-  ⋅ ¦~Timeline of Major Events on Pern~@http://pern.srellim.org/time.htm@ .
- ――――――――
 
  ~Пернский календарь~@Pern_Pernese@     ~Конфигурации~@Contents@

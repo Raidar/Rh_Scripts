@@ -8,7 +8,7 @@
 $ #Configurations# of date and time for calendars
     ~Gregorean calendar~@Terra_Gregorean@
 
-    ~Milleniums' calendar~@Terra_Millenium@
+    ~Milleniumsʼ calendar~@Terra_Millenium@
     ~Hexadecimal calendar~@Terra_Hexadecimal@
     ~Minimum project of calendar~@Terra_Minimum@
 
@@ -30,8 +30,17 @@ $ #Gregorean calendar#
  ~Configurations~@Contents@
 
 @Terra_Millenium
-$ #Milleniums' calendar#
-  A Milleniums' calendar is a years notation by milleniums.
+$ #Milleniumsʼ calendar#
+  A Milleniumsʼ calendar is a years notation by milleniums.
+
+ One "year"    = 1000 years — one millenium.
+ One "month"   =  100 years — one century.
+ One "week"    =   10 years — one decade.
+ One "day"     =    1 year.
+ One "hour"    =    1 month.
+ One "minute"  =    1 day (approximately!).
+ One "second"  =    1 hour.
+ One "msec"    =    ⅟₁₀₀₀ of an hour (thousandth part).
 
  ~Configurations~@Contents@
 
@@ -39,11 +48,31 @@ $ #Milleniums' calendar#
 $ #Hexadecimal calendar#
   A Hexadecimal calendar is a calendar in a radix‑16.
 
+ ――――――――
+  Links:
+ — ¦~Вам календарик 2013~@http://habrahabr.ru/post/164419/@
+{A calendar 2013 for You}.
+ — ¦~Делаем календари в разных системах счисления~@http://habrahabr.ru/post/133036/@
+{Making calendars in different number systems}.
+ ――――――――
+
  ~Configurations~@Contents@
 
 @Terra_Minimum
 $ #Minimum project of calendar#
   A Minimum project of permanent worldwide calendar (N.V. Volodomonov).
+
+ ――――――――
+  Links:
+ — ¦Володомонов Н.В.
+Календарь: прошлое, настоящее, будущее.-
+2-е изд., перераб. и доп.-
+М.: Наука, Физматлит, 1987.- 80 с.- С. 45 + форзац.
+   {Volodomonov N.V.
+The Calendar: Past, Present, Future.-
+2nd ed., rev. и enl.-
+M.: Nauka, Fizmatlit, 1987.- 80 p.- P. 45 + flyleaf.}
+ ――――――――
 
  ~Configurations~@Contents@
 
@@ -51,20 +80,27 @@ $ #Minimum project of calendar#
 $ #Pernese calendar#
   A Pernese calendar is a time notation on planet Pern (P.E.R.N.).
 
+ ――――――――
+  Bibliography:
+ — ¦~Sarielʼs Guide to Pern~@http://pern.srellim.org/@ :
+  ⋅ ¦~Timeline of Major Events on Pern~@http://pern.srellim.org/time.htm@ .
+    ⋅ ¦~Where the dates come from?~@http://pern.srellim.org/time_date.htm@ .
+ ――――――――
+
  ~Configurations~@Contents@
 
 @Pern_Seasons
 $ #Seasons on Pern#
-  Formal calendar division of Turn
+  A formal calendar division of Turn
 to four approximately equal periods is used on Pern.
 
-  In the Northern Hemisphere following dates are fixed:
+  In the Northern Hemisphere the following dates are fixed:
  ⋅ ¦01-01 — Winter Solstice;
  ⋅ ¦04-01 — Spring Equinox;
  ⋅ ¦07-01 — Summer Solstice;
  ⋅ ¦10-01 — Autumn Equinox.
 
-  The seasons follow these dates, e.g.:
+  The seasons follow these dates, e.g.:
  ⋅ ¦Winter — from 01-01 until 03-30;
  ⋅ ¦Spring — from 04-01 until 06-30;
  ⋅ ¦Summer — from 07-01 until 09-30;
