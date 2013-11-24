@@ -190,17 +190,98 @@ These properties@TM_Props@ is similar to properties of user menu display
 
 @CharsMap
 $ #Characters map# (CharsMap)
-  CharsMap is a script to display characters map.
+  CharsMap is a script to display a characters map.
+  
+  Navigation keys:
+ \37Alt+(Left|Right)\-       — ¦a previous/next part of the map.
+ \37Alt+(Up|Down)\-          — ¦a previous/next block of the map.
+ \37Alt+(PgUp|PgDn)\-        — ¦a start of previous/next block.
+ \37Alt+(0-9|A-F)\-          — ¦a start of block with corresponding number.
+
+ \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
+
+  Special keys:
+ \37Num* | Clear\- (Num5)    — ¦the last choosen character.
+ \37CtrlV\-                  — ¦go to a character from clipboard.
+ \37CtrlAltX\-               — ¦go to a character obtained by XLat.
+ \37(Shift+) <символ>\-      — ¦go to a character corresponding to key.
+
+ \37Num/\-                   — ¦go to a ~code point input~@CharsMap_Input@ mode.
 
  ~Contents~@Contents@
 
+@CharsMap_Input
+$ #Characters map#: Code point input
+
+  Code point input is performed in a hexadecimal format.
+
+  To input code point of character use following keys:
+ \371—9, 0, A-F\-            — ¦to input the hexadecimal digits.
+ \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+ 
+  After the input completion a character with the inputted code point
+will be displayed in the window.
+
+ ~Contents~@Contents@       ~Characters map~@CharsMap@
+
 @Calendar
 $ #Calendar for one month# (Calendar)
-  Calendar is a script to display calendar for one month.
+  Calendar is a script to display a calendar for one month.
+
+  Area with date information is displayed on the left,
+the calendar itself is displayed on the right.
+  In the area with date information the following is displayed:
+  — ¦a number of the year day is on the left of the fullname of the week day,
+  — ¦a number of the year week is on the right,
+  — ¦the date in \3AYYYY‑MM‑DD\- format is from above,
+  — ¦the time for current date в формате in \3AHH‑NN‑SS\-  format is from below.
+  In the calendar area the following is displayed:
+  — ¦a number of the month week is on the first row,
+  — ¦a number of the year week  is on the last row,
+  — ¦an abbreviated name for the week day is in the last column.
+
+  Navigation keys:
+ \37Alt+(Left|Right)\-       — ¦a previous/next month.
+ \37Alt+(Up|Down)\-          — ¦a previous/next year.
+ \37Alt+(PgUp|PgDn)\-        — ¦a start/end of the month.
+ \37Alt+(Home|End)\-         — ¦a start/end of the year.
+
+ \37Ctrl+(PgUp|PgDn)\-       — ¦a start/end of the decade
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+(Home|End)\-        — ¦a start/end of the century
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+Alt+(PgUp|PgDn)\-   — ¦a start/end of the millenium
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+Alt+(Clear)\-       — ¦a start/end of the 1st year (CE) (a switch).
+ \37Ctrl+Alt+(Home|End)\-    — ¦a start of −9999 y. / an end of 9999 y. (CE).
+
+  Special keys:
+ \37Num* | Clear\- (Num5)    — ¦the current date and time.
+ \37Num/\-                   — ¦go to a ~date input~@Calendar_Input@ mode.
 
     Implemented ~configurations~@<..\Utils\DateTime\>Contents@
 
  ~Contents~@Contents@
+
+@Calendar_Input
+$ #Calendar for one month#: Date input
+
+  Date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
+where \3AY\-, \3AM\- и \3AD\- are numbers, that represent corresponding year,
+month and day of the inputted date. Missed values are replaced by \3A1\-.
+
+  To input date use following keys:
+ \371—9, 0\- (digits)        — ¦to input date digits.
+ \37Num1—Num9\- (Num‑digits) — ¦to input date digits when NumLock is on.
+ \37‑, Num‑\-                — ¦to input separator between the date parts.
+ \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+
+  After the input completion the inputted date will be displayed in the window.
+
+ ~Contents~@Contents@       ~Calendar for one month~@Calendar@
 
 @rhsConfig
 $ #Rh_Scripts pack configurator# (rhsConfig)

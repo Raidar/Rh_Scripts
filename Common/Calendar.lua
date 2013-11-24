@@ -999,6 +999,8 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
+    --if self.IsInput then return end
+
     local AKey, VMod = AKey, VMod
 
     local DT_cfg = self.DT_cfg
