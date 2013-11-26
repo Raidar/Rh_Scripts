@@ -324,7 +324,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
       LastX = 0, LastY = 0,
       EdgeL = 0, EdgeR = 0,
       EdgeT = 0, EdgeB = 0,
-      EdgeH = 0, EdgeV = 0,
+      BeltWidth = 0, BeltHeight = 0,
       IndentH = 0, IndentV = 0,
       Width = 0, Height = 0,
       Rows = 0, Cols = 0,
@@ -364,8 +364,6 @@ function TMenu:DialogForm () --> (dialog)
              Zone.HomeY,
              Zone.LastX + Zone.EmbScrollV,
              Zone.LastY + Zone.EmbScrollH,
-             --Zone.LastX + b2n(Zone.EmbScrollV),
-             --Zone.LastY + b2n(Zone.EmbScrollH),
              0, 0, 0, 0, "" } }
 end ---- DialogForm
 
@@ -818,31 +816,32 @@ function TMenu:DefineZoneInfo () --| Zone
 
   local MenuOnly = RM.MenuOnly
   do -- Размеры края окна диалога.
+    local MenuEdge = RM.MenuEdge -- по горизонтали
+    Zone.EdgeL = (RM.MenuEdgeL or RM.MenuEdgeH or MenuEdge)
+    Zone.EdgeR = (RM.MenuEdgeR or RM.MenuEdgeH or MenuEdge)
+    MenuEdge = bshr(MenuEdge, 1) -- по вертикали
+    Zone.EdgeT = (RM.MenuEdgeT or RM.MenuEdgeV or MenuEdge)
+    Zone.EdgeB = (RM.MenuEdgeB or RM.MenuEdgeV or MenuEdge)
+    -- Верхняя левая позиция зоны:
     local BoxGage = (MenuOnly or RM.BoxKind == "") and 0 or 1 -- Толщина рамки
     Zone.BoxGage = BoxGage
-    local MenuEdge = RM.MenuEdge -- по горизонтали
-    Zone.EdgeL = (RM.MenuEdgeL or RM.MenuEdgeH or MenuEdge) + BoxGage
-    Zone.EdgeR = (RM.MenuEdgeR or RM.MenuEdgeH or MenuEdge) + BoxGage
-    MenuEdge = bshr(MenuEdge, 1) -- по вертикали
-    Zone.EdgeT = (RM.MenuEdgeT or RM.MenuEdgeV or MenuEdge) + BoxGage
-    Zone.EdgeB = (RM.MenuEdgeB or RM.MenuEdgeV or MenuEdge) + BoxGage
-    -- Верхняя левая позиция зоны
-    Zone.HomeX = Zone.EdgeL
-    Zone.HomeY = Zone.EdgeT
-    Zone.EdgeH = Zone.EdgeL + Zone.EdgeR
-    Zone.EdgeV = Zone.EdgeT + Zone.EdgeB
-    --Zone.EdgeH, Zone.EdgeV = bshl(Zone.HomeX, 1), bshl(Zone.HomeY, 1)
+    Zone.HomeX = Zone.EdgeL + BoxGage
+    Zone.HomeY = Zone.EdgeT + BoxGage
+    -- Размер зоны, опоясывающей меню:
+    Zone.BeltWidth  = Zone.EdgeL + BoxGage + BoxGage + Zone.EdgeR
+    Zone.BeltHeight = Zone.EdgeT + BoxGage + BoxGage + Zone.EdgeB
   end --
-  
+
   do -- Размеры меню окна диалога.
     local MaxWidth  = RM.MaxWidth  or self.Area.Width
     local MaxHeight = RM.MaxHeight or self.Area.Height
     local MinWidth  = min2(RM.MinWidth  or 1, self.Area.Width)
     local MinHeight = min2(RM.MinHeight or 1, self.Area.Height)
-    Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH) - Zone.EdgeH
-    Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV) - Zone.EdgeV
-    --Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.EdgeH + 1) - Zone.EdgeH - 1
-    --Zone.Height = max2(MaxHeight, MinHeight + Zone.EdgeV + 1) - Zone.EdgeV - 1
+    Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.BeltWidth ) - Zone.BeltWidth
+    Zone.Height = max2(MaxHeight, MinHeight + Zone.BeltHeight) - Zone.BeltHeight
+    -- С учётом тени:
+    --Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.BeltWidth  + 1) - Zone.BeltWidth  - 1
+    --Zone.Height = max2(MaxHeight, MinHeight + Zone.BeltHeight + 1) - Zone.BeltHeight - 1
     -- Отображаемые кол-во рядов и реальные размеры.
     Zone.Cols, Zone.Width  = self:VisibleColCount(1)
     Zone.Rows, Zone.Height = self:VisibleRowCount(1)
@@ -940,13 +939,13 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
     end
   end --
 
-  -- Нижняя правая позиция зоны
+  -- Нижняя правая позиция зоны:
   Zone.LastX = Zone.HomeX + Zone.Width  - 1
   Zone.LastY = Zone.HomeY + Zone.Height - 1
 
   -- Размеры окна диалога.
-  Zone.BoxWidth  = Zone.Width  + Zone.EdgeH + Zone.EmbScrollV
-  Zone.BoxHeight = Zone.Height + Zone.EdgeV + Zone.EmbScrollH
+  Zone.BoxWidth  = Zone.Width  + Zone.BeltWidth  + Zone.EmbScrollV
+  Zone.BoxHeight = Zone.Height + Zone.BeltHeight + Zone.EmbScrollH
   --logShow(self.Zone, "self.Zone")
 
   do -- Форма окна:
@@ -2211,12 +2210,10 @@ function TMenu:DrawBorderLine () -- --| Border
   local Color, Colors = self.Colors.Border, self.Colors.Borders
   local BoxChars = SymsBoxChars[self.RectMenu.BoxKind]
   local Zone, Rect, Titles = self.Zone, self.DlgRect, self.Titles
-  local X1 = Rect.Left + Zone.EdgeL - BoxGage
-  local Y1 = Rect.Top  + Zone.EdgeT - BoxGage
-  local X2 = Rect.Left + Zone.LastX + Zone.EmbScrollV + BoxGage
-  local Y2 = Rect.Top  + Zone.LastY + Zone.EmbScrollH + BoxGage
-  --local X2 = Rect.Left + Zone.BoxWidth  - Zone.HomeX
-  --local Y2 = Rect.Top  + Zone.BoxHeight - Zone.HomeY
+  local X1 = Rect.Left + Zone.HomeX - BoxGage
+  local Y1 = Rect.Top  + Zone.HomeY - BoxGage
+  local X2 = Rect.Left + Zone.LastX + 1 + Zone.EmbScrollV
+  local Y2 = Rect.Top  + Zone.LastY + 1 + Zone.EmbScrollH
   local W, H = X2 - X1 - 1, Y2 - Y1 - 1
   --logShow({ X1, Y1, X2, Y2, W, H }, "DrawBorderLine")
   local LineH = BoxChars.H:rep(W)
@@ -2246,7 +2243,7 @@ function TMenu:CalcScrollBars () --| ScrollBars
 
   -- Расчёт параметров прокруток.
   local SH = { -- Горизонтальная прокрутка:
-    X1 = Rect.Left + Zone.EdgeL,
+    X1 = Rect.Left + Zone.HomeX,
     Y1 = Rect.Top  + Zone.LastY + 1,
     X2 = 0, Y2 = 0,
     Length = Zone.Width  - 2, -- За вычетом стрелок
@@ -2256,7 +2253,7 @@ function TMenu:CalcScrollBars () --| ScrollBars
 
   local SV = { -- Вертикальная прокрутка:
     X1 = Rect.Left + Zone.LastX + 1,
-    Y1 = Rect.Top  + Zone.EdgeT,
+    Y1 = Rect.Top  + Zone.HomeY,
     X2 = 0, Y2 = 0,
     Length = Zone.Height - 2, -- За вычетом стрелок
     --Length = Zone.MenuHeight - 2, -- За вычетом стрелок
@@ -2341,24 +2338,23 @@ function TMenu:DrawScrollBars ()
 end ---- DrawScrollBars
 
 function TMenu:DrawStatusBar ()
-  if self.RectMenu.MenuEdge < 2 then return end
+  local self = self
+  local Zone = self.Zone
+  if Zone.EdgeB < 1 then return end
 
-  local Zone, Rect = self.Zone, self.DlgRect
+  local Rect = self.DlgRect
   -- Подсказка пункта меню:
   local Index = self.SelIndex
   local Hint = Index and Index > 0 and self.List[Index].Hint or ""
 
   Rect = {
     x = Rect.Left + Zone.HomeX,
-    --y = Rect.Top + Zone.LastY + 2 + Zone.EmbScrollH,
-    --y = Rect.Top + Zone.LastY + 1 + Zone.BoxGage + Zone.EmbScrollH,
-    y = Rect.Top +
-        Zone.HomeY + Zone.Height +
-        --Zone.HomeY + Zone.MenuHeight +
-        Zone.BoxGage + Zone.EmbScrollH, -- TODO: Check
+    y = Rect.Top  + Zone.LastY + 1 + Zone.EmbScrollH + Zone.BoxGage,
     h = 1,
+    --h = Zone.EdgeB,
     w = Zone.Width,
   }
+  --logShow(Rect, "DrawStatusBar")
 
   LineFill(Rect, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
