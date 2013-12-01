@@ -2260,7 +2260,7 @@ function TMenu:CalcScrollBars () --| ScrollBars
   } --- SV
   SV.X2, SV.Y2 = SV.X1, SV.Y1 + SV.Length + 1
 
-  self.ScrollBars = { ScrollH = SH, ScrollV = SV }
+  self.ScrollBars = { ScrollH = SH, ScrollV = SV, }
 end ---- CalcScrollBars
 
 -- Расчёт параметров каретки прокрутки.
@@ -2290,9 +2290,10 @@ local ArrowX = BlackShapes.Romb  -- Стрелки: пересечение по�
 
 -- Формирование рисунка полосы прокрутки.
 local function ScrollBar (Bar) --> (string)
-  local Tail = Bar.Length - Bar.End
-  return ((Bar.Pos > 1) and Strap:sub(1, Bar.Pos - 1) or "")..
-         Caret:sub(1, Bar.Len)..((Tail > 0) and Strap:sub(1, Tail) or "")
+  local Head, Tail = Bar.Pos - 1, Bar.Length - Bar.End
+  return ((Head > 0) and Strap:sub(1, Head) or "")..
+         Caret:sub(1, Bar.Len)..
+         ((Tail > 0) and Strap:sub(1, Tail) or "")
 end -- ScrollBar
 
 -- Рисование полос прокрутки меню.
@@ -2359,6 +2360,27 @@ function TMenu:DrawStatusBar ()
   LineFill(Rect, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 
+--[[
+function TMenu:DrawEdges ()
+  local self = self
+  local Zone = self.Zone
+
+  local Rect, EdgeRect = self.DlgRect
+
+  EdgeRect = {
+    x = Rect.Left,
+    y = Rect.Top,
+    h = Zone.EdgeT,
+    w = Zone.BoxWidth,
+    color = self.Colors.StatusBar,
+    text = "",
+  }
+  --logShow(Rect, "DrawEdges")
+
+  LineFill(Rect, Rect.color, text)
+end ---- DrawEdges
+]]--
+
 -- Обработчик рисования меню.
 function TMenu:DoMenuDraw (Rect)
   local self = self
@@ -2406,7 +2428,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
 --[[ 2.1. Рисование меню в диалоге ]]
 
-  -- Обработчик рисования меню:
+  -- Обработка рисования меню:
   local function DlgItemDraw (hDlg, ProcItem, DlgItem) --> (bool)
     local Form = _Menu.Form
     if not Form then return end
@@ -2419,15 +2441,19 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   --local NoDlgClose -- Нет выбора пункта меню для спец. действий.
   local InputRecordToName = (require "far2.keynames").InputRecordToName
 
-  -- Обработчик нажатия клавиши клавиатуры:
-  local function DlgKeyInput (hDlg, ProcItem, VirKey) --> (bool)
+  -- Обработка управления клавиатурой.
+  local function DlgKeyInput (hDlg, ProcItem, Input) --> (bool)
     --logShow(_Menu, "_Menu", "d1 bns")
 
-    local StrKey = InputRecordToName(VirKey) or ""
-    VirKey.Name = StrKey
-    VirKey.StateName, VirKey.KeyName = ParseKeyName(StrKey)
+    --logShow(Input, ProcItem, "d1 x8")
+    local StrKey = InputRecordToName(Input) or ""
+    Input.Name = StrKey
+    Input.StateName, Input.KeyName = ParseKeyName(StrKey)
+    if Input.KeyName == "" and Input.StrName then 
+      Input.KeyName = Input.StrName
+    end
+    --logShow(Input, StrKey, "d1 x8")
 
-    --logShow(VirKey, StrKey, "d1 x8")
     -- 1. Обработка специальных нажатий.
     if StrKey == "F1" then -- Получение помощи:
       return farUt.ShowHelpTopic(_Menu.Props.HelpTopic)
@@ -2438,32 +2464,70 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     end
 
     -- 2. Обработка обычных нажатий.
-    return _Menu:DoKeyPress(hDlg, VirKey)
+    return _Menu:DoKeyPress(hDlg, Input)
   end -- DlgKeyInput
 
   -- [[
   local MouseLeftBtn    = F.FROM_LEFT_1ST_BUTTON_PRESSED
-  local MouseDblClick   = F.DOUBLE_CLICK
+  local MouseClickDbl   = F.DOUBLE_CLICK
+  local MouseMoved      = F.MOUSE_MOVED
+  local MouseWheeledV   = F.MOUSE_WHEELED
+  local MouseWheeledH   = F.MOUSE_HWHEELED or 0x8 -- FIX
 
-  -- Обработчик обработки нажатия кнопки мыши.
-  local function DlgMouseInput (hDlg, ProcItem, MouseRec) --> (bool)
-    --logShow(MouseRec, ProcItem, 3)
+  -- Обработка прокрутки мышью.
+  local function DlgMouseWheel (hDlg, ProcItem, Input) --> (bool)
+    local Input = Input
+
+    local Delta = bshr(Input.ButtonState, 16)
+    if Delta >= 0x8000 then Delta = Delta - 0x10000 end
+
+    if     Input.EventFlags == MouseWheeledV then
+      --logShow({ Delta, Input }, ProcItem, "d3")
+      Input.StrName = Delta >= 0 and "MSWheelUp" or "MSWheelDown"
+    elseif Input.EventFlags == MouseWheeledH then
+      --logShow(Input, ProcItem, "d3 x1")
+      Input.StrName = Delta >= 0 and "MSWheelRight" or "MSWheelLeft"
+    else
+      return false
+    end
+
+    Input.EventType = F.KEY_EVENT
+    Input.VirtualKeyCode = 0x00
+    Input.UnicodeChar = ""
+
+    return DlgKeyInput(hDlg, ProcItem, Input)
+  end -- DlgMouseWheel
+
+  -- Обработка управления мышью.
+  local function DlgMouseInput (hDlg, ProcItem, Input) --> (bool)
+
     if ProcItem == -1 then return false end
 
-    if MouseRec.ButtonState == MouseLeftBtn then
+    --logShow({ MouseClickDbl, MouseMoved, '-',
+    --          MouseWheeledV, MouseWheeledH, '-', }, ProcItem, 3)
+
+    local Input = Input
+    --logShow(Input, ProcItem, 3)
+    --if not Input.X then logShow(Input, ProcItem, 3) end
+
+    if Input.ButtonState == MouseLeftBtn then
       local Zone = _Menu.Zone
-      local x, y = MouseRec.MousePositionX, MouseRec.MousePositionY
-      --logShow({ x, y, Zone = Zone, MouseRec = MouseRec, }, ProcItem, 3)
+      local x, y = Input.MousePositionX, Input.MousePositionY
+      --logShow({ x, y, Zone = Zone, Input = Input, }, ProcItem, 3)
+
+      -- TODO: Проверка на области вне меню: рамка, край!
 
       -- Обработка прокрутки мышью.
-      if Zone.Is_ScrollH and y == Zone.Height then
-        return _Menu:ScrollHClick(hDlg, _Menu.DlgRect.Left + Zone.HomeX + x)
-      elseif Zone.Is_ScrollV and x == Zone.Width then
-        return _Menu:ScrollVClick(hDlg, _Menu.DlgRect.Top  + Zone.HomeY + y)
+      if     Zone.Is_ScrollH and y == Zone.Height + Zone.EmbScrollV then
+        return _Menu:ScrollHClick(hDlg, Input.X or
+                                        _Menu.DlgRect.Left + Zone.HomeX + x)
+      elseif Zone.Is_ScrollV and x == Zone.Width  + Zone.EmbScrollH then
+        return _Menu:ScrollVClick(hDlg, Input.Y or
+                                        _Menu.DlgRect.Top  + Zone.HomeY + y)
       end
 
       -- Обработка выбором мышью.
-      if MouseRec.EventFlags == MouseDblClick then
+      if Input.EventFlags == MouseClickDbl then
         return _Menu:MouseDblClick(hDlg, x, y)
       else
         return _Menu:MouseBtnClick(hDlg, x, y)
@@ -2474,40 +2538,70 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   end -- DlgMouseInput
   --]]
 
-  -- Обработчик нажатия клавиши / кнопки:
+  -- Обработка управления клавиатурой и мышью.
   local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
 
     --logShow(Input, "Event", "d1 x8")
     local EventType = Input.EventType
 
-    if EventType == F.MOUSE_EVENT then
-      return DlgMouseInput(hDlg, ProcItem, Input)
-    elseif EventType == F.KEY_EVENT or
-           EventType == F.FARMACRO_KEY_EVENT then
+    if EventType == F.KEY_EVENT or
+       EventType == F.FARMACRO_KEY_EVENT then
       return DlgKeyInput(hDlg, ProcItem, Input)
+    end
+
+    if EventType == F.MOUSE_EVENT then
+      if Input.EventFlags == MouseWheeledV or
+         Input.EventFlags == MouseWheeledH then
+        return DlgMouseWheel(hDlg, ProcItem, Input) -- FIX
+      end
+
+      if not _Menu.RectMenu.DoMouseEvent and
+         Input.ButtonState == MouseLeftBtn then
+        return DlgMouseInput(hDlg, ProcItem, Input)
+      end
     end
 
     return false
   end -- DlgCtrlInput
 
-  -- Обработчик предобработки нажатия кнопки мыши.
-  local function DlgPredInput (hDlg, ProcItem, MouseRec) --> (bool)
-    --local Zone = _Menu.Zone
-    --local X, Y = MouseRec.MousePositionX, MouseRec.MousePositionY
-    if isFlag(MouseRec.ButtonState or 0, F.FROM_LEFT_1ST_BUTTON_PRESSED) then
-    end
-    --logShow({ MouseRec }, ProcItem, 2)
+  -- Предобработка управления мышью.
+  local function DlgPredInput (hDlg, ProcItem, Input) --> (bool)
+    local Input = Input
+    --logShow(Input, ProcItem, 3)
 
+    if Input.EventFlags == MouseMoved then return true end
+
+    local Zone = _Menu.Zone
+    local Rect = GetRect(hDlg)
+    local x, y = Input.MousePositionX, Input.MousePositionY
+    Input.X = x
+    Input.Y = y
+    Input.MousePositionX = x - Rect.Left - Zone.HomeX
+    Input.MousePositionY = y - Rect.Top  - Zone.HomeY
+
+    if Input.EventFlags == MouseWheeledV or
+       Input.EventFlags == MouseWheeledH then
+      --logShow(Input, ProcItem, 3)
+      return not DlgMouseWheel(hDlg, ProcItem, Input)
+    end
+
+    if Input.ButtonState == MouseLeftBtn then
+      --logShow({ Input, Zone }, ProcItem, 2)
+      return not DlgMouseInput(hDlg, ProcItem, Input)
+    end
+    --logShow({ Input, Zone }, ProcItem, 2)
+    
     return true
   end -- DlgPredInput
 
+  -- Инициализация обработки.
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
     if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
       SendDlgMessage(hDlg, F.DM_SETMOUSEEVENTNOTIFY, 1, 0)
     end
 
     return true
-  end --
+  end -- DlgInit
 
   --[[
   local function DlgClose (hDlg, ProcItem, NoUse) --> (bool)
@@ -2518,16 +2612,19 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Ссылки на обработчики событий:
   local Procs = {
-    [F.DN_CONTROLINPUT] = DlgCtrlInput,
-    [F.DN_INPUT]        = DlgPredInput,
-    [F.DN_CTLCOLORDIALOG]  = DlgGetCtlColor,
-    [F.DN_CTLCOLORDLGITEM] = DlgGetBoxColor,
-    [F.DN_DRAWDLGITEM] = DlgItemDraw,
     [F.DN_INITDIALOG] = DlgInit,
     --[F.DN_CLOSE] = DlgClose,
+
+    [F.DN_INPUT]        = DlgPredInput,
+    [F.DN_CONTROLINPUT] = DlgCtrlInput,
+
+    [F.DN_CTLCOLORDIALOG]  = DlgGetCtlColor,
+    [F.DN_CTLCOLORDLGITEM] = DlgGetBoxColor,
+
+    [F.DN_DRAWDLGITEM] = DlgItemDraw,
   } --- Procs
 
-  -- Обработчик событий диалога.
+  -- Обработчик событий.
   local function DlgProc (hDlg, msg, param1, param2)
     return Procs[msg] and Procs[msg](hDlg, param1, param2) or nil
   end --
