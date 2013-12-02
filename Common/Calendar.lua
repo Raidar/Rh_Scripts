@@ -367,7 +367,7 @@ function TMain:MakeProps ()
   self.ColCount = self.InfoCols + self.WeekCols + 1
 
   -- Свойства RectMenu:
-  local RM_Props = {
+  local RM = {
     Order = "V",
     Rows = self.RowCount,
     --Cols = self.ColCount,
@@ -388,8 +388,10 @@ function TMain:MakeProps ()
 
     Colors = self.Colors,
 
-  } --- RM_Props
-  Props.RectMenu = RM_Props
+    IsStatusBar = true,
+
+  } --- RM
+  Props.RectMenu = RM
 
   return true
 end ---- MakeProps
@@ -1164,11 +1166,11 @@ function TMain:AssignEvents () --> (bool | nil)
   end -- ChooseItem
 
   -- Назначение обработчиков:
-  local RM_Props = self.Props.RectMenu
-  RM_Props.OnKeyPress = KeyPress
-  RM_Props.OnNavKeyPress = NavKeyPress
-  RM_Props.OnSelectItem = SelectItem
-  RM_Props.OnChooseItem = ChooseItem
+  local RM = self.Props.RectMenu
+  RM.OnKeyPress = KeyPress
+  RM.OnNavKeyPress = NavKeyPress
+  RM.OnSelectItem = SelectItem
+  RM.OnChooseItem = ChooseItem
 end -- AssignEvents
 
 end --

@@ -2344,11 +2344,7 @@ function TMenu:DrawStatusBar ()
   if Zone.EdgeB < 1 then return end
 
   local Rect = self.DlgRect
-  -- Подсказка пункта меню:
-  local Index = self.SelIndex
-  local Hint = Index and Index > 0 and self.List[Index].Hint or ""
-
-  Rect = {
+  self.StatusBar = {
     x = Rect.Left + Zone.HomeX,
     y = Rect.Top  + Zone.LastY + 1 + Zone.EmbScrollH + Zone.BoxGage,
     h = 1,
@@ -2357,7 +2353,11 @@ function TMenu:DrawStatusBar ()
   }
   --logShow(Rect, "DrawStatusBar")
 
-  LineFill(Rect, self.Colors.StatusBar, Hint)
+  -- Подсказка пункта меню:
+  local Index = self.SelIndex
+  local Hint = Index and Index > 0 and self.List[Index].Hint or ""
+
+  LineFill(self.StatusBar, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 
 --[[
@@ -2381,9 +2381,29 @@ function TMenu:DrawEdges ()
 end ---- DrawEdges
 ]]--
 
+function TMenu:DrawDebugInfo ()
+  local self = self
+  local Color = 0x74
+
+  local Rect = self.DlgRect
+  local X, Y = Rect.Left, Rect.Top
+
+  local function DbgText (x, y, text)
+    HText(X + x, Y + y, Color, text)
+  end --
+
+  local Zone = self.Zone
+  DbgText(Zone.HomeX, Zone.HomeY, "H")
+  DbgText(Zone.LastX, Zone.LastY, "L")
+  local Bar = self.StatusBar
+  HText(Bar.x, Bar.y, Color, "⟨")
+  HText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, Color, "⟩")
+end ---- DrawDebugInfo
+
 -- Обработчик рисования меню.
 function TMenu:DoMenuDraw (Rect)
   local self = self
+  local RM = self.RectMenu
 
   --logShow(Rect, "DoMenuDraw")
   if Rect then self.DlgRect = Rect end
@@ -2393,7 +2413,10 @@ function TMenu:DoMenuDraw (Rect)
   --self:DrawSepars() -- Разделители пунктов
   self:DrawBorderLine() -- Рамка вокруг меню
   self:DrawScrollBars() -- Полосы прокрутки
-  self:DrawStatusBar()  -- Статусная строка
+
+  if RM.IsStatusBar then self:DrawStatusBar() end -- Статусная строка
+
+  if RM.IsDebugDraw then self:DrawDebugInfo() end -- Отладочные сведения
 
   return true
 end ---- DoMenuDraw
@@ -2449,7 +2472,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     local StrKey = InputRecordToName(Input) or ""
     Input.Name = StrKey
     Input.StateName, Input.KeyName = ParseKeyName(StrKey)
-    if Input.KeyName == "" and Input.StrName then 
+    if Input.KeyName == "" and Input.StrName then
       Input.KeyName = Input.StrName
     end
     --logShow(Input, StrKey, "d1 x8")
@@ -2590,7 +2613,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
       return not DlgMouseInput(hDlg, ProcItem, Input)
     end
     --logShow({ Input, Zone }, ProcItem, 2)
-    
+
     return true
   end -- DlgPredInput
 

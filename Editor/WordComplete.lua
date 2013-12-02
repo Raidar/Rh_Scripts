@@ -646,16 +646,16 @@ function TMain:MakeProps ()
   self.Menu.BreakUseKeys = menUt.ParseMenuHandleKeys(self.Menu.LocalUseKeys)
 
   -- Свойства RectMenu:
-  local RM_Props = Props.RectMenu or {}
-  Props.RectMenu = RM_Props
-  RM_Props.Cols = 1
-  RM_Props.BoxKind = "S"
-  RM_Props.Shadowed = false
-  --RM_Props.MenuOnly = true
+  local RM = Props.RectMenu or {}
+  Props.RectMenu = RM
+  RM.Cols = 1
+  RM.BoxKind = "S"
+  RM.Shadowed = false
+  --RM.MenuOnly = true
 
   local SelectedBG = Cfg.SelectedBG
   local SelColors = Colors.Selected
-  RM_Props.Colors = {
+  RM.Colors = {
     Selected = {
       normal  = setBG(SelColors.normal, SelectedBG),
       hlight  = setBG(SelColors.hlight, SelectedBG),
@@ -665,21 +665,21 @@ function TMain:MakeProps ()
     }, --
 
     BorderAngle = Cfg.AngleColor or nil,
-  } -- RM_Props.Colors
+  } -- RM.Colors
 
-  RM_Props.MenuEdge = 0 --1
-  RM_Props.AltHotOnly = true
+  RM.MenuEdge = 0 --1
+  RM.AltHotOnly = true
 
   do -- Значения для списка-меню:
     local Info = EditorGetInfo()
-    local BoxLen = RM_Props.BoxKind and 2 or 0
+    local BoxLen = RM.BoxKind and 2 or 0
     local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
 
     self.Popup = {
-      LenH = BoxLen + bshl(RM_Props.MenuEdge, 1),
+      LenH = BoxLen + bshl(RM.MenuEdge, 1),
                     --+ (Cfg.HotChars and 2 or 0),
-      LenV = BoxLen + bshl(bshr(RM_Props.MenuEdge, 1), 1),
-      PosX = max2(CurPos.X - (Info.CurPos - Info.LeftPos), 0),
+      LenV = BoxLen + bshl(bshr(RM.MenuEdge, 1), 1),
+      PosX = max2(CurPos.X - (Info.CurPos  - Info.LeftPos), 0),
       PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
       --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
     } -- Popup
@@ -1053,9 +1053,9 @@ function TMain:MakePopupMenu () --> (table)
   Props.Id = Props.Id or self.PopupGuid
   Props.HelpTopic = self.Custom.help.tlink
 
-  local RM_Props = Props.RectMenu
-  --logShow(RM_Props, "RectMenu Props")
-  if Cfg.SlabMark then RM_Props.TextMark = MakeSlabMark() end -- Маркировка
+  local RM = Props.RectMenu
+  --logShow(RM, "RectMenu Props")
+  if Cfg.SlabMark then RM.TextMark = MakeSlabMark() end -- Маркировка
   -- Расчёт позиции и размера окна:
   local Info, Popup = EditorGetInfo(), self.Popup
   Width, Height = Width + Popup.LenH, Height + Popup.LenV
@@ -1068,7 +1068,7 @@ function TMain:MakePopupMenu () --> (table)
     y = Info.CurLine - Info.TopScreenLine + Popup.PosY,
     angle = "",
   } ---
-  --logShow({ RM_Props.MenuEdge, Width, Height, Pos, Info }, "Position")
+  --logShow({ RM.MenuEdge, Width, Height, Pos, Info }, "Position")
   if Pos.y <= Height then
     Pos.y = Pos.y + 1
     Pos.angle = "T"
@@ -1084,13 +1084,13 @@ function TMain:MakePopupMenu () --> (table)
     Pos.x = Pos.x - Width - 1
     Pos.angle = Pos.angle.."R"
   end
-  RM_Props.Position = Pos
+  RM.Position = Pos
 
-  local Colors = RM_Props.Colors
+  local Colors = RM.Colors
   if Colors.BorderAngle then
     Colors.Borders = { [Pos.angle] = Colors.BorderAngle, }
   end
-  --logShow(RM_Props.Position, "RectMenu Position")
+  --logShow(RM.Position, "RectMenu Position")
   --logShow(Items, "Items")
 
   return true
@@ -1368,8 +1368,8 @@ function TMain:AssignEvents () --> (bool | nil)
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
 
   -- Назначение обработчика:
-  local RM_Props = self.Props.RectMenu
-  RM_Props.OnKeyPress = KeyPress
+  local RM = self.Props.RectMenu
+  RM.OnKeyPress = KeyPress
 end -- AssignEvents
 
 end --

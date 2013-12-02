@@ -493,22 +493,23 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
 
   local Fixed = Config.Fixed or DefFixedBoth
 
-  local RM_Props = Props.RectMenu or {}
-  RM_Props.Cols         = (Props.Size or length(Props.Order)) +
-                          (Fixed == DefFixedBoth and 1 or 0)
-  RM_Props.MenuAlign    = DefMenuAlign
-  RM_Props.MenuEdge     = 2
-  RM_Props.Fixed        = Fixed
-  if RM_Props.ReuseItems == nil then RM_Props.ReuseItems = true end
+  local RM = Props.RectMenu or {}
+  RM.Cols         = (Props.Size or length(Props.Order)) +
+                    (Fixed == DefFixedBoth and 1 or 0)
+  RM.MenuAlign    = DefMenuAlign
+  RM.MenuEdge     = 2
+  RM.IsStatusBar  = true
+  RM.Fixed        = Fixed
+  if RM.ReuseItems == nil then RM.ReuseItems = true end
 
-  RM_Props.OnChooseItem = ChooseItem
-  ----- RM_Props
+  RM.OnChooseItem = ChooseItem
+  ----- RM
   
   local Properties = {
     Id = Guid,
     Bottom = Config.Bottom,
 
-    RectMenu = RM_Props,
+    RectMenu = RM,
   } --- Properties
 
   --[[

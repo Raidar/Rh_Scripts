@@ -168,15 +168,17 @@ function TMain:MakeProps ()
   --Props.Title = L.Calendar
 
   -- Свойства RectMenu:
-  local RM_Props = {
+  local RM = {
     Cols = 2,
     Order = "V",
     Separators = "V",
     --BoxKind = "R",
     MenuAlign = "CM",
     UncheckedChar = " ",
+
+    IsStatusBar = true,
   } -- RectMenu
-  Props.RectMenu = RM_Props
+  Props.RectMenu = RM
 
   return true
 end ---- MakeProps

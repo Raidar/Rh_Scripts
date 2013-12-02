@@ -265,7 +265,7 @@ function TMain:MakeProps ()
   --Props.Bottom = L.CharsMapKeys
 
   -- Свойства RectMenu:
-  local RM_Props = {
+  local RM = {
     Order = "H",
     --Rows = self.RowCount,
     Cols = self.ColCount,
@@ -291,11 +291,13 @@ function TMain:MakeProps ()
 
     Colors = self.Colors,
 
+    IsStatusBar = true,
+
     --RectItem = {
     --  TextMark = true,
     --},
-  } --- RM_Props
-  Props.RectMenu = RM_Props
+  } --- RM
+  Props.RectMenu = RM
 
   self.RectItem = {
     TextMark = true,
@@ -759,11 +761,11 @@ function TMain:AssignEvents () --> (bool | nil)
   end -- ChooseItem
 
   -- Назначение обработчиков:
-  local RM_Props = self.Props.RectMenu
-  RM_Props.OnKeyPress = KeyPress
-  RM_Props.OnNavKeyPress = NavKeyPress
-  --RM_Props.OnSelectItem = SelectItem
-  RM_Props.OnChooseItem = ChooseItem
+  local RM = self.Props.RectMenu
+  RM.OnKeyPress = KeyPress
+  RM.OnNavKeyPress = NavKeyPress
+  --RM.OnSelectItem = SelectItem
+  RM.OnChooseItem = ChooseItem
 end -- AssignEvents
 
 end --

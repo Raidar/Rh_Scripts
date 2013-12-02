@@ -251,14 +251,20 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   Props.Title = Props.Title or "Menu"
   local Title = Props.Title
   -- TODO: М/б, лучше сделать отдельно от titles.
-  if not Title:find("%s", 1, true) then Title = Title.." "..CharsText end
+  if not Title:find("%s", 1, true) then
+    Title = Title.." "..CharsText
+  end
+
   Props.Bottom = Props.Bottom or ""
   local Bottom = Props.Bottom
-  if Bottom == "" then Bottom = ItemsText
+  if Bottom == "" then
+    Bottom = ItemsText
   elseif not Bottom:find("%d", 1, true) then
-    Bottom = Bottom.." "..ItemsText end
+    Bottom = Bottom.." "..ItemsText
+  end
   if not Bottom:find("%s", 1, true) and ShowCheck then
-    Bottom = Bottom.." "..CheckText end
+    Bottom = Bottom.." "..CheckText
+  end
 
   -- Отображение пунктов для фильтрации.
   local MapItems = MappingItems(Items)
@@ -370,9 +376,9 @@ function unit.Menu (Properties, Items, BreakKeys) --| (menu)
   end -- KeyPress
 
   -- Назначение обработчика:
-  local RM_Props = Props.RectMenu or {}
-  Props.RectMenu = RM_Props
-  RM_Props.OnKeyPress = KeyPress
+  local RM = Props.RectMenu or {}
+  Props.RectMenu = RM
+  RM.OnKeyPress = KeyPress
 
   -- Предварительный отбор:
   ApplyFilter() -- для отображения надписей!

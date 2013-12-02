@@ -73,7 +73,7 @@ local function dometaFields (t, u) --|> (t)
 
   return t
   --]]
-end --
+end -- dometaFields
 
 -- Формирование таблицы по базовой и "индексной" таблицам.
 --[[
@@ -84,7 +84,7 @@ end --
 local function makeFields (t, u) --> (table)
   local t = copyFields(t) or {} -- Заполнение
   return dometaFields(t, u)     -- "Индексирование"
-end ----
+end -- makeFields
 
 ---------------------------------------- Menu class
 local TMenu = {
@@ -230,10 +230,10 @@ function TMenu:FillProperties (Props, Table) --|> (Props)
   updateFields(Props, TableProps)
 
   -- RectMenu --
-  local RM_Props = Props.RectMenu or {}
+  local RM = Props.RectMenu or {}
   Props.Id = Props.Id or self.Guid
-  Props.RectMenu = RM_Props
-  updateFields(RM_Props, TableProps.RectMenu)
+  Props.RectMenu = RM
+  updateFields(RM, TableProps.RectMenu)
   --Table.RectMenu = Table.RectMenu or {}
 
   -- FilterMenu --
