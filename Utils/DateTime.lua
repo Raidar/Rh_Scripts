@@ -90,6 +90,8 @@ function unit.fillCfgTime (Config) --|> Config
   return Config
 end ---- fillCfgTime
 
+  local divc = numbers.divc
+
 -- Fill month days with additional data.
 -- Заполнение дней месяцев дополнительными данными.
 function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
@@ -104,8 +106,8 @@ function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
   MonthDays.Min = Min
   MonthDays.Max = Max
 
-  MonthDays.WeekMin = numbers.divc(Min, DayPerWeek) + 1
-  MonthDays.WeekMax = numbers.divc(Max, DayPerWeek) + 1
+  MonthDays.WeekMin = divc(Min, DayPerWeek) + 1
+  MonthDays.WeekMax = divc(Max, DayPerWeek) + 1
 
   return MonthDays
 end ---- fillMonthDaysData

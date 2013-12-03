@@ -18,8 +18,8 @@
 local setmetatable = setmetatable
 
 ----------------------------------------
---local bit = bit64
---bshr = bit.rshift
+local bit = bit64
+bshr = bit.rshift
 
 ----------------------------------------
 local far = far

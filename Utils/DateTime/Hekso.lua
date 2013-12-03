@@ -23,8 +23,8 @@ local tables = require 'context.utils.useTables'
 --local numbers = require 'context.utils.useNumbers'
 local locale = require 'context.utils.useLocale'
 
---local divf = numbers.divf
---local divm = numbers.divm
+--local divf  = numbers.divf
+--local divm  = numbers.divm
 
 --------------------------------------------------------------------------------
 local unit = {}

@@ -160,7 +160,7 @@ $ #Menu window properties#: RectMenu
   #Shadowed# (bool) — Output of shadow for menu window.
   — ¦It controls a display of shadow for menu window.
   — ¦Default value is \37true\-.
-  — ¦If #MenuOnly# \37== true\- it is equal to\37false\-.
+  — ¦If #MenuOnly# \37== true\- it is equal to \37false\-.
 
   #MenuEdge# (number) — Indent for menu from window edge.
   — ¦It specifies an empty space between menu and window.
@@ -172,14 +172,14 @@ $ #Menu window properties#: RectMenu
   #MenuAlign# (string) — Menu alignment within window:
   — ¦Default value is \37"LT"\-.
   — ¦Values for horizontal (according to priority):
-    \37"L"\- — left, \37"R"\- — right, \37"C"\- — center.
+    \37"L"\- — left, \37"R"\- — right, \37"C"\- — center.
   — ¦Values for vertical (according to priority):
-    \37"T"\- — top, \37"B"\- — bottom, \37"M"\- — middle.
+    \37"T"\- — top, \37"B"\- — bottom, \37"M"\- — middle.
 
   #BoxKind# (string) — Kind of box around menu.
   — ¦Accepted values:
-    \37false\- — no box at all, \37""\-  — "empty" box,
-    \37"S"\-   — single box,    \37"D"\- — double box (by default).
+    \37false\- — no box,     \37""\-  — "empty" box,
+    \37"S"\-   — single box, \37"D"\- — double box (by default).
 
   #BoxScroll# (bool) — Output of scroll bars on menu box.
   — ¦It controls a position of scroll bars:
