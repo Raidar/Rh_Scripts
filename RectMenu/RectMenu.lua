@@ -1736,8 +1736,12 @@ function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Data)
   local Data, Flags = OnKeyPress(VirKey, self:GetSelectIndex())
   --logShow({ VirKey, Table, Flags }, "OnKeyPress", , "w d2")
   Flags = Flags or Null -- or {}
-  if Flags.isCancel then self.SelIndex = nil end
-  if Flags.isClose or Flags.isCancel then return CloseDialog(hDlg) end
+  if Flags.isCancel then
+    self.SelIndex = nil
+  end
+  if Flags.isClose or Flags.isCancel then
+    return CloseDialog(hDlg)
+  end
 
   if type(Data) == 'table' then
     self:UpdateAll(hDlg, Flags, Data)
@@ -1779,7 +1783,8 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
       --logShow({ AKey, VMod }, SelIndex, "w h8 d1")
       return self:ArrowKeyPress(hDlg, AKey, VMod, true)
     end
-  end
+
+  end -- if SelIndex
 
   -- 2. Обработка быстрого выбора.
   local isOk = self:RapidKeyPress(hDlg, VirKey)
@@ -1806,7 +1811,9 @@ end ---- DoKeyPress
   Fixes  (table) - данные о фиксированных рядах.
 --]]
 local function MousePosToCat (Len, Sep, Total, Pos, Base, Fixes) --> (number)
-  if Pos >= Total then return #Len + 1 end
+  if Pos >= Total then
+    return #Len + 1
+  end
 
   local k, L = Base, Fixes.HeadLen
   local Count = Fixes.Max
@@ -1836,10 +1843,11 @@ end -- CheckMouseOut
 --]]
 
 -- Обработка обычного нажатия левой кнопки мыши в меню.
-function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
+function TMenu:MouseBtnClick (hDlg, Input) --> (bool)
   local self = self
-
   self.DebugClickChar = "M"
+
+  local x, y = Input.x, Input.y
 
   --[[
   local AKey = CheckMouseOut(self.Data.ColSep, self.Zone.Width,
@@ -1884,11 +1892,36 @@ function TMenu:MouseBtnClick (hDlg, x, y) --> (bool)
 end ---- MouseBtnClick
 
 -- Обработка двойного нажатия левой кнопки мыши в меню.
-function TMenu:MouseDblClick (hDlg, x, y) --> (bool)
+function TMenu:MouseDblClick (hDlg, Input) --> (bool)
+  local self = self
   self.DebugClickChar = "D"
+
+  --local x, y = Input.x, Input.y
 
   return self:DefaultChooseItem(hDlg, "DblClick")
 end ---- MouseDblClick
+
+function TMenu:MouseBorderClick (hDlg, Input)
+  local self = self
+  self.DebugClickChar = "B"
+
+  --local x, y = Input.x, Input.y
+
+  -- TODO: Пользовательское действие!
+
+  return self:DoMenuDraw() -- Перерисовка меню
+end ---- MouseBorderClick
+
+function TMenu:MouseEdgeClick (hDlg, Input)
+  local self = self
+  self.DebugClickChar = "E"
+
+  --local x, y = Input.x, Input.y
+
+  -- TODO: Пользовательское действие!
+
+  return self:DoMenuDraw() -- Перерисовка меню
+end ---- MouseEdgeClick
 
 ---------------------------------------- ---- Scroll
 do
@@ -1906,13 +1939,14 @@ local function ScrollPosToCat (ALen, Pos, Cats, Bar) --> (number)
 end -- ScrollPosToCat
 
 -- Обработка горизонтальной прокрутки.
-function TMenu:ScrollHClick (hDlg, pos)
+function TMenu:ScrollHClick (hDlg, Input)
   local self = self
+  self.DebugClickChar = "H"
+
+  local pos = Input.X
   local Bar = self.ScrollBars.ScrollH
   --logShow(Bar, pos, 2)
   if pos < Bar.X1 or pos > Bar.X2 then return false end
-
-  self.DebugClickChar = "H"
 
   if     pos == Bar.X1 then
     return self:ArrowKeyPress(hDlg, "Left", 0, true)
@@ -1935,13 +1969,14 @@ function TMenu:ScrollHClick (hDlg, pos)
 end ---- ScrollHClick
 
 -- Обработка вертикальной прокрутки.
-function TMenu:ScrollVClick (hDlg, pos)
+function TMenu:ScrollVClick (hDlg, Input)
   local self = self
+  self.DebugClickChar = "V"
+
+  local pos = Input.Y
   local Bar = self.ScrollBars.ScrollV
   --logShow(Bar, pos, 2)
   if pos < Bar.Y1 or pos > Bar.Y2 then return false end
-
-  self.DebugClickChar = "V"
 
   if     pos == Bar.Y1 then
     return self:ArrowKeyPress(hDlg, "Up", 0, true)
@@ -1965,9 +2000,8 @@ function TMenu:ScrollVClick (hDlg, pos)
 end ---- ScrollVClick
 
 -- Обработка "пересечения" полос прокрутки.
-function TMenu:ScrollXClick (hDlg)
+function TMenu:ScrollXClick (hDlg, Input)
   local self = self
-
   self.DebugClickChar = "X"
 
   -- TODO: Какое действие выполнять? На первый/последний элемент?
@@ -2001,15 +2035,19 @@ function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
   local Data, Flags = OnChooseItem(Kind, self:GetSelectIndex())
   --logShow({ Data, Flags }, "OnChooseItem", 2)
   Flags = Flags or Null -- or {}
-  if Flags.isCancel then self.SelIndex = nil end
-  if Flags.isClose or Flags.isCancel then return CloseDialog(hDlg) end
+  if Flags.isCancel then
+    self.SelIndex = nil
+  end
+  if Flags.isClose or Flags.isCancel then
+    return CloseDialog(hDlg)
+  end
 
   if type(Data) == 'table' then
     self:UpdateAll(hDlg, Flags, Data)
     return true
   end
 
-  return true
+  return Data
 end ---- ChooseItem
 
 -- Обработка выбора пункта по умолчанию.
@@ -2411,7 +2449,7 @@ function TMenu:DrawStatusBar ()
   local Index = self.SelIndex
   local Hint = Index and Index > 0 and self.List[Index].Hint or ""
 
-  LineFill(self.StatusBar, self.Colors.StatusBar, Hint)
+  return LineFill(self.StatusBar, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 
 --[[
@@ -2458,8 +2496,10 @@ function TMenu:DrawDebugInfo ()
   DbgDraw(Zone.LastX, Zone.LastY, "L")
 
   local Bar = self.StatusBar
-  DbgText(Bar.x, Bar.y, "⟨")
-  DbgText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, "⟩")
+  if Bar then
+    DbgText(Bar.x, Bar.y, "⟨")
+    DbgText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, "⟩")
+  end
 
   if self.DebugClickChar then
     DbgDraw(Zone.HomeX - 1, Zone.HomeY - 1, self.DebugClickChar)
@@ -2569,7 +2609,6 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     return _Menu:DoKeyPress(hDlg, Input)
   end -- DlgKeyInput
 
-  -- [[
   local MouseLeftBtn    = F.FROM_LEFT_1ST_BUTTON_PRESSED
   local MouseClickDbl   = F.DOUBLE_CLICK
   local MouseMoved      = F.MOUSE_MOVED
@@ -2616,46 +2655,56 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
       local Zone = _Menu.Zone
       local x, y = Input.MousePositionX, Input.MousePositionY
       --logShow({ x, y, Zone = Zone, Input = Input, }, ProcItem, 3)
+      Input.x = x
+      Input.y = y
+      Input.X = Input.X or _Menu.DlgRect.Left + Zone.HomeX + x
+      Input.Y = Input.Y or _Menu.DlgRect.Top  + Zone.HomeY + y
 
       -- Обработка прокрутки мышью.
       if Zone.ScrolledH and y == Zone.Height and
-         x > 0          and x <  Zone.Width then
+         x >= 0         and x <  Zone.Width then
         --logShow({ x, y, Zone = Zone, }, "H", 3)
-        return _Menu:ScrollHClick(hDlg, Input.X or
-                                        _Menu.DlgRect.Left + Zone.HomeX + x)
+        return _Menu:ScrollHClick(hDlg, Input)
       end
       if Zone.ScrolledV and x == Zone.Width and
-         y > 0          and y <  Zone.Height then
+         y >= 0         and y <  Zone.Height then
         --logShow({ x, y, Zone = Zone }, "V", 3)
-        return _Menu:ScrollVClick(hDlg, Input.Y or
-                                        _Menu.DlgRect.Top  + Zone.HomeY + y)
+        return _Menu:ScrollVClick(hDlg, Input)
       end
       if Zone.ScrolledH and y == Zone.Height and
          Zone.ScrolledV and x == Zone.Width then
         --logShow({ x, y, Zone = Zone, }, "C", 3)
-        return _Menu:ScrollXClick(hDlg) -- "Пересечение" полос
+        return _Menu:ScrollXClick(hDlg, Input) -- "Пересечение"
       end
 
-      -- TODO: Проверка на области вне меню: рамка, край!
-      --if x < 0 or
-      --   y < 0 or
-      --   x >
-      --   then
-      --  if Zone.BoxGage > 0 then
-      --  end
-      --end
+      -- Обработка областей вне меню.
+      if x < 0 or
+         y < 0 or
+         x >= Zone.BoxWidth or
+         y >= Zone.BoxHeight then
+
+        if Zone.BoxGage > 0 then -- Рамка
+          if (x == -1 or  x == Zone.BoxWidth ) and
+             (y >= -1 and y <= Zone.BoxHeight) or
+             (y == -1 or  y == Zone.BoxHeight) and
+             (x >= -1 and x <= Zone.BoxWidth ) then
+            return _Menu:MouseBorderClick(hDlg, Input)
+          end
+        end
+
+        return _Menu:MouseEdgeClick(hDlg, Input) -- Край
+      end
 
       -- Обработка выбором мышью.
       if Input.EventFlags == MouseClickDbl then
-        return _Menu:MouseDblClick(hDlg, x, y)
+        return _Menu:MouseDblClick(hDlg, Input)
       else
-        return _Menu:MouseBtnClick(hDlg, x, y)
+        return _Menu:MouseBtnClick(hDlg, Input)
       end
-    end
+    end -- if
 
     return false
   end -- DlgMouseInput
-  --]]
 
   -- Обработка управления клавиатурой и мышью.
   local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
