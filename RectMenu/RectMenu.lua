@@ -1477,7 +1477,33 @@ function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
 end ---- MoveToCell
 
 end -- do
----------------------------------------- Menu control
+---------------------------------------- Event
+
+-- Обработка пользовательского события.
+function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
+  local self = self
+  local RunEvent = self.RectMenu[Event]
+  if not RunEvent then return end
+
+  local Data, Flags = RunEvent(...)
+  --logShow({ Data, Flags }, Event, 2)
+  Flags = Flags or Null -- or {}
+  if Flags.isCancel then
+    self.SelIndex = nil
+  end
+  if Flags.isClose or Flags.isCancel then
+    return CloseDialog(hDlg)
+  end
+
+  if type(Data) == 'table' then
+    self:UpdateAll(hDlg, Flags, Data)
+    return true
+  end
+
+  return Data
+end ---- HandleEvent
+
+---------------------------------------- Keyboard
 local ParseKeyName = keyUt.ParseKeyName
 local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 local IsModShift, IsModAltShift = keyUt.IsModShift, keyUt.IsModAltShift
@@ -1728,27 +1754,8 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
 end ---- UserNavKeyPress
 
 -- Пользовательская обработка клавиш.
-function TMenu:UserKeyPress (hDlg, VirKey) --> (nil|true | Data)
-  local self = self
-  local OnKeyPress = self.RectMenu.OnKeyPress
-  if not OnKeyPress then return end
-
-  local Data, Flags = OnKeyPress(VirKey, self:GetSelectIndex())
-  --logShow({ VirKey, Table, Flags }, "OnKeyPress", , "w d2")
-  Flags = Flags or Null -- or {}
-  if Flags.isCancel then
-    self.SelIndex = nil
-  end
-  if Flags.isClose or Flags.isCancel then
-    return CloseDialog(hDlg)
-  end
-
-  if type(Data) == 'table' then
-    self:UpdateAll(hDlg, Flags, Data)
-    return true
-  end
-
-  return Data
+function TMenu:UserKeyPress (hDlg, VirKey, Index) --> (nil|true | Data)
+  return self:HandleEvent("OnKeyPress", hDlg, VirKey, Index)
 end ---- UserKeyPress
 
 -- Обработчик нажатия клавиши.
@@ -1791,7 +1798,7 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
   if isOk then return isOk end
 
   -- 3. Пользовательская обработка
-  isOk = self:UserKeyPress(hDlg, VirKey)
+  isOk = self:UserKeyPress(hDlg, VirKey, self:GetSelectIndex())
   if isOk then return isOk end
 
   return false
@@ -1905,22 +1912,26 @@ function TMenu:MouseBorderClick (hDlg, Input)
   local self = self
   self.DebugClickChar = "B"
 
-  --local x, y = Input.x, Input.y
+  local Data = self:HandleEvent("OnBorderClick", hDlg, Input)
+  if type(Data) ~= 'table' and
+     self.RectMenu.IsDebugDraw then
+    self:DoMenuDraw() -- Перерисовка меню
+  end
 
-  -- TODO: Пользовательское действие!
-
-  return self:DoMenuDraw() -- Перерисовка меню
+  return Data
 end ---- MouseBorderClick
 
 function TMenu:MouseEdgeClick (hDlg, Input)
   local self = self
   self.DebugClickChar = "E"
 
-  --local x, y = Input.x, Input.y
+  local Data = self:HandleEvent("OnEdgeClick", hDlg, Input)
+  if type(Data) ~= 'table' and
+     self.RectMenu.IsDebugDraw then
+    self:DoMenuDraw() -- Перерисовка меню
+  end
 
-  -- TODO: Пользовательское действие!
-
-  return self:DoMenuDraw() -- Перерисовка меню
+  return Data
 end ---- MouseEdgeClick
 
 ---------------------------------------- ---- Scroll
@@ -2004,9 +2015,13 @@ function TMenu:ScrollXClick (hDlg, Input)
   local self = self
   self.DebugClickChar = "X"
 
-  -- TODO: Какое действие выполнять? На первый/последний элемент?
+  local Data = self:HandleEvent("OnScrollXClick", hDlg, Input)
+  if type(Data) ~= 'table' and
+     self.RectMenu.IsDebugDraw then
+    self:DoMenuDraw() -- Перерисовка меню
+  end
 
-  return self:DoMenuDraw() -- Перерисовка меню
+  return Data
 end ---- ScrollXClick
 
 end -- do
@@ -2015,43 +2030,30 @@ end -- do
 -- Пользовательская обработка выделения пункта.
 function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|boolean)
   self.SelectKind = Kind
-  local OnSelectItem = self.RectMenu.OnSelectItem
+  --[[local OnSelectItem = self.RectMenu.OnSelectItem
 
   if OnSelectItem then
-    OnSelectItem(Kind, self:GetSelectIndex())
+    OnSelectItem(Kind, Index)
   end
 
-  return true
+  return true]]
+  
+  return self:HandleEvent("OnSelectItem", hDlg, Kind, Index)
 end ---- SelectItem
 
 -- Пользовательская обработка выбора пункта.
-function TMenu:ChooseItem (hDlg, Kind, Index) --> (nil|boolean)
+function TMenu:ChooseItem (hDlg, Kind, Index, ...) --> (nil|boolean)
   self.ChooseKind = Kind
-  local OnChooseItem = self.RectMenu.OnChooseItem
-  if not OnChooseItem then
+
+  if not self.RectMenu.OnChooseItem then
     return CloseDialog(hDlg)
   end
-
-  local Data, Flags = OnChooseItem(Kind, self:GetSelectIndex())
-  --logShow({ Data, Flags }, "OnChooseItem", 2)
-  Flags = Flags or Null -- or {}
-  if Flags.isCancel then
-    self.SelIndex = nil
-  end
-  if Flags.isClose or Flags.isCancel then
-    return CloseDialog(hDlg)
-  end
-
-  if type(Data) == 'table' then
-    self:UpdateAll(hDlg, Flags, Data)
-    return true
-  end
-
-  return Data
+  
+  return self:HandleEvent("OnChooseItem", hDlg, Kind, Index, ...)
 end ---- ChooseItem
 
 -- Обработка выбора пункта по умолчанию.
-function TMenu:DefaultChooseItem (hDlg, Kind) --> (bool)
+function TMenu:DefaultChooseItem (hDlg, Kind, ...) --> (bool)
   local self = self
   local SelIndex = self.SelIndex
   --logShow(self.List[SelIndex], SelIndex)
@@ -2059,7 +2061,7 @@ function TMenu:DefaultChooseItem (hDlg, Kind) --> (bool)
   -- Исключение обработки "серых" пунктов меню:
   if SelIndex and self.List[SelIndex].grayed then return true end
 
-  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex())
+  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex(), ...)
 end ---- DefaultChooseItem
 
 ---------------------------------------- Menu drawing
