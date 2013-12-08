@@ -193,10 +193,10 @@ $ #Characters map# (CharsMap)
   CharsMap is a script to display a characters map.
   
   Navigation keys:
- \37Alt+(Left|Right)\-       — ¦a previous/next part of the map.
- \37Alt+(Up|Down)\-          — ¦a previous/next block of the map.
- \37Alt+(PgUp|PgDn)\-        — ¦a start of previous/next block.
- \37Alt+(0-9|A-F)\-          — ¦a start of block with corresponding number.
+ \37Alt+(Left|Right)\-       — ¦a previous/next part of the map (±0x0100).
+ \37Alt+(Up|Down)\-          — ¦a previous/next section of the map (±0x1000).
+ \37Alt+(PgUp|PgDn)\-        — ¦a start part of previous/next section.
+ \37Alt+(0-9|A-F)\-          — ¦a start of section with corresponding number.
 
  \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
 
