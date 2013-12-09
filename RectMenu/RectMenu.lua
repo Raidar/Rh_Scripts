@@ -40,7 +40,7 @@ local F = far.Flags
 
 local farUt = require "Rh_Scripts.Utils.Utils"
 
-local HText, VText = far.Text, farUt.VText
+local HText, VText, YText = farUt.HText, farUt.VText, farUt.YText
 
 ----------------------------------------
 --local context = context
@@ -941,7 +941,7 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
 
   do -- Поправка на длину вертикальных надписей.
     local Length = max2(Titles.Left:len(), Titles.Right:len())
-    --if Length > 0 then Length = Length + 4 end -- no + 4
+    if Length > 0 then Length = Length + 2 end -- only 2, not 4
     Length = max2(Length, Zone.MenuHeight)
     local Delta = Length - Zone.Height -- Избыток пустоты
     if Delta > 0 then -- Выравнивание:
@@ -2268,25 +2268,34 @@ function TMenu:DrawMenu ()
   end
 end ---- DrawMenu
 
--- Вывод текста вертикально с "обратными" координатами.
-local YText = function (Y, X, Color, Str) return VText(X, Y, Color, Str) end
-
--- Рисование линии с текстом внутри
+-- Рисование линии с текстом внутри.
 local function DrawTitleLine (X, Y, TitleColor, Title, Color, Line, Show)
   if Title == "" then
     return Show(X, Y, Color, Line) -- Только линия
   end
 
   -- Линия с текстом:
-  local Len, Width = Title:len() + 2, Line:len()
-  local LineLen = bshr(Width - Len, 1)
+  local Len, Space = Title:len(), 2
+  local TextLen, Width = Len + Space, Line:len()
+  local Delta = Width - TextLen
 
-  Show(X, Y, Color, Line:sub(1, LineLen))
-  Show(X + LineLen, Y, TitleColor, (" %s "):format(Title))
-  --logShow({ Title, X, Y, Len, Width, LineLen, Width - LineLen - Len })
+  if Delta < 0 then
+    -- Поправка на слишком длинный текст:
+    Delta = 0
+    TextLen = Width - Delta
 
-  return Show(X + LineLen + Len, Y,
-              Color, Line:sub(1, Width - LineLen - Len))
+    Title = TextLen > Space and Title:sub(1, TextLen - Space) or ""
+    if Title == "" then
+      return Show(X, Y, Color, Line) -- Только линия
+    end
+  end
+  Delta = bshr(Delta, 1)
+  --logShow({ Title, X, Y, Len, TextLen, Width, Delta, Width - Delta - TextLen })
+
+  Show(X, Y, Color, Line:sub(1, Delta))
+  Show(X + Delta, Y, TitleColor, (" %s "):format(Title))
+  Show(X + Delta + TextLen, Y,
+       Color, Line:sub(1, Width - Delta - TextLen))
 end -- DrawTitleLine
 
   local SymsBoxChars = uChars.BoxChars

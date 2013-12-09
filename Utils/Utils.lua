@@ -728,8 +728,13 @@ function unit.VText (X, Y, Color, Str)
   end
 end ---- VText
 
-end -- do
+-- Vertical output of text with "reversed" coordinates.
+-- Вывод текста вертикально с "обратными" координатами.
+function unit.YText (Y, X, Color, Str)
+  return unit.VText(X, Y, Color, Str)
+end
 
+end -- do
 ---------------------------------------- Insert
 do
   local DlgEditItems = {
