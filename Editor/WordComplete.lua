@@ -652,6 +652,8 @@ function TMain:MakeProps ()
   RM.BoxKind = "S"
   RM.Shadowed = false
   --RM.MenuOnly = true
+  RM.ReuseItems = true
+  --RM.ReuseProps = true
 
   local SelectedBG = Cfg.SelectedBG
   local SelColors = Colors.Selected
