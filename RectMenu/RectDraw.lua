@@ -51,30 +51,79 @@ local unit = {}
 ---------------------------------------- Draw text
 
 -- Вывод текста с ограничением по длине.
-local function LineText (Rect, Color, Text) --> (number)
+local function DrawText (Rect, Color, Text) --> (number)
   local Len = min2(Text:len(), Rect.w) -- Длина выведенного текста
   far_Text(Rect.x, Rect.y, Color, Text:sub(1, Len) or "")
 
   return Len
-end ---- LineText
-unit.LineText = LineText
+end -- DrawText
+unit.DrawText = DrawText
+
+-- Вывод заполнителя текста.
+local function DrawClear (Rect, Color)
+  return DrawText(Rect, Color, spaces[Rect.w]) -- Пустое место
+end -- DrawClear
+unit.DrawClear = DrawClear
 
 -- Вывод текста с заполнением по длине.
-function unit.LineFill (Rect, Color, Text) --> (bool)
-  local Len = LineText(Rect, Color, Text)
+local function DrawLineText (Rect, Color, Text) --> (bool)
+  local Len = DrawText(Rect, Color, Text)
   if Len >= Rect.w then return false end
 
-  far_Text(Rect.x + Len, Rect.y, Color, spaces[Rect.w - Len + 1])
+  far_Text(Rect.x + Len, Rect.y, Color, spaces[Rect.w - Len])
 
   return true
-end ---- LineFill
+end ---- DrawLineText
+unit.DrawLineText = DrawLineText
+
+-- Вывод текста в прямоугольнике.
+function unit.DrawRectText (Rect, Color, Text, ...) --> (number)
+  local tp = type(Text)
+  local k, Count = 1, Rect.h
+
+  if     tp == 'string' then
+    for s in Text:gmatch("([^\n]*)") do
+      if k > Count then break end
+      DrawLineText(Rect, Color, s)
+      k = k + 1
+      Rect.y = Rect.y + 1
+    end
+
+  elseif tp == 'table' then
+    for i = 1, #Text do
+      if k > Count then break end
+      local s = Text[i] or ""
+      if type(s) == "function" then
+        s = s(k, ...)
+      end
+      DrawLineText(Rect, Color, s)
+      k = k + 1
+      Rect.y = Rect.y + 1
+    end
+
+  elseif tp == 'function' then
+    for i = 1, Count do
+      DrawLineText(Rect, Color, Text(i, ...))
+      Rect.y = Rect.y + 1
+    end
+
+    return true
+  end -- if
+
+  for i = k + 1, Count do
+    DrawClear(Rect, Color)
+    Rect.y = Rect.y + 1
+  end
+  
+  return true
+end ---- DrawRectText
 
 -- Draw text for non-item of menu.
 -- Рисование текста не пункта меню.
 function unit.DrawClearItemText (Rect, Color)
   -- TODO: MultiLine.
   -- TODO: No one Line but Rect!!!
-  return LineText(Rect, Color, spaces[Rect.w]) -- Пустое место
+  return DrawText(Rect, Color, spaces[Rect.w]) -- Пустое место
 end ---- DrawClearItemText
 
 local Separ = ("─"):rep(255) -- Текст-разделитель
@@ -92,13 +141,13 @@ function unit.DrawSeparItemText (Rect, Color, Text)
       local SepLen = bshr(Width - Len, 1)
       --local SepLen = divf(Width - Len, 2)
       --logShow(Rect, Len, 2)
-      LineText(Rect, Color, Separ:sub(1, SepLen)..Text..
+      DrawText(Rect, Color, Separ:sub(1, SepLen)..Text..
                             Separ:sub(1, Width - SepLen - Len))
     else
-      LineText(Rect, Color, Text) -- Без разделителя?!
+      DrawText(Rect, Color, Text) -- Без разделителя?!
     end
   else
-    LineText(Rect, Color, Separ) -- Разделитель обычный
+    DrawText(Rect, Color, Separ) -- Разделитель обычный
   end
 end ---- DrawSeparItemText
 
@@ -182,7 +231,7 @@ local checkedChar = menUt.checkedChar
 
 -- [[
 -- Разбор текста на отдельные линии по символу новой строки.
-local function LineParseText (Rect, Color, Parse, Item, Options)
+local function RectParseText (Rect, Color, Parse, Item, Options)
   local Parse = Parse
 
   local RM = Options.Props
@@ -202,7 +251,7 @@ local function LineParseText (Rect, Color, Parse, Item, Options)
   end
 
   return t
-end -- LineParseText
+end -- RectParseText
 --]]
 
 -- Рисование разобранного текста как набора цветовых фрагментов.
@@ -222,8 +271,9 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
       if r.h < 0 then break end
     end
 
+    -- TODO: DrawLineText или Реализовать чистку конца!
     if text and text ~= "" and r.w > 0 then -- Вывод:
-      local len = LineText(r, v.color, text)
+      local len = DrawText(r, v.color, text)
       r.x = r.x + len
       r.w = r.w - len
       --if r.w <= 0 then break end -- TODO: Заменить на проверку!!!
@@ -268,7 +318,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   Parse[1]       = { text = MarginB,       color = Color.normal, }
   Parse[Parse.n] = { text = Clear..Margin, color = Color.normal, }
 
-  DrawParseText(Rect, Item, Parse) -- Рисование разобранного текста
+  return DrawParseText(Rect, Item, Parse) -- Рисование разобранного текста
 end ---- DrawItemText
 
 end -- do

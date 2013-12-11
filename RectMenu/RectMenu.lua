@@ -78,7 +78,8 @@ local uChars = require "Rh_Scripts.Utils.CharsSets"
 
 ----------------------------------------
 local RDraw = require "Rh_Scripts.RectMenu.RectDraw"
-local LineFill          = RDraw.LineFill
+local DrawLineText      = RDraw.DrawLineText
+local DrawRectText      = RDraw.DrawRectText
 local DrawItemText      = RDraw.DrawItemText
 local DrawClearItemText = RDraw.DrawClearItemText
 local DrawSeparItemText = RDraw.DrawSeparItemText
@@ -471,6 +472,7 @@ function TMenu:DefinePropInfo () --| Props
   local MenuEdge = RM.MenuOnly and 0 or RM.MenuEdge or 2
   if MenuEdge < 0 then MenuEdge = 0 end
   RM.MenuEdge = MenuEdge
+  RM.Edges = RM.Edges or {}
 
   if RM.UncheckedChar then  -- Символ не-метки пункта меню: -- First call!
     RM.UncheckedChar = menUt.checkedChar(RM.UncheckedChar, " ", nil)
@@ -823,12 +825,13 @@ function TMenu:DefineZoneInfo () --| Zone
   do -- Край, рамка и пояс.
 
     -- Размеры края окна диалога:
+    local Edges = RM.Edges
     local MenuEdge = RM.MenuEdge -- по горизонтали
-    Zone.EdgeL = (RM.MenuEdgeL or RM.MenuEdgeH or MenuEdge)
-    Zone.EdgeR = (RM.MenuEdgeR or RM.MenuEdgeH or MenuEdge)
+    Zone.EdgeL = (Edges.Left  or Edges.Width or MenuEdge)
+    Zone.EdgeR = (Edges.Right or Edges.Width or MenuEdge)
     MenuEdge = bshr(MenuEdge, 1) -- по вертикали
-    Zone.EdgeT = (RM.MenuEdgeT or RM.MenuEdgeV or MenuEdge)
-    Zone.EdgeB = (RM.MenuEdgeB or RM.MenuEdgeV or MenuEdge)
+    Zone.EdgeT = (Edges.Top    or Edges.Height or MenuEdge)
+    Zone.EdgeB = (Edges.Bottom or Edges.Height or MenuEdge)
 
     -- Толщина рамки:
     local BoxGage = (MenuOnly or RM.BoxKind == "") and 0 or 1
@@ -2037,7 +2040,7 @@ function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|boolean)
   end
 
   return true]]
-  
+
   return self:HandleEvent("OnSelectItem", hDlg, Kind, Index)
 end ---- SelectItem
 
@@ -2048,7 +2051,7 @@ function TMenu:ChooseItem (hDlg, Kind, Index, ...) --> (nil|boolean)
   if not self.RectMenu.OnChooseItem then
     return CloseDialog(hDlg)
   end
-  
+
   return self:HandleEvent("OnChooseItem", hDlg, Kind, Index, ...)
 end ---- ChooseItem
 
@@ -2307,12 +2310,12 @@ function TMenu:DrawBorderLine () -- --| Border
   local Color, Colors = self.Colors.Border, self.Colors.Borders
   local BoxChars = SymsBoxChars[self.RectMenu.BoxKind]
 
-  local Zone, Rect = self.Zone, self.DlgRect
+  local Zone, DlgRect = self.Zone, self.DlgRect
   --local BoxGage = Zone.BoxGage
-  local X1 = Rect.Left + Zone.HomeX - Zone.BoxGage
-  local Y1 = Rect.Top  + Zone.HomeY - Zone.BoxGage
-  local X2 = Rect.Left + Zone.HomeX + Zone.BoxWidth
-  local Y2 = Rect.Top  + Zone.HomeY + Zone.BoxHeight
+  local X1 = DlgRect.Left + Zone.HomeX - Zone.BoxGage
+  local Y1 = DlgRect.Top  + Zone.HomeY - Zone.BoxGage
+  local X2 = DlgRect.Left + Zone.HomeX + Zone.BoxWidth
+  local Y2 = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight
   local W, H = X2 - X1 - 1, Y2 - Y1 - 1
   --logShow({ X1, Y1, X2, Y2, W, H }, "DrawBorderLine")
 
@@ -2340,12 +2343,12 @@ end ---- DrawBorderLine
 -- Информация о полосах прокрутки меню.
 function TMenu:CalcScrollBars () --| ScrollBars
   local self = self
-  local Zone, Rect = self.Zone, self.DlgRect
+  local Zone, DlgRect = self.Zone, self.DlgRect
 
   -- Расчёт параметров прокруток.
   local SH = { -- Горизонтальная прокрутка:
-    X1 = Rect.Left + Zone.HomeX,
-    Y1 = Rect.Top  + Zone.LastY + 1,
+    X1 = DlgRect.Left + Zone.HomeX,
+    Y1 = DlgRect.Top  + Zone.LastY + 1,
     X2 = 0, Y2 = 0,
     Length = Zone.Width  - 2, -- За вычетом стрелок
     --Length = Zone.MenuWidth  - 2, -- За вычетом стрелок
@@ -2353,8 +2356,8 @@ function TMenu:CalcScrollBars () --| ScrollBars
   SH.X2, SH.Y2 = SH.X1 + SH.Length + 1, SH.Y1
 
   local SV = { -- Вертикальная прокрутка:
-    X1 = Rect.Left + Zone.LastX + 1,
-    Y1 = Rect.Top  + Zone.HomeY,
+    X1 = DlgRect.Left + Zone.LastX + 1,
+    Y1 = DlgRect.Top  + Zone.HomeY,
     X2 = 0, Y2 = 0,
     Length = Zone.Height - 2, -- За вычетом стрелок
     --Length = Zone.MenuHeight - 2, -- За вычетом стрелок
@@ -2446,43 +2449,86 @@ function TMenu:DrawStatusBar ()
   local Zone = self.Zone
   if Zone.EdgeB < 1 then return end
 
-  local Rect = self.DlgRect
+  local DlgRect = self.DlgRect
   self.StatusBar = {
-    x = Rect.Left + Zone.HomeX,
-    y = Rect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
+    x = DlgRect.Left + Zone.HomeX,
+    y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
     h = 1,
     --h = Zone.EdgeB,
     w = Zone.Width,
   }
-  --logShow(Rect, "DrawStatusBar")
+  --logShow({ self.StatusBar, DlgRect }, "DrawStatusBar")
 
   -- Подсказка пункта меню:
   local Index = self.SelIndex
   local Hint = Index and Index > 0 and self.List[Index].Hint or ""
 
-  return LineFill(self.StatusBar, self.Colors.StatusBar, Hint)
+  return DrawLineText(self.StatusBar, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 
---[[
-function TMenu:DrawEdges ()
+function TMenu:DrawZoneEdges ()
   local self = self
-  local Zone = self.Zone
+  local Zone, RM = self.Zone, self.RectMenu
 
-  local Rect, EdgeRect = self.DlgRect
+  local Texts  = RM.Edges.Texts  or Null
+  local Colors = RM.Edges.Colors or Null
+  local Color = self.Colors.StatusBar
+  local Item = self.SelIndex and self.List[self.SelIndex]
 
-  EdgeRect = {
-    x = Rect.Left,
-    y = Rect.Top,
-    h = Zone.EdgeT,
-    w = Zone.DlgWidth,
-    color = self.Colors.StatusBar,
-    text = "",
-  }
-  --logShow(Rect, "DrawEdges")
+  local DlgRect = self.DlgRect
 
-  LineFill(Rect, Rect.color, text)
-end ---- DrawEdges
-]]--
+  if Texts.Top then
+    local Rect = {
+      x = DlgRect.Left,
+      y = DlgRect.Top,
+      h = Zone.EdgeT,
+      w = Zone.DlgWidth,
+    }
+    --logShow(Rect, "DrawZoneEdges: Top")
+    DrawRectText(Rect, Colors.Top or Color, Texts.Top, Item, self)
+  end
+
+  if Texts.Left then
+    local Rect = {
+      x = DlgRect.Left,
+      y = DlgRect.Top + Zone.EdgeT,
+      h = Zone.DlgHeight - Zone.EdgeB,
+      w = Zone.EdgeL,
+    }
+    --logShow(Rect, "DrawZoneEdges: Left")
+    DrawRectText(Rect, Colors.Left or Color, Texts.Left, Item, self)
+  end
+
+  if Texts.Right then
+    local Rect = {
+      x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth + Zone.BoxGage,
+      y = DlgRect.Top + Zone.EdgeT,
+      h = Zone.DlgHeight - Zone.EdgeB,
+      w = Zone.EdgeR,
+    }
+    --logShow(Rect, "DrawZoneEdges: Right")
+    DrawRectText(Rect, Colors.Right or Color, Texts.Right, Item, self)
+  end
+
+  if Texts.Bottom then
+    local Rect = {
+      x = DlgRect.Left,
+      y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
+      h = Zone.EdgeB,
+      w = Zone.DlgWidth,
+    }
+    --logShow(Rect, "DrawZoneEdges: Bottom")
+    DrawRectText(Rect, Colors.Bottom or Color, Texts.Bottom, Item, self)
+  end
+end ---- DrawZoneEdges
+
+function TMenu:DoUserDraw ()
+  local self = self
+  local RunEvent = self.RectMenu.OnDrawMenu
+  if not RunEvent then return end
+
+  return RunEvent(self)
+end ---- DoUserDraw
 
 function TMenu:DrawDebugInfo ()
   local self = self
@@ -2492,8 +2538,8 @@ function TMenu:DrawDebugInfo ()
     HText(x, y, Color, text)
   end --
 
-  local Rect = self.DlgRect
-  local X, Y = Rect.Left, Rect.Top
+  local DlgRect = self.DlgRect
+  local X, Y = DlgRect.Left, DlgRect.Top
 
   local function DbgDraw (x, y, text)
     HText(X + x, Y + y, Color, text)
@@ -2518,12 +2564,12 @@ function TMenu:DrawDebugInfo ()
 end ---- DrawDebugInfo
 
 -- Обработчик рисования меню.
-function TMenu:DoMenuDraw (Rect)
+function TMenu:DoMenuDraw (DlgRect)
   local self = self
 
-  --logShow(Rect, "DoMenuDraw")
-  if Rect then
-    self.DlgRect = Rect
+  --logShow(DlgRect, "DoMenuDraw")
+  if DlgRect then
+    self.DlgRect = DlgRect
   end
 
   self:DrawMenu() -- Видимые пункты меню
@@ -2542,6 +2588,14 @@ function TMenu:DoMenuDraw (Rect)
 
   if RM.IsStatusBar then
     self:DrawStatusBar() -- Статусная строка
+  end
+
+  if RM.IsDrawEdges then
+    self:DrawZoneEdges() -- Рисование отступов
+  end
+
+  if RM.IsUserDraw then
+    self:DoUserDraw() -- Пользовательское рисование
   end
 
   if RM.IsDebugDraw then
@@ -2751,12 +2805,12 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     if Input.EventFlags == MouseMoved then return true end
 
     local Zone = _Menu.Zone
-    local Rect = GetRect(hDlg)
+    local DlgRect = GetRect(hDlg)
     local x, y = Input.MousePositionX, Input.MousePositionY
     Input.X = x
     Input.Y = y
-    Input.MousePositionX = x - Rect.Left - Zone.HomeX
-    Input.MousePositionY = y - Rect.Top  - Zone.HomeY
+    Input.MousePositionX = x - DlgRect.Left - Zone.HomeX
+    Input.MousePositionY = y - DlgRect.Top  - Zone.HomeY
 
     if Input.EventFlags == MouseWheeledV or
        Input.EventFlags == MouseWheeledH then
