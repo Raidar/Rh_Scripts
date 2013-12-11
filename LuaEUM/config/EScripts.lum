@@ -294,6 +294,7 @@ CharChanges.Refer = {
 } -- Refer
 
 local ChangeChar = {
+
   default = function (Table) --> (function)
     local Table = Table
     return function (block) --> (block)
@@ -303,6 +304,7 @@ local ChangeChar = {
                                       end)
            end
   end, -- default
+
   Typer = function (Table) --> (function)
     local Table = Table
     --logShow(Table)
@@ -321,6 +323,7 @@ local ChangeChar = {
              return block
            end -- function
   end, -- Typer
+
 } --- ChangeChar
 
 local function DoChangeChar (Name) --> (function)

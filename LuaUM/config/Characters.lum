@@ -154,7 +154,7 @@ end ----
 
 -- Использовать компактное меню для умещения на экране.
 function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
-  local RM= Menu.Props.RectMenu
+  local RM = Menu.Props.RectMenu
   --RM.BoxKind = ""
   --RM.Shadowed = false
   --RM.MenuEdgeH = 0
