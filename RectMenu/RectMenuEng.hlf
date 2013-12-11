@@ -90,6 +90,7 @@ presentation and using of menu and its particular items.
 
     ~Whole menu properties~@RM_Props_MenuWhole@
     ~Menu window properties~@RM_Props_MenuWindow@
+    ~Menu drawing properties~@RM_Props_MenuDraw@
     ~Menu handling properties~@RM_Props_MenuHandle@
     ~Menu items properties~@RM_Props_MenuItems@
     ~Particular item properties~@RM_Props_ItemPart@
@@ -189,6 +190,13 @@ $ #Menu window properties#: RectMenu
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
 
+@RM_Props_MenuDraw
+$ #Menu drawing properties#: RectMenu
+
+  #Edges# (table) — Data to draw edges.
+
+ ~Contents~@Contents@       ~Menu properties~@RM_Props@
+
 @RM_Props_MenuHandle
 $ #Menu handling properties#: RectMenu
   #AltHotOnly# (bool) — Handling hot chars by \37Alt\- pressed only.
@@ -245,7 +253,8 @@ $ #Menu events#: RectMenu
   RectMenu has several properties that allow
 to specify own response of menu to particular events.
 
-  ~OnKeyPress~@RM_Event_KeyPress@ — an event of key press.
+  ~OnKeyPress~@RM_Event_KeyPress@ — an event on key press.
+  ~OnChooseItem~@RM_Event_ChooseItem@ — an event on item choose.
 
  ~Contents~@Contents@
 
