@@ -82,7 +82,8 @@ function unit.DrawRectText (Rect, Color, Text, ...) --> (number)
   local k, Count = 1, Rect.h
 
   if     tp == 'string' then
-    for s in Text:gmatch("([^\n]*)") do
+    if Text:sub(-1, 1) ~= "\n" then Text = Text.."\n" end
+    for s in Text:gmatch("([^\n]*)\n") do
       if k > Count then break end
       DrawLineText(Rect, Color, s)
       k = k + 1
@@ -92,18 +93,19 @@ function unit.DrawRectText (Rect, Color, Text, ...) --> (number)
   elseif tp == 'table' then
     for i = 1, #Text do
       if k > Count then break end
-      local s = Text[i] or ""
+      local s = Text[i]
       if type(s) == "function" then
         s = s(k, ...)
       end
-      DrawLineText(Rect, Color, s)
+      if s then DrawLineText(Rect, Color, s) end
       k = k + 1
       Rect.y = Rect.y + 1
     end
 
   elseif tp == 'function' then
     for i = 1, Count do
-      DrawLineText(Rect, Color, Text(i, ...))
+      local s = Text(i, ...)
+      if s then DrawLineText(Rect, Color, s) end
       Rect.y = Rect.y + 1
     end
 

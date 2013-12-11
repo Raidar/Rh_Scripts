@@ -2328,16 +2328,16 @@ function TMenu:DrawBorderLine () -- --| Border
   HText(X2, Y1, Colors.TR or Color, BoxChars.TR)
   DrawTitleLine(Y1 + 1, X1, Colors.Left or Color, Titles.Left,
                             Colors.Left or Color, LineV, YText)
-  HText(X1, Y2, Colors.BL or Color, BoxChars.BL)
   if not Zone.BoxScrollV then
     DrawTitleLine(Y1 + 1, X2, Colors.Right or Color, Titles.Right,
                               Colors.Right or Color, LineV, YText)
   end
-  HText(X2, Y2, Colors.BR or Color, BoxChars.BR)
+  HText(X1, Y2, Colors.BL or Color, BoxChars.BL)
   if not Zone.BoxScrollH then
     DrawTitleLine(X1 + 1, Y2, Colors.Bottom or Color, Titles.Bottom,
                               Colors.Bottom or Color, LineH, HText)
   end
+  HText(X2, Y2, Colors.BR or Color, BoxChars.BR)
 end ---- DrawBorderLine
 
 -- Информация о полосах прокрутки меню.
@@ -2477,22 +2477,44 @@ function TMenu:DrawZoneEdges ()
 
   local DlgRect = self.DlgRect
 
-  if Texts.Top then
+  if Texts.TL then
     local Rect = {
       x = DlgRect.Left,
       y = DlgRect.Top,
       h = Zone.EdgeT,
-      w = Zone.DlgWidth,
+      w = Zone.EdgeL,
+    }
+    --logShow(Rect, "DrawZoneEdges: TL")
+    DrawRectText(Rect, Colors.TL or Color, Texts.TL, Item, self)
+  end
+
+  if Texts.Top then
+    local Rect = {
+      x = DlgRect.Left + Zone.EdgeL,
+      y = DlgRect.Top,
+      h = Zone.EdgeT,
+      w = Zone.BoxWidth,
     }
     --logShow(Rect, "DrawZoneEdges: Top")
     DrawRectText(Rect, Colors.Top or Color, Texts.Top, Item, self)
+  end
+
+  if Texts.TR then
+    local Rect = {
+      x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
+      y = DlgRect.Top,
+      h = Zone.EdgeT,
+      w = Zone.EdgeR,
+    }
+    --logShow(Rect, "DrawZoneEdges: TR")
+    DrawRectText(Rect, Colors.TR or Color, Texts.TR, Item, self)
   end
 
   if Texts.Left then
     local Rect = {
       x = DlgRect.Left,
       y = DlgRect.Top + Zone.EdgeT,
-      h = Zone.DlgHeight - Zone.EdgeB,
+      h = Zone.BoxHeight,
       w = Zone.EdgeL,
     }
     --logShow(Rect, "DrawZoneEdges: Left")
@@ -2501,24 +2523,46 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.Right then
     local Rect = {
-      x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth + Zone.BoxGage,
+      x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
       y = DlgRect.Top + Zone.EdgeT,
-      h = Zone.DlgHeight - Zone.EdgeB,
+      h = Zone.BoxHeight,
       w = Zone.EdgeR,
     }
     --logShow(Rect, "DrawZoneEdges: Right")
     DrawRectText(Rect, Colors.Right or Color, Texts.Right, Item, self)
   end
 
-  if Texts.Bottom then
+  if Texts.BL then
     local Rect = {
       x = DlgRect.Left,
       y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
       h = Zone.EdgeB,
-      w = Zone.DlgWidth,
+      w = Zone.EdgeL,
+    }
+    --logShow(Rect, "DrawZoneEdges: BL")
+    DrawRectText(Rect, Colors.BL or Color, Texts.BL, Item, self)
+  end
+
+  if Texts.Bottom then
+    local Rect = {
+      x = DlgRect.Left + Zone.EdgeL,
+      y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
+      h = Zone.EdgeB,
+      w = Zone.BoxWidth,
     }
     --logShow(Rect, "DrawZoneEdges: Bottom")
     DrawRectText(Rect, Colors.Bottom or Color, Texts.Bottom, Item, self)
+  end
+
+  if Texts.BR then
+    local Rect = {
+      x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
+      y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
+      h = Zone.EdgeB,
+      w = Zone.EdgeR,
+    }
+    --logShow(Rect, "DrawZoneEdges: BR")
+    DrawRectText(Rect, Colors.BR or Color, Texts.BR, Item, self)
   end
 end ---- DrawZoneEdges
 
