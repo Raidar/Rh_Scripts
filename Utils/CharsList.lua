@@ -17,7 +17,10 @@
 local logShow = context.ShowInfo
 
 --local utils = require 'context.utils.useUtils'
+local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
+
+local divf = numbers.divf
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -46,18 +49,55 @@ unit.uCPname = uCPname
 local uCP2s = strings.ucp2s
 unit.uCP = uCP2s
 
-local CharNameFmt = "U+%s — %s" -- utf-8 string
-unit.CharNameFmt = CharNameFmt
+unit.CharNameFmt = "U+%s — %s" -- utf-8 string
 
 local function uCodeName (u)
-  return CharNameFmt:format(uCP2s(u, true), uCPname(u))
-end ---- uCodeName
+  return unit.CharNameFmt:format(uCP2s(u, true), uCPname(u))
+end -- uCodeName
 unit.uCodeName = uCodeName
 
   local u_byte = strings.u8byte
 
 function unit.uCharName (c)
   return uCodeName(u_byte(c))
+end ---- uCharName
+
+  local CharsBlocks = CharsData and CharsData.Blocks
+
+local function uCharBlock (u)
+  local Blocks = CharsBlocks
+
+  local l, r = 1, #Blocks
+
+  while l <= r do
+    local m = divf(l + r, 2)
+    local b = Blocks[m]
+
+    if     u > b.last then
+      l = m + 1
+    elseif u < b.first then
+      r = m - 1
+    else
+      return b
+    end
+  end
+end ---- uCharBlock
+unit.uCharBlock = uCharBlock
+
+unit.CharBlockFmt = "U+%s..U+%s — %s" -- utf-8 string
+
+local function uBlockName (u)
+  local b = uCharBlock(u)
+  if b then
+    return unit.CharBlockFmt:format(uCP2s(b.first, true),
+                                    uCP2s(b.last, true),
+                                    b.name)
+  end
+end ---- uBlockName
+unit.uBlockName = uBlockName
+
+function unit.uCharBlockName (c)
+  return uBlockName(u_byte(c))
 end ---- uCharName
 
 end --
