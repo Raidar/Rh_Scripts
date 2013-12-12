@@ -59,7 +59,8 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 
 ----------------------------------------
 local CharsList = require "Rh_Scripts.Utils.CharsList"
-local uCodeName = CharsList.uCodeName
+local uCodeName  = CharsList.uCodeName
+local uBlockName = CharsList.uBlockName
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -287,11 +288,30 @@ function TMain:MakeProps ()
       [self.ColCount] = self.DigitNum,
     }, --
 
-    MaxHeight = 2 + self.ColCount + 2 + 0,
+    MaxHeight = 1 + 1 + self.RowCount + 1 + 3 + 0,
 
     Colors = self.Colors,
 
-    IsStatusBar = true,
+    --IsStatusBar = true,
+
+    Edges = {
+      --Bottom = 1,
+      Bottom = 3,
+
+      Texts = {
+        Bottom = function (k, Item)
+          if Item == nil then
+            return
+          end
+          if     k == 1 then
+            return Item.Hint
+          elseif k == 3 then
+            return uBlockName(Item.Data and Item.Data.Char or 0)
+          end
+        end,
+      },
+    },
+    IsDrawEdges = true,
 
     --RectItem = {
     --  TextMark = true,
@@ -486,7 +506,16 @@ function TMain:EditInput (SKey)
 
   local Input = self.Input
   if SKey == "BS" then
-    if Input ~= "" then Input = Input:sub(1, -2) end
+    if Input ~= "" then
+      Input = Input:sub(1, -2)
+    end
+
+  elseif SKey == "V" then
+    local s = far.PasteFromClipboard()
+    if type(s) == 'string' then
+      s = (s.."0000"):match("^(%x%x%x%x)")
+      if s then Input = s end
+    end
   else
     if Input:len() < 4 then
       Input = Input..SKey
@@ -544,6 +573,7 @@ do
     ["E"] = true,
     ["F"] = true,
     ["BS"] = true,
+    ["V"] = true,
   } --- InputActions
 
   local tonumber = tonumber
@@ -598,6 +628,15 @@ function TMain:AssignEvents () --> (bool | nil)
       local s = far.PasteFromClipboard()
       if type(s) == 'string' then
         self.Char = u8byte(s:sub(1, 1))
+      else
+        isUpdate = false
+      end
+
+    elseif SKey == "CtrlShiftV" then
+      local s = far.PasteFromClipboard()
+      if type(s) == 'string' then
+        s = (s.."0000"):match("^(%x%x%x%x)")
+        if s then self.Char = tonumber(s, 16) end
       else
         isUpdate = false
       end

@@ -197,12 +197,13 @@ $ #Characters map# (CharsMap)
  \37Alt+(Up|Down)\-          — ¦a previous/next section of the map (±0x1000).
  \37Alt+(PgUp|PgDn)\-        — ¦a start part of previous/next section.
  \37Alt+(0-9|A-F)\-          — ¦a start of section with corresponding number.
-
+ 
  \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
 
   Special keys:
  \37Num* | Clear\- (Num5)    — ¦the last choosen character.
  \37CtrlV\-                  — ¦go to a character from clipboard.
+ \37CtrlShiftV\-             — ¦go to a character with code point from clipboard.
  \37CtrlAltX\-               — ¦go to a character obtained by XLat.
  \37(Shift+) <символ>\-      — ¦go to a character corresponding to key.
 
@@ -218,6 +219,7 @@ $ #Characters map#: Code point input
   To input code point of character use following keys:
  \371—9, 0, A-F\-            — ¦to input the hexadecimal digits.
  \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+ \37V\-                      — ¦to insert code point from clipboard.
  
   After the input completion a character with the inputted code point
 will be displayed in the window.

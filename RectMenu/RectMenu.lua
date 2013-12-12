@@ -857,6 +857,7 @@ function TMenu:DefineZoneInfo () --| Zone
     -- Корректировка для учёта тени:
     --Zone.Width  = max2(MaxWidth,  MinWidth  + Zone.BeltWidth  + 1) - Zone.BeltWidth  - 1
     --Zone.Height = max2(MaxHeight, MinHeight + Zone.BeltHeight + 1) - Zone.BeltHeight - 1
+
     -- Отображаемые кол-во рядов и реальные размеры.
     Zone.Cols, Zone.Width  = self:VisibleColCount(1)
     Zone.Rows, Zone.Height = self:VisibleRowCount(1)
