@@ -555,15 +555,17 @@ unit.FarGetAreaSize = {
     return { Width  = APInfo.right - APInfo.left + 1 +
                       PPInfo.right - PPInfo.left + 1,
              Height = max2(APInfo.bottom - APInfo.top + 1,
-                           PPInfo.bottom - PPInfo.top + 1) }
+                           PPInfo.bottom - PPInfo.top + 1), }
   end, -- panels
   editor = function () -- Редактор:
     local Info = EditorGetInfo(nil)
-    return { Width = Info.WindowSizeX, Height = Info.WindowSizeY }
+    return { Width  = Info.WindowSizeX,
+             Height = Info.WindowSizeY, }
   end, -- editor
   viewer = function () -- Просмотр:
     local Info = ViewerGetInfo(nil)
-    return { Width = Info.WindowSizeX, Height = Info.WindowSizeY }
+    return { Width  = Info.WindowSizeX,
+             Height = Info.WindowSizeY, }
   end, -- viewer
 } ---
 

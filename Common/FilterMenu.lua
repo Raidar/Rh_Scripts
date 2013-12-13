@@ -221,7 +221,7 @@ do
   local DoChange = { isUpdate = true }
   local NoChange = { isUpdate = false }
 
-function unit.Menu (Properties, Items, BreakKeys) --| (menu)
+function unit.Menu (Properties, Items, BreakKeys) --| (Menu)
 
   local Props = tables.copy(Properties, true, pairs, false) -- true
   --local Props = { __index = Properties }; setmetatable(Props, Props)

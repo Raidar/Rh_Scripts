@@ -49,7 +49,9 @@ unit.CharCodeNameFmt = "U+%s — %s" -- utf-8 string
 
 local function uCodeName (u)
   local c = CharsNames[u]
-  if not c then return end
+  if not c then
+    return unit.CharCodeNameFmt:format(uCP2s(u, true), "")
+  end
   local s = c.fullname
   if not s then
     s = unit.CharCodeNameFmt:format(uCP2s(u, true), c.name or "")
@@ -81,7 +83,7 @@ local function uCharBlock (u)
     elseif u < b.first then
       r = m - 1
     else
-      return b
+      return m, b
     end
   end
 end ---- uCharBlock
@@ -90,7 +92,7 @@ unit.uCharBlock = uCharBlock
 unit.CharBlockNameFmt = "U+%s..U+%s — %s" -- utf-8 string
 
 local function uBlockName (u)
-  local b = uCharBlock(u)
+  local _, b = uCharBlock(u)
   if not b then return end
 
   local s = b.fullname

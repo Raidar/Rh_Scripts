@@ -2657,7 +2657,11 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
 --[[ 1. Конфигурирование меню ]]
 
-  local Additions = { FarArea = farUt.GetBasicAreaType() }
+  local Additions = {
+    FarArea = Properties and Properties.FarArea or
+              farUt.GetBasicAreaType(),
+  }
+  --logShow(Additions, "Additions", 1)
   local _Menu = TMenu:isMenu(ShowMenu) and ShowMenu or
                 CreateMenu(Properties, Items, BreakKeys, Additions)
   --logShow(_Menu, "_Menu", 1)
