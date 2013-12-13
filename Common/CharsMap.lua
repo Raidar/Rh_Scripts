@@ -18,6 +18,8 @@
 local type = type
 local setmetatable = setmetatable
 
+local string = string
+
 ----------------------------------------
 local useprofiler = false
 --local useprofiler = true
@@ -161,9 +163,11 @@ local function CreateMain (ArgData)
 
     Blocks    = {         -- Объект: Блоки символов
       Main      = false,    -- Объект основного класса
+
       -- Текущее состояние:
       Items     = false,    -- Список пунктов меню
       Props     = false,    -- Свойства меню
+      Pattern   = "",       -- Паттерн фильтрации
 
       ActItem   = false,    -- Выбранный пункт меню
       ItemPos   = false,    -- Позиция выбранного пункта меню
@@ -364,7 +368,6 @@ local Msgs = {
 function TMain:Prepare ()
 
   self:InitData()
-
   self:InitChar()
 
   if not self:Localize() then
@@ -500,11 +503,11 @@ function TMain:LimitChar ()
 end ---- LimitChar
 
 end -- do
----------------------------------------- ---- Block
+---------------------------------------- ---- Blocks
 do
   local TBlocks = TMain.Blocks
 
-  local max = math.max
+  --local max = math.max
 
 function TBlocks:MakeProps () --| (BlocksProps)
   local self = self
@@ -520,8 +523,8 @@ function TBlocks:MakeProps () --| (BlocksProps)
   Props.FarArea = Main.FarArea
 
   local L = Main.LocData
-  Props.Title  = L.BlocksCaption
-  --Props.Bottom = L.CharsBlocksKeys
+  Props.DefTitle  = L.BlocksCaption
+  Props.DefBottom = ""
 
   local RangeLen = 0
   do
@@ -560,10 +563,9 @@ function TBlocks:MakeProps () --| (BlocksProps)
     LineMax = 1,
     TextMax = {
       [1] = RangeLen,
-      --[1] = max(4 + 2 + 4, L.BlocksColBlockRange:len()),
     }, --
 
-    --MaxHeight = self.Props.RectMenu.MaxHeight,
+    --MaxHeight = Main.Props.RectMenu.MaxHeight,
 
     --Colors = self.Colors,
 
@@ -571,10 +573,10 @@ function TBlocks:MakeProps () --| (BlocksProps)
   } -- RM
   Props.RectMenu = RM
 
-  self.RectItem = {
+  --self.RectItem = {
     --TextMark = true,
-    TextAlign = "CM",
-  } --
+    --TextAlign = "CM",
+  --} --
 
   return true
 end ---- MakeProps
@@ -595,21 +597,23 @@ function TBlocks:MakeItems () --| (BlocksItems)
   local t = {
     { text = L.BlocksColBlockRange,
       Label = true,
-      RectMenu = self.BlocksItem,
+      --RectMenu = self.RectItem,
     },
     { text = L.BlocksColBlockName,
       Label = true,
-      RectMenu = self.BlocksItem,
+      --RectMenu = self.RectItem,
     },
   } ---
 
-  for i = 1, #uBlocks do
+  self.Count = #uBlocks
+
+  for i = 1, self.Count do
     local b = uBlocks[i]
     t[#t + 1] = {
       text = BlockRangeFmt:format(uCP(b.first, true),
                                   uCP(b.last, true)),
       Label = true,
-      RectMenu = self.BlocksItem,
+      --RectMenu = self.RectItem,
     }
     t[#t + 1] = {
       text = b.name,
@@ -622,8 +626,100 @@ function TBlocks:MakeItems () --| (BlocksItems)
   return true
 end ---- MakeItems
 
+function TBlocks:InitFilter ()
+  local self = self
+  local Props = self.Props
+
+  local PatternFmt = Props.PatternFmt or " *[%s]"
+  local FiltersFmt = Props.FiltersFmt or "(%d / %d)"
+  Props.FmtTitle  = Props.DefTitle..PatternFmt
+  if Props.DefBottom == "" then
+    Props.FmtBottom = FiltersFmt
+  else
+    Props.FmtBottom = Props.DefBottom.." "..FiltersFmt
+  end
+  
+  -- Сброс фильтра:
+  self.Pattern = ""
+  --self:MakeFilter()
+  self:ApplyFilter()
+
+  return true
+end ---- InitFilter
+  
+  local function patfind (Text, Pattern)
+    local Pattern = Pattern
+    if Pattern:sub(-1,-1) == '%' and -- Exclude single escape character
+       Pattern:sub(-2,-2) ~= '%' then Pattern = Pattern:sub(1,-2) end
+    return Text:cfind(Pattern)
+  end -- patfind
+
+function TBlocks:MakeFilter ()
+  local self = self
+  local Items = self.Items
+  if not Items or #Items == 0 then return end
+
+  local Pattern = self.Pattern
+  --logShow(Items, Pattern, 2)
+
+  local i, j = 4, 0
+  while i <= #Items do
+    local r, v = Items[i - 1], Items[i]
+    local s = v.conv
+    if not s then
+      s = v.text:lower()
+      v.conv = s
+    end
+
+    if Pattern and Pattern ~= "" then
+      local fpos, fend = patfind(s, Pattern)
+      if fpos then
+        r.dummy = false --nil
+        v.dummy = false --nil
+        v.RectMenu = v.RectMenu or {}
+        v.RectMenu.TextMark = { fpos, fend }
+      else
+        j = j + 1
+        r.dummy = true
+        v.dummy = true
+        v.RectMenu = v.RectMenu or {}
+        v.RectMenu.TextMark = nil
+      end
+    else
+      r.dummy = nil
+      v.dummy = nil
+      v.RectMenu = v.RectMenu or {}
+      v.RectMenu.TextMark = nil
+    end
+
+    i = i + 2
+  end -- while
+
+  self.Filtered = j
+end ---- MakeFilter
+
+function TBlocks:ApplyFilter ()
+  local self = self
+  local Props = self.Props
+
+  self:MakeFilter()
+
+  Props.Title  = Props.FmtTitle:format(self.Pattern)
+  Props.Bottom = Props.FmtBottom:format(self.Filtered, self.Count)
+end ---- ApplyFilter
+
+  local slen, sconv = string.len, string.lower
+
+  --local CloseFlag  = { isClose = true }
+  local CancelFlag = { isCancel = true }
+  --local CompleteFlags = { isRedraw = false, isRedrawAll = true }
+  local DoChange = { isUpdate = true }
+  local NoChange = { isUpdate = false }
+
 function TBlocks:AssignEvents () --> (bool | nil)
   local self = self
+
+  local Table = { self.Props, self.Items, self.Keys }
 
   -- Обработчик нажатия клавиш.
   local function KeyPress (VirKey, ItemPos)
@@ -631,34 +727,40 @@ function TBlocks:AssignEvents () --> (bool | nil)
     if SKey == "Esc" then return nil, CancelFlag end
     --if SKey == "Enter" then return end
     --logShow(VirKey, SKey)
+    local State = VirKey.StateName
+    if State ~= "" and State ~= "Shift" then return end
 
     local Data = self.Items[ItemPos]
     if not Data then return end
 
-    if SKey == "Divide" then
-      local Char = u8byte(VirKey.UnicodeChar or 0x0000)
-      if Char ~= 0x0000 and
-         (VirKey.StateName == "" or
-          VirKey.StateName == "Shift") then
-        self.Char = Char
-      else
-        isUpdate = false
-      end
+    SKey = VirKey.KeyName
+    if SKey == "BS" then
+      self.Pattern = self.Pattern:sub(1, -2)
+    elseif slen(SKey) == 1 then
+      self.Pattern = self.Pattern..sconv(SKey)
+    else
+      return
     end -- SKey
 
-    return
+    self:ApplyFilter()
+    --logShow({ self.Filtered, self.Count, self.Pattern }, "KeyPress")
+    if self.Filtered == self.Count then
+      self.Pattern = self.Pattern:sub(1, -2)
+      self:ApplyFilter()
+    end
+
+    return Table, DoChange
   end -- KeyPress
 
   -- Назначение обработчиков:
   local RM = self.Props.RectMenu
   RM.OnKeyPress = KeyPress
-  --RM.OnNavKeyPress = NavKeyPress
-  --RM.OnSelectItem = SelectItem
-  --RM.OnChooseItem = ChooseItem
 end -- AssignEvents
 
 function TBlocks:ShowMenu () --> (item, pos)
   local self = self
+  self:AssignEvents()
+
   return usercall(nil, unit.RunMenu,
                   self.Props, self.Items, self.Keys)
 end ---- ShowMenu
@@ -673,12 +775,14 @@ function TMain:ChooseBlock (Data)
 
   Blocks:MakeProps()
   Blocks:MakeItems()
+  Blocks:InitFilter()
 
   local Char = Data and Data.Char or 0
   Blocks.Props.SelectIndex = (uCharBlock(Char) or 1) * 2 + 2
   --logShow(Blocks.Props, uCP(Char), 1)
 
   Blocks.ActItem, Blocks.ItemPos = Blocks:ShowMenu()
+  farUt.RedrawAll() -- Exclude Blocks menu
 
   return Blocks.ActItem and Blocks.ActItem.Char
 end ---- ChooseBlock
