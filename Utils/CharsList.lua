@@ -19,8 +19,11 @@ local logShow = context.ShowInfo
 --local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
 local strings = require 'context.utils.useStrings'
+local tables = require 'context.utils.useTables'
 
 local divf = numbers.divf
+
+local Null = tables.Null
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -36,33 +39,33 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 do --- Преобразование в читаемый формат
 
   local CharsData = unit.Data
-  local CharsNames = CharsData and CharsData.Names
-
--- Получение имени символа по её кодовой точке.
-local function uCPname (c) --> (string)
-  local c = CharsNames and CharsNames[c]
-  return c and c.name or ""
-end -- uCPname
-unit.uCPname = uCPname
+  local CharsNames = CharsData and CharsData.Names or Null
 
 -- Представление кодовой точки символа в виде строки.
 local uCP2s = strings.ucp2s
 unit.uCP = uCP2s
 
-unit.CharNameFmt = "U+%s — %s" -- utf-8 string
+unit.CharCodeNameFmt = "U+%s — %s" -- utf-8 string
 
 local function uCodeName (u)
-  return unit.CharNameFmt:format(uCP2s(u, true), uCPname(u))
+  local c = CharsNames[u]
+  if not c then return end
+  local s = c.fullname
+  if not s then
+    s = unit.CharCodeNameFmt:format(uCP2s(u, true), c.name or "")
+    c.fullname = s
+  end
+  return s
 end -- uCodeName
 unit.uCodeName = uCodeName
 
   local u_byte = strings.u8byte
 
-function unit.uCharName (c)
+function unit.uCharCodeName (c)
   return uCodeName(u_byte(c))
-end ---- uCharName
+end ---- uCharCodeName
 
-  local CharsBlocks = CharsData and CharsData.Blocks
+  local CharsBlocks = CharsData and CharsData.Blocks or Null
 
 local function uCharBlock (u)
   local Blocks = CharsBlocks
@@ -84,21 +87,26 @@ local function uCharBlock (u)
 end ---- uCharBlock
 unit.uCharBlock = uCharBlock
 
-unit.CharBlockFmt = "U+%s..U+%s — %s" -- utf-8 string
+unit.CharBlockNameFmt = "U+%s..U+%s — %s" -- utf-8 string
 
 local function uBlockName (u)
   local b = uCharBlock(u)
-  if b then
-    return unit.CharBlockFmt:format(uCP2s(b.first, true),
-                                    uCP2s(b.last, true),
-                                    b.name)
+  if not b then return end
+
+  local s = b.fullname
+  if not s then
+    s = unit.CharBlockNameFmt:format(uCP2s(b.first, true),
+                                     uCP2s(b.last, true),
+                                     b.name or "")
+    b.fullname = s
   end
+  return s
 end ---- uBlockName
 unit.uBlockName = uBlockName
 
 function unit.uCharBlockName (c)
   return uBlockName(u_byte(c))
-end ---- uCharName
+end ---- uCharBlockName
 
 end --
 ---------------------------------------- main

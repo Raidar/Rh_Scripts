@@ -306,7 +306,15 @@ function TMain:MakeProps ()
           if     k == 1 then
             return Item.Hint
           elseif k == 3 then
-            return uBlockName(Item.Data and Item.Data.Char or 0)
+            local d = Item.Data
+            if type(d) == 'table' then
+              local n = d.BlockName
+              if not n then
+                n = uBlockName(d.Char or 0)
+                d.BlockName = n
+              end
+              return n
+            end
           end
         end,
       },

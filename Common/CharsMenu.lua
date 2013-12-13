@@ -32,7 +32,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local keyUt = require "Rh_Scripts.Utils.Keys"
 
 local CharsList = require "Rh_Scripts.Utils.CharsList"
-local uCharName = CharsList.uCharName
+local uCharCodeName = CharsList.uCharCodeName
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -174,7 +174,7 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   local Hint = Props.Hint
   if Hint == true then
     if x:len() == 1 then
-      t.Hint = uCharName(x)
+      t.Hint = uCharCodeName(x)
     end
   elseif Hint then
     t.Hint = Hint
