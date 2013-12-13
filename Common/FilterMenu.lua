@@ -291,22 +291,22 @@ function unit.Menu (Properties, Items, BreakKeys) --| (Menu)
   local function PrepareItems (Pattern)
     local n = 0
     for _, v in ipairs(MapItems) do
-       local isOk, fpos, fend = pcall(CheckItem, v.text, Pattern, v)
-       if isOk then
-         if fpos then
-           v.dummy = false --nil
-           v.RectMenu = v.RectMenu or {}
-           v.RectMenu.TextMark = { fpos, fend }
-           n = n + 1
-         else
-           v.dummy = true
-           v.RectMenu = nil
-         end
-       else
-         --v.dummy = true
-         v.RectMenu = nil
-         n = n + 1
-       end
+      local isOk, fpos, fend = pcall(CheckItem, v.text, Pattern, v)
+      if isOk then
+        if fpos then
+          v.dummy = false --nil
+          v.RectMenu = v.RectMenu or {}
+          v.RectMenu.TextMark = { fpos, fend }
+          n = n + 1
+        else
+          v.dummy = true
+          v.RectMenu = nil
+        end
+      else
+        --v.dummy = true
+        v.RectMenu = nil
+        n = n + 1
+      end
     end
     return n
   end -- PrepareItems
