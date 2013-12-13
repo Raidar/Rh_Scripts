@@ -299,7 +299,7 @@ function TMain:MakeProps ()
       Bottom = 3,
 
       Texts = {
-        Bottom = function (k, Item)
+        Bottom = function (k, Rect, Item)
           if Item == nil then
             return
           end

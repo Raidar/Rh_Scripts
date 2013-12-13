@@ -79,7 +79,9 @@ unit.DrawLineText = DrawLineText
 -- Вывод текста в прямоугольнике.
 function unit.DrawRectText (Rect, Color, Text, ...) --> (number)
   local tp = type(Text)
+
   local k, Count = 1, Rect.h
+  local Color = Rect.Color or Color
 
   if     tp == 'string' then
     if Text:sub(-1, 1) ~= "\n" then Text = Text.."\n" end
@@ -95,17 +97,21 @@ function unit.DrawRectText (Rect, Color, Text, ...) --> (number)
       if k > Count then break end
       local s = Text[i]
       if type(s) == "function" then
-        s = s(k, ...)
+        s = s(k, Rect, ...)
       end
-      if s then DrawLineText(Rect, Color, s) end
+      if s then
+        DrawLineText(Rect, Rect.Color or Color, s)
+      end
       k = k + 1
       Rect.y = Rect.y + 1
     end
 
   elseif tp == 'function' then
     for i = 1, Count do
-      local s = Text(i, ...)
-      if s then DrawLineText(Rect, Color, s) end
+      local s = Text(i, Rect, ...)
+      if s then
+        DrawLineText(Rect, Rect.Color or Color, s)
+      end
       Rect.y = Rect.y + 1
     end
 
