@@ -112,8 +112,13 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 local TMain = {
   Guid       = win.Uuid("19500a29-1a9b-4b1b-833c-693d58669963"),
   ConfigGuid = win.Uuid("1991fe2b-e919-480e-8b0a-90b7c960d113"),
+
+  Blocks     = {
+    Guid       = win.Uuid("19b4271d-09c2-4671-af59-b043d1698104"),
+  }, ---
 }
-local MMain = { __index = TMain }
+local MMain     = { __index = TMain }
+local MBlocks   = { __index = TMain.Blocks }
 
 -- Создание объекта основного класса.
 local function CreateMain (ArgData)
@@ -153,7 +158,18 @@ local function CreateMain (ArgData)
     ItemPos   = false,    -- Позиция выбранного пункта меню
     --Action    = false,    -- Выбранное действие
     --Effect    = false,    -- Выбранный эффект
+
+    Blocks    = {         -- Объект: Блоки символов
+      Main      = false,    -- Объект основного класса
+      -- Текущее состояние:
+      Items     = false,    -- Список пунктов меню
+      Props     = false,    -- Свойства меню
+
+      ActItem   = false,    -- Выбранный пункт меню
+      ItemPos   = false,    -- Позиция выбранного пункта меню
+    },
   } --- self
+  self.Blocks.Main = self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(self.ArgData, "ArgData", "wA d2")
@@ -174,6 +190,7 @@ local function CreateMain (ArgData)
   locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
+  setmetatable(self.Blocks, MBlocks)
   return setmetatable(self, MMain)
 end -- CreateMain
 
@@ -254,7 +271,7 @@ function TMain:MakeProps ()
 
   self.RowCount = 1 + self.CharRows + 1
   self.ColCount = 1 + self.CharCols + 1
-  
+
   -- Свойства меню:
   local Props = self.CfgData.Props or {}
   self.Props = Props
@@ -291,7 +308,7 @@ function TMain:MakeProps ()
       [1] = self.DigitNum,
       [self.ColCount] = self.DigitNum,
     }, --
-    
+
     MaxHeight = 1 + 1 + self.RowCount + 1 + 3 + 0,
 
     Colors = self.Colors,
@@ -485,21 +502,24 @@ end ---- LimitChar
 end -- do
 ---------------------------------------- ---- Block
 do
+  local TBlocks = TMain.Blocks
+
   local max = math.max
 
-function TMain:MakeBlocksProps () --| (BlocksProps)
+function TBlocks:MakeProps () --| (BlocksProps)
   local self = self
-  if self.BlocksProps then return end
-  
+  if self.Props then return end
+
   -- Свойства меню блоков символов:
   local Props = {}
-  self.BlocksProps = Props
+  self.Props = Props
 
-  --Props.Id = Props.Id or self.Guid
-  Props.HelpTopic = self.Custom.help.tlink
-  Props.FarArea = self.FarArea
+  local Main = self.Main
+  Props.Id = Props.Id or self.Guid
+  Props.HelpTopic = Main.Custom.help.tlink
+  Props.FarArea = Main.FarArea
 
-  local L = self.LocData
+  local L = Main.LocData
   Props.Title  = L.BlocksCaption
   --Props.Bottom = L.CharsBlocksKeys
 
@@ -542,7 +562,7 @@ function TMain:MakeBlocksProps () --| (BlocksProps)
       [1] = RangeLen,
       --[1] = max(4 + 2 + 4, L.BlocksColBlockRange:len()),
     }, --
-    
+
     --MaxHeight = self.Props.RectMenu.MaxHeight,
 
     --Colors = self.Colors,
@@ -551,24 +571,26 @@ function TMain:MakeBlocksProps () --| (BlocksProps)
   } -- RM
   Props.RectMenu = RM
 
-  self.BlocksRectItem = {
+  self.RectItem = {
     --TextMark = true,
     TextAlign = "CM",
   } --
 
   return true
-end ---- MakeBlocksProps
+end ---- MakeProps
 
   local uCP = CharsList.uCP
   local uData = CharsList.Data
-  local Blocks = uData and uData.Blocks or Null
+  local uBlocks = uData and uData.Blocks or Null
   local BlockRangeFmt = "%s..%s"
 
-function TMain:MakeBlocksItems () --| (BlocksItems)
+function TBlocks:MakeItems () --| (BlocksItems)
   local self = self
-  if self.BlocksItems then return end
-  
-  local L = self.LocData
+  if self.Items then return end
+
+  local Main = self.Main
+
+  local L = Main.LocData
 
   local t = {
     { text = L.BlocksColBlockRange,
@@ -579,10 +601,10 @@ function TMain:MakeBlocksItems () --| (BlocksItems)
       Label = true,
       RectMenu = self.BlocksItem,
     },
-  }
+  } ---
 
-  for i = 1, #Blocks do
-    local b = Blocks[i]
+  for i = 1, #uBlocks do
+    local b = uBlocks[i]
     t[#t + 1] = {
       text = BlockRangeFmt:format(uCP(b.first, true),
                                   uCP(b.last, true)),
@@ -595,31 +617,70 @@ function TMain:MakeBlocksItems () --| (BlocksItems)
     }
   end
 
-  self.BlocksItems = t
+  self.Items = t
 
   return true
-end ---- MakeBlocksItems
+end ---- MakeItems
 
-function TMain:ShowBlocksMenu () --> (item, pos)
+function TBlocks:AssignEvents () --> (bool | nil)
+  local self = self
+
+  -- Обработчик нажатия клавиш.
+  local function KeyPress (VirKey, ItemPos)
+    local SKey = VirKey.Name --or InputRecordToName(VirKey)
+    if SKey == "Esc" then return nil, CancelFlag end
+    --if SKey == "Enter" then return end
+    --logShow(VirKey, SKey)
+
+    local Data = self.Items[ItemPos]
+    if not Data then return end
+
+    if SKey == "Divide" then
+      local Char = u8byte(VirKey.UnicodeChar or 0x0000)
+      if Char ~= 0x0000 and
+         (VirKey.StateName == "" or
+          VirKey.StateName == "Shift") then
+        self.Char = Char
+      else
+        isUpdate = false
+      end
+    end -- SKey
+
+    return
+  end -- KeyPress
+
+  -- Назначение обработчиков:
+  local RM = self.Props.RectMenu
+  RM.OnKeyPress = KeyPress
+  --RM.OnNavKeyPress = NavKeyPress
+  --RM.OnSelectItem = SelectItem
+  --RM.OnChooseItem = ChooseItem
+end -- AssignEvents
+
+function TBlocks:ShowMenu () --> (item, pos)
+  local self = self
   return usercall(nil, unit.RunMenu,
-                  self.BlocksProps, self.BlocksItems, self.BlocksKeys)
-end ---- ShowBlocksMenu
+                  self.Props, self.Items, self.Keys)
+end ---- ShowMenu
 
   local uCharBlock = CharsList.uCharBlock
 
 -- Choose character block.
 -- Выбор блока символов.
 function TMain:ChooseBlock (Data)
-  self:MakeBlocksProps()
-  self:MakeBlocksItems()
+  --local self = self
+  local Blocks = self.Blocks
+
+  Blocks:MakeProps()
+  Blocks:MakeItems()
 
   local Char = Data and Data.Char or 0
-  self.BlocksProps.SelectIndex = (uCharBlock(Char) or 1) * 2 + 2
-  --logShow(self.BlocksProps, uCP(Char), 1)
+  Blocks.Props.SelectIndex = (uCharBlock(Char) or 1) * 2 + 2
+  --logShow(Blocks.Props, uCP(Char), 1)
 
-  self.BlocksItem, self.BlocksPos = self:ShowBlocksMenu()
+  Blocks.ActItem, Blocks.ItemPos = Blocks:ShowMenu()
 
-  return self.BlocksItem and self.BlocksItem.Char
+  return Blocks.ActItem and Blocks.ActItem.Char
 end ---- ChooseBlock
 
 end -- do
@@ -774,7 +835,7 @@ function TMain:AssignEvents () --> (bool | nil)
     -- TODO: Поддержка перехода на символ:
     -- - при нажатии комбинации клавиш, соответствующих символу
     --   (см. макросы для вставки символов в редактор) - через config!
-    
+
     local isUpdate = true
     if SKey == "CtrlB" then
       local Char = self:ChooseBlock(Data)
@@ -838,7 +899,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-    end -- KeyPress
+    end -- SKey
 
     if isUpdate then
       self:LimitChar()
