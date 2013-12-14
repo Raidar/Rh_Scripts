@@ -1912,11 +1912,11 @@ function TMenu:MouseDblClick (hDlg, Input) --> (bool)
   return self:DefaultChooseItem(hDlg, "DblClick")
 end ---- MouseDblClick
 
-function TMenu:MouseBorderClick (hDlg, Input)
+function TMenu:MouseBorderClick (hDlg, Kind, Input)
   local self = self
   self.DebugClickChar = "B"
 
-  local Data = self:HandleEvent("OnBorderClick", hDlg, Input)
+  local Data = self:HandleEvent("OnBorderClick", hDlg, Kind, Input)
   if type(Data) ~= 'table' and
      self.RectMenu.IsDebugDraw then
     self:DoMenuDraw() -- Перерисовка меню
@@ -1925,11 +1925,12 @@ function TMenu:MouseBorderClick (hDlg, Input)
   return Data
 end ---- MouseBorderClick
 
-function TMenu:MouseEdgeClick (hDlg, Input)
+function TMenu:MouseEdgeClick (hDlg, Kind, Input)
   local self = self
   self.DebugClickChar = "E"
 
-  local Data = self:HandleEvent("OnEdgeClick", hDlg, Input)
+  local Data = self:HandleEvent("OnEdgeClick", hDlg, Kind, Input,
+                                               self:GetSelectIndex())
   if type(Data) ~= 'table' and
      self.RectMenu.IsDebugDraw then
     self:DoMenuDraw() -- Перерисовка меню
@@ -2791,23 +2792,59 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
         return _Menu:ScrollXClick(hDlg, Input) -- "Пересечение"
       end
 
-      -- Обработка областей вне меню.
-      if x < 0 or
-         y < 0 or
-         x >= Zone.BoxWidth or
-         y >= Zone.BoxHeight then
+      do -- Обработка областей вне меню.
+        local g = Zone.BoxGage
+        local w = Zone.BoxWidth
+        local h = Zone.BoxHeight
+        Input.w = w -- MAYBE: Debug only
+        Input.h = h -- MAYBE: Debug only
 
-        if Zone.BoxGage > 0 then -- Рамка
-          if (x == -1 or  x == Zone.BoxWidth ) and
-             (y >= -1 and y <= Zone.BoxHeight) or
-             (y == -1 or  y == Zone.BoxHeight) and
-             (x >= -1 and x <= Zone.BoxWidth ) then
-            return _Menu:MouseBorderClick(hDlg, Input)
+        if x < 0 or y < 0 or x >= w or y >= h then
+          if g > 0 then -- Рамка
+            if (x == -1 or x == w) and (y >= -1 and y <= h) or
+               (y == -1 or y == h) and (x >= -1 and x <= w) then
+
+              -- Часть рамки
+              local Kind = (y == -1 and "T" or y == h and "B" or "")
+              Kind = Kind..(x == -1 and "L" or x == w and "R" or "")
+
+              return _Menu:MouseBorderClick(hDlg, Kind, Input)
+            end
           end
-        end
 
-        return _Menu:MouseEdgeClick(hDlg, Input) -- Край
-      end
+          -- Часть отступа
+          local Kind = (y < 0 and "T" or y >= h and "B" or "")
+          Kind = Kind..(x < 0 and "L" or x >= w and "R" or "")
+
+          -- Получение строки и столбца
+          -- + Учёт областей вне окна
+          local r, c
+          if y < 0 then
+            r = y + Zone.EdgeT + g
+            if r < 0 then return false end
+          elseif y >= h then
+            r = y - h - g
+            if r >= Zone.EdgeB then return false end
+          else
+            r = y + g
+          end
+          if x < 0 then
+            c = x + Zone.EdgeL + g
+            if c < 0 then return false end
+          elseif x >= w then
+            c = x - w - g
+            if c >= Zone.EdgeR then return false end
+          else
+            c = x + g
+          end
+
+          Input.r = r + 1
+          Input.c = c + 1
+
+          --logShow(Input, Kind, 1)
+          return _Menu:MouseEdgeClick(hDlg, Kind, Input) -- Край
+        end
+      end -- do
 
       -- Обработка выбором мышью.
       if Input.EventFlags == MouseClickDbl then
