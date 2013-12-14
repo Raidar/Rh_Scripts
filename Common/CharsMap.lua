@@ -1016,7 +1016,7 @@ function TMain:AssignEvents () --> (bool | nil)
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
     --if self.IsInput then return end
-
+    
     local AKey, VMod = AKey, VMod
 
     local Data = self.Items[ItemPos].Data
@@ -1093,7 +1093,33 @@ function TMain:AssignEvents () --> (bool | nil)
     return
   end -- NavKeyPress
 
-  local function EdgeClick (Input)
+  -- Обработчик нажатия мыши на отступе.
+  local function EdgeClick (Kind, Input, ItemPos)
+    --logShow(Input, Kind)
+
+    local Data = self.Items[ItemPos].Data
+    --if not Data then return end
+
+    local isUpdate = true
+
+    if Kind == "B" and Input.r == 3 then
+      --logShow(Input, Kind)
+      local Char = self:ChooseBlock(Data)
+      if type(Char) == 'number' then
+        self.Char = Char
+      else
+        isUpdate = false
+      end
+    else
+      isUpdate = false
+    end
+
+    if isUpdate then
+      self:LimitChar()
+      return MakeUpdate()
+    end
+
+    return
   end -- EdgeClick
 
 --[[
@@ -1130,10 +1156,12 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Назначение обработчиков:
   local RM = self.Props.RectMenu
-  RM.OnKeyPress = KeyPress
-  RM.OnNavKeyPress = NavKeyPress
-  --RM.OnSelectItem = SelectItem
-  RM.OnChooseItem = ChooseItem
+  RM.DoMouseEvent   = true
+  RM.OnKeyPress     = KeyPress
+  RM.OnNavKeyPress  = NavKeyPress
+  RM.OnEdgeClick    = EdgeClick
+  --RM.OnSelectItem   = SelectItem
+  RM.OnChooseItem   = ChooseItem
 end -- AssignEvents
 
 end --
