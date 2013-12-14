@@ -274,8 +274,8 @@ function unit.Menu (Properties, Items, BreakKeys) --| (Menu)
   -- Обработка отображаемых клавиш.
   local MapKeys = Options.MapKeys
   --logShow({ BreakKeys, MapKeys }, "Keys", 2)
-  local function MapKeyPress (VirKey, SelIndex)
-    local SKey = VirKey.Name or InputRecordToName(VirKey)
+  local function MapKeyPress (Input, SelIndex)
+    local SKey = Input.Name or InputRecordToName(Input)
 
     for k, f in pairs(MapKeys) do
       if SKey == k and type(f) == 'function' then
@@ -332,20 +332,20 @@ function unit.Menu (Properties, Items, BreakKeys) --| (Menu)
   --local FMod, FKey -- Информация нажатой клавише
 
   -- Обработчик нажатия клавиши.
-  local function KeyPress (VirKey, SelIndex)
+  local function KeyPress (Input, SelIndex)
     Props.SelectIndex = SelIndex -- Восстановление выделения!
   -- 2.1. Обработка "отображаемых" клавиш.
-    if MapKeys and MapKeyPress(VirKey, SelIndex) then return Table end
+    if MapKeys and MapKeyPress(Input, SelIndex) then return Table end
   -- 2.2. Обработка нажатия клавиши.
       -- Предварительный анализ клавиши.
-    local VMod, VKey = VirKey.ControlKeyState, VirKey.VirtualKeyCode
+    local VMod, VKey = Input.ControlKeyState, Input.VirtualKeyCode
     if VMod ~= 0 and
        not IsModShift(VMod) and
        not IsModAlt(VMod) then
       return
     end
 
-    local SKey = VirKey.Name or InputRecordToName(VirKey)
+    local SKey = Input.Name or InputRecordToName(Input)
     local SpecKeyChar = SpecKeyChars[SKey]
     if SKey ~= "BS" and
        not SpecKeyChar and
@@ -362,7 +362,7 @@ function unit.Menu (Properties, Items, BreakKeys) --| (Menu)
         Flags = NoChange
       end
     else
-      local Char = SpecKeyChar or VirKey.UnicodeChar
+      local Char = SpecKeyChar or Input.UnicodeChar
       if IsModAlt(VMod) or not MatchCase then
         Char = Char:lower()
       end

@@ -955,8 +955,8 @@ function TMain:AssignEvents () --> (bool | nil)
   end -- MakeUpdate
 
   -- Обработчик нажатия клавиш.
-  local function KeyPress (VirKey, ItemPos)
-    local SKey = VirKey.Name --or InputRecordToName(VirKey)
+  local function KeyPress (Input, ItemPos)
+    local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --logShow(SKey, "SKey")
 

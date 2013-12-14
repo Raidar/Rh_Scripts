@@ -1683,14 +1683,14 @@ local UnhotSKeys = {
 } ---
 
 -- Обработка быстрых клавиш в меню.
-function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
+function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
   local self = self
   local RM = self.RectMenu
   --local Ctrl, RM = self.Ctrl, self.RectMenu
   if RM.NoRapidKey then return end -- TODO: --> Doc!
 
-  local StrKey = VirKey.Name
-  --logShow(VirKey, StrKey)
+  local StrKey = Input.Name
+  --logShow(Input, StrKey)
 
   -- 1. Обработка AccelKeys.
   local Index = self.AKeys[StrKey]
@@ -1702,15 +1702,15 @@ function TMenu:RapidKeyPress (hDlg, VirKey) --> (bool)
   end
 
   -- 2. Обработка Hot Chars.
-  local VMod = VirKey.ControlKeyState
-  --logShow({ VirKey, StrKey, self.HKeys }, "Check HKeys", "d1 xv8")
+  local VMod = Input.ControlKeyState
+  --logShow({ Input, StrKey, self.HKeys }, "Check HKeys", "d1 xv8")
   if ( RM.AltHotOnly and (IsModAlt(VMod) or IsModAltShift(VMod)) ) or
      ( not RM.AltHotOnly and (VMod == 0 or IsModShift(VMod)) ) then
-    local SKey = VirKey.UnicodeChar:upper()
-    --logShow({ VirKey, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
+    local SKey = Input.UnicodeChar:upper()
+    --logShow({ Input, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
     if SKey and not UnhotSKeys[SKey] then
       local Index = self.HKeys:cfind(SKey, 1, true)
-      local VName = VirKey.KeyName
+      local VName = Input.KeyName
       --logShow({ Index, VName, self.HKeys }, tostring(SKey), "d1 xv8")
       if not Index and VName:len() == 1 then
         -- Использование латинской буквы
@@ -1758,16 +1758,16 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
 end ---- UserNavKeyPress
 
 -- Пользовательская обработка клавиш.
-function TMenu:UserKeyPress (hDlg, VirKey, Index) --> (nil|true | Data)
-  return self:HandleEvent("OnKeyPress", hDlg, VirKey, Index)
+function TMenu:UserKeyPress (hDlg, Input, Index) --> (nil|true | Data)
+  return self:HandleEvent("OnKeyPress", hDlg, Input, Index)
 end ---- UserKeyPress
 
 -- Обработчик нажатия клавиши.
-function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
+function TMenu:DoKeyPress (hDlg, Input) --> (bool)
   local self = self
   --logShow(self, "self", 1)
   local SelIndex = self.SelIndex
-  --logShow(VirKey, SelIndex, "d1 x8")
+  --logShow(Input, SelIndex, "d1 x8")
 
   self.DebugClickChar = "K"
 
@@ -1775,12 +1775,12 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
   if SelIndex then -- (только при наличии выделения)
 
     -- Корректировка: Numpad / MSWheel --> Arrow keys
-    local AKey = VirKey.KeyName
+    local AKey = Input.KeyName
     AKey = keyUt.SKEY_NumpadNavs[AKey] or
            keyUt.SKEY_MSWheelNavs[AKey] or AKey
-    --logShow(VirKey, AKey, "w d1 x8")
-    local VMod = keyUt.GetModBase(VirKey.ControlKeyState)
-    --logShow({ AKey, VMod, VirKey }, SelIndex, "h8d1")
+    --logShow(Input, AKey, "w d1 x8")
+    local VMod = keyUt.GetModBase(Input.ControlKeyState)
+    --logShow({ AKey, VMod, Input }, SelIndex, "h8d1")
 
     local isOk, NewKey, NewMod = self:UserNavKeyPress(hDlg, AKey, VMod)
     if isOk then return isOk end
@@ -1798,11 +1798,11 @@ function TMenu:DoKeyPress (hDlg, VirKey) --> (bool)
   end -- if SelIndex
 
   -- 2. Обработка быстрого выбора.
-  local isOk = self:RapidKeyPress(hDlg, VirKey)
+  local isOk = self:RapidKeyPress(hDlg, Input)
   if isOk then return isOk end
 
   -- 3. Пользовательская обработка
-  isOk = self:UserKeyPress(hDlg, VirKey, self:GetSelectIndex())
+  isOk = self:UserKeyPress(hDlg, Input, self:GetSelectIndex())
   if isOk then return isOk end
 
   return false

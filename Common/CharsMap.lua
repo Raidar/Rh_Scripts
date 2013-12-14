@@ -722,18 +722,18 @@ function TBlocks:AssignEvents () --> (bool | nil)
   local Table = { self.Props, self.Items, self.Keys }
 
   -- Обработчик нажатия клавиш.
-  local function KeyPress (VirKey, ItemPos)
-    local SKey = VirKey.Name --or InputRecordToName(VirKey)
+  local function KeyPress (Input, ItemPos)
+    local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --if SKey == "Enter" then return end
-    --logShow(VirKey, SKey)
-    local State = VirKey.StateName
+    --logShow(Input, SKey)
+    local State = Input.StateName
     if State ~= "" and State ~= "Shift" then return end
 
     local Data = self.Items[ItemPos]
     if not Data then return end
 
-    SKey = VirKey.KeyName
+    SKey = Input.KeyName
     if SKey == "BS" then
       self.Pattern = self.Pattern:sub(1, -2)
     elseif slen(SKey) == 1 then
@@ -927,11 +927,11 @@ function TMain:AssignEvents () --> (bool | nil)
   end -- MakeUpdate
 
   -- Обработчик нажатия клавиш.
-  local function KeyPress (VirKey, ItemPos)
-    local SKey = VirKey.Name --or InputRecordToName(VirKey)
+  local function KeyPress (Input, ItemPos)
+    local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --if SKey == "Enter" then return end
-    --logShow(VirKey, SKey)
+    --logShow(Input, SKey)
 
     local Data = self.Items[ItemPos].Data
     if not Data then return end
@@ -991,14 +991,14 @@ function TMain:AssignEvents () --> (bool | nil)
       end
 
     elseif AlterActions[SKey] then
-      self.Char = tonumber(VirKey.UnicodeChar.."000", 16)
+      self.Char = tonumber(Input.UnicodeChar.."000", 16)
       --logShow(self.Char, SKey)
 
     else
-      local Char = u8byte(VirKey.UnicodeChar or 0x0000)
+      local Char = u8byte(Input.UnicodeChar or 0x0000)
       if Char ~= 0x0000 and
-         (VirKey.StateName == "" or
-          VirKey.StateName == "Shift") then
+         (Input.StateName == "" or
+          Input.StateName == "Shift") then
         self.Char = Char
       else
         isUpdate = false
@@ -1092,6 +1092,9 @@ function TMain:AssignEvents () --> (bool | nil)
 
     return
   end -- NavKeyPress
+
+  local function EdgeClick (Input)
+  end -- EdgeClick
 
 --[[
   -- Обработчик выделения пункта.

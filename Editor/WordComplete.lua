@@ -1279,15 +1279,15 @@ function TMain:AssignEvents () --> (bool | nil)
   Popup.PressKey = false -- Нажатая клавиша
 
   -- Обработчик нажатия клавиши.
-  local function KeyPress (VirKey, ItemPos)
-    local SKey = VirKey.Name --or InputRecordToName(VirKey)
+  local function KeyPress (Input, ItemPos)
+    local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
 
     -- Предварительный анализ клавиши.
-    Popup.PressKey = Cfg.UndueOut and VirKey or false
-    local VKey = VirKey.VirtualKeyCode
-    local VMod = GetModBase(VirKey.ControlKeyState)
-    --logShow({ VKey, VMod, SKey }, "VirKey", 1, "xv2")
+    Popup.PressKey = Cfg.UndueOut and Input or false
+    local VKey = Input.VirtualKeyCode
+    local VMod = GetModBase(Input.ControlKeyState)
+    --logShow({ VKey, VMod, SKey }, "Input", 1, "xv2")
 
     local function MakeUpdate () -- Обновление!
       Popup.PressKey = false
@@ -1316,36 +1316,36 @@ function TMain:AssignEvents () --> (bool | nil)
       return MakeUpdate()
     end -- if Index
 
-    --logShow(VirKey, "Info on Key Press: before")
+    --logShow(Input, "Info on Key Press: before")
     if not (VMod == 0 or IsModShift(VMod)) and
        not (Cfg.ActionAlt and IsModAlt(VMod)) then
-      --logShow(VirKey, "Info on Key Press: inner")
+      --logShow(Input, "Info on Key Press: inner")
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
-    --logShow(VirKey, "Info on Key Press: after")
+    --logShow(Input, "Info on Key Press: after")
 
     -- Учёт нажатия клавиш действий.
-    local Name = KeyActionNames[VirKey.KeyName]
-    --logShow(Name, VirKey.KeyName)
+    local Name = KeyActionNames[Input.KeyName]
+    --logShow(Name, Input.KeyName)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
-      --logShow(Name, VirKey.KeyName)
+      --logShow(Name, Input.KeyName)
       return MakeUpdate()
     end
     if IsModAlt(VMod) then
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
 
-    --logShow(VirKey, "Info on Key Press: Spec")
+    --logShow(Input, "Info on Key Press: Spec")
     -- Учёт нажатия клавиш-символов.
     local SpecKeyChar = SpecKeyChars[SKey]
     if not SpecKeyChar and not isVKeyChar(VKey) then
-      --logShow({ VirKey, Cfg.UndueOut, CancelFlag }, "Key is not Char")
+      --logShow({ Input, Cfg.UndueOut, CancelFlag }, "Key is not Char")
       return nil, Cfg.UndueOut and CancelFlag or nil
     end
 
-    --logShow(VirKey, "Info on Key Press: Char")
-    local Char = SpecKeyChar or VirKey.UnicodeChar
+    --logShow(Input, "Info on Key Press: Char")
+    local Char = SpecKeyChar or Input.UnicodeChar
     --logShow(Char, hex(VKey))
     if Cfg.Trailers:find(Char, 1, true) and
        not (Cfg.UseMagic and
@@ -1362,7 +1362,7 @@ function TMain:AssignEvents () --> (bool | nil)
     end
 
     if not InsText(Char) then return end
-    if Cfg.OnCharPress then Cfg.OnCharPress(VirKey, Char) end
+    if Cfg.OnCharPress then Cfg.OnCharPress(Input, Char) end
 
     return MakeUpdate()
   end -- KeyPress
