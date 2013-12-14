@@ -18,11 +18,19 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
    Выберите пункт "Rh_Scripts package" и настройте пакет.
 
 Дополнительно:
-  Для работы с меню Tortoise SVN:
+
+* Для работы с меню Tortoise SVN:
 1. Скопируйте файл "TortoiseSVN.cfg.example" в файл "TortoiseSVN.cfg"
    каталога ~%FarProfile%\scripts\Rh_Scripts\LuaPUM\config~,
    если его там нет.
 2. Настройте параметры конфигурации в файле "TortoiseSVN.cfg".
+
+* Для таблицы символов:
+1. Скачайте файлы "NamesList.txt" и "Blocks.txt"
+   с сайта "The Unicode Consortium" по ссылкам:
+   http://www.unicode.org/Public/UNIDATA/NamesList.txt
+   http://www.unicode.org/Public/UNIDATA/Blocks.txt
+2. Скопируйте скачанные файлы в каталог ~data~ каталога ~Rh_Scripts~.
 
 ―――――――
 P.S. Рекомендуется также просмотреть историю изменений
