@@ -2887,6 +2887,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   local function DlgPredInput (hDlg, ProcItem, Input) --> (bool)
     local Input = Input
     --logShow(Input, ProcItem, 3)
+    if Input.EventType ~= F.MOUSE_EVENT then return true end
 
     if Input.EventFlags == MouseMoved then return true end
 
