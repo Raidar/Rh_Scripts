@@ -21,7 +21,7 @@ Additions:
 
 * To work with Tortoise SVN menu:
 1. Copy "TortoiseSVN.cfg.example" file to "TortoiseSVN.cfg" file
-   of ~%FarProfile%scripts\Rh_Scripts\LuaPUM\config~ directory,
+   of ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~ directory,
    if file is absent in it.
 2. Customize configuration parameters in "TortoiseSVN.cfg" file.
 
@@ -30,7 +30,8 @@ Additions:
    from "The Unicode Consortium" site by following links:
    http://www.unicode.org/Public/UNIDATA/NamesList.txt
    http://www.unicode.org/Public/UNIDATA/Blocks.txt
-2. Copy downloaded files to ~data~ directory of ~Rh_Scripts~ directory.
+2. Copy downloaded files
+   to ~%FarProfile%\data\scripts\Rh_Scripts\data~ directory.
 
 ―――――――
 P.S. It's also recommended view a history of changes

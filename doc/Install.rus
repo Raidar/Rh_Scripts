@@ -7,7 +7,7 @@
 
 Установка:
 1. Удалите весь каталог ~Rh_Scripts~ в каталоге ~scripts~ плагина.
-2. Скопируйте каталог ~Rh_Scripts~ из скачанного архива в каталог
+2. Скопируйте каталог ~Rh_Scripts~ из скачанного архива в каталог
    ~scripts~ плагина "LuaFAR для Редактора" (LuaFAR for Editor).
 3. Создайте в каталоге плагина файл "_usermenu.lua", если его нет.
    Добавьте в этот файл следующую строку:
@@ -21,7 +21,7 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 
 * Для работы с меню Tortoise SVN:
 1. Скопируйте файл "TortoiseSVN.cfg.example" в файл "TortoiseSVN.cfg"
-   каталога ~%FarProfile%\scripts\Rh_Scripts\LuaPUM\config~,
+   каталога ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~,
    если его там нет.
 2. Настройте параметры конфигурации в файле "TortoiseSVN.cfg".
 
@@ -30,7 +30,8 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
    с сайта "The Unicode Consortium" по ссылкам:
    http://www.unicode.org/Public/UNIDATA/NamesList.txt
    http://www.unicode.org/Public/UNIDATA/Blocks.txt
-2. Скопируйте скачанные файлы в каталог ~data~ каталога ~Rh_Scripts~.
+2. Скопируйте скачанные файлы в каталог
+   ~%FarProfile%\data\scripts\Rh_Scripts\data~.
 
 ―――――――
 P.S. Рекомендуется также просмотреть историю изменений

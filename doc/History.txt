@@ -8,6 +8,12 @@
 [=] совместимость
 ==================
 
+2013-12-16, v.3.1.1.2
+―――――――
+  Utils\CharsData:
+[*] NamesList.txt и Blocks.txt должны располагаться
+    в каталоге ~%FarProfile%\data\scripts\Rh_Scripts\data~.
+
 2013-12-16, v.3.1.1.1
 ―――――――
 [!] RectMenu: Исключены нефокусные события при обработке DN_INPUT.
