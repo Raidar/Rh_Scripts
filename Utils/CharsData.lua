@@ -34,8 +34,9 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 ---------------------------------------- ---- Config
 
 unit.DefCfgData = { -- Конфигурация по умолчанию:
-  PluginPath = utils.PluginPath,
-  FilePath  = "scripts\\Rh_Scripts\\data\\",
+  PluginPath    = utils.PluginPath,
+  PluginDataPath= utils.PluginDataPath,
+  FilePath      = "scripts\\Rh_Scripts\\data\\",
   NamesFile     = "NamesList.txt",
   BlocksFile    = "Blocks.txt",
 
@@ -281,13 +282,13 @@ function unit:Execute (Data) --> (bool | nil)
   local FileName
 
   -- Разбор имён
-  FileName = sformat("%s%s%s", CfgData.PluginPath,
+  FileName = sformat("%s%s%s", CfgData.PluginDataPath,
                      CfgData.FilePath, CfgData.NamesFile)
   --logShow(unit.DefCfgData, FileName, "d1")
   self:ParseNames(FileName)
 
   -- Разбор имён
-  FileName = sformat("%s%s%s", CfgData.PluginPath,
+  FileName = sformat("%s%s%s", CfgData.PluginDataPath,
                      CfgData.FilePath, CfgData.BlocksFile)
   --logShow(unit.DefCfgData, FileName, "d1")
   self:ParseBlocks(FileName)
