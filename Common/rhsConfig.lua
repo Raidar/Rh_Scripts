@@ -80,7 +80,7 @@ local CfgDataOrder = {
   "mKeysInfo",
   "Separator", -- Separator --
   -- MakeResident function lines:
-  "rAutoActions", "rVoidTruncate",
+  "rAutoActions", "rTruncAction",
 } --- CfgDataOrder
 local CfgDataSepPos = tables.find(CfgDataOrder, "Separator", ipairs)
 
@@ -303,15 +303,15 @@ local DefCfgData = {
     Name = "AutoActions",
     BasePath = "EditorPath",
     FilePath = "AutoActions",
-    EndComment = "  -- Auto Actions",
+    EndComment = " -- Auto Actions",
   },
-  rVoidTruncate = {
+  rTruncAction = {
     Area = "e",
     enabled = false,
-    Name = "VoidTruncate",
+    Name = "TruncAction",
     BasePath = "EditorPath",
-    FilePath = "VoidTruncate",
-    EndComment = " -- Void Truncater",
+    FilePath = "TruncAction",
+    EndComment = " -- Truncate Action",
   },
 } --- DefCfgData
 
@@ -678,7 +678,6 @@ _UM.End = [==[
 ]==]--_UM.End
 ----------------------------------------
 _UM.MenuItems = [==[
-
 ---------------------------------------- Items
 local ScriptsPath = "scripts\\Rh_Scripts\\"
 local EditorPath  = ScriptsPath.."Editor\\"
@@ -792,7 +791,7 @@ function unit.CreateFile (Data)
   if f then
     f:close()
     if farMsg(L:t"FileExistsOverwrite",
-              L:t"FileCreate", ";OkCancel") ~= 0 then
+              L:t"FileCreate", ";OkCancel") ~= 1 then
       return nil, L:t"FileCreatingCancel"
     end
   end

@@ -59,11 +59,11 @@ local Data = {
 
     -- Residents:
   cfg_Res_AutoActions  = "Авто-действия",
-  cfg_Res_VoidTruncate = "Усекатель пустоты",
+  cfg_Res_TruncAction  = "Действие усечения",
   cfg_Res_Keys_AutoActions  = "Клавиши-символы",
-  cfg_Res_Keys_VoidTruncate = "End + модиф.-ры",
+  cfg_Res_Keys_TruncAction  = "End + модиф.-ры",
   cfg_Res_Desc_AutoActions  = "Шаблоны + Завершение",
-  cfg_Res_Desc_VoidTruncate = "(конечных пробелов + пустых строк)",
+  cfg_Res_Desc_TruncAction  = "(конечных пробелов + пустых строк)",
 
   ----------------------------------------
 } --- Data

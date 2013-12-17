@@ -6,7 +6,7 @@ do local t = {}; Data = t
       t["Title"] = "LUM для &Редактора"
     end
   end
-  t["rVoidTruncate"] = {}
+  t["rTruncAction"] = {}
   do local t = {}; Data["mTextTemplate"] = t
     t["Title"] = "&Текстовые шаблоны"
     do local t = {}; Data["mTextTemplate"]["config"] = t

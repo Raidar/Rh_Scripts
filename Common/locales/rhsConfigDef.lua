@@ -58,11 +58,11 @@ local Data = {
 
     -- Residents:
   cfg_Res_AutoActions  = "Auto Actions",
-  cfg_Res_VoidTruncate = "Void Truncater",
+  cfg_Res_TruncAction  = "Truncate Action",
   cfg_Res_Keys_AutoActions  = "Character keys",
-  cfg_Res_Keys_VoidTruncate = "End w/modifiers",
+  cfg_Res_Keys_TruncAction  = "End w/modifiers",
   cfg_Res_Desc_AutoActions  = "Templates + Completion",
-  cfg_Res_Desc_VoidTruncate = "Kill trailing spaces + empty lines",
+  cfg_Res_Desc_TruncAction  = "Kill trailing spaces + empty lines",
 
   ----------------------------------------
 } --- Data
