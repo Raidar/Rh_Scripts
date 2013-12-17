@@ -1,0 +1,25 @@
+--[[ Rh_Scripts ]]--
+-- This file is for Rh_Scripts pack configurator only. Please, don't edit it.
+
+----------------------------------------
+--[[ description:
+  -- Rh_Scripts pack configurator.
+  -- Конфигуратор пакета Rh_Scripts.
+--]]
+---------------------------------------- Check
+local CErrorTitle = "Error: Rh_Scripts pack"
+local SInstallError = "Package is not properly installed:\n%s"
+local farError = function (Msg) return far.Message(Msg, CErrorTitle, nil, 'e') end
+
+if rawget(_G, 'context') == nil then
+  farError(SInstallError:format"LuaFAR context is required!")
+  return false
+end
+
+---------------------------------------- Items
+local ScriptsPath = "scripts\\Rh_Scripts\\"
+
+-- Rh_Scripts pack configurator.
+AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig")
+
+--------------------------------------------------------------------------------
