@@ -61,6 +61,7 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 
 ----------------------------------------
 local CharsList = require "Rh_Scripts.Utils.CharsList"
+local uData = CharsList.Data
 local uCodeName  = CharsList.uCodeName
 local uBlockName = CharsList.uBlockName
 
@@ -275,6 +276,7 @@ function TMain:MakeProps ()
 
   self.RowCount = 1 + self.CharRows + 1
   self.ColCount = 1 + self.CharCols + 1
+  self.Filler = ("─"):rep(self.DigitNum)
 
   -- Свойства меню:
   local Props = self.CfgData.Props or {}
@@ -313,7 +315,11 @@ function TMain:MakeProps ()
       [self.ColCount] = self.DigitNum,
     }, --
 
-    MaxHeight = 1 + 1 + self.RowCount + 1 + 3 + 0,
+    MaxHeight = 1 + 1 +
+                self.RowCount +
+                1 +
+                (uData and uData.Blocks and (1 + 2) or 0) +
+                0,
 
     Colors = self.Colors,
 
@@ -344,13 +350,15 @@ function TMain:MakeProps ()
         end,
       },
     },
-    IsDrawEdges = true,
+    IsDrawEdges = uData and uData.Blocks,
 
     --RectItem = {
     --  TextMark = true,
     --},
   } --- RM
   Props.RectMenu = RM
+
+  RM.IsStatusBar = not RM.IsDrawEdges
 
   self.RectItem = {
     TextMark = true,
@@ -395,65 +403,75 @@ function TMain:FillMenu () --> (table)
 
   local t = self.Items
 
-  local Filler = "────"
-  local l = (RowCount - 1) * ColCount + 1
-  t[1].text                 = Filler
-  t[1 + ColCount - 1].text  = Filler
-  t[l].text                 = Filler
-  t[l + ColCount - 1].text  = Filler
+  do
+    -- Угловые ячейки
+    local Filler = self.Filler
+    local l = (RowCount - 1) * ColCount + 1
+    t[1].text                 = Filler
+    t[1 + ColCount - 1].text  = Filler
+    t[l].text                 = Filler
+    t[l + ColCount - 1].text  = Filler
 
-  local Order = "0123456789ABCDEF"
-  for k = 1, CharCols do
-    local s = Order:sub(k, k)
-    t[1 + k].text = s
-    t[l + k].text = s
-  end
-
-  local p = 0
-  local b = self.CharBase
-  for _ = 1, CharRows do
-    p = p + ColCount
-    --local s = uCP2s(b, true)
-    t[p + 1].text        = uCP2s(b, true)
-    t[p + ColCount].text = uCP2s(b + CharCols - 1, true)
-    b = b + CharCols
-  end
-
-  p = 1                 -- Индекс начального пункта строки
-  b = self.CharBase     -- Код символа для текущего пункта
-  local U = unicode.utf8.char
-
-  local SelChar = self.Char -- Код текущего символа
-  local SelIndex            -- Индекс пункта с текущим символом
-
-  for i = 1, CharRows do
-    p = p + ColCount
-
-    for j = 1, CharCols do
-      local c = U(b)
-      local f = t[p + j]
-
-      f.text = c
-      f.Hint = uCodeName(b)
-      f.RectMenu = self.RectItem
-
-      f.Data = {
-        Char = b,
-        char = c,
-        r = i,
-        c = j,
-        --p = p + j,
-      } --
-
-      if not SelIndex and b == SelChar then
-        SelIndex = p + j
-      end
-
-      b = b + 1
+    -- Начальная и конечная строки
+    local Order = "0123456789ABCDEF"
+    for k = 1, CharCols do
+      local s = Order:sub(k, k)
+      t[1 + k].text = s
+      t[l + k].text = s
     end
-  end --
+  end -- do
 
-  self.Props.SelectIndex = SelIndex
+  do
+    -- Начальный и конечный столбцы
+    local p = 0
+    local b = self.CharBase
+    for _ = 1, CharRows do
+      p = p + ColCount
+      --local s = uCP2s(b, true)
+      t[p + 1].text        = uCP2s(b, true)
+      t[p + ColCount].text = uCP2s(b + CharCols - 1, true)
+      b = b + CharCols
+    end
+  end -- do
+
+  do -- Символы таблицы
+    local p = 1               -- Индекс начального пункта строки
+    local b = self.CharBase   -- Код символа для текущего пункта
+    local U = unicode.utf8.char
+
+    local SelChar = self.Char -- Код текущего символа
+    local SelIndex            -- Индекс пункта с текущим символом
+
+    for i = 1, CharRows do
+      p = p + ColCount
+
+      for j = 1, CharCols do
+        local c = U(b)
+        local f = t[p + j]
+
+        f.text = c
+        f.Hint = uCodeName(b)
+        f.RectMenu = self.RectItem
+
+        f.Data = {
+          Char = b,
+          char = c,
+          r = i,
+          c = j,
+          --p = p + j,
+        } --
+
+        if not SelIndex and b == SelChar then
+          SelIndex = p + j
+        end
+
+        b = b + 1
+      end
+    end --
+  
+    self.Props.SelectIndex = SelIndex
+
+  end -- do
 
   return true
 end ---- FillMenu
@@ -582,7 +600,6 @@ function TBlocks:MakeProps () --| (BlocksProps)
 end ---- MakeProps
 
   local uCP = CharsList.uCP
-  local uData = CharsList.Data
   local uBlocks = uData and uData.Blocks or Null
   local BlockRangeFmt = "%s..%s"
 
@@ -1159,7 +1176,7 @@ function TMain:AssignEvents () --> (bool | nil)
   RM.DoMouseEvent   = true
   RM.OnKeyPress     = KeyPress
   RM.OnNavKeyPress  = NavKeyPress
-  RM.OnEdgeClick    = EdgeClick
+  RM.OnEdgeClick    = uData and uData.Blocks and EdgeClick
   --RM.OnSelectItem   = SelectItem
   RM.OnChooseItem   = ChooseItem
 end -- AssignEvents
