@@ -4,6 +4,7 @@
 local Data = {
   ----------------------------------------
   Name = "Earth",
+  ["Type.Terra"]        = "Calendar",
   ["Type.Gregorean"]    = "Gregorean calendar",
   ["Type.Hexadecimal"]  = "Hexadecimal calendar",
   ["Type.Minimum"]      = "Minimum project of calendar",

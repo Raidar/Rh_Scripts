@@ -70,6 +70,30 @@ function unit.CalendarTerra ()
   } ----
 end ---- CalendarTerra
 
+function unit.CalendarGrego ()
+  local datim = require "Rh_Scripts.Utils.DateTime"
+  local Calendar = require "Rh_Scripts.Common.Calendar"
+  local cfgWorld = require "Rh_Scripts.Utils.DateTime.Grego"
+  --logShow(cfgWorld, "Grego Config", "w d2")
+  
+  local dt = os.date("*t")
+
+  local Config = datim.newConfig(cfgWorld.TConfig)
+  local Data = {
+    Config = Config,
+    Date = datim.newDate(dt.year, dt.month, dt.day, Config),
+    Time = datim.newTime(dt.hour, dt.min, dt.sec, Config),
+    YearMin = -9998,
+    YearMax =  9999,
+  } --- Data
+
+  return {
+    text = L.AdnCalendarGrego,
+    Function = Calendar.Execute,
+    Arguments = Data,
+  } ----
+end ---- CalendarGrego
+
 function unit.CalendarMillo ()
   local datim = require "Rh_Scripts.Utils.DateTime"
   local Calendar = require "Rh_Scripts.Common.Calendar"
@@ -166,6 +190,7 @@ end ---- CalendarPern
 local mCalendars = {
   text = L.AdnCalendars,
   Items = {
+    unit.CalendarGrego,
     unit.CalendarMillo,
     unit.CalendarHekso,
     unit.CalendarMinimum,

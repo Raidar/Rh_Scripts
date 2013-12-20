@@ -56,7 +56,7 @@ end
 ---------------------------------------- Config class
 local TConfig = {
   World         = "Terra",
-  Type          = "Type.Gregorean",
+  Type          = "Type.Terra",
 
   YearMin       = 1583,
   YearMax       = 9999,
