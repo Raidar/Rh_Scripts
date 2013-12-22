@@ -48,10 +48,11 @@ local Data = {
     LuaTruncFileText    = "&T - Текст и конец файла",
 
   LuaChangeChar     = "&Q - Изменение символов",
+      LuaChangeCharTyper    = "&Q - Типографика",
+      LuaChangeCharMaths    = "&M - Математика",
       LuaChangeCharSuper    = "&= - Верхний индекс",
       LuaChangeCharSuber    = "&- - Нижний индекс",
       LuaChangeCharRefer    = "&0 - Ссылка-сноска",
-      LuaChangeCharTyper    = "&Q - Типографика",
 
   LuaTranscript     = "&X - Транскрибирование",
 

@@ -47,10 +47,11 @@ local Data = {
     LuaTruncFileText    = "File end and &text",
 
   LuaChangeChar     = "&Q - Change characters",
+      LuaChangeCharTyper    = "&Q - Typographics",
+      LuaChangeCharMaths    = "&M - Mathematics",
       LuaChangeCharSuper    = "&= - Superscript",
       LuaChangeCharSuber    = "&- - Subscript",
       LuaChangeCharRefer    = "&0 - Refer-note",
-      LuaChangeCharTyper    = "&Q - Typograph",
 
   LuaTranscript     = "&X - Transcript text",
 
