@@ -89,8 +89,8 @@ $ #Handlers# in LuaFAR for Editor: Rh_Scripts pack
   Name                  Action            Note
  ───────────────────────────────────────────────────────────────────────────────
   Auto Actions    Character key           ¦Completion, Templates.
-  Void Truncater  \37(Alt-)(Shift-)End\-       ¦Truncate trailing spaces
-                  \37(Alt-)Ctrl-(Shift-)End\-  ¦Truncate empty lines in the end & trailing spaces in last line
+  Truncater       \37(Alt-)(Shift-)End\-       ¦Truncate trailing spaces
+       Action     \37(Alt-)Ctrl-(Shift-)End\-  ¦Truncate empty lines in the end & trailing spaces in last line
  ───────────────────────────────────────────────────────────────────────────────
 
   Handlers is attached to plugin as resident modules.
