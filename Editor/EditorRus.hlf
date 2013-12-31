@@ -18,31 +18,12 @@ $ #Скрипты для редактора#
 
 @Edt_ScriptFiles
 $ #Файлы скриптов#: Скрипты для редактора
-    \37AutoActions.lua\-    — ¦~Авто-действия~@AutoActions@
-    \37HandActions.lua\-    — ¦~Ручные действия~@HandActions@
-
     \37TextTemplate.lua\-   — ¦~Текстовые шаблоны~@TextTemplate@
     \37WordComplete.lua\-   — ¦~Завершение слов~@WordComplete@
     \37VoidTruncate.lua\-   — ¦~Усекатель пустоты~@VoidTruncate@
 
- ~Содержание~@Contents@
-
-@AutoActions
-$ #Авто-действия# (AutoActions.lua)
-  AutoActions — скрипт для задания автоматических действий:
-
-  — ~АвтоШаблоны~@AutoTemplate@ на основе скрипта ~Текстовые шаблоны~@TextTemplate@.
-  — ~АвтоЗавершение~@AutoComplete@ на основе скрипта ~Завершение слов~@WordComplete@.
-
- ~Содержание~@Contents@
-
-@HandActions
-$ #Ручные действия# (HandActions.lua)
-  HandActions — скрипт для задания "ручных" действий
-в файле \37_usermenu.lua\- для плагина #LuaFAR для Редактора#:
-
-  — ~Текстовые шаблоны~@TextTemplate@.
-  — ~Завершение слов~@WordComplete@.
+    \37AutoActions.lua\-    — ¦~Авто-действия~@AutoActions@
+    \37HandActions.lua\-    — ¦~Ручные действия~@HandActions@
 
  ~Содержание~@Contents@
 
@@ -460,5 +441,24 @@ $ #Усекатель пустоты# (VoidTruncate.lua)
   \34Внимание\-: ¦Не используйте функцию, если конечные пробелы
 и пустые строки в конце файла являются существенной частью хранимых данных.
 Их усечение может привести к потере или искажению информации.
+
+ ~Содержание~@Contents@
+
+@AutoActions
+$ #Авто-действия# (AutoActions.lua)
+  AutoActions — скрипт для задания автоматических действий:
+
+  — ~АвтоШаблоны~@AutoTemplate@ на основе скрипта ~Текстовые шаблоны~@TextTemplate@.
+  — ~АвтоЗавершение~@AutoComplete@ на основе скрипта ~Завершение слов~@WordComplete@.
+
+ ~Содержание~@Contents@
+
+@HandActions
+$ #Ручные действия# (HandActions.lua)
+  HandActions — скрипт для задания "ручных" действий
+в файле \37_usermenu.lua\- для плагина #LuaFAR для Редактора#:
+
+  — ~Текстовые шаблоны~@TextTemplate@.
+  — ~Завершение слов~@WordComplete@.
 
  ~Содержание~@Contents@

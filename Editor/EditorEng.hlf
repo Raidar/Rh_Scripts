@@ -18,31 +18,12 @@ $ #Scripts for editor#
 
 @Edt_ScriptFiles
 $ #Script files#: Scripts for editor
-    \37AutoActions.lua\-    — ¦~Auto actions~@AutoActions@
-    \37HandActions.lua\-    — ¦~Hand actions~@HandActions@
-
     \37TextTemplate.lua\-   — ¦~Text Templates~@TextTemplate@
     \37WordComplete.lua\-   — ¦~Word Completion~@WordComplete@
     \37VoidTruncate.lua\-   — ¦~Void Truncater~@VoidTruncate@
 
- ~Contents~@Contents@
-
-@AutoActions
-$ #Auto actions# (AutoActions.lua)
-  AutoActions is a small script to specify automatical actions:
-
-  — AutoTemplates based on ~Text Templates~@TextTemplate@ script.
-  — AutoCompletion based on ~Word Completion~@WordComplete@ script.
-
- ~Contents~@Contents@
-
-@HandActions
-$ #Hand actions# (HandActions.lua)
-  HandActions is a small script to specify manual actions
-in \37_usermenu.lua\- file for #LuaFAR for Editor# plugin:
-
-  — ~Text Templates~@TextTemplate@.
-  — ~Word Completion~@WordComplete@.
+    \37AutoActions.lua\-    — ¦~Auto actions~@AutoActions@
+    \37HandActions.lua\-    — ¦~Hand actions~@HandActions@
 
  ~Contents~@Contents@
 
@@ -310,5 +291,24 @@ trailing spaces in last line by pressing \37(Alt-)Ctrl-(Shift-)End\-.
   \34Notice\-: ¦Don't use the function if trailing spaces
 and empty lines in end of file are important part of stored data.
 Truncating them may corrupt or destroy your information.
+
+ ~Contents~@Contents@
+
+@AutoActions
+$ #Auto actions# (AutoActions.lua)
+  AutoActions is a small script to specify automatical actions:
+
+  — AutoTemplates based on ~Text Templates~@TextTemplate@ script.
+  — AutoCompletion based on ~Word Completion~@WordComplete@ script.
+
+ ~Contents~@Contents@
+
+@HandActions
+$ #Hand actions# (HandActions.lua)
+  HandActions is a small script to specify manual actions
+in \37_usermenu.lua\- file for #LuaFAR for Editor# plugin:
+
+  — ~Text Templates~@TextTemplate@.
+  — ~Word Completion~@WordComplete@.
 
  ~Contents~@Contents@
