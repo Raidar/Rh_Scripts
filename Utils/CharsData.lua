@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Unicode characters' data.
-  -- Данные по Unicode‑символам.
+  -- Parsing Unicode characters' Data.
+  -- Разбор данных по Unicode‑символам.
 --]]
 ----------------------------------------
 --[[ uses:
