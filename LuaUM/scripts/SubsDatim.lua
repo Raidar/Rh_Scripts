@@ -148,18 +148,18 @@ end ----
 
 ---------------------------------------- parse & store
 -- Разбор времени.
-function unit.parseTime (s, tp) --> (time | nil)
+function unit.parseTime (tp, s) --> (time | nil)
   return TplKit[tp].parse(s)
 end ----
 
 -- Заполнение времени.
-function unit.spellTime (time, tp) --> (string)
+function unit.spellTime (tp, time) --> (string)
   return TplKit[tp].spell(time)
 end ----
 
 -- Разбор линии.
-function unit.parseLine (s, tp) --> (data | nil)
-  tp = tp or "sub_assa"
+function unit.parseLine (tp, s) --> (data | nil)
+  local tp = tp or "sub_assa"
 
   -- Разбор линии на части.
   local t = { s:match(TplKit[tp].linecap) }
@@ -170,8 +170,8 @@ function unit.parseLine (s, tp) --> (data | nil)
 
   -- Разбор времён на части.
   local info = TplKit[tp]
-  t.start = unit.parseTime(t[info.start], tp)
-  t.stop  = unit.parseTime(t[info.stop], tp)
+  t.start = unit.parseTime(tp, t[info.start])
+  t.stop  = unit.parseTime(tp, t[info.stop])
 
   return t
 end ---- parseLine
@@ -181,8 +181,8 @@ function unit.spellLine (data) --> (string)
   -- Заполнение времён.
   local tp = data.type
   local info = TplKit[tp]
-  t[info.start] = unit.spellTime(t.start, tp)
-  t[info.stop]  = unit.spellTime(t.stop, tp)
+  t[info.start] = unit.spellTime(tp, t.start)
+  t[info.stop]  = unit.spellTime(tp, t.stop)
 
   -- Заполнение линии.
   local s = format(TplKit[tp].linefmt, unpack(t))
@@ -217,7 +217,7 @@ local function DefGetLineData (tp, line, shift) --> (data)
     if s == nil then break end
 
     --logShow({ line, shift, s })
-    data = unit.parseLine(s, tp)
+    data = unit.parseLine(tp, s)
   until data
 
   if data then
