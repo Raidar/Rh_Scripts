@@ -47,15 +47,6 @@ local Data = {
     LuaTruncEndLines    = "&E - Пустой конец файла",
     LuaTruncFileText    = "&T - Текст и конец файла",
 
-  LuaChangeChar     = "&Q - Изменение символов",
-      LuaChangeCharTyper    = "&Q - Типографика",
-      LuaChangeCharMaths    = "&M - Математика",
-      LuaChangeCharSuper    = "&= - Верхний индекс",
-      LuaChangeCharSuber    = "&- - Нижний индекс",
-      LuaChangeCharRefer    = "&0 - Ссылка-сноска",
-
-  LuaTranscript     = "&X - Транскрибирование",
-
   ----------------------------------------
 } --- Data
 
