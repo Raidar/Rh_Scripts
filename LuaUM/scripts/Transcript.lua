@@ -275,6 +275,87 @@ TekstChangeSets.SignMaths = {
 
 -- TekstChangeSets
 ----------------------------------------
+local LeterChangeSets = {
+  GrafRusLat = true,
+  GrafLatRus = true,
+} -- LeterChangeSets
+unit.TekstChangeSets = TekstChangeSets
+
+LeterChangeSets.GrafLatRus = {
+  -- DO
+  
+  ["A"] = 'А',  ["a"] = 'а',
+  ["B"] = 'В',  ["b"] = 'ь',
+  ["C"] = 'С',  ["c"] = 'с',
+  ["D"] = '',   ["d"] = '',
+  ["E"] = 'Е',  ["e"] = 'е',
+  ["F"] = '',   ["f"] = '',
+  ["G"] = 'Б',  ["g"] = 'ф',
+  ["H"] = 'Н',  ["h"] = 'н',
+  ["I"] = '1',  ["i"] = '1',
+  ["J"] = '',   ["j"] = '',
+  ["K"] = 'К',  ["k"] = 'к',
+  ["L"] = '',   ["l"] = '1',
+  ["M"] = 'М',  ["m"] = 'м',
+  ["N"] = 'И',  ["n"] = 'п',
+  ["O"] = 'О',  ["o"] = 'о',
+  ["P"] = 'Р',  ["p"] = 'р',
+  ["Q"] = 'О',  ["q"] = '',
+  ["R"] = 'Я',  ["r"] = 'г',
+  ["S"] = 'В',  ["s"] = 'в',
+  ["T"] = 'Т',  ["t"] = 'т',
+  ["U"] = 'Ц',  ["u"] = 'ц',
+  ["V"] = '',   ["v"] = '',
+  ["W"] = 'Ж',  ["w"] = 'ж',
+  ["X"] = 'Х',  ["x"] = 'х',
+  ["Y"] = 'У',  ["y"] = 'у',
+  ["Z"] = '',   ["z"] = '',
+
+  -- END
+} -- GrafLatRus
+
+LeterChangeSets.GrafRusLat = {
+  -- DO
+  
+  ["А"] = 'A',  ["а"] = 'a',
+  ["Б"] = 'G',  ["б"] = 'b',
+  ["В"] = 'S',  ["в"] = 's',
+  ["Г"] = 'r',  ["г"] = 'r',
+  ["Д"] = '',   ["д"] = '',
+  ["Е"] = 'E',  ["е"] = 'e',
+  ["Ё"] = 'E',  ["ё"] = 'e',
+  ["Ж"] = 'W',  ["ж"] = 'w',
+  ["З"] = '3',  ["з"] = '3',
+  ["И"] = 'N',  ["и"] = 'ii',
+  ["Й"] = 'N',  ["й"] = 'ii',
+  ["К"] = 'K',  ["к"] = 'k',
+  ["Л"] = '',   ["л"] = 'n',
+  ["М"] = 'M',  ["м"] = 'm',
+  ["Н"] = 'H',  ["н"] = 'h',
+  ["О"] = 'O',  ["о"] = 'o',
+  ["П"] = '',   ["п"] = 'n',
+  ["Р"] = 'P',  ["р"] = 'p',
+  ["С"] = 'C',  ["с"] = 'c',
+  ["Т"] = 'T',  ["т"] = 't',
+  ["У"] = 'Y',  ["у"] = 'y',
+  ["Ф"] = '',   ["ф"] = 'g',
+  ["Х"] = 'X',  ["х"] = 'x',
+  ["Ц"] = 'U',  ["ц"] = 'u',
+  ["Ч"] = '4',  ["ч"] = '4',
+  ["Ш"] = 'W',  ["ш"] = 'w',
+  ["Щ"] = 'W',  ["щ"] = 'w',
+  ["Ъ"] = 'b',  ["ъ"] = 'b',
+  ["Ы"] = 'bi', ["ы"] = 'bi',
+  ["Ь"] = 'b',  ["ь"] = 'b',
+  ["Э"] = '',   ["э"] = '',
+  ["Ю"] = 'IO', ["ю"] = 'io',
+  ["Я"] = 'R',  ["я"] = '',
+
+  -- END
+} -- GrafRusLat
+
+-- LeterChangeSets
+----------------------------------------
 local CharChangeSets = {
   -- Tekst
   SignTyper = true,
@@ -283,8 +364,11 @@ local CharChangeSets = {
   SignSuber = true,
   SignRefer = true,
   -- Leter
+  GrafLatRus = true,
+  GrafRusLat = true,
 
   Tekst = TekstChangeSets,
+  Leter = LeterChangeSets,
 } --- CharChangeSets
 unit.CharChangeSets = CharChangeSets
 
@@ -354,12 +438,14 @@ local function GroupChangeSets (Base, Kind)
   local max = 0
 
   for k, v in pairs(u) do
-    local len = k:len()
-    if max < len then max = len end
+    if v and v ~= '' then
+      local len = k:len()
+      if max < len then max = len end
 
-    if t[len] == nil then t[len] = {} end
+      if t[len] == nil then t[len] = {} end
 
-    t[len][makeplain(k)] = v
+      t[len][makeplain(k)] = v
+    end
   end -- for
 
   t[0] = max
@@ -368,6 +454,8 @@ unit.GroupChangeSets = GroupChangeSets
 
 GroupChangeSets("Tekst", "SignTyper")
 GroupChangeSets("Tekst", "SignMaths")
+GroupChangeSets("Leter", "GrafLatRus")
+GroupChangeSets("Leter", "GrafRusLat")
 
 end -- do
 
@@ -384,7 +472,17 @@ local Actions = {
            end
   end, -- default
 
-  SignTyper = function (Table) --> (function)
+  SignTyper  = false,
+  SignMaths  = false,
+
+  GrafLatRus = false,
+  GrafRusLat = false,
+
+} --- Actions
+unit.Actions = Actions
+
+do
+  local function VarLenAction (Table) --> (function)
     local Table = Table
     --logShow(Table)
     return function (block) --> (block)
@@ -401,14 +499,14 @@ local Actions = {
              end
              return block
            end -- function
-  end, -- SignTyper
+  end -- VarLenAction
 
-  SignMaths = false,
-
-} --- Actions
-Actions.SignMaths = Actions.SignTyper
-
-unit.Actions = Actions
+  for k, v in pairs(Actions) do
+    if v == false then
+      Actions[k] = VarLenAction
+    end
+  end
+end -- do
 
 local function Execute (Name) --> (function)
 
@@ -448,27 +546,25 @@ Menus.ChangeSign = {
   } ---
 } --- ChangeSign
 
-Menus.ChangeChar = nil
+--Menus.ChangeChar = nil
 
---[[
 Menus.ChangeChar = {
   text = L.ChangeChar,
   Items = {
-    { text = L.Char,
+    --{ text = L.Char,
+    --  separator = true, },
+    --{ text = L.Char,
+    --  Function = Execute"Typer", },
+    --{ text = L.Char,
+    --  Function = Execute"Maths", },
+    { text = L.CharGraf,
       separator = true, },
-    { text = L.Char,
-      Function = Execute"Typer", },
-    { text = L.Char,
-      Function = Execute"Maths", },
-    { text = L.Char,
-      separator = true, },
-    { text = L.Char,
-      Function = Execute"Super", },
-    { text = L.Char,
-      Function = Execute"Suber", },
+    { text = L.GrafLatRus,
+      Function = Execute"GrafLatRus", },
+    { text = L.GrafRusLat,
+      Function = Execute"GrafRusLat", },
   } ---
 } --- ChangeChar
---]]
 
 --------------------------------------------------------------------------------
 return unit
