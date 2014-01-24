@@ -1,0 +1,1942 @@
+--[[ TT: readme ]]--
+
+----------------------------------------
+--[[ description:
+  -- Templates for 'readme'
+     (ini-like text in *.rme).
+  -- Шаблоны для 'readme'.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+local logShow = context.ShowInfo
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Enums/Sets
+local format = ("").format
+local setfmt = "[%s]" -- Задание множества символов:
+local capfmt = "(%s)" -- Задание "захвата" символов:
+local sf = function (s) return format(setfmt, s) end
+local cf = function (s) return format(capfmt, s) end
+
+--[[ Обозначения:
+  a - any case   - любой регистр
+  l - lower-case - нижний регистр
+  u - upper-case - верхний регистр
+  s - small case - со строчной буквы + верхний регистр
+  t - title case - с прописной буквы + нижний регистр
+  m - mixed case - со строчной буквы + любой регистр
+  x - mixed case - c прописной буквы + любой регистр
+--]]
+
+local let = { -- Letter enumerations:
+  -- any        upper               lower
+  lat = 0,      ulat = "A-Z",       llat = "a-z",       -- Latin
+  rus = 0,      urus = "ЁА-Я",      lrus = "а-яё",      -- Russian
+  lax = 0,      ulax = 0,           llax = 0,           -- Latin-x
+} --- let
+
+let.lat = let.ulat..let.llat
+let.rus = let.urus..let.lrus
+let.llax = let.llat..'`'
+let.ulax = let.ulat..'~'
+--let.lax = let.lat..'`'
+let.lax = let.ulax..let.llax
+
+local les = { -- Letter sets:
+  lat = sf(let.lat), ulat = sf(let.ulat), llat = sf(let.llat),  -- Latin
+  rus = sf(let.rus), urus = sf(let.urus), lrus = sf(let.lrus),  -- Russian
+  lax = sf(let.lax), ulax = sf(let.ulax), llax = sf(let.llax),  -- Latin-x
+} --- les
+
+--logShow({ let, les }, "Letters")
+
+-- One letter slabs:
+local alat, ulat, llat = les.lat, les.ulat, les.llat
+local alax, ulax, llax = les.lax, les.ulax, les.llax
+local arus, urus, lrus = les.rus, les.urus, les.lrus
+-- Some letter slabs:
+local l2lat, l2rus =  llat..llat,  lrus..lrus -- 2 lower letter slab
+local l3lat, l3rus = l2lat..llat, l2rus..lrus -- 3 lower letter slab
+local u3rus = urus..urus..urus -- 3 upper letter
+-- Mixed slabs:
+local x2lax        =  ulax..alax              -- upper + 1 any letter
+local x2lat, x2rus =  ulat..alat,  urus..arus -- upper + 1 any letter
+local x3lax        = x2lax..alax              -- upper + 2 any letter
+local x3lat, x3rus = x2lat..alat, x2rus..arus -- upper + 2 any letter
+local        x4rus =              x3rus..arus -- upper + 3 any letter
+--local x4lat, x4rus = x3lat..alat, x3rus..arus -- upper + 3 any letter
+-- Title slabs:
+local t2lat, t2rus = ulat..llat,  urus..lrus  -- 1 letter slab
+local t3lat, t3rus = ulat..l2lat, urus..l2rus -- 2 letter slab
+local t4lat, t4rus = ulat..l3lat, urus..l3rus -- 3 letter slab
+-- Special letter slabs:
+local yrus = "ё"..urus      -- titled letter prefixed by 'ё'
+local lrusn = "[а-мопр-яё]" -- russian letter without 'н'
+local crusn = cf(lrusn)     -- captured lrusn
+--local lrusl = lrus          -- russian letter without 'л'
+local lrusl = "[а-км-пр-яё]"-- russian letter without 'л'
+
+--logShow({ alat, ulat, llat, alax, ulax, llax, arus, urus, lrus }, "Letter sets", 2)
+
+---------------------------------------- Layout
+local bndUt = require "Rh_Scripts.Utils.Binding"
+local BindLayout = bndUt.BindLayout
+local DefLay, LocLay = BindLayout(), BindLayout("Russian")
+local ConvertLayout = bndUt.ConvertLayout
+--logShow({ DefLay, LocLay }, "Layouts")
+
+-- Convert string layout.
+-- Преобразование раскладки строки.
+local function LocToDef (s) --> (string)
+  return ConvertLayout(s, LocLay, DefLay, true)
+end --
+--[[
+-- Variant for 'apply' field.
+-- Вариант для поля 'apply'.
+local function LocAsDef (Cfg) --> (string)
+  return LocToDef(Cfg.Template.Result)
+end --
+--]]
+
+local function Lower (s)
+  return s:lower()
+end --
+
+local function Upper1st (s)
+  return s:sub(1, 1):upper()..s:sub(2, -1)
+end --
+
+---------------------------------------- Make
+-- Make result from data table.
+-- Формирование результата из таблицы данных.
+local function makeData (Data, s, f) --> (string | nil) | (bool, string)
+  -- Поиск.
+  if Data.find and s then f = s:match(Data.find) end
+  --logShow({ f, Data }, s)
+  if not f then return end -- nil!
+  -- Преобразование.
+  if Data.cvtfind then f = Data.cvtfind(f) end
+
+  -- Анализ.
+  s = Data.data and Data.data[f]
+  if not s then return false, f end
+  if s == true then s = f end
+  -- Преобразование.
+  if Data.convert then s = Data.convert(s) end
+
+  -- Форматирование.
+  return Data.format and format(Data.format, s) or s
+end -- makeData
+
+-- Make common replace by pattern.
+-- Формирование обычной замены по шаблону.
+local function MakeTPL (Cfg, Match, Other, isLoc) --> (string)
+  local s = Cfg.Template.Result
+  s = isLoc and LocToDef(s) or s
+  --logShow(Cfg, s)
+  --logShow({ Match, Other, isLoc }, s, 2)
+  local res, f = makeData(Match, s)
+  --logShow({ res, f, Cfg }, s)
+  if res then return res end
+  --res, sn = makeData(Other, s, f)
+  return Other and makeData(Other, s, f) or false
+end -- MakeTPL
+
+---------------------------------------- Tables
+local List = {} -- data tables
+local Find = {} -- pattern tables
+local Fmts = {} -- format strings
+local Pats = {} -- pattern strings
+
+---------------------------------------- Languages
+-- Языки:
+List.LatLang = {
+  r = "Rus",
+  q = "Epo",
+  --
+  e = "Eng",
+  f = "Fra",
+  g = "Ger",
+  i = "Ita",
+  j = "Jap",
+  k = "Ell",
+  l = "Lat",
+  --
+  O = "Rus:old",
+  J = "Jap/Rus/Eng",
+  E = "Eng/Rus",
+} -- LatLang
+List.RusLang = {
+  ['р'] = "рус.",
+  ['ё'] = '[?]',
+  -----
+  ['а'] = "англ.",
+  --['г'] = "греч.",
+  ['и'] = "итал.",
+  ['к'] = "кит.",
+  --['л'] = "лат.",
+  ['н'] = "нем.",
+  ['п'] = "польск.",
+  ['с'] = "исп.",
+  ['ф'] = "фр.",
+  ['ч'] = "чеш.",
+  ['э'] = "эсп.",
+  ['я'] = "яп.",
+} -- RusLang
+
+---------------------------------------- File types
+-- Обозначения типов файлов:
+List.FileTypeCode = {
+  b = "bin",
+  c = "chm",
+  d = "djv",
+  g = "gif",
+  i = "img",
+  j = "jpg",
+  k = "dok",
+  --o = "doc",
+  p = "pdf",
+  q = "ps",
+  r = "rtf",
+  s = "srg",
+  t = "txt",
+  w = "Site",
+  x = "tex",
+  z = "exe",
+  ["1"] = "pic",
+  ["2"] = "fb2",
+  -- Browser
+  hh = "htm",
+  hm = "mht",
+  hi = "htm+img",
+  hj = "htm+jpg",
+  -- OpenDocument
+  ot = "odt",
+  os = "ods",
+  og = "odg",
+  oi = "odp",
+  -- MS Office doc
+  ow = "doc",
+  ox = "xls",
+  ov = "vsd",
+  op = "ppt",
+  -- Multimedia
+  a = "audio",
+  v = "video",
+  m = "medio",
+} -- FileTypeCode
+Find.DefFileTypeCode = {
+  find = "~%](%w+)$",
+  data = List.FileTypeCode,
+  format = "[%s]",
+}
+Find.LocFileTypeCode = { Find.DefFileTypeCode, false, true }
+
+Fmts.FileType = "File: [%s]."
+
+List.FreqUsedTypes = { 'd', 'p', 'q' }
+
+---------------------------------------- Sites
+-- Обозначения сайтов:
+List.DefOpusLoadSite = {
+  ["c"] = "ChildBooks",
+  ["g"] = "GenLib",
+  ["h"] = "ShareMan",
+  ["k"] = "ProKlondike",
+  ["m"] = "MCCME",
+  ["o"] = "Others",
+  ["p"] = "PubLib",
+  ["s"] = "SciLib",
+  ["t"] = "Torrent",
+  ["u"] = "UmupLib",
+  ["w"] = "OwnScan",
+  ["y"] = "YugZone",
+} -- DefOpusLoadSite
+Find.DefOpusLoadSite = {
+  find = "~%}(%w)$",
+  data = List.DefOpusLoadSite,
+  format = " <%s>",
+}
+Find.LocOpusLoadSite = { Find.DefOpusLoadSite, false, true }
+
+---------------------------------------- Sections
+-- Разделы (в описании произведения).
+local A = '`'
+
+-- Разделы:
+local SecOnlys = {
+  r = "Redo",   -- Редактор
+  u = "Uzum",   -- Область использования
+  p = "Part",   -- Перечисление частей
+  x = "Klas",   -- Классификация
+[A] = "Faktor", -- Мастер/Создатель
+  z = "Serio",  -- Серия
+} -- SecOnlys
+List.SecOnlyName = SecOnlys
+
+-- Разделы:
+local SecNames = {
+  o = "Opus",   -- Описание произведения
+ --oo = "Opus",   -- Описание произведения
+  m = "Nomo",   -- Полное название
+ mm = "Nomo",
+ fr = "Redo",   -- Редактор
+  y = "Tran",   -- Перевод и переводчики
+ yy = "Tran",   --
+  n = "Noto",   -- Детализация описани
+ nn = "Noto",   --
+  e = "Edit",   -- Вид издания
+ ee = "Edit",   --
+  f = "Faktor", --
+ ff = "Faktor", --
+ ef = "Formo",  -- Форма + формат
+ fs = "Senzor", -- Рецензент
+  w = "Versio", -- Буквальный перевод названия
+ ww = "Versio",
+  i = "Origo",  -- Оригинал
+ io = "Origo",
+ jj = "Juro",   -- Право
+ js = "Suplo",  -- Дополнение
+ jo = "Info",   -- Информация
+  v = "Vorto",  -- Ключевые слова
+ vv = "Vorto",
+  a = "Anons",  -- Аннотация
+ aa = "Anons",
+  t = "Tekst",  -- Текст
+ tt = "Tekst",
+ ct = "Kont",   -- Краткое содержание
+  c = "Kontent",-- Содержание (полное)
+ cc = "Kontent",
+ hh = "Index",  -- Указатель
+ hr = "Eraro",  -- Опечатки
+  q = "Kvalio", -- Качество
+ qq = "Kvalio",
+} -- SecNames
+List.SectionName = SecNames
+
+-- Подразделы:
+List.SectSubName = {
+  o = SecNames.oo,  -- Произведение
+  R = SecNames.fr,  -- Редактор
+  y = SecNames.yy,  -- Перевод
+  n = SecNames.nn,  -- Замечания
+  u = SecOnlys.u,   -- Пользование
+  E = SecNames.ee,  -- Издание
+  p = SecOnlys.p,   -- Части
+  F = SecNames.ff,  -- Создатель
+[A] = SecOnlys[A],
+  z = SecOnlys.z,   -- Серия
+  c = SecNames.ct,  -- Содержание
+  x = SecOnlys.x,   -- Классификация
+
+  a = "Alia",   -- Другой
+  d = "Aldo",   -- Добавление
+  P = "Para",   --< parallelum - Параллельный
+  T = "Temo",   -- Тема
+  V = "Vario",  -- Изменения
+  --w = "Nova",   -- Новый
+  --W = "Veta",   -- Старый
+} -- SectSubName
+
+Fmts.SectionName = "[%s]@Enter"
+Fmts.SectionLang = "[%s]:%s@Enter"
+Fmts.SectSubName = "[%s.%s]@Enter"
+Fmts.SectSubWide = "[%s.%s]:%s@Enter"
+Fmts.SQualisName = "%s — %s — %s — %s — %s.@Enter"
+Fmts.SQualisFull = "%s%s%s%s%s"
+Fmts.SQualisVal1 = "%s%s.@Enter%s"
+Fmts.SQualisVal2 = "%s%s — "..Fmts.SQualisVal1.."%s"
+Fmts.DefaultDesc = "%s@Enter@Enter@Enter%s"
+Fmts.EditDefName = Fmts.SectionName..Fmts.FileType.."@Enter"
+Fmts.EditDefDesc = "%s@Enter%s"
+
+local Qualis = {
+  Name = "Качество: ",
+  best = "отличное",
+  good = "хорошее",
+  mid = "среднее",
+  bad = "плохое",
+  worse = "худшее",
+  Pref = 0,
+  Enum = 0,
+  Desc = "Нужно: .@EnterНет: с. .@Enter"..
+         "Худшие: с. .@EnterПлохие: с. .@EnterЛишние: p. .@Enter"..
+         "с.→p. : .@Enterp.→с. : .@Enter"..
+         "Сделан: с. .@Enter",
+  Line = "@Enter――――――――@Enter",
+  toOdd = "@Up@6@End@Left",
+} ---
+List.Qualis = Qualis
+Qualis.Pref = Fmts.SectionName:format(List.SectionName.qq)..Qualis.Name
+Qualis.Enum = Fmts.SQualisName:format(Qualis.best, Qualis.good,
+                                      Qualis.mid, Qualis.bad, Qualis.worse)
+
+-- Спец. комбинации:
+List.SecCombo = {
+  -- Разделы с языком:
+  oo = Fmts.SectionLang:format(List.SectionName.o,  List.LatLang.r),
+  oO = Fmts.SectionLang:format(List.SectionName.o,  List.LatLang.O),
+  oJ = Fmts.SectionLang:format(List.SectionName.o,  List.LatLang.J),
+  oE = Fmts.SectionLang:format(List.SectionName.o,  List.LatLang.E),
+  -- Разделы с подразделами:
+  op = Fmts.SectSubName:format(List.SectionName.o,  List.SectSubName.P),
+  yr = Fmts.SectSubName:format(List.SectionName.yy, List.SectSubName.R),
+  yn = Fmts.SectSubName:format(List.SectionName.yy, List.SectSubName.n),
+  ne = Fmts.SectSubName:format(List.SectionName.nn, List.SectSubName.E),
+  vf = Fmts.SectSubName:format(List.SectionName.vv, List.SectSubName.F),
+  --sr = Fmts.SectSubName:format(List.SectionName.sc, List.SectSubName.R),
+  --se = Fmts.SectSubName:format(List.SectionName.sc, List.SectSubName.E),
+  ['s'..A] = Fmts.SectSubName:format(List.SectionName.io, List.SectSubName.F),
+  -- Разделы с содержимым:
+  --oz = Fmts.SectSubName:format(List.SectionName.oo, List.SectSubName.a)..
+  oz = Fmts.SectSubWide:format(List.SectionName.o,  List.SectSubName.a, "1")..
+       '-[Text].@Enter',
+  -- Разделы с качеством:
+  qs = Qualis.Pref..Qualis.Enum,
+  qo = Fmts.SQualisVal1:format(Qualis.Pref, Qualis.best, Qualis.Line),
+  --qp = Fmts.SQualisVal2:format(Qualis.Pref, Qualis.best, Qualis.good, Qualis.Line),
+  qi = Fmts.SQualisVal1:format(Qualis.Pref, Qualis.good, Qualis.Line, Qualis.Line),
+  --ql = Fmts.SQualisVal2:format(Qualis.Pref, Qualis.good, Qualis.mid, Qualis.Line),
+  qm = Fmts.SQualisVal1:format(Qualis.Pref, Qualis.mid, Qualis.Line),
+  --qn = Fmts.SQualisVal2:format(Qualis.Pref, Qualis.mid, Qualis.bad, Qualis.Line),
+  qb = Fmts.SQualisVal1:format(Qualis.Pref, Qualis.bad, Qualis.Line),
+  qt = Fmts.SQualisFull:format(Qualis.Pref, Qualis.Enum,
+                               Qualis.Desc, Qualis.Line, Qualis.toOdd),
+} -- SecCombo
+do
+  local SecCombo = List.SecCombo
+  -- Разделы с содержимым для [Edit]:
+  -- Основные часто используемые разделы:
+  local SecBody = Fmts.DefaultDesc:format(
+                    Fmts.SectionName:format(List.SectionName.cc),
+                    SecCombo.qt)
+  for _, v in ipairs(List.FreqUsedTypes) do
+    local SecEdit = Fmts.EditDefName:format(List.SectionName.ee,
+                                            List.FileTypeCode[v])
+    SecCombo['e'..v] = SecEdit
+    SecCombo['b'..v] = Fmts.EditDefDesc:format(SecEdit, SecBody)
+  end
+end
+
+Pats.SectionDesc1 = "`%[("..alax.."-)$"
+Pats.SectionDesc2 = ("(%s-)(%s)$"):format(alax, alax)
+
+local function DescSection (Cfg, isLoc) --> (string)
+  --logShow(Cfg, "Cfg")
+  local s = Cfg.Template.Result
+  s = isLoc and LocToDef(s) or s
+  local sn, ss = s:match(Pats.SectionDesc1)
+  if not sn then return false end
+  if sn:len() > 1 then
+    s = List.SectionName[sn] -- "Спец." раздел:
+    if s then return Fmts.SectionName:format(s) end
+    s = List.SecCombo[sn]; if s then return s end
+  else
+    s = List.SecOnlyName[sn] -- Только раздел:
+    if s then return Fmts.SectionName:format(s) end
+  end -- if
+  sn, ss = sn:match(Pats.SectionDesc2)
+  if not sn then return false end
+  --far.Message(sn..'\n'..ss, Cfg.Template.Result)
+  s = List.SectionName[sn]
+  if not s then return false end
+  -- Подраздел:
+  local r = List.SectSubName[ss] --or SectSubName[ss:lower()]
+  if r then return Fmts.SectSubName:format(s, r) end
+  r = List.LatLang[ss] -- Язык раздела:
+  if r then return Fmts.SectionLang:format(s, r) end
+  return false
+end -- DescSection
+
+---------------------------------------- Language
+-- Язык раздела.
+List.DefSectLang = {
+  Old = true,
+  Rus = true,
+  ---
+  Eng = true,
+  Fra = true,
+  Ger = true,
+  Ita = true,
+  Pol = true,
+} -- DefSectLang
+Find.DefSectLang = {
+  find = ":(%a-)$",
+  data = List.DefSectLang,
+  format = ":%s",
+}
+Find.LocSectLang = { Find.DefSectLang, false, true }
+
+---------------------------------------- Opus
+-- Тип произведения.
+List.LocOpusType = {
+  ["Пос"] = "Пособие",
+  ["Уч"]  = "Учебник",
+  ["Уп"]  = "Учеб. пособие",
+  ["Мп"]  = "Метод. пособие",
+  ["Умп"] = "Учеб.‑метод. пособие",
+  ["Мон"] = "Монография",
+  ["Сб"]  = "Сборник",
+} -- LocOpusType
+Find.LocOpusType = {
+  find = "ж(%a-)$",
+  data = List.LocOpusType,
+}
+
+-- Материал произведения.
+-- Вид ресурса произведения.
+List.MateriaType = {
+  -- Text:
+  mm = "Tekst",
+  mn = "Manus.",
+  -- Electronic:
+  me = "El. res.",
+  -- Resource:
+  ra = "Audio",
+  rf = "Film",
+  rg = "Graf.",
+  rk = "Karto",
+  rm = "Medio",
+  ro = "mForm",
+  ru = "Musik",
+  rv = "Video",
+  -- Other:
+  mb = "Brail",
+  mk = "Komp.",
+  mo = "Objekt",
+} -- MateriaType
+
+List.DefResKindType = {
+  ee = "El. dat. e prg.",
+  -- Datae:
+  ed = "El. dat.",
+  ef = "El. tipar. dat.",
+  eg = "El. graf. dat.",
+  eh = "El. sonem. dat.",
+  ek = "El. kinem. dat.",
+  em = "El. dem. dat.",
+  en = "El. num. dat.",
+  et = "El. tek. dat.",
+  -- Programs:
+  ep = "El. prg.",
+  ea = "El. apl. prg.",
+  es = "El. serv. prg.",
+  ey = "El. sist. prg.",
+} -- DefResKindType
+--[[
+List.LocResKindType = {
+  -- Datae:
+  ed = "Эл. дан.",
+  ef = "Эл. шрифт. дан.",
+  eg = "Эл. граф. дан.",
+  eh = "Эл. звук. дан.",
+  ek = "Эл. кинем. дан.",
+  em = "Эл. дем. дан.",
+  en = "Эл. числ. дан.",
+  et = "Эл. текст. дан.",
+  -- Programs:
+  ep = "Эл. прг.",
+  ea = "Эл. прикл. прг.",
+  es = "Эл. серв. прг.",
+  ey = "Эл. сист. прг.",
+} -- LocResKindType
+--]]
+
+Pats.Materia = "`m("..alax.."-)$"
+Fmts.Materia = "-[%s]."
+--Fmts.Materia = "-[%s].@Enter"
+Fmts.MateRes = "-[%s].- %s@Enter"
+
+local function DescMateriaKind (Cfg, isLoc) --> (string)
+  local s = Cfg.Template.Result
+  s = isLoc and LocToDef(s) or s
+  --far.Message(s, Cfg.Template.Result)
+  local sn = s:match(Pats.Materia)
+  if not sn then return false end
+  --far.Message(tostring(sn)..'\n'..s, Cfg.Template.Result)
+  s = List.MateriaType[sn]
+  if s then return Fmts.Materia:format(s) end
+  local ResKindType = List.DefResKindType
+  --local ResKindType = isLoc and List.LocResKindType or List.DefResKindType
+  s = ResKindType[sn]
+  if s then return s end
+  if sn:sub(1, 1) == "j" then
+    s = ResKindType["e"..sn:sub(2, 2)]
+    if s then return Fmts.MateRes:format(List.MateriaType.me, s) end
+  end
+  return false
+end -- DescMateriaKind
+
+---------------------------------------- Change kind
+-- Вид изменений в издании.
+List.LocOpusEditVaro = {
+  ["дд"] = "доп.",
+  ["ии"] = "испр.",
+  ["пп"] = "перераб.",
+  ["сс"] = "стер.",
+  ["ди"] = "доп. и испр.",
+  ["ид"] = "испр. и доп.",
+  ["дп"] = "доп. и перераб.",
+  ["пд"] = "перераб. и доп.",
+} -- LocOpusEditVaro
+Find.LocOpusEditVaro = {
+  find = "ёи(%a-)$",
+  data = List.LocOpusEditVaro,
+}
+
+---------------------------------------- Opus actor
+-- Создатель произведения.
+List.LocOpusFaktor = {
+  ["Авс"] = "Авт.‑сост",
+  ["Сос"] = "Сост",
+  ["Ред"] = true,
+  ["Худ"] = true,
+  ["Рец"] = true,
+} -- LocOpusFaktor
+Find.LocOpusFaktor = {
+  find = "[ёЁ](%a-)$",
+  data = List.LocOpusFaktor,
+  format = "/ %s.: .@Left",
+}
+--[[
+Find.LocOpusFaktor = {
+  find = "ё(%a-)$",
+  data = List.LocOpusFaktor,
+  format = "%s.: .@Left",
+}
+Find.LocOpusFaktorNote = {
+  find = "Ё(%a-)$",
+  data = List.LocOpusFaktor,
+  format = "/ %s.: .@Left",
+}
+--]]
+
+-- Редактор произведения.
+List.LocRedactor = {
+  --["В"] = "Вед",
+  ["Г"] = "Гл",
+  ["Н"] = "Науч",
+  ["О"] = "Общ",
+  ["С"] = "Спец",
+  ["Т"] = "Отв",
+  ["Х"] = "Худ",
+} -- LocRedactor
+Find.LocRedactor = {
+  find = "[ёЁ](%a-)ред$",
+  data = List.LocRedactor,
+  format = "/ %s. ред.: .@Left",
+}
+--[[
+Find.LocRedactor = {
+  find = "ё(%a-)ред$",
+  data = List.LocRedactor,
+  format = "%s. ред.: .@Left",
+}
+Find.LocRedaNote = {
+  find = "Ё(%a-)ред$",
+  data = List.LocRedactor,
+  format = "/ %s. ред.: .@Left",
+}
+--]]
+
+---------------------------------------- Translation
+-- Язык перевода.
+Find.LocTranLang = {
+  find = "ёпер(%a-)$",
+  data = List.RusLang,
+  format = "Пер. с %s",
+}
+Find.LocTranNote = {
+  find = "ёПер(%a-)$",
+  data = List.RusLang,
+  format = "/ Пер. с %s: .@Left",
+}
+
+---------------------------------------- Edition
+-- Вид издания.
+List.DefEditKind = {
+  ['a']  = "Auct.",
+  ['e']  = "El.",
+} -- DefEditKind
+List.LocEditKind = {
+  ['а']  = "Авт.",          -- авторское
+  ['ар'] = "Арх.",          -- ?
+  ['з']  = "Занимат.",      -- занимательное
+  ['л']  = "Лит.",          -- литературное
+  ['лх'] = "Лит.‑худ.",
+  ['н']  = "Науч.",         -- научное
+  ['нз'] = "Науч.‑занимат.",
+  ['нп'] = "Науч.‑попул.",
+  ['нх'] = "Науч.‑худ.",
+  ['ны'] = "Науч.‑произв.",
+  ['о']  = "Офиц.",         -- официальное
+  ['п']  = "Попул.",        -- полулярное
+  ['пв'] = "Перев.",        -- переводное
+  ['р']  = "Рукоп.",        -- рукописное
+  ['с']  = "Справ.",        -- справочное
+  ['сб'] = "Сб.",           -- сборочное
+  ['у']  = "Учеб.",         -- учебное
+  ['х']  = "Худ.",          -- художественное
+  ['ы']  = "Произв.",       -- производственное
+  ['ыы'] = "Произв.‑практ.",
+  ['э']  = "Эл.",           -- электронное
+  ['эс'] = "Эл. сб.",
+} -- LocEditKind
+List.LocEditSpecKind = {
+  ['д'] = "Изд. для досуга.",
+} -- LocEditSpecKind
+Find.DefEditKind = {
+  find = "`(%a-)ed$",
+  data = List.DefEditKind,
+  format = "%s ed.",
+}
+Find.LocEditKind = {
+  { find = "ё(%a-)из$",
+    data = List.LocEditKind,
+    format = "%s изд.",
+  },
+  { data = List.LocEditSpecKind },
+} --
+
+-- Вариант издания.
+List.DefEditVar = {
+  ['e'] = "El. equiv.",
+  ['t'] = "El. trans.",
+  ['m'] = "Ms.",
+} -- DefEditVar
+List.LocEditVar = {
+  ['э'] = "Эл. экв.",
+  ['п'] = "Эл. пер.",
+  ['р'] = "Рукоп.",
+} -- LocEditVar
+Find.DefEditVar = {
+  find = "`(%a)var$",
+  data = List.DefEditVar,
+  format = "%s var.",
+}
+Find.LocEditVar = {
+  find = "ё(%a)вар$",
+  data = List.LocEditVar,
+  format = "%s вар.",
+}
+
+-- Версия издания.
+List.DefEditVer = {
+  ['e'] = "El.",
+  ['p'] = "Pr.",
+} -- DefEditVer
+List.LocEditVer = {
+  ['э'] = "Эл.",
+  ['п'] = "Печ.",
+} -- LocEditVer
+Find.DefEditVer = {
+  find = "`(%a)ver$",
+  data = List.DefEditVer,
+  format = "%s ver.",
+}
+Find.LocEditVer = {
+  find = "ё(%a)вер$",
+  data = List.LocEditVer,
+  format = "%s вер.",
+}
+
+-- Файл издания.
+Find.DefEditFile = {
+  find = "`%](%w+)$",
+  data = List.FileTypeCode,
+  format = Fmts.FileType.."@Left@2",
+}
+Find.LocEditFile = { Find.DefEditFile, false, true }
+
+---------------------------------------- Illustrations
+-- Иллюстрации.
+List.DefEditIll = {
+  ["b"] = "Bibl. @Here tit.@Back",
+  ["f"] = "Ill.: @Here fig.@Back",
+  ["t"] = "Ill.: @Here tab.@Back",
+  ["i"] = "Ill.: @Here fig.,  tab.@Back",
+  ["l"] = "Ill.: @Here fig.,  tab.- Bibl.:  tit.@Back",
+} -- DefEditIll
+List.LocEditIll = {
+  ["б"] = "Библ.: @Here назв.@Back",
+  ["р"] = "Илл.: @Here рис.@Back",
+  ["т"] = "Илл.: @Here табл.@Back",
+  ["и"] = "Илл.: @Here рис.,  табл.@Back",
+  ["л"] = "Илл.: @Here рис.,  табл.- Библ.:  назв.@Back",
+} -- LocEditIll
+Find.DefEditIll = { find = "`il(%a)$", data = List.DefEditIll }
+Find.LocEditIll = { find = "ёил(%a)$", data = List.LocEditIll }
+
+---------------------------------------- Classifications
+-- Классификации издания.
+List.LocClassoOKP = {
+  ["кб"] = "953000 — книги, брошюры.",
+  ["нп"] = "953004 — лит‑ра науч. и произв.",
+  ["лу"] = "953005 — лит‑ра учебная.",
+} -- LocClassoOKP
+Find.LocClassoOKP = {
+  find = "ёОКП(%a-)$",
+  data = List.LocClassoOKP,
+  format = "ОКП ОК‑005‑93, т. 2; %s@Enter",
+}
+
+---------------------------------------- Edition form
+-- Форматы формы издания.
+List.LocFormaFormat = {
+  ["6"]  = { "60",  "90", "16" },
+  ["7"]  = { "70", "100", "16" },
+  ["8"]  = { "84", "108", "32" },
+  ["64"] = { "60",  "84", "16" },
+  ["68"] = { "60",  "88", "16" },
+  ["78"] = { "70", "108", "16" },
+} -- LocFormaFormat
+
+Fmts.FormaFormat = "Формат: %s×%s/%s."
+Fmts.FormaFormatDef = "Формат: %s0×%s0/16.@Left@4"
+
+local function Loc_FormaFmt (Cfg, Pattern) --> (string)
+  local s = Cfg.Template.Result
+  local sn = s:match(Pattern)
+  s = List.LocFormaFormat[sn]
+  if s then return Fmts.FormaFormat:format(unpack(s)) end
+  if sn:len() > 1 then
+    return Fmts.FormaFormatDef:format(sn:sub(1, 1), sn:sub(2, 2))
+  end
+
+  return false
+end -- Loc_FormaFmt
+
+Pats.LocFormaFmt1 = "ёфф(%d)$"
+Pats.LocFormaFmt2 = "ёф(%d%d)$"
+
+-- Бумага формы издания.
+List.LocFormaPaper = {
+  ['вх'] = "высокохуд",
+  ['га'] = "газ",
+  ['гл'] = "глазир",
+  ['кж'] = "кн.‑журн",
+  ['оф'] = "офсет",
+  ['пи'] = "писч",
+  ['сн'] = "Снегурочка",
+  ['ти'] = "тип",
+} -- LocFormaPaper
+List.LocFormaSpecPaper = {
+  ['о'] = List.LocFormaPaper['оф'],
+  ['т'] = List.LocFormaPaper['ти'],
+} -- LocFormaSpecPaper
+
+Fmts.FormaPaper = "Бумага: %s."
+Fmts.FormaNumbPaper = "Бумага: № %s."
+Fmts.FormaSpecPaper = "Бумага: %s. № %s."
+
+local function Loc_FormaPaper (Cfg) --> (string)
+  local s = Cfg.Template.Result
+  local sn = s:match("ёбу(%w-)$")
+  s = List.LocFormaPaper[sn]
+  if s then return Fmts.FormaPaper:format(s) end
+
+  s = sn:sub(1, 1)
+  if s:find("%d") then return Fmts.FormaNumbPaper:format(s) end
+
+  s = List.LocFormaSpecPaper[s]
+  local sd = sn:sub(2, 2)
+  if s and sd:find("%d") then
+    return Fmts.FormaSpecPaper:format(s, sd)
+  end
+
+  return false
+end -- Loc_FormaPaper
+
+-- Шрифт формы издания.
+List.LocFormaFont = {
+  ['ба'] = "Балтика",
+  ['бу'] = "букварь",
+  ['ге'] = "Гельветика",
+  ['ет'] = "Times New Roman",
+  ['еш'] = "Times",
+  ['зк'] = "Пресс‑Роман",
+  ['ла'] = "лат",
+  ['ли'] = "литер",
+  ['ми'] = "Миниатюра",
+  ['нь'] = "Ньютон",
+  ['об'] = "обыкн",
+  ['он'] = "обыкн., нов",
+  ['пр'] = "Прагматика",
+  ['ск'] = "Computer Modern Roman",
+  ['сь'] = "Computer Modern",
+  ['ту'] = "NewtonC",
+  ['уг'] = "Europe",
+  ['шк'] = "школьный",
+} -- LocFormaFont
+Find.LocFormaFont = {
+  find = "ёшр(%a-)$",
+  data = List.LocFormaFont,
+  format = "Шрифт: %s.",
+}
+
+-- Печать формы издания.
+List.LocFormaPrint = {
+  ['вы'] = "высокая",
+  ['оф'] = "офсетная",
+  ['пл'] = "плоская",
+  ['рз'] = "ризо",
+  ['ул'] = "ультрасетная",
+} -- LocFormaPrint
+Find.LocFormaPrint = {
+  find = "ёпе(%a-)$",
+  data = List.LocFormaPrint,
+  format = "Печать: %s.",
+}
+
+-- Количество листов формы издания.
+List.LocFormaList = {
+  ['а'] = "у.а.л.,  б.л.,  п.л.",
+  ['б'] = "б.л.,  у.п.л.,  у.и.л.",
+  ['ё'] = "у.п.л.,  у.и.л.",
+  ['и'] = "у.и.л.",
+  ['й'] = "п.л.,  у.п.л.,  у.и.л.",
+  ['п'] = "п.л.",
+  ['у'] = "у.п.л.",
+  ['ф'] = "ф.п.л.,  у.п.л.,  у.и.л.",
+  ['ц'] = "п.л.,  у.и.л.",
+} -- LocFormaList
+Find.LocFormaList = {
+  find = "ёлс(%a-)$",
+  data = List.LocFormaList,
+  format = "Листы: @Here %s@Back",
+}
+
+---------------------------------------- Abbr in [Jura]
+-- Сокращение в секции [Jura].
+List.JuraAbr = {
+  a = "auct.", -- auctor - автор
+  c = "comp.", -- compilator - составитель
+  r = "red.",  -- redactor / redactio - редактор / редакция
+  t = "tran.", -- translator - переводчик
+  q = "pict.", -- pictor - художник
+  p = "publ.", -- publicator - издатель / издательство
+  d = "div.",  -- divisio - отделение / подразделение
+  i = "inst.", -- institutum - организация
+
+  f = "авт.",  -- автор
+  s = "сост.", -- составитель
+  h = "ред.",  -- редактор / редакция
+  g = "пер.",  -- переводчик
+  x = "худ.",  -- художник
+  z = "изд.",  -- издатель
+  v = "отд.",  -- отделение
+  b = "инст.", -- институт
+} -- JuraAbr
+
+Find.DefJuraAbr = {
+  find = "```(%a-)$",
+  data = List.JuraAbr,
+  cvtfind = Lower,
+  convert = Upper1st,
+}
+Find.LocJuraAbr = { Find.DefJuraAbr, false, true }
+
+---------------------------------------- Opus division
+-- Раздел произведения для [Text] и [Cont].
+
+-- Простые названия:
+List.DefCapitulum = {
+  Cnt  = "Contents",
+  --Tocs = "Table of contents",
+  Desc = "Description",
+  Abs  = "Abstract",
+  Frag = "Fragment",
+  Ded  = "Dedication",
+  Epi  = "Epigraph",
+  Ack  = "Acknowledgments",
+  Ind  = "Introduction",
+  --Indu = "Introduction",
+  Crl  = "Corollary",
+  Prea = "Preamble",
+  Conc = "Conclusion",
+  Prf  = "Preface",
+  Fwd  = "Foreword",
+  Awd  = "Afterword",
+  Supp = "Supplement",
+  Add  = "Addendum",
+  Apx  = "Appendix",
+  Aps  = "Appendices",
+  Exa  = "Examples",
+  Qst  = "Questions",
+  Ans  = "Answers",
+  Sol  = "Solution",
+  Sos  = "Solutions",
+  Inq  = "Inquiry",
+  Prm  = "Prompts",
+  Ins  = "Instructions",
+  Exe  = "Exercises",
+  Comm = "Comment",
+  Coms = "Comments",
+  Nts  = "Notes",
+  Remk = "Remark",
+  Rems = "Remarks",
+  --Lit  = "Literature",
+  Ref  = "References",
+  Ixx  = "Index",
+  --Idx  = "Index",
+  Nots = "Notations",
+  Gls  = "Glossary",
+  Trm  = "Terms",
+  Def  = "Definitions",
+  Abg  = "Abridgements",
+  Abb  = "Abbreviations",
+  Biog = "Biography",
+  Bibl = "Bibliography",
+  Hist = "History",
+  Chro = "Chronology",
+  Ill  = "Illustrations",
+  Pht  = "Photo",
+  --Cvr  = "+Cover",
+  --Dcvr = "+Dust-cover",
+  --Flf  = "+Flyleaf",
+  --Llf  = "+Loose leaf",
+  Iss  = "Issue",
+  Imp  = "Imprint",
+  Edn  = "Edition",
+  Crt  = "Copyright",
+} -- DefCapitulum
+List.LocCapitulum = {
+  ['Тита'] = "Авантитул",   -- Титул с общей информацией (издательство и т.п.)
+  ['Титк'] = "Контртитул",  -- Титул на языке подлинника / с информацией о серии
+  ['Титл'] = "Титул",       -- Титул на языке перевода / с детальной информацией
+  ['Тито'] = "Титул оригинала", -- Титул на языке подлинника
+  ['Огл']  = "Оглавление",
+  ['Сод']  = "Содержание",
+  ['Опис'] = "Описание",
+  ['Анн']  = "Аннотация",
+  ['Ансо'] = "Аннотация {с обложки}",
+  ['Рцз']  = "Рецензия",
+  ['Фраг'] = "Фрагмент",
+  ['Посв'] = "Посвящение",
+  ['Эпф']  = "Эпиграф",
+  ['Благ'] = "Благодарности",
+  ['Вве']  = "Введение",
+  ['Выв']  = "Вывод",
+  ['Выы']  = "Выводы",
+  ['Вст']  = "Вступление",
+  ['Закл'] = "Заключение",
+  ['Пред'] = "Предисловие",
+  ['Посл'] = "Послесловие",
+  ['Прл']  = "Пролог",
+  ['Эпл']  = "Эпилог",
+  ['Доб']  = "Добавление",
+  ['Доп']  = "Дополнение",
+  ['Прил'] = "Приложение",
+  ['Прия'] = "Приложения",
+  ['Прм']  = "Примеры",
+  ['Воп']  = "Вопросы",
+  ['Отв']  = "Ответы",
+  ['Реш']  = "Решение",
+  ['Рея']  = "Решения",
+  ['Пдс']  = "Подсказки",
+  ['Упр']  = "Упражнения",
+  ['Спр']  = "Справка",
+  ['Комй'] = "Комментарий",
+  ['Комм'] = "Комментарии",
+  ['Прие'] = "Примечание",
+  ['Прим'] = "Примечания",
+  ['Зам']  = "Замечания",
+  ['Лит']  = "Литература",
+  ['Укк']  = "Указатель",
+  ['Обо']  = "Обозначения",
+  ['Укз']  = "Указание",
+  ['Укя']  = "Указания",
+  ['Слв']  = "Словарь",
+  ['Трм']  = "Термины",
+  ['Опр']  = "Определения",
+  ['Сок']  = "Сокращения",
+  ['Абб']  = "Аббревиатуры",
+  ['Биог'] = "Биография",
+  ['Библ'] = "Библиография",
+  ['Ист']  = "История",
+  ['Хрон'] = "Хронология",
+  ['Илл']  = "Иллюстрации",
+  ['Фото'] = "Фотография",
+  ['Редк'] = "Редколлегия",
+  ['Испр'] = "Исправления",
+  ['Опеч'] = "Опечатки",
+  ['Обл']  = "+Обложка",
+  ['Собл'] = "+Суперобложка",
+  ['Ттл']  = "+Титул",
+  ['Фзц']  = "+Форзац",
+  ['Вкл']  = "+Вкладыш",
+} -- LocCapitulum
+Find.DefCapitulum = {
+  find = "`(%a-)$",
+  data = List.DefCapitulum,
+}
+Find.LocCapitulum = {
+  find = "ё(%a-)$",
+  data = List.LocCapitulum,
+}
+-- Составные названия:
+Find.LocBrevisCapit = {
+  find = "ёКр(%a-)$",
+  data = List.LocCapitulum,
+  format = "Краткое@Here %s@Back",
+  cvtfind = Upper1st,
+  convert = Lower,
+}
+
+-- Дательный падеж, порядковое числительное:
+List.LocDatOrdNumer = {
+  ["1"] = "первому",
+  ["2"] = "второму",
+  ["3"] = "третьему",
+  ["4"] = "четвёртому",
+  ["5"] = "пятому",
+  ["6"] = "шестому",
+  ["7"] = "седьмому",
+  ["8"] = "восьмому",
+  ["9"] = "девятому",
+ ["10"] = "десятому",
+} -- LocDatOrdNumer
+Find.LocCapitPraeNum = {
+  find = "ёПреК(%d)$",
+  data = List.LocDatOrdNumer,
+  format = "Предисловие к@Here %s изданию@Back",
+}
+
+-- Дательный падеж, прилагательное, язык:
+List.LocDatAdjLang = {
+  ["р"] = "русскому",
+  ["а"] = "английскому",
+  ['и'] = "итальянскому",
+  ["н"] = "немецкому",
+  ['п'] = "польскому",
+  ["ф"] = "французскому",
+} -- LocDatAdjLang
+Find.LocCapitPraeLang = {
+  find = "ёПреК(%a)$",
+  data = List.LocDatAdjLang,
+  format = "Предисловие к@Here %s изданию@Back",
+}
+
+-- Родительный падеж, создатель:
+List.LocGenFaktor = {
+  ["авт"] = "автора",
+  ["авв"] = "авторов",
+  ["сос"] = "составителя",
+  ["сой"] = "составителей",
+  ["изв"] = "издательства",
+  ["нау"] = "научного редактора",
+  ["пер"] = "переводчика",
+  ["ред"] = "редактора",
+  ["рек"] = "редколлегии",
+  ["рел"] = "редакционной коллегии",
+  ["реп"] = "редактора перевода",
+  ["рес"] = "редактора серии",
+  ["рец"] = "редакции",
+  ["пол"] = "пользователя",
+  ["чит"] = "читателя",
+  ["зри"] = "зрителя",
+  ["слу"] = "слушателя",
+} -- LocGenFaktor
+Find.LocCapitAbFaktor = {
+  find = "ёОт(%a-)$",
+  cvtfind = Lower,
+  data = List.LocGenFaktor,
+  format = "От %s",
+}
+Find.LocCapitPraefo = {
+  find = "ёПре(%a-)$",
+  cvtfind = Lower,
+  data = List.LocGenFaktor,
+  format = "Предисловие %s",
+}
+Find.LocCapitPostfo = {
+  find = "ёПос(%a-)$",
+  cvtfind = Lower,
+  data = List.LocGenFaktor,
+  format = "Послесловие %s",
+}
+Find.LocCapitComment = {
+  find = "ёКом(%a-)$",
+  cvtfind = Lower,
+  data = List.LocGenFaktor,
+  format = "Комментарий %s",
+}
+
+-- Именительный падеж, создатель:
+List.DefNomFaktor = {
+  Aut  = "Authorʼs",
+  Aus  = "Authorsʼ",
+  Cmp  = "Compilerʼs",
+  --Cms  = "Compilers'",
+  Trn  = "Translatorʼs",
+  Edr  = "Editorʼs",
+  Sce  = "Scientific editorʼs",
+  Tre  = "Translation editorʼs",
+  Esh  = "Editorship",
+  Ser  = "Series",
+  Iss  = "Issue",
+  Edn  = "Edition",
+  Imp  = "Imprint",
+  Pbr  = "Publisherʼs",
+  Pbh  = "Publishing houseʼs",
+  Usr  = "User's",
+  --Rdr = "Readerʼs",
+  --Vwr = "Viewerʼs",
+  --Lnr = "Listenerʼs",
+} -- DefNomFaktor
+-- Предложный падеж, создатель:
+List.LocAnsFaktor = {
+  ["сос"] = "составителе",
+  --["сох"] = "составителях",
+  ["пер"] = "переводчике",
+  ["ред"] = "редакторе",
+  ["нау"] = "научном редакторе",
+  ["реп"] = "редакторе перевода",
+  ["рец"] = "редакции",
+  ["сер"] = "серии",
+  ["вып"] = "выпуске",
+  ["пол"] = "пользователе",
+  --["чит"] = "читателе",
+  --["зри"] = "зрителе",
+  --["слу"] = "слушателе",
+} -- LocAnsFaktor
+List.LocAnsFactoz = {
+  ["авт"] = "авторе",
+  ["авх"] = "авторах",
+  ["изд"] = "издании",
+  ["изл"] = "издателе",
+  ["изв"] = "издательстве",
+} -- LocAnsFactoz
+Find.DefCapitDeFaktor = {
+  find = "`A(%a-)$",
+  data = List.DefNomFaktor,
+  format = "About the@Here %s@Back",
+}
+Find.DefCapitInformae = {
+  find = "`Nt(%a-)$",
+  data = List.DefNomFaktor,
+  format = "%s Note",
+}
+Find.LocCapitDeFaktor = {
+  { find = "ёО(%a-)$",
+    cvtfind = Lower,
+    data = List.LocAnsFaktor,
+    format = "О %s",
+  },
+  { data = List.LocAnsFactoz,
+    format = "Об %s",
+  },
+} --
+Find.LocCapitInformae = {
+  { find = "ёСв(%a-)$",
+    cvtfind = Lower,
+    data = List.LocAnsFaktor,
+    format = "Сведения о %s"
+  },
+  { data = List.LocAnsFactoz,
+    format = "Сведения об %s",
+  },
+} --
+
+-- Родительный падеж, название:
+List.LocGenCapitum = {
+  ["вве"] = "введения",
+  ["зак"] = "заключения",
+  ["пре"] = "предисловия",
+  ["пос"] = "послесловия",
+} -- LocGenCapitum
+Find.LocCapitDeCapit = {
+  find = "ёИз(%a-)$",
+  data = List.LocGenCapitum,
+  format = "Из %s",
+  cvtfind = Lower,
+}
+Find.LocCapitLoCapit = {
+  find = "ёВм(%a-)$",
+  data = List.LocGenCapitum,
+  format = "Вместо %s",
+  cvtfind = Lower,
+}
+
+-- Родительный падеж, название для списка:
+List.LocGenCatCapitum = {
+  ["лит"] = "литературы",
+  ["обо"] = "обозначений",
+  ["тер"] = "терминов",
+  ["абб"] = "аббревиатур",
+  ["сок"] = "сокращений",
+  ["илл"] = "иллюстраций",
+  ["имн"] = "имён",
+  ["упр"] = "упражнений",
+  ["раб"] = "работ",
+} -- LocGenCatCapitum
+Find.LocCatalogCapit = {
+  find = "ёСп(%a-)$",
+  data = List.LocGenCatCapitum,
+  format = "Список %s",
+  cvtfind = Lower,
+}
+Find.LocCatalogIndex = {
+  find = "ёУк(%a-)$",
+  data = List.LocGenCatCapitum,
+  format = "Указатель %s",
+  cvtfind = Lower,
+}
+
+-- Вид указателя:
+List.EngCapitAdjIndex = {
+  Au = "Author",
+  Af = "Alphabetic",
+  Bi = "Bibliographic",
+  Nm = "Name",
+  Su = "Subject",
+} -- EngCapitAdjIndex
+List.LocCapitAdjIndex = {
+  ["Ав"] = "Авторский",
+  ["Ал"] = "Алфавитный",
+  ["Ап"] = "Алфавитно‑предметный",
+  ["Би"] = "Библиографический",
+  ["Им"] = "Именной",
+  ["Пи"] = "Предметно‑именной",
+  ["Пр"] = "Предметный",
+} -- LocCapitAdjIndexe
+List.LocCapitGenIndex = {
+  ["Ли"] = "литературы",
+  ["Об"] = "обозначений",
+  ["Те"] = "терминов",
+  ["Аб"] = "аббревиатур",
+  ["Со"] = "сокращений",
+  ["Ил"] = "иллюстраций",
+  ["Им"] = "имён",
+  ["Уп"] = "упражнений",
+  ["Ус"] = "условных сокращений",
+} -- LocCapitGenIndex
+Find.DefCapitCatIndex = {
+  find = "`(%a-)Ix$",
+  data = List.EngCapitAdjIndex,
+  format = "%s index",
+}
+Find.LocCapitCatIndex = {
+  { find = "ё(%a-)Ук$",
+    data = List.LocCapitAdjIndex,
+    format = "%s указатель",
+  },
+  { data = List.LocCapitGenIndex,
+    format = "Указатель %s",
+  },
+} --
+Find.LocCapitCatCapit = {
+  { find = "ё(%a-)Сп$",
+    data = List.LocCapitAdjIndex,
+    format = "%s список",
+  },
+  { data = List.LocCapitGenIndex,
+    format = "Список %s",
+},
+} --
+
+-- Родительный падеж, название для перечисления:
+List.LocGenEnumCapitum = {
+  ["вып"] = "выпуска",
+  ["изд"] = "издания",
+  ["сер"] = "серии",
+  ["цик"] = "цикла",
+  ["изв"] = "издательства",
+} -- LocGenEnumCapitum
+Find.LocOpusEnumCapit = {
+  find = "ёКн(%w-)$",
+  cvtfind = Lower,
+  data = List.LocGenEnumCapitum,
+  format = "Книги %s",
+}
+
+-- Мн. число, прилагательное, пояснение:
+List.LocPlurAdjExplan = {
+  ["В"] = "Вводные",
+  ["З"] = "Заключительные",
+  ["О"] = "Основные",
+  ["Д"] = "Дополнительные",
+  ["С"] = "Сокращённые",
+  ["У"] = "Условные",
+} -- LocPlurAdjExplan
+Find.LocCapitNotula = {
+  find = "ё(%a)Зам$",
+  data = List.LocPlurAdjExplan,
+  format = "%s замечания",
+}
+Find.LocCapitNotatio = {
+  find = "ё(%a)Обо$",
+  data = List.LocPlurAdjExplan,
+  format = "%s обозначения",
+}
+Find.LocCapitAbbrevo = {
+  find = "ё(%a)Сок$",
+  data = List.LocPlurAdjExplan,
+  format = "%s сокращения",
+}
+
+-- Ед. число, жен. род, прилагательное, пояснение:
+List.LocSingFemAdjExplan = {
+  ["В"] = "Вводная",
+  ["З"] = "Заключительная",
+  ["О"] = "Основная",
+  ["Д"] = "Дополнительная",
+  ["И"] = "Использованная",
+  ["А"] = "Аннотированная",
+  ["Р"] = "Рекомендуемая",
+  ["Ц"] = "Цитированная",
+} -- LocSingFemAdjExplan
+Find.LocCapitLitter = {
+  find = "ё(%a)Лит$",
+  data = List.LocSingFemAdjExplan,
+  format = "%s литература",
+}
+
+-- Ед. число, жен. род, род. падеж, прилагательное, пояснение:
+List.LocSingFemGenAdjExplan = {
+  ["В"] = "вводной",
+  ["З"] = "заключительной",
+  ["О"] = "основной",
+  ["Д"] = "дополнительной",
+  ["И"] = "использованной",
+  ["А"] = "аннотированной",
+  ["Р"] = "рекомендуемой",
+  ["Ц"] = "цитированной",
+} -- LocSingFemGenAdjExplan
+Find.LocCatalogLitter = {
+  find = "ёС(%a)[Лл]ит$",
+  data = List.LocSingFemGenAdjExplan,
+  format = "Список %s литературы",
+}
+
+-- Название информационное:
+List.LocInfoCapitum = {
+  ["Ас"] = "Адрес",
+  ["Рек"] = "Реклама",
+} -- LocInfoCapitum
+Find.LocCapitPublic = {
+  find = "ё(%a-)Изв$",
+  data = List.LocInfoCapitum,
+  format = "%s издательства",
+}
+
+---------------------------------------- Producer
+-- Информация о производителе.
+
+-- Места издания:
+List.EngPublicLocus = {
+  BRF  = "Boca Raton, FL",
+  IIN  = "Indianapolis, IN",
+  USR  = "Upper Saddle River, NJ",
+  EwC  = "Englewood Cliffs, NJ",
+} -- EngPublicLocus
+Find.DefPublicLocus = {
+  find = "`A([%a%`]-)$",
+  data = List.EngPublicLocus,
+  format = "%s: ",
+}
+
+-- Издательства:
+List.EngPublicNomen = {
+  AH  = "Artech House",
+  AP  = "Academic",
+  Ap  = "Apress",
+  AW  = "Addison Wesley",
+  CP  = "CRC Press",
+  CS  = "Computer Science",
+  CU  = "Cambridge University",
+  Ev  = "Elsevier",
+  EA  = "Elsevier Academic",
+  HM  = "Hungry Minds",
+  IBW = "IDG Books Worldwide",
+  JWS = "John Wiley & Sons",
+  KA  = "Kluwer Academic",
+  LR  = "Lakeview Research",
+  MGH = "McGraw‑Hill",
+  MHO = "McGraw‑Hill/Osborne",
+  OMH = "Osborne/McGraw‑Hill",
+  MI  = "MIT",
+  MK  = "Morgan Kaufmann",
+  Ms  = "Microsoft",
+  ORy = "O'Reilly",
+  ORA = "O'Reilly & Associates",
+  OU  = "Oxford University",
+  Ps  = "Pearson",
+  PP  = "Pearson PTR",
+  PH  = "Prentice Hall",
+  Pp  = "Peachpit",
+  PU  = "Princeton University",
+  Ss  = "Sams",
+  Sr  = "Springer",
+  Sx  = "Sybex",
+  Sy  = "Syngress",
+  Wy  = "Wiley",
+  WW  = "Wordware",
+  Wx  = "Wrox",
+} -- EngPublicNomen
+List.LocPublicNomen = {
+  ["НФ"] = "Наука, Физматлит",
+  ["Фё"] = "ФИЗМАТЛИТ",
+  ["Фт"] = "Физматлит",
+  ["ЛО"] = "Ленингр. отд‑ние",
+  ["СО"] = "Сиб. отд‑ние",
+  ["КИ"] = "Ин‑т компьют. иссл.",
+  ["Иж"] = "Иж. респ. тип.",
+  ["Уу"] = "Удмурт. ун‑т",
+  ------
+  ["ВШ"] = "Высш. шк.",
+  ["МГ"] = "Мол. гвардия",
+  ["МШ"] = "Машиностроение",
+  ["Пр"] = "Просвещение",
+  ["РС"] = "Радио и связь",
+  ["СР"] = "Сов. радио",
+  ["ФС"] = "Финансы и статистика",
+  ------
+  ["ДВ"] = "Вильямс",
+  ["ДП"] = "Питер",
+} -- LocPublicNomen
+Find.DefPublicNomen = {
+  find = "`P([%a%`]-)$",
+  data = List.EngPublicNomen,
+}
+Find.LocPublicNomen = {
+  find = "ёИ(%a-)$",
+  data = List.LocPublicNomen,
+}
+Find.LocPublicMoscow = {
+  find = "ёИМ(%a-)$",
+  data = List.LocPublicNomen,
+  format = "М.: %s",
+}
+
+-- Редакции издательств:
+List.LocRedactNomen = {
+  ["ЛБ"]  = " лит. по биологии.",
+  ["ЛМН"] = " лит. по мат. наукам.",
+  ["ЛФ"]  = " лит. по физике.",
+  ["ЛХ"]  = " лит. по химии.",
+  -------
+  ["КЛ"]  = " киберн. лит.",
+  ["МЛ"]  = " мат. лит.",
+  ["ПЛ"]  = " пер. лит.",
+  ["СЛ"]  = " справ. лит.",
+  ["ТЛ"]  = " техн. лит.",
+  ["ФЛ"]  = " физ. лит.",
+  ["ХЛ"]  = " хим. лит.",
+  -------
+  ["ВТ"] = " лит. по выч. техн.",
+  ["НТ"] = " лит. по нов. техн.",
+  ["МН"] = " лит. по мат. наукам.",
+  ["ИЭ"] = " лит. по информатике и электронике.",
+  ["ФА"] = " лит. по физике и астрономии.",
+  ["КАГ"] = " косм. иссл., астрономии и геофизики.",
+  ["НПФ"] = " науч.‑попул. и науч.‑фантаст. лит.",
+  ["НПЮ"] = " науч.‑попул. и юношеск. лит.",
+  -------
+  ["ВЛ"]  = " вост. лит.",
+  ["НАЛ"] = " науч.‑атеист. лит.",
+  ["НПЛ"] = " науч.‑попул. лит.",
+  ["СПЛ"] = " соц.‑полит. лит.",
+  ["СЭЛ"] = " соц.‑экон. лит.",
+  ["ФМЛ"] = " физ.‑мат. лит.",
+  ["ФМС"] = " физ.‑мат. справочников.",
+  ["ФТЛ"] = " физ.‑техн. лит.",
+  ["ХТЛ"] = " хим.‑техн. лит.",
+  -------
+  ["ИВТ"] = " лит. по информатике и выч. техн.",
+  ["ИНТ"] = " лит. по информатике и нов. техн.",
+  ["ИРТ"] = " лит. по информатике и робототехн.",
+  ["КВТ"] = " лит. по кибернетике и выч. техн.",
+  -------
+  ["БСД"] = " языков Ближн., Средн. и Дальн. Востока.",
+} -- LocRedactNomen
+Find.LocRedactNomen = {
+  find = "ёР(%a-)$",
+  data = List.LocRedactNomen,
+  format = "\\ Ред.%s",
+}
+Find.LocRedPriNomen = {
+  find = "ёГР(%a-)$",
+  data = List.LocRedactNomen,
+  format = "\\ Гл. ред.%s",
+}
+
+-- Организации:
+List.EngInstitNomen = {
+  ACM = "Association for Computing Machinery",
+} -- EngInstitNomen
+List.LocInstitNomen = {
+  ["Укп"]  = "Утверждено к печати",
+  --------
+  ["МНС"]  = "Министерство науки СССР.",
+  ["МОС"]  = "Министерство образования СССР.",
+  ["МОН"]  = "Министерство образования и науки РФ.",
+  --------
+  ["АНС"]  = "Академия наук СССР (АН СССР).",
+  ["АПНС"] = "Академия педагогических наук СССР (АПН СССР).",
+  ["РАН"]  = "Российская академия наук (РАН).",
+  ["СО"]   = "Сибирское отделение (СО).",
+  ["ДВО"]  = "Дальневосточное отделение (ДВО).",
+  --------
+  ["ИИЕТ"] = "Институт истории естествознания и техники (ИИЕТ).",
+  ["ИЕТВ"] = "Институт истории естествознания и техники им. С.И. Вавилова (ИИЕТ).",
+  --------
+  ["ГУ"]   = "государственный университет",
+  ["ГПУ"]  = "государственный педагогический университет",
+  ["ГТУ"]  = "государственный технический университет",
+  ["ГТлУ"] = "государственный технологический университет",
+  --------
+  ["МГУ"]  = "Московский государственный университет им. М.В. Ломоносова (МГУ).",
+  ["НИВЦ"] = "Научно‑исследовательский вычислительный центр (НИВЦ).",
+  ["ЦПИ"]  = "Центр прикладных исследований (ЦПИ).",
+  ["ВКМ"]  = "Высший колледж математики (ВКМ).",
+  ["НМУ"]  = "Независимый московский университет (НМУ).",
+  ["МЦНМ"] = "Московский центр непрерывного математического образования (МЦНМО).",
+  --------
+  ["НГУ"]  = "Новосибирский государственный университет (НГУ).",
+  ["ННГУ"] = "Нижегородский государственный университет им. Н.И. Лобачевского (ННГУ).",
+  ["МГТУ"] = "Московский государственный технический университет им. Н.Э. Баумана (МГТУ).",
+  ["СПГУ"] = "Санкт‑Петербургский государственный университет (СПбГУ).",
+  --------
+  ["УГУ"]  = "Удмуртский государственный университет (УдмГУ).",
+  ["ЦРХД"] = 'НИЦ "Регулярная и хаотическая динамика" (НИЦ "РХД").',
+  ["ЖРХД"] = 'Журнал "Регулярная и хаотическая динамика" ("РХД").',
+  --------
+  ["КГУ"]  = "Казанский государственный университет (КГУ).",
+  ["КГТУ"] = "Казанский государственный технический университет@IndEnterим. А.Н. Туполева (КАИ) (КГТУ‑КАИ).",
+} -- LocInstitNomen
+Find.DefInstitNomen = {
+  find = "`O(%a-)$",
+  data = List.DefInstitNomen,
+}
+Find.LocInstitNomen = {
+ find = "ёО(%a-)$",
+ data = List.LocInstitNomen,
+}
+
+-- Подразделения:
+List.LocFacultNomen = {
+  ["ММФ"]  = "Механико‑математический факультет (ММФ).",
+  ["ВМК"]  = "Факультет Вычислительной математики и кибернетики (ВМиК).",
+  --------
+} -- LocFacultNomen
+Find.LocFacultNomen = {
+  find = "ёФ(%a-)$",
+  data = List.LocFacultNomen,
+}
+
+-- Отдельные аббревиатуры:
+List.LocSeparaNomen = {
+  ["ИНТВ"] = "Итоги науки и техн. ВИНИТИ",
+  ["СПМФ"] = "Совр. проблемы мат. Фунд. напр.",
+  ["РФФИ"] = "  Издание осуществлено при поддержке@Enter"..
+             "Российского фонда фундаментальных исследований (проект ).@Left@2",
+  --------
+} -- LocSeparaNomen
+Find.LocSeparaNomen = {
+  find = "ёЁ(%a-)$",
+  data = List.LocSeparaNomen,
+}
+
+---------------------------------------- Reference to notes
+-- Ссылки на сноски.
+List.NoteRefFormat = {
+  ['1'] = '¹', ['2'] = '²', ['3'] = '³', ['4'] = '⁴', ['5'] = '⁵',
+  ['6'] = '⁶', ['7'] = '⁷', ['8'] = '⁸', ['9'] = '⁹', ['0'] = '⁰',
+  --['+'] = '⁺', ['-'] = '⁻', ['='] = '⁼', ['('] = '⁽', [')'] = '⁾',
+  ['¹'] = '₁', ['²'] = '₂', ['³'] = '₃', ['⁴'] = '₄', ['⁵'] = '₅',
+  ['⁶'] = '₆', ['⁷'] = '₇', ['⁸'] = '₈', ['⁹'] = '₉', ['⁰'] = '₀',
+  --['⁺'] = '₊', ['⁻'] = '₋', ['⁼'] = '₌', ['⁽'] = '₍', ['⁾'] = '₎',
+  ['₁'] = '¹', ['₂'] = '²', ['₃'] = '³', ['₄'] = '⁴', ['₅'] = '⁵',
+  ['₆'] = '⁶', ['₇'] = '⁷', ['₈'] = '⁸', ['₉'] = '⁹', ['₀'] = '⁰',
+  --['₊'] = '⁺', ['₋'] = '⁻', ['₌'] = '⁼', ['₍'] = '⁽', ['₎'] = '⁾',
+} -- NoteRefFormat
+
+Fmts.NoteRefFormat = "†%s"
+
+local function NoteRefFmt (Cfg, Pattern) --> (string)
+  local s = Cfg.Template.Result
+  local sn = s:match(Pattern)
+  sn = sn:gsub(".", List.NoteRefFormat)
+
+  if sn then
+    return Fmts.NoteRefFormat:format(sn)
+  end
+
+  return false
+end -- NoteRefFmt
+
+Pats.NoteRefFmt = "†([1234567890¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀]+)*"
+
+--------------------------------------------------------------------------------
+local noteline = ('―'):rep(8)
+local indspace = (' '):rep(20)
+
+---------------------------------------- Data
+local Data = {
+  --[[DO]]--
+
+  -- Controls:
+  CharEnum = "%S",
+  CharsMin = 3,
+  --UseInside = false,
+  UseInside = true,
+  -- Templates:
+  regex = "lua";
+
+  --[[Common]]-- Общее:
+  -- Разделы описания --> [Opus]
+  { find = "`%["..llax..alax.."?", apply = DescSection },                       -- `[∂∀
+  { find =  "ёх"..lrus..arus.."?", apply = DescSection, param = true },         -- ёх∂∀
+  -- Языки разделов --> :Rus
+  { find = "Ж"..t3rus,        apply = MakeTPL, params = Find.LocSectLang },     -- Ж∆∂∂
+  -- Файл для списка --> [djv]
+  { find = "~][,\\]",         macro = "[]@Left",            regex = false },    -- ~]\
+  { find = "Ёъ[,\\]",         macro = "[]@Left",            regex = false },    -- Ёъ\
+  { find = "~%]%d",           apply = MakeTPL, param  = Find.DefFileTypeCode }, -- ~]ⁿ
+  { find =  "Ёъ%d",           apply = MakeTPL, params = Find.LocFileTypeCode }, -- Ёъⁿ
+  { find = "~%]"..l2lat.."?", apply = MakeTPL, param  = Find.DefFileTypeCode }, -- ~]∂∂
+  { find =  "Ёъ"..l2rus.."?", apply = MakeTPL, params = Find.LocFileTypeCode }, -- Ёъ∂∂
+  -- Сайт для списка --> <SciLib>
+  { find = "~}[,\\]",         macro = "<>@Left",            regex = false },    -- ~}\
+  { find = "ЁЪ[,\\]",         macro = "<>@Left",            regex = false },    -- ЁЪ\
+  { find = "~%}"..l2lat.."?", apply = MakeTPL, params = Find.LocOpusLoadSite }, -- ~}∂∂
+  { find =  "ЁЪ"..l2rus.."?", apply = MakeTPL, params = Find.LocOpusLoadSite }, -- ЁЪ∂∂
+
+  --[[Opus]]-- Произведение:
+  -- Материал --> -[Text].
+  -- Вид ресурса --> Эл. текст. дан.
+  { find = "`m"..l2lat,       apply = DescMateriaKind },                        -- `m∂∂ / `me∂
+  { find = "ёь"..l2rus,       apply = DescMateriaKind, param = true },          -- ёь∂∂ / ёьу∂
+  -- Тип --> Учеб. пособие
+  { find = "ж"..t3rus.."?",   apply = MakeTPL, param = Find.LocOpusType },      -- ж∆∂∂
+  -- Создатель --> / Сост.: .
+  { find = "[ёЁ]"..t3rus,     apply = MakeTPL, param = Find.LocOpusFaktor },    -- ё∆∂∂ / Ё∆∂∂
+  --{ find = "Ё"..t3rus,        apply = MakeTPL, param = Find.LocOpusFaktor },    -- Ё∆∂∂
+  -- Номер издания --> 2‑е изд.
+  { find = "ё([1-9]?%d)([Ии]з)",     plain = "%1‑е %2д." },                     -- ёⁿⁿиз
+  { find = "`([1-9]?1)([Ee]d)",      plain = "%1st %2." },                      -- `ⁿⁿed
+  { find = "`([1-9]?2)([Ee]d)",      plain = "%1nd %2." },
+  { find = "`([1-9]?3)([Ee]d)",      plain = "%1rd %2." },
+  { find = "`([1-9]?[04-9])([Ee]d)", plain = "%1th %2." },
+  -- Вид изменений в издании --> испр. и доп.
+  { find = "ёи"..lrusl..lrus, apply = MakeTPL, param = Find.LocOpusEditVaro },  -- ёи∂∂
+
+  --[[Redo]]-- Редактор:
+  { find = "`EiC",  macro = "Ed.‑in‑Ch.: .@Left",           regex = false },    -- `EiC
+  { find = "[ёЁ][ГНОСТХ]ред", apply = MakeTPL, param = Find.LocRedactor },      -- ё∆ред / Ё∆ред
+  --{ find = "ё[ГНОТС]ред",     apply = MakeTPL, param = Find.LocRedactor },      -- ё∆ред
+  --{ find = "Ё[ГНОТС]ред",     apply = MakeTPL, param = Find.LocRedaNote },      -- Ё∆ред
+
+  --[[Tran]]-- Перевод:
+  -- / Пер. с англ.
+  { find = "ёПер"..lrus,      apply = MakeTPL, param = Find.LocTranNote },      -- ёПер∂
+  { find = "ёпер"..lrus,      apply = MakeTPL, param = Find.LocTranLang },      -- ёпер∂
+
+  --[[Edit]]-- Издание:
+  -- Вид --> Учеб. изд.
+  { find = "`([Ee]d)",        macro = "@Here %1.@Back" },                       -- `ed
+  { find = "ё([Ии]зд)",       macro = "@Here %1.@Back" },                       -- ёизд
+  { find = "`"..l2lat.."?ed", apply = MakeTPL, param  = Find.DefEditKind },     -- `∂∂ed
+  { find = "ё"..l2rus.."?из", apply = MakeTPL, params = Find.LocEditKind },     -- ё∂∂из
+  -- Раздел (в периодике):
+  { find = "`sec",            macro = 'Section "".@Left@2', regex = false },    -- `sec
+  { find = "ёраз",            macro = 'Раздел "".@Left@2',  regex = false },    -- ёраз
+  -- Сорт --> Эл. версия.
+  { find = "`(v[ae]r)",       macro = "@Here %1.@Back" },                       -- `vaer
+  { find = "ё(в[ае]р)",       macro = "@Here %1.@Back" },                       -- ёваер
+  { find = "`"..llat.."var",  apply = MakeTPL, param = Find.DefEditVar },       -- `∂var
+  { find = "ё"..lrus.."вар",  apply = MakeTPL, param = Find.LocEditVar },       -- ё∂вар
+  { find = "`"..llat.."ver",  apply = MakeTPL, param = Find.DefEditVer },       -- `∂ver
+  { find = "ё"..lrus.."вер",  apply = MakeTPL, param = Find.LocEditVer },       -- ё∂вер
+  -- File: [djv].
+  { find = "`][,\\]",         macro = "File: [].@Left@2",   regex = false },    -- `]\
+  { find = "ёъ[,\\]",         macro = "File: [].@Left@2",   regex = false },    -- ёъ\
+  { find = "`%]%d",           apply = MakeTPL, param  = Find.DefEditFile },     -- `]ⁿ
+  { find =  "ёъ%d",           apply = MakeTPL, params = Find.LocEditFile },     -- ёъⁿ
+  { find = "`%]"..l2lat.."?", apply = MakeTPL, param  = Find.DefEditFile },     -- `]∂
+  { find =  "ёъ"..l2rus.."?", apply = MakeTPL, params = Find.LocEditFile },     -- ёъ∂
+  -- Илл.: 1 рис., 1 табл.- Библ. 1 назв.
+  { find =  "`il"..llat,      apply = MakeTPL, param  = Find.DefEditIll },      -- `il∂
+  { find =  "ёил"..lrus,      apply = MakeTPL, param  = Find.LocEditIll },      -- ёил∂
+
+  --[[Klas]]-- Классификация:
+  -- Аббревиатуры:
+  { find = "ELR",             plain = "УДК",  regex = false },
+  { find = "<<R",             plain = "ББК",  regex = false },
+  { find = "BYL",             plain = "ИНД",  regex = false },
+  { find = "ШЫИТ",            plain = "ISBN", regex = false },
+  -- ОКП ... .
+  { find = "ёОКП"..l2rus,     apply = MakeTPL, param = Find.LocClassoOKP },     -- ёОКП∂∂
+
+  --[[Faktor]]-- Создатель:
+  -- Степени --> к.ф.-м.н. | д.т.н.
+  { find = "ё([кд])"..crusn.."н",                 macro = "%1.%2.н." },         -- ёк∂н   / ёд∂н
+  { find = "ё([кд])"..crusn..crusn.."н",          macro = "%1.%2.‑%3.н." },     -- ёк∂∂н  / ёд∂∂н
+  { find = "ё([кд])("..lrusn..lrusn..lrusn..")н", macro = "%1.%2.н." },         -- ёк∂∂∂н / ёд∂∂∂н
+  -- Должности --> м.н.с.
+  { find = "ё([вмс])нс",      macro = "%1.н.с." },                              -- ё∂нс
+  { find = "ёчлк",            plain = "чл.‑кор.",           regex = false },    -- ёчлк
+  { find = "ёдчл",            plain = "действ. чл.",        regex = false },    -- ёдчл
+  { find = "ёпчл",            plain = "поч. чл.",           regex = false },    -- ёпчл
+  { find = "ёзднт",           plain = "засл. деятель науки и техники.",
+                                                            regex = false },    -- ёзднт
+
+  --[[Formo]]-- Форма издания:
+  -- Сдано|Подписано|Поступило --> 2010-10-10.
+  { find = "ёсда",            macro = "Сдано .@Left",       regex = false },    -- ёсда
+  { find = "ёсдц",            macro = "Сдано с матриц." },                      -- ёсдц
+  { find = "ёсд([0-1])",      macro = "Сдано 20%1.@Left" },                     -- ёсдⁿ
+  { find = "ёсд([2-9])",      macro = "Сдано 19%1.@Left" },
+  { find = "ёподп",           macro = "Подписано .@Left",   regex = false },    -- ёподп
+  { find = "ёпод([0-1])",     macro = "Подписано 20%1.@Left" },                 -- ёподⁿ
+  { find = "ёпод([2-9])",     macro = "Подписано 19%1.@Left" },
+  { find = "ёпост",           macro = "Поступило .@Left",   regex = false },    -- ёпост
+  { find = "ёпос([0-1])",     macro = "Поступило 20%1.@Left" },                 -- ёпосⁿ
+  { find = "ёпос([2-9])",     macro = "Поступило 19%1.@Left" },
+  -- Тираж: 1000 экз.
+  { find = "`cpa",  macro = "Copia: @Here ex.@Back",        regex = false },    -- `cpa
+  { find = "ётир",  macro = "Тираж: @Here экз.@Back",       regex = false },    -- ётир
+  { find = "ётид",  macro = "Тираж: доп. @Here экз.@Back",  regex = false },    -- ётид
+  { find = "ётт(%d)",         macro = "Тираж: %1@Here000 экз.@Back" },          -- ёттⁿ
+  { find = "ёттт(%d)",        macro = "Тираж: %1@Here00 экз.@Back" },           -- ётттⁿ
+  { find = "ёт(%d+)т",        macro = "Тираж: %1 @Here000 экз.@Back" },         -- ётⁿⁿт
+  -- Формат: 60¤84/16.
+  { find = "`fmt",  macro = "Format: @Here×/.@Back",        regex = false },    -- `fmt
+  { find = "ёфмт",  macro = "Формат: @Here×/.@Back",        regex = false },    -- ёфмт
+  { find = "ёфф%d",           apply = Loc_FormaFmt, param = Pats.LocFormaFmt1 },-- ёффⁿ
+  { find = "ёф%d%d",          apply = Loc_FormaFmt, param = Pats.LocFormaFmt2 },-- ёфⁿⁿ
+  -- Бумага: офсет.
+  { find = "`cht",            macro = "Charta: .@Left",     regex = false },    -- `cht
+  { find = "ёбум",            macro = "Бумага: .@Left",     regex = false },    -- ёбум
+  { find = "ёбу"..l2rus,      apply = Loc_FormaPaper, },                        -- ёбу∂∂
+  { find = "ёбу[от]?[1-9]",   apply = Loc_FormaPaper, },                        -- ёбу∂ⁿ
+  -- Шрифт: литер.
+  { find = "`ltr",            macro = "Litter: .@Left",     regex = false },    -- `ltr
+  { find = "ёшрф",            macro = "Шрифт: .@Left",      regex = false },    -- ёшрф
+  { find = "ёшр"..l2rus,      apply = MakeTPL, param = Find.LocFormaFont },     -- ёшр∂∂
+  -- Печать: офсетная.
+  { find = "`prs",            macro = "Press: .@Left",      regex = false },    -- `prs
+  { find = "ёпеч",            macro = "Печать: .@Left",     regex = false },    -- ёпеч
+  { find = "ёпе"..l2rus,      apply = MakeTPL, param = Find.LocFormaPrint },    -- ёпе∂∂
+  { find = "ёкхэ",            macro = "картон хром‑эрзац",  regex = false },    -- ёкхэ
+  -- Переплёт: картон.
+  { find = "`itx",            macro = "Intex: .@Left",      regex = false },    -- `itx
+  { find = "ёппл",            macro = "Переплёт: .@Left",   regex = false },    -- ёппл
+  -- Листы: 2 п.л.
+  { find = "`fla",            macro = "Folia: .@Left",      regex = false },    -- `fla
+  { find = "ёлст",            macro = "Листы: .@Left",      regex = false },    -- ёлст
+  { find = "ёлс"..lrus,       apply = MakeTPL, param = Find.LocFormaList },     -- ёлс∂
+  { find = "ёлс([1-9])",      macro = "Листы: %1 п.л." },                       -- ёлсⁿ
+  { find = "ёлс0([1-9])",     macro = "Листы: %1,0 п.л." },                     -- ёлсⁿ
+  { find = "ёлс/",            macro = "(@Here тип. зн. / п.л.).@Back",
+                                                            regex = false },    -- ёлс/
+
+  --[[Serio]]-- Серия:
+  { find = "`ser",  macro = 'Series@IndEnter"".@Left@2',    regex = false },    -- `ser
+  { find = "ёсер",  macro = 'Серия@IndEnter"".@Left@2',     regex = false },    -- ёсер
+
+  --[[Juro]]-- Права:
+  -- Сокращения --> Авт.
+  { find = "```"..alat,       apply = MakeTPL, param  = Find.DefJuraAbr },      -- ```∀
+  { find = "ёёё"..arus,       apply = MakeTPL, params = Find.LocJuraAbr },      -- ёёё∀
+                            -- TODO: Реализовать общий шаблон.
+  { find = "ёиря",            plain = "изд. на рус. яз.",   regex = false },    -- ёиря
+  { find = "ёпря",            plain = "пер. на рус. яз.",   regex = false },    -- ёпря
+
+  --[[Info]]-- Информация:
+  { find = "`h`",             macro = "http:///@Left",      regex = false },    -- `h`
+  { find = "ёрё",             macro = "http:///@Left",      regex = false },    -- ёрё
+
+  --[[Tekst]]-- Текст:
+  --
+  { find = Pats.NoteRefFmt,   apply = NoteRefFmt, param = Pats.NoteRefFmt },    -- †n
+  -- Линии сноски --> -------
+  { find = "`-`",             plain = noteline,             regex = false },    -- `-`
+  { find = "ё-ё",             plain = noteline,             regex = false },    -- ё-ё
+  -- Текст сноски:
+  { find = "`-n",             plain = "Notes",              regex = false },    -- `-n
+  { find = "ё-с",             plain = "Сноски",             regex = false },    -- ё-с
+  -- Отступы спец. текста -->
+  { find = "`_`",             plain = indspace,             regex = false },    -- `_`
+  { find = "ё_ё",             plain = indspace,             regex = false },    -- ё_ё
+
+  --[[Kont]]-- Содержание:
+  -- Текст сноски:
+  { find = "ёёнум", regex = false,
+    plain = "* Нумерация страниц по эл. изд." },                                -- ёёнум
+  { find = "ёёстр", regex = false,
+    macro = "* #. Название (Стр. книги/главы/задач/упражнений /@Enter"..
+            "Стр. комментариев/ответов/указаний/решений)" },                    -- ёёстр
+
+  --[[Kvalio]]-- Качество:
+  { find = "ёёубр",           macro = "Убрать я. на p. ",   regex = false },    -- ёёубр
+  { find = "ёёисп",           macro = "Исправить ссылки в сод",
+                                                            regex = false },    -- ёёисп
+
+  --[[Abbr]]-- Аббревиатуры в некоторых разделах:
+  -- Разделы произведения: --
+  { find = "`"..t4lat.."?",   apply = MakeTPL, param  = Find.DefCapitulum },    -- `∆∂∂∂
+  { find = "ё"..t4rus.."?",   apply = MakeTPL, param  = Find.LocCapitulum },    -- ё∆∂∂∂
+  { find = "ёКр"..t4rus.."?", apply = MakeTPL, param  = Find.LocBrevisCapit },  -- ёКр∆∂∂
+  { find = "ёКЧит",           plain = "К читателю",         regex = false },    -- ёКЧит
+  { find = "`PreTE", regex = false,
+                    macro = "Preface to @Here Edition@Back" },                  -- `PreTE
+  { find = "ёПреКИ", regex = false,
+                    macro = "Предисловие к @Here изданию@Back" },               -- ёПреКИ
+  { find = "ёПреК%d",         apply = MakeTPL, param  = Find.LocCapitPraeNum }, -- ёПреКⁿ
+  { find = "ёПреК"..lrus,     apply = MakeTPL, param  = Find.LocCapitPraeLang },-- ёПреК∂
+  { find = "ёОт"..t3rus,      apply = MakeTPL, param  = Find.LocCapitAbFaktor },-- ёОт∆∂∂
+  { find = "`A" ..t3lat,      apply = MakeTPL, param  = Find.DefCapitDeFaktor },-- `A∆∂∂
+  { find = "`Nt"..t3lat,      apply = MakeTPL, param  = Find.DefCapitInformae },-- `Nt∆∂∂
+  { find = "ёО" ..t3rus,      apply = MakeTPL, params = Find.LocCapitDeFaktor },-- ёО∆∂∂
+  { find = "ёСв"..t3rus,      apply = MakeTPL, params = Find.LocCapitInformae },-- ёСв∆∂∂
+  { find = "ёПре"..t3rus,     apply = MakeTPL, param  = Find.LocCapitPraefo },  -- ёПре∆∂∂
+  { find = "ёПос"..t3rus,     apply = MakeTPL, param  = Find.LocCapitPostfo },  -- ёПос∆∂∂
+  { find = "ёКом"..t3rus,     apply = MakeTPL, param  = Find.LocCapitComment }, -- ёКом∆∂∂
+  { find = "ёИз"..t3rus,      apply = MakeTPL, param  = Find.LocCapitDeCapit }, -- ёИз∆∂∂
+  { find = "ёВм"..t3rus,      apply = MakeTPL, param  = Find.LocCapitLoCapit }, -- ёИз∆∂∂
+  { find = "ёКн"..t3rus,      apply = MakeTPL, param  = Find.LocOpusEnumCapit },-- ёКн∆∂∂
+  { find = "ёСп"..t3rus,      apply = MakeTPL, param  = Find.LocCatalogCapit }, -- ёСп∆∂∂
+  { find = "ёУк"..t3rus,      apply = MakeTPL, param  = Find.LocCatalogIndex }, -- ёУк∆∂∂
+  { find = "`"..t2lat.."Ix",  apply = MakeTPL, param  = Find.DefCapitCatIndex },-- `∆∂Ix
+  { find = "ё"..t2rus.."Ук",  apply = MakeTPL, params = Find.LocCapitCatIndex },-- ё∆∂Ук
+  { find = "ё"..t2rus.."Сп",  apply = MakeTPL, params = Find.LocCapitCatCapit },-- ё∆∂Сп
+  { find = yrus.."Зам",       apply = MakeTPL, param  = Find.LocCapitNotula },  -- ё∆Зам
+  { find = yrus.."Лит",       apply = MakeTPL, param  = Find.LocCapitLitter },  -- ё∆Лит
+  { find = "ёС"..urus.."[Лл]ит",
+                              apply = MakeTPL, param  = Find.LocCatalogLitter },-- ёС∆Лит
+  { find = yrus.."Обо",       apply = MakeTPL, param  = Find.LocCapitNotatio }, -- ё∆Обо
+  { find = yrus.."Сок",       apply = MakeTPL, param  = Find.LocCapitAbbrevo }, -- ё∆Сок
+  { find = "ё"..t3rus.."?Изв",apply = MakeTPL, param  = Find.LocCapitPublic },  -- ё∆∂Изв
+  -- Часто используемое:
+  --{ find = "ёМНё",  macro = "М.: Наука, .  с.@Left@4",    regex = false },    -- ёМНё
+  --{ find = "ёФМЛ",  macro = "ФИЗМАТЛИТ",                  regex = false },    -- ёФМЛ
+  --{ find = "ёФмл",  macro = "Физматлит",                  regex = false },    -- ёфмл
+  -- Издательства / Редакции:
+  { find = "`A"..x3lax.."?",  apply = MakeTPL, param  = Find.DefPublicLocus },  -- `A∆∀
+  { find = "`P"..x3lax.."?",  apply = MakeTPL, param  = Find.DefPublicNomen },  -- `P∆∀
+  { find = "ёИ"..x2rus,       apply = MakeTPL, param  = Find.LocPublicNomen },  -- ёИ∆∀
+  { find = "ёИМ"..x2rus,      apply = MakeTPL, param  = Find.LocPublicMoscow }, -- ёИМ∆∀
+  { find = "ёР"..u3rus.."?",  apply = MakeTPL, param  = Find.LocRedactNomen },  -- ёР∆∆∆
+  { find = "ёГР"..u3rus.."?", apply = MakeTPL, param  = Find.LocRedPriNomen },  -- ёГР∆∆∆
+  -- Организации / Подразделения:
+  { find = "`O"..x3lax.."?",  apply = MakeTPL, param  = Find.DefInstitNomen },  -- ёО∆∆∆
+  { find = "ёО"..x3rus.."?",  apply = MakeTPL, param  = Find.LocInstitNomen },  -- ёО∆∆∆
+  { find = "ёО"..x4rus.."?",  apply = MakeTPL, param  = Find.LocInstitNomen },  -- ёО∆∆∆∆
+  { find = "ёФ"..x3rus.."?",  apply = MakeTPL, param  = Find.LocFacultNomen },  -- ёФ∆∆∆
+  { find = "ёЁ"..x4rus.."?",  apply = MakeTPL, param  = Find.LocSeparaNomen },  -- ёЁ∆∆∆∆
+
+  -- Right signs:
+  { find = "[ё`][9%(][CcСс][0%)]", plain = "©" },
+  { find = "[ё`][9%(][RrКк][0%)]", plain = "®" },
+  { find = "[ё`][9%(][PpЗз][0%)]", plain = "℗" },
+  { find = "[ё`][9%(][TtЕе][0%)]", plain = "™" },
+
+  --[[END]]--
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------
