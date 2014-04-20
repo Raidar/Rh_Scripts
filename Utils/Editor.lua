@@ -118,7 +118,7 @@ end -- do
 -- Get length of line.
 -- Получение длины линии.
 function unit.GetLength (id, line)
-  return (unit.GetLine(id, line, 2) or ""):len()
+  return (unit.GetLine(id, line, 3) or ""):len()
 end ----
 
 -- Set length of line.
@@ -152,7 +152,7 @@ end -- Goto
 -- Установка позиции в начало линии.
 function unit.LineHome (id, line)
   if line and line >= 1 then
-    if not unit.SetPos(id, line) then return end
+    return unit.SetPos(id, line)
   end
   return unit.SetPos(id, 0, 1)
 end -- LineHome
@@ -161,7 +161,7 @@ end -- LineHome
 -- Установка позиции в конец линии.
 function unit.LineEnd (id, line)
   if line and line >= 1 then
-    if not unit.SetPos(id, line) then return end
+    return unit.SetPos(id, line, unit.GetLength(id, line) + 1)
   end
   return unit.SetPos(id, 0, unit.GetLength(id, 0) + 1)
 end -- LineEnd
