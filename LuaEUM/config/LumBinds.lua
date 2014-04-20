@@ -52,13 +52,30 @@ local Data = {
   none   = { Menu = "J_None;Characters", },
   --text   = { Menu = "Characters", },
 
-  html   = { Menu = "J_Html;Characters", },
-  c      = { Menu = "J_C_Cpp", },
-  pascal = { Menu = "J_Pascal", },
-  lua    = { Menu = "J_Lua", },
-    lua_lum = { Menu = "J_Lua;Characters", },
+--text
+  --plain
+  --rich
+    --define
+      --(subtitles)
+        sub = { Menu = "Subtitles;J_None;Characters", },
 
-  sub    = { Menu = "Subtitles;J_None;Characters", },
+    --markup
+      --sgml
+        html = { Menu = "J_Html;Characters", },
+        --xml
+          --(book)
+            fb2 = { Menu = "J_Html;Characters", },
+
+  --source
+    --main
+      --(freqs)
+        c       = { Menu = "J_C_Cpp", },
+        pascal  = { Menu = "J_Pascal", },
+      --dbl
+      --codscript
+        lua     = { Menu = "J_Lua", },
+          lua_lum = { Menu = "J_Lua;Characters", },
+
 } ---
 
 return Data
