@@ -70,7 +70,7 @@ local SpaceTruncPat, EmptyTruncPat, TruncSub = "%s+$", "^%s-$", ""
 -- Усечение пробелов в заданной линии.
 function unit.TruncateSpaces (n) --> (number)
   --n = n or -1
-  local s, q = EditorGetLine(nil, n, 2)
+  local s, q = EditorGetLine(nil, n, 3)
   s, q = s:gsub(SpaceTruncPat, TruncSub)
   --logShow(s, q, "w d2")
   if q > 0 then EditorSetLine(nil, n, s) end
@@ -83,7 +83,7 @@ local TruncateSpaces = unit.TruncateSpaces
 function unit.UpdateLineEnd ()
   local Info = EditorGetInfo()
   local p = Info.CurPos
-  local l = (EditorGetLine(nil, 0, 2) or ""):len()
+  local l = (EditorGetLine(nil, 0, 3) or ""):len()
   EditorSetPos(nil, 0, p > l and l + 1 or p)
 end ----
 local UpdateLineEnd = unit.UpdateLineEnd
@@ -127,7 +127,7 @@ function unit.TruncateFile (keep) --> (number)
   -- Проверка на пустоту линий:
   local q = 0
   for k = l, l - keep + 1, -1 do
-    local s = EditorGetLine(nil, k, 2)
+    local s = EditorGetLine(nil, k, 3)
     if s and not s:find(EmptyTruncPat) then
       EditorSetPos(nil, Info)
       return -q
@@ -139,7 +139,7 @@ function unit.TruncateFile (keep) --> (number)
   -- Отсечение пустых линий:
   q = 0
   for k = l - keep, 1, -1 do
-    local s = EditorGetLine(nil, k, 2)
+    local s = EditorGetLine(nil, k, 3)
     if s and s:find(EmptyTruncPat) then
       EditorDelLine()
       q = q + 1

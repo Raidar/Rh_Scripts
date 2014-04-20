@@ -201,7 +201,7 @@ function unit.getFileType () --> (string)
 end ----
 
 do
-  local EditorGetStr = editor.GetString
+  local EditorGetLine = editor.GetString
 
 -- Получение данных по линии файла (по умолчанию).
 local function DefGetLineData (tp, line, shift) --> (data)
@@ -213,7 +213,7 @@ local function DefGetLineData (tp, line, shift) --> (data)
     line = line + shift
     if line <= 0 then break end
 
-    local s = EditorGetStr(nil, line, 2)
+    local s = EditorGetLine(nil, line, 3)
     if s == nil then break end
 
     --logShow({ line, shift, s })

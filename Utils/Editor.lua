@@ -126,7 +126,7 @@ end ----
 function unit.SetLength (id, line, len, fill)
   if type(len) ~= 'number' or len < 0 then return end
 
-  local s = unit.GetLine(id, line, 2) or ""
+  local s = unit.GetLine(id, line, 3) or ""
   local l = s:len()
   if l == len then return true end
 
@@ -313,7 +313,7 @@ function Text.Dequote (Info, left, right) --> (bool)
   local left, l_len, right, r_len = DefineDequote(left, right)
 
   local id, Pos = Info.EditorID, Info.CurPos
-  local s = unit.GetLine(id, 0, 2) or ""
+  local s = unit.GetLine(id, 0, 3) or ""
   if Pos > l_len then
     if not left or s:sub(Pos - l_len, Pos - 1) == left then
       s = (s:sub(1, Pos - l_len - 1) or "")..(s:sub(Pos, -1) or "")
@@ -820,7 +820,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   end
 
   -- Несколько выделенных cтрок
-  local s = unit.GetLine(id, first, 2) or ""
+  local s = unit.GetLine(id, first, 3) or ""
   local go = SelInfo.StartPos
   local t = {
     Type = "stream",
@@ -832,10 +832,10 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   } ---
 
   for line = first + 1, last - 1 do
-    t[#t+1] = unit.GetLine(id, line, 2) or "" -- inners
+    t[#t+1] = unit.GetLine(id, line, 3) or "" -- inners
   end
 
-  local LineInfo = unit.GetLine(id, last, 1)
+  local LineInfo = unit.GetLine(id, last, 0)
   s = LineInfo.StringText
   if s ~= nil then
     local len = s:len()
@@ -903,7 +903,7 @@ function Selection.CopyColumn (Info, ToPos) --> (nil|string|table)
     --BeyondEnd = nil, -- don't use
   } ---
   for line = first, last do
-    local s = unit.GetLine(id, line, 2) or ""
+    local s = unit.GetLine(id, line, 3) or ""
     t[#t+1] = s:sub(go, pos)..spaces[pos - s:len()]
   end
 
@@ -1162,12 +1162,12 @@ function Selection.next (count, line) --> (number, table)
   if count >= 1 then
     local line = (line or 0) + 1
     if line < count then
-      local s = EditorGetLine(nil, line, 1)
+      local s = EditorGetLine(nil, line, 0)
       if s.SelEnd ~= 0 then return line, s end
     end
 
   elseif line >= 1 then
-    return 0, EditorGetLine(nil, line, 1)
+    return 0, EditorGetLine(nil, line, 0)
   end
 end ---- next
 

@@ -36,8 +36,8 @@ local F = far.Flags
 
 local CompareString = win.CompareString
 local EditorGetInfo = editor.GetInfo
+local EditorGetLine = editor.GetString
 local EditorSetPos  = editor.SetPosition
-local EditorGetStr  = editor.GetString
 local EditorInsText = editor.InsertText
 
 ----------------------------------------
@@ -1121,7 +1121,7 @@ function TMain:MakeWordsList () --> (table)
 
   -- Получение слова под курсором (CurPos is 0-based):
   local CurCfg = self.Current
-  CurCfg.Line = EditorGetStr(nil, 0, 2) or ""
+  CurCfg.Line = EditorGetLine(nil, 0, 3) or ""
   CurCfg.Pos  = Info.CurPos -- 1-based!
   CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   --logShow(CurCfg) -- Проверка на выход:
@@ -1141,7 +1141,7 @@ function TMain:MakeWordsList () --> (table)
 
   -- Информация для работы со строками файла (Line number is 0-based):
   CurCfg.CurLine, CurCfg.MaxLine = Info.CurLine, Info.TotalLines
-  CurCfg.GetLine = function (n) return EditorGetStr(nil, n or 0, 2) end
+  CurCfg.GetLine = function (n) return EditorGetLine(nil, n or 0, 3) end
 
   -- Поиск подходящих слов в строках файла:
   local Words = self:SearchWords(); self.Words = Words

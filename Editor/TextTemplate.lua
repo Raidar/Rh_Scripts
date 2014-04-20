@@ -38,8 +38,8 @@ local win, far, regex = win, far, regex
 local F = far.Flags
 
 local EditorGetInfo = editor.GetInfo
+local EditorGetLine = editor.GetString
 local EditorSetPos  = editor.SetPosition
-local EditorGetStr  = editor.GetString
 local EditorInsText = editor.InsertText
 local EditorRedraw  = editor.Redraw
 
@@ -638,7 +638,7 @@ function TMain:Run () --> (bool | nil)
 
   -- Получение слова под курсором (CurPos is 0-based):
   local CurCfg = self.Current
-  CurCfg.Line = EditorGetStr(nil, 0, 2) or ""
+  CurCfg.Line = EditorGetLine(nil, 0, 3) or ""
   CurCfg.Pos  = Info.CurPos -- 1-based!
   CurCfg.Word, CurCfg.Slab = self.Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
   -- Проверки: внутри слова, вне слова, мин. число символов:
