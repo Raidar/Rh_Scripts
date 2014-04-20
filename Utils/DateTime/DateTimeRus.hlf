@@ -6,8 +6,9 @@
 
 @Contents
 $ #Конфигурации# даты/времени для календарей
-    ~Григорианский календарь~@Terra_Gregorean@
+    ~Календарь~@Terra_Gregorean@
 
+    ~Григорианский календарь~@Terra_Gregorean@
     ~Календарь тысячелетий~@Terra_Millenium@
     ~Шестнадцатеричный календарь~@Terra_Hexadecimal@
     ~Проект‑минимум календаря~@Terra_Minimum@

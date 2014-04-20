@@ -6,8 +6,9 @@
 
 @Contents
 $ #Configurations# of date and time for calendars
-    ~Gregorean calendar~@Terra_Gregorean@
+    ~The calendar~@Terra_Gregorean@
 
+    ~Gregorean calendar~@Terra_Gregorean@
     ~Milleniumsʼ calendar~@Terra_Millenium@
     ~Hexadecimal calendar~@Terra_Hexadecimal@
     ~Minimum project of calendar~@Terra_Minimum@
