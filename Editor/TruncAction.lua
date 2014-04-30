@@ -125,7 +125,7 @@ function ProcessEditorInput (rec) --> (bool)
                      --SelInfo.StartLine, SelInfo.StartPos,
                      --(EditorGetLine(nil, 0, 3) or ""):len() - SelInfo.StartPos,
                      --Info.TotalLines - SelInfo.StartLine)
-        logShow(Info, "ProcessEditorInput")
+        --logShow(Info, "ProcessEditorInput")
       end
 
     else -- End of line
