@@ -129,7 +129,7 @@ function unit.TruncateFile (keep) --> (number)
   for k = l, l - keep + 1, -1 do
     local s = EditorGetLine(nil, k, 3)
     if s and not s:find(EmptyTruncPat) then
-      EditorSetPos(nil, Info)
+      --EditorSetPos(nil, Info)
       return -q
     end
     q = q + 1
@@ -139,7 +139,7 @@ function unit.TruncateFile (keep) --> (number)
   -- Отсечение пустых линий:
   q = 0
   for k = l - keep, 1, -1 do
-    local s = EditorGetLine(nil, k, 3)
+    local s = EditorGetLine(nil, k, 2) -- С переходом к линии!
     if s and s:find(EmptyTruncPat) then
       EditorDelLine()
       q = q + 1
@@ -149,7 +149,12 @@ function unit.TruncateFile (keep) --> (number)
   end
   --logShow({ l, keep, q }, "TruncateFile")
 
-  EditorSetPos(nil, Info)
+  --logShow(Info, "TruncateFile")
+
+  if q > 0 then
+    EditorSetPos(nil, Info)
+  end
+
   return q
 end ----
 local TruncateFile = unit.TruncateFile

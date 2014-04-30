@@ -96,6 +96,8 @@ function ProcessEditorInput (rec) --> (bool)
       --]]
       --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
 
+      --logShow(Info, "ProcessEditorInput")
+
       EditorSetPos(nil, Info.TotalLines)
       TruncateLine()
 
