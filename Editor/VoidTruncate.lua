@@ -151,10 +151,7 @@ function unit.TruncateFile (keep) --> (number)
 
   --logShow(Info, "TruncateFile")
 
-  if q > 0 then
-    EditorSetPos(nil, Info)
-  end
-
+  EditorSetPos(nil, Info)
   return q
 end ----
 local TruncateFile = unit.TruncateFile
