@@ -661,12 +661,12 @@ Find.LocRedaNote = {
 Find.LocTranLang = {
   find = "ёпер(%a-)$",
   data = List.RusLang,
-  format = "Пер. с %s",
+  format = "Пер. с %s",
 }
 Find.LocTranNote = {
   find = "ёПер(%a-)$",
   data = List.RusLang,
-  format = "/ Пер. с %s: .@Left",
+  format = "/ Пер. с %s: .@Left",
 }
 
 ---------------------------------------- Edition
