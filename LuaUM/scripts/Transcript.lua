@@ -275,15 +275,18 @@ TekstChangeSets.SignMaths = {
 
 -- TekstChangeSets
 ----------------------------------------
-local LeterChangeSets = {
+local LiterChangeSets = {
   GrafRusLat = true,
   GrafLatRus = true,
-} -- LeterChangeSets
-unit.LeterChangeSets = LeterChangeSets
+  CharRusLat = true,
+  CharLatRus = true,
+} -- LiterChangeSets
+unit.LiterChangeSets = LiterChangeSets
 
-LeterChangeSets.GrafLatRus = {
+---------------------------------------- Graf
+LiterChangeSets.GrafLatRus = {
   -- DO
-  
+
   ["1"] = 'Т',  ["2"] = '2',
   ["3"] = 'З',  ["4"] = 'Ч',
   ["5"] = 'Б',  ["6"] = 'б',
@@ -319,9 +322,9 @@ LeterChangeSets.GrafLatRus = {
   -- END
 } -- GrafLatRus
 
-LeterChangeSets.GrafRusLat = {
+LiterChangeSets.GrafRusLat = {
   -- DO
-  
+
   ["1"] = 'I',  ["2"] = 'Z',
   ["3"] = '3',  ["4"] = '4',
   ["5"] = 'S',  ["6"] = 'b',
@@ -364,21 +367,105 @@ LeterChangeSets.GrafRusLat = {
   -- END
 } -- GrafRusLat
 
--- LeterChangeSets
+---------------------------------------- Char
+LiterChangeSets.CharLatRus = {
+  -- DO
+
+  ["A"] = 'А',
+  ["B"] = 'Б',
+  ["C"] = 'Ц',
+  ["D"] = 'Д',
+  ["E"] = 'Э',
+  ["F"] = 'Ф',
+  ["G"] = 'Г',
+  ["H"] = 'Х',
+  ["I"] = 'И',
+  ["J"] = 'Й',
+  ["K"] = 'К',
+  ["L"] = 'Л',
+  ["M"] = 'М',
+  ["N"] = 'Н',
+  ["O"] = 'О',
+  ["P"] = 'П',
+  ["Q"] = 'Кв',
+  ["R"] = 'Р',
+  ["S"] = 'С',
+  ["T"] = 'Т',
+  ["U"] = 'У',
+  ["V"] = 'В',
+  ["W"] = 'В',
+  ["X"] = 'Кс',
+  ["Y"] = 'Ы',
+  ["Z"] = 'З',
+
+  ["KH"] = 'Х', ["Kh"] = 'Х',
+  ["YA"] = 'Я', ["Ya"] = 'Я',
+  ["YE"] = 'Е', ["Ye"] = 'Е',
+  ["YI"] = 'И', ["Yi"] = 'И',
+  ["YO"] = 'Ё', ["Yo"] = 'Ё',
+  ["YU"] = 'Ю', ["Yu"] = 'Ю',
+
+  -- END
+} -- CharLatRus
+
+LiterChangeSets.CharRusLat = {
+  -- DO
+
+  ["А"] = 'A',
+  ["Б"] = 'B',
+  ["В"] = 'V',
+  ["Г"] = 'G',
+  ["Д"] = 'D',
+  ["Е"] = 'Ye',
+  ["Ё"] = 'Yo',
+  ["Ж"] = 'J',
+  ["З"] = 'Z',
+  ["И"] = 'I',
+  ["Й"] = 'J',
+  ["К"] = 'K',
+  ["Л"] = 'L',
+  ["М"] = 'M',
+  ["Н"] = 'N',
+  ["О"] = 'O',
+  ["П"] = 'P',
+  ["Р"] = 'R',
+  ["С"] = 'S',
+  ["Т"] = 'T',
+  ["У"] = 'U',
+  ["Ф"] = 'F',
+  ["Х"] = 'H',
+  ["Ц"] = 'C',
+  ["Ч"] = 'Ch',
+  ["Ш"] = 'Sh',
+  ["Щ"] = 'Xh',
+  ["Ъ"] = '\'',
+  ["Ы"] = 'Y',
+  ["Ь"] = '\'',
+  ["Э"] = 'E',
+  ["Ю"] = 'Yu',
+  ["Я"] = 'Ya',
+
+  -- END
+} -- CharRusLat
+
+-- LiterChangeSets
 ----------------------------------------
 local CharChangeSets = {
   -- Tekst
   SignTyper = true,
   SignMaths = true,
+  -- 
   SignSuper = true,
   SignSuber = true,
   SignRefer = true,
-  -- Leter
+  -- Liter
   GrafLatRus = true,
   GrafRusLat = true,
+  CharLatRus = true,
+  CharRusLat = true,
 
   Tekst = TekstChangeSets,
-  Leter = LeterChangeSets,
+  Liter = LiterChangeSets,
 } --- CharChangeSets
 unit.CharChangeSets = CharChangeSets
 
@@ -436,6 +523,22 @@ CharChangeSets.SignRefer = {
 -- CharChangeSets
 ---------------------------------------- Fill
 do
+
+-- Extend set for specifed kind by character forms.
+-- Расширение набора указанного вида с учётом формы символов.
+local function WidenChangeSets (Base, Kind)
+  local t = {}
+  local u = CharChangeSets[Base][Kind]
+
+  for k, v in pairs(u) do
+    t[k] = v
+    t[k:lower()] = v:lower()
+  end -- for
+
+  CharChangeSets[Base][Kind] = t
+end -- WidenChangeSets
+unit.WidenChangeSets = WidenChangeSets
+  
   local makeplain = strings.makeplain
 
 -- Grouping set for specifed kind by key length.
@@ -464,8 +567,14 @@ unit.GroupChangeSets = GroupChangeSets
 
 GroupChangeSets("Tekst", "SignTyper")
 GroupChangeSets("Tekst", "SignMaths")
-GroupChangeSets("Leter", "GrafLatRus")
-GroupChangeSets("Leter", "GrafRusLat")
+
+WidenChangeSets("Liter", "CharLatRus")
+GroupChangeSets("Liter", "CharLatRus")
+WidenChangeSets("Liter", "CharRusLat")
+GroupChangeSets("Liter", "CharRusLat")
+
+GroupChangeSets("Liter", "GrafLatRus")
+GroupChangeSets("Liter", "GrafRusLat")
 
 end -- do
 
@@ -484,6 +593,9 @@ local Actions = {
 
   SignTyper  = false,
   SignMaths  = false,
+
+  CharLatRus = false,
+  CharRusLat = false,
 
   GrafLatRus = false,
   GrafRusLat = false,
@@ -561,12 +673,12 @@ Menus.ChangeSign = {
 Menus.ChangeChar = {
   text = L.ChangeChar,
   Items = {
-    --{ text = L.Char,
-    --  separator = true, },
-    --{ text = L.Char,
-    --  Function = Execute"Typer", },
-    --{ text = L.Char,
-    --  Function = Execute"Maths", },
+    { text = L.CharChar,
+      separator = true, },
+    { text = L.CharLatRus,
+      Function = Execute"CharLatRus", },
+    { text = L.CharRusLat,
+      Function = Execute"CharRusLat", },
     { text = L.CharGraf,
       separator = true, },
     { text = L.GrafLatRus,

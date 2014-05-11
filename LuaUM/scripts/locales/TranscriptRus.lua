@@ -15,6 +15,9 @@ local Data = {
       SignRefer     = "&0 - Ссылка-сноска",
 
   ChangeChar      = "&X - Транскрибирование",
+    CharChar      = "Транслитерация",
+      CharLatRus    = "Lat -> Rus",
+      CharRusLat    = "Rus -> Lat",
     CharGraf      = "Трансграфика",
       GrafLatRus    = "Lat -> Rus",
       GrafRusLat    = "Rus -> Lat",

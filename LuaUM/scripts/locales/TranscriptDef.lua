@@ -14,6 +14,9 @@ local Data = {
       SignRefer     = "&0 - Refer-note",
 
   ChangeChar      = "&X - Transcript text",
+    CharChar      = "Transliteration",
+      CharLatRus    = "Lat -> Rus",
+      CharRusLat    = "Rus -> Lat",
     CharGraf      = "Transgraphics",
       GrafLatRus    = "Lat -> Rus",
       GrafRusLat    = "Rus -> Lat",
