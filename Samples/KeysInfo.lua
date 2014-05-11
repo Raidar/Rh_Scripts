@@ -139,7 +139,7 @@ local function SendText (hDlg, Param1, Param2)
   return SendMsg(hDlg, F.DM_SETTEXT, Param1, Param2)
 end --
 
-local Guid = win.Uuid("f218e7ec-b782-4746-a188-952d6231afbb")
+local Guid = win.Uuid("a05f1ebc-02aa-4450-9ef8-e12e6da4ba00")
 
 -- Показ нажатой клавиши в диалоге.
 function unit.Dialog ()
