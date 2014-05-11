@@ -1,4 +1,12 @@
-[Rh_Scripts]
+[Packs]
+
+[F -- Packs]
+F0AA2F42-5352-4D11-B8C7-BAFF33EA3DCA -- Rh_Scripts pack
+f132878d-9671-4cb4-a94b-335b9da87536 -- LFA config pack
+f24e9b90-e122-49c8-8e76-7e09db029c7f -- fl_scripts set
+f333ea9c-380c-4ce3-bdc7-26a1ec1920e5 -- Rh_Presets pack
+f734eb23-4294-4548-9e31-61b03ef17e62 -- Rh_Macros pack
+f7684e73-a856-4196-9562-9e829e53a410 -- LuaSpell macro
 
 [0 -- LUM]
 00B06FBA-0BB7-4333-8025-BA48B6077435 -- LUM
@@ -25,7 +33,7 @@
 [5 -- Panels]
 
 [6 -- Editor]
-62023165-B8f6-41d6-B468-94ca21d7b34f -- Editor.TextTemplate script
+62023165-B8F6-41D6-B468-94CA21D7B34F -- Editor.TextTemplate script
 6227AFFB-5E24-42CE-9EC0-106868FAD0BA -- Editor.TextTemplate config
 
 64B26458-1E8B-4844-9585-BECFB1CE8DE3 -- Editor.WordComplete script
@@ -34,9 +42,16 @@ Editor.WordComplete Words list (RectMenu) == Editor.WordComplete script
 
 [7 -- Viewer]
 
-[F -- Samples]
-F218E7EC-B782-4746-A188-952D6231AFBB -- Samples.KeysInfo
+[A -- Samples]
+A05F1EBC-02AA-4450-9EF8-E12E6DA4BA00 -- Samples.KeysInfo
 
 [C -- context]
+C0AFE3A3-FF78-4904-B100-1C366D04EA96 -- LuaFAR context pack
+context table = LuaFAR context pack
+C05E4187-192B-4C37-8821-06CF75E7B4D1 -- ctxdata table
+
+[D -- Coloring]
+D1D36A00-7F1B-41F0-9A66-1A252A4FA3A4 -- lfa_config
+D7F001FF-7860-4A24-B9CA-37BEF603F7BC -- LuaSpell
 
 ――――――――
