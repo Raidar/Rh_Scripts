@@ -44,6 +44,8 @@ local mInsert = {
     RectMenu = {
       Cols = 5,
       Fixed = { HeadRows = 1, HeadCols = 1, },
+
+      IsStatusBar = true,
     }, -- RectMenu
   },
 

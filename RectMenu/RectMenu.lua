@@ -2465,6 +2465,8 @@ function TMenu:DrawStatusBar ()
   local Index = self.SelIndex
   local Hint = Index and Index > 0 and self.List[Index].Hint or ""
 
+  --if Hint ~= "" then logShow(self.StatusBar, Hint) end
+
   return DrawLineText(self.StatusBar, self.Colors.StatusBar, Hint)
 end ---- DrawStatusBar
 

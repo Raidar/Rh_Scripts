@@ -94,7 +94,8 @@ local dLogGraphFormat =
 
 local mItems = {
   { text = "Git GUI",
-    CmdLine = "git gui citool", },
+    CmdLine = "git gui citool",
+    Hint = "Show GUI", },
   { text = "Fetch origin…",
     Function = FillCmdLine,
     Arguments = "git fetch origin", },
@@ -385,6 +386,8 @@ local mGitCommands = { -- Git commands
       --BoxKind = "R",
       MenuAlign = "CM",
       UncheckedChar = " ",
+
+      IsStatusBar = true,
     }, -- RectMenu
 
   }, -- Props

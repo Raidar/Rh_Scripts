@@ -389,7 +389,6 @@ function TMain:MakeProps ()
     Colors = self.Colors,
 
     IsStatusBar = true,
-
   } --- RM
   Props.RectMenu = RM
 

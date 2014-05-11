@@ -223,6 +223,8 @@ local mEnquote = {
       Rows = 9,
       Order = "V",
       Fixed = { HeadRows = 1, HeadCols = 0, },
+
+      IsStatusBar = true,
     },
   }, -- Props
 
