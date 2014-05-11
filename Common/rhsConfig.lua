@@ -670,6 +670,8 @@ end
 ----------------------------------------
 rawset(_G, 'Rh_Scripts', {})
 
+Rh_Scripts.guid = win.Uuid("f0aa2f42-5352-4d11-b8c7-baff33ea3dca")
+
 ]==]--_UM.Start
 ----------------------------------------
 _UM.End = [==[
