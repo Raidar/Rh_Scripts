@@ -110,7 +110,8 @@ end
     Число бит для данных внутри страницы.
   Может быть изменено для лучшего разбиения и минимизации размера таблицы.
 --]]
-unit.shift = 5 -- Default 5
+--unit.shift = 5 -- Default 5
+unit.shift = 5
 
 --unit.NullLine = "FFFF;;Cn;0;ON;;;;;N;;;;;"
 unit.NullLine = "10FFFF;;Co;0;L;;;;;N;;;;;"
@@ -708,9 +709,9 @@ do
   --local args = { ... }
 
   local utils = require 'context.utils.useUtils'
-  local BasePath = utils.PluginPath
+  local BasePath = utils.ProfilePath
 
-  local DataPath = "scripts\\Rh_Scripts\\data\\"
+  local DataPath = "data\\scripts\\Rh_Scripts\\data\\"
   local DataName = "UnicodeData.txt"
   local CodeName = "slnudata.c"
 
