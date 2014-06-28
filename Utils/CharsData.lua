@@ -125,6 +125,8 @@ function unit:ParseNames (FileName) --> (bool | nil)
       last = cp
     end
 
+    self.Data.NamesCount = last
+
     --[[
     name = s:match("^\t%= (.+)")
     -- Альтернативное название:
@@ -201,6 +203,7 @@ function unit:ParseBlocks (FileName) --> (bool | nil)
         name = name,
       } ---
     end
+    self.Data.BlocksCount = k
 
     s = f:read('*l')
     --sn = sn + 1
@@ -287,7 +290,7 @@ function unit:Execute (Data) --> (bool | nil)
   --logShow(unit.DefCfgData, FileName, "d1")
   self:ParseNames(FileName)
 
-  -- Разбор имён
+  -- Разбор блоков
   FileName = sformat("%s%s%s", CfgData.PluginDataPath,
                      CfgData.FilePath, CfgData.BlocksFile)
   --logShow(unit.DefCfgData, FileName, "d1")

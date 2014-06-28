@@ -204,16 +204,17 @@ $ #Characters map# (CharsMap)
  \37Num* | Clear\- (Num5)    — ¦the last choosen character.
  \37CtrlB\-                  — ¦choose a character block and go to
 a first character of the chosen block; you can click a block name by mouse.
- \37CtrlV\-                  — ¦go to a character from clipboard.
- \37CtrlShiftV\-             — ¦go to a character with code point from clipboard.
- \37CtrlAltX\-               — ¦go to a character obtained by XLat.
- \37(Shift+) <символ>\-      — ¦go to a character corresponding to key.
+ \37CtrlV\-                  — ¦go to a character from clipboard.
+ \37CtrlShiftV\-             — ¦go to a character with code point from clipboard.
+ \37CtrlAltX\-               — ¦go to a character obtained by XLat.
+ \37(Shift+) <символ>\-      — ¦go to a character corresponding to key.
 
- \37Num/\-                   — ¦go to a ~code point input~@CharsMap_Input@ mode.
+ \37Num/\-                   — ¦go to a ~code point input~@CharsMap_CodeInput@ mode.
+ \37ShiftNum/\-              — ¦go to a ~character name input~@CharsMap_CharInput@ mode.
 
  ~Contents~@Contents@
 
-@CharsMap_Input
+@CharsMap_CodeInput
 $ #Characters map#: Code point input
 
   Code point input is performed in a hexadecimal format.
@@ -225,6 +226,24 @@ $ #Characters map#: Code point input
  
   After the input completion a character with the inputted code point
 will be displayed in the window.
+
+ ~Contents~@Contents@       ~Characters map~@CharsMap@
+
+@CharsMap_CharInput
+$ #Characters map#: Character name input
+
+  To input name of character use following keys:
+ \371–9, 0, A–Z\-            — ¦to input digits and letters.
+ \37^$()%.[]*+-?\-           — ¦to input special symbols.
+ \37ShiftNum/\-              — ¦to complete the input.
+ \37Enter, NumEnter\-        — ¦go to a character with input name.
+ \37CtrlV\-                  — ¦to insert character name from clipboard.
+
+  A search is performed by a input text as Lua regular expression
+from code point of a character following by selected character.
+If the search from name start is not specified  (with \37^\- symbol),
+the search will be performed for character with name containing
+the input text (\37.*\- will be added in start of the text).
 
  ~Contents~@Contents@       ~Characters map~@CharsMap@
 

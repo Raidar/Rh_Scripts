@@ -47,7 +47,7 @@ unit.uCP = uCP2s
 
 unit.CharCodeNameFmt = "U+%s — %s" -- utf-8 string
 
-local function uCodeName (u)
+local function uCodeName (u) --< uCode --> Name
   local c = CharsNames[u]
   if not c then
     return unit.CharCodeNameFmt:format(uCP2s(u, true), "")
@@ -63,13 +63,13 @@ unit.uCodeName = uCodeName
 
   local u_byte = strings.u8byte
 
-function unit.uCharCodeName (c)
+function unit.uCharCodeName (c) --< uChar --> Name
   return uCodeName(u_byte(c))
 end ---- uCharCodeName
 
   local CharsBlocks = CharsData and CharsData.Blocks or Null
 
-local function uCharBlock (u)
+local function uCodeBlock (u) --< uCode --> (uBlock index, uBlock)
   local Blocks = CharsBlocks
 
   local l, r = 1, #Blocks
@@ -86,13 +86,13 @@ local function uCharBlock (u)
       return m, b
     end
   end
-end ---- uCharBlock
-unit.uCharBlock = uCharBlock
+end ---- uCodeBlock
+unit.uCodeBlock = uCodeBlock
 
 unit.CharBlockNameFmt = "U+%s..U+%s — %s" -- utf-8 string
 
-local function uBlockName (u)
-  local _, b = uCharBlock(u)
+local function uBlockName (u) --< uCode --> Name
+  local _, b = uCodeBlock(u)
   if not b then return end
 
   local s = b.fullname
@@ -106,11 +106,29 @@ local function uBlockName (u)
 end ---- uBlockName
 unit.uBlockName = uBlockName
 
-function unit.uCharBlockName (c)
+function unit.uCharBlockName (c) --< uChar --> Name
   return uBlockName(u_byte(c))
 end ---- uCharBlockName
 
-end --
+--end -- do
+---------------------------------------- Search
+--do
+
+  local NamesCount = unit.Data.NamesCount
+
+function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
+  for k = base or 0x0000, NamesCount do
+  --for k = base or 0x0000, (base or 0x0000) + 3 do
+    local c = CharsNames[k]
+    local s = c and c.name
+    --logShow({ pattern, base, c }, s and s:lower():match(pattern))
+    if s and s:lower():match(pattern) then
+      return k
+    end
+  end -- for
+end ---- uFindCode
+
+end -- do
 ---------------------------------------- main
 
 --logShow(unit.Data.Names, "Char Names", "d1")

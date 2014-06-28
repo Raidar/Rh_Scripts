@@ -9,6 +9,7 @@ local Data = {
 
   --
   InputCodePoint    = "Введите кодовую точку",
+  InputCharName     = "Введите название символа",
   BlocksColBlockRange   = "Диапазон",
   BlocksColBlockName    = "Название",
 

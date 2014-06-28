@@ -8,6 +8,7 @@ local Data = {
   
   --
   InputCodePoint    = "Input code point",
+  InputCharName     = "Input character name",
   BlocksColBlockRange   = "Range",
   BlocksColBlockName    = "Name",
 

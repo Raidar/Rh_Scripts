@@ -62,8 +62,6 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 ----------------------------------------
 local CharsList = require "Rh_Scripts.Utils.CharsList"
 local uData = CharsList.Data
-local uCodeName  = CharsList.uCodeName
-local uBlockName = CharsList.uBlockName
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -271,6 +269,8 @@ function TMain:MakeColors ()
   return true
 end ---- MakeColors
 
+  local uBlockName = CharsList.uBlockName
+
 function TMain:MakeProps ()
   local self = self
 
@@ -393,7 +393,8 @@ end -- do
 ---------------------------------------- ---- Menu
 do
   local uCP2s = strings.ucp2s
-
+  local uCodeName = CharsList.uCodeName
+  
 -- Заполнение меню.
 function TMain:FillMenu () --> (table)
   local self = self
@@ -782,7 +783,7 @@ function TBlocks:ShowMenu () --> (item, pos)
                   self.Props, self.Items, self.Keys)
 end ---- ShowMenu
 
-  local uCharBlock = CharsList.uCharBlock
+  local uCodeBlock = CharsList.uCodeBlock
 
 -- Choose character block.
 -- Выбор блока символов.
@@ -795,7 +796,7 @@ function TMain:ChooseBlock (Data)
   Blocks:InitFilter()
 
   local Char = Data and Data.Char or 0
-  Blocks.Props.SelectIndex = (uCharBlock(Char) or 1) * 2 + 2
+  Blocks.Props.SelectIndex = (uCodeBlock(Char) or 1) * 2 + 2
   --logShow(Blocks.Props, uCP(Char), 1)
 
   Blocks.ActItem, Blocks.ItemPos = Blocks:ShowMenu()
@@ -809,33 +810,33 @@ end -- do
 do
   local tonumber = tonumber
 
-function TMain:ParseInput ()
+function TMain:FindCodeInput ()
   --local self = self
 
   local Input = self.Input or ""
   if Input == "" then return end
 
   return tonumber(Input, 16)
-end ---- ParseInput
+end ---- FindCodeInput
 
-function TMain:StartInput (Data)
+function TMain:StartCodeInput (Data)
   local self = self
   local L = self.LocData
 
   self.Input = ""
   self.Props.Bottom = L.InputCodePoint
-  self.IsInput = true
-end ---- StartInput
+  self.IsCodeInput = true
+end ---- StartCodeInput
 
-function TMain:StopInput (Data)
+function TMain:StopCodeInput (Data)
   local self = self
 
-  self.IsInput = false
+  self.IsCodeInput = false
   self.Props.Bottom = ""
-  self.Char = self:ParseInput() or Data.Char
-end ---- StopInput
+  self.Char = self:FindCodeInput() or Data.Char
+end ---- StopCodeInput
 
-function TMain:EditInput (SKey)
+function TMain:EditCodeInput (SKey)
   local self = self
 
   local Input = self.Input
@@ -844,11 +845,13 @@ function TMain:EditInput (SKey)
       Input = Input:sub(1, -2)
     end
 
-  elseif SKey == "V" then
+  elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
+    --logShow(s, SKey)
     if type(s) == 'string' then
       s = (s.."0000"):match("^(%x%x%x%x)")
-      if s then Input = s end
+      --logShow(s, SKey)
+      if s then Input = s:upper() end
     end
   else
     if Input:len() < 4 then
@@ -857,8 +860,87 @@ function TMain:EditInput (SKey)
   end
 
   self.Input = Input
-  self.Props.Bottom = Input
-end ---- EditInput
+  if Input ~= "" then
+    self.Props.Bottom = Input
+  else
+    local L = self.LocData
+    self.Props.Bottom = L.InputCodePoint
+  end
+end ---- EditCodeInput
+
+end -- do
+do
+  --local u8byte = strings.u8byte -- TEMP
+  local uFindCode = CharsList.uFindCode
+
+function TMain:FindCharInput ()
+  --local self = self
+  
+  local Input = self.Input or ""
+  if Input == "" then return end
+
+  if Input:sub(1, 1) ~= "^" then
+    Input = ".*"..Input
+  end
+  --if Input:sub(-1, -1) ~= "$" then
+  --  Input = Input..".*"
+  --end
+
+  --logShow(self, Input)
+  --return u8byte(Input:sub(1, 1)) -- TEMP
+  return uFindCode(Input, self.Char + 1)
+end ---- FindCharInput
+
+function TMain:StartCharInput (Data)
+  local self = self
+  local L = self.LocData
+
+  self.Input = ""
+  self.Props.Bottom = L.InputCharName
+  self.IsCharInput = true
+end ---- StartCharInput
+
+function TMain:StopCharInput (Data)
+  local self = self
+
+  self.IsCharInput = false
+  self.Props.Bottom = ""
+end ---- StopCharInput
+
+function TMain:GotoCharInput (Data)
+  local self = self
+
+  self.Char = self:FindCharInput() or Data.Char
+end ---- GotoCharInput
+
+function TMain:EditCharInput (SKey)
+  local self = self
+
+  local Input = self.Input
+  if SKey == "BS" then
+    if Input ~= "" then
+      Input = Input:sub(1, -2)
+    end
+
+  elseif SKey == "CtrlV" then
+    local s = far.PasteFromClipboard()
+    if type(s) == 'string' then
+      Input = s
+    end
+  else
+    --if Input:len() < 4 then
+      Input = Input..SKey
+    --end
+  end
+
+  self.Input = Input
+  if Input ~= "" then
+    self.Props.Bottom = Input
+  else
+    local L = self.LocData
+    self.Props.Bottom = L.InputCharName
+  end
+end ---- EditCharInput
 
 end -- do
 ---------------------------------------- ---- Output
@@ -886,10 +968,10 @@ do
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }
-
+  
   local u8byte, u8char = strings.u8byte, strings.u8char
 
-  local InputActions = {
+  local CodeInputActions = {
     ["1"] = true,
     ["2"] = true,
     ["3"] = true,
@@ -907,8 +989,34 @@ do
     ["E"] = true,
     ["F"] = true,
     ["BS"] = true,
-    ["V"] = true,
-  } --- InputActions
+    ["CtrlV"] = true,
+  } --- CodeInputActions
+
+  local CharInputActions = {
+    ["BS"] = true,
+    ["CtrlV"] = true,
+  } --- CharInputActions
+
+  local UniCharInputActions = {
+    ["^"] = true,
+    ["$"] = true,
+    ["("] = true,
+    [")"] = true,
+    ["%"] = true,
+    ["."] = true,
+    ["["] = true,
+    ["]"] = true,
+    ["*"] = true,
+    ["+"] = true,
+    ["-"] = true,
+    ["?"] = true,
+
+    --["!"] = true,
+    --[","] = true,
+    --["'"] = true,
+    --[":"] = true,
+    --[";"] = true,
+  } --- UniCharInputActions
 
   local tonumber = tonumber
 
@@ -965,6 +1073,53 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
+      
+    elseif SKey == "Divide" then
+      if self.IsCodeInput then
+        self:StopCodeInput(Data)
+        --return MakeUpdate()
+      elseif not self.IsCharInput then
+        self:StartCodeInput(Data)
+      end
+
+    elseif SKey == "ShiftDivide" then
+      if self.IsCharInput then
+        self:StopCharInput(Data)
+        --return MakeUpdate()
+      elseif not self.IsCodeInput then
+        self:StartCharInput(Data)
+      end
+
+    elseif self.IsCodeInput then
+      if CodeInputActions[SKey] then
+        self:EditCodeInput(SKey)
+      end
+
+    elseif self.IsCharInput then
+      --logShow(Input, SKey)
+      local KeyChar = Input.KeyName
+      local UniChar = Input.UnicodeChar
+      if UniCharInputActions[UniChar or ""] then
+        KeyChar = UniChar
+      elseif KeyChar:len() == 1 then
+        if (Input.StateName == "" or
+            Input.StateName == "Shift") then
+          KeyChar = KeyChar:lower()
+        --if Input.StateName == "" then
+        --  KeyChar = KeyChar:lower()
+        --elseif Input.StateName == "Shift" then
+        --  -- Nothing to do
+        --  KeyChar = KeyChar:lower()
+        else
+          KeyChar = false
+        end
+      else
+        KeyChar = false
+      end
+
+      if KeyChar or CharInputActions[SKey] then
+        self:EditCharInput(KeyChar or SKey)
+      end
 
     elseif SKey == "CtrlV" then
       local s = far.PasteFromClipboard()
@@ -994,19 +1149,6 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    elseif SKey == "Divide" then
-      if self.IsInput then
-        self:StopInput(Data)
-        --return MakeUpdate()
-      else
-        self:StartInput(Data)
-      end
-
-    elseif self.IsInput then
-      if InputActions[SKey] then
-        self:EditInput(SKey)
-      end
-
     elseif AlterActions[SKey] then
       self.Char = tonumber(Input.UnicodeChar.."000", 16)
       --logShow(self.Char, SKey)
@@ -1032,7 +1174,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
-    --if self.IsInput then return end
+    --if self.IsCodeInput then return end
     
     local AKey, VMod = AKey, VMod
 
@@ -1159,11 +1301,21 @@ function TMain:AssignEvents () --> (bool | nil)
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
-    if self.IsInput and Kind == "Enter" then
-      self:StopInput(Data)
+    if Kind == "Enter" then
 
-      self:LimitChar()
-      return MakeUpdate()
+      local isUpdate = true
+      if     self.IsCodeInput then
+        self:StopCodeInput(Data)
+      elseif self.IsCharInput then
+        self:GotoCharInput(Data)
+      else
+        isUpdate = false
+      end
+
+      if isUpdate then
+        self:LimitChar()
+        return MakeUpdate()
+      end
     end
 
     self:SaveData(Data)
