@@ -374,9 +374,10 @@ local Qualio = {
   Name = "Качество: ",
   best = "отличное",
   good = "хорошее",
-  mid = "среднее",
-  bad = "плохое",
-  worse = "худшее",
+  mid  = "среднее",
+  bad  = "плохое",
+  dire = "ужасное",
+
   Pref = 0,
   Enum = 0,
   Desc = [[
@@ -396,7 +397,7 @@ p.→с. : .
 List.Qualio = Qualio
 Qualio.Pref = Fmts.SectioName:format(List.SectioName.qq)..Qualio.Name
 Qualio.Enum = Fmts.QualioName:format(Qualio.best, Qualio.good,
-                                     Qualio.mid, Qualio.bad, Qualio.worse)
+                                     Qualio.mid, Qualio.bad, Qualio.dire)
 
 do
 -- Спец. комбинации:

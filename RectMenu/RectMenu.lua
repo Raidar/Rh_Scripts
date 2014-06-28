@@ -1783,6 +1783,7 @@ function TMenu:DoKeyPress (hDlg, Input) --> (bool)
     --logShow({ AKey, VMod, Input }, SelIndex, "h8d1")
 
     local isOk, NewKey, NewMod = self:UserNavKeyPress(hDlg, AKey, VMod)
+    --logShow({ isOk, NewKey, NewMod, Input }, SelIndex, "h8d1")
     if isOk then return isOk end
     --if isOk ~= nil then return isOk end -- TODO: TEST
     --logShow({ AKey, VMod, isOk, NewKey, NewMod }, SelIndex, "w h8 d1")
@@ -2861,7 +2862,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработка управления клавиатурой и мышью.
   local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
-
+  
     --logShow(Input, "Event", "d1 x8")
     local EventType = Input.EventType
 
