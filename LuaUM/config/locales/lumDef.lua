@@ -37,7 +37,7 @@ local Data = {
   CharacterKits     = "Character kits",
   ChsKitItem        = "&H - Character kits",
   
-  ChsCharacterMap   = "Character map",
+  ChsCharacterMap   = "All characters",
 
   ChsChars          = "Characters",
     ChsChars_Greeks     = "Greek characters",

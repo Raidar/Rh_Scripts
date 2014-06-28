@@ -270,9 +270,11 @@ function unit.CharacterMap ()
 
   Menu = unit.MakeKindMenu(Cfg, Props, Datas, "None")
   unit.ScriptData[Name] = Menu
+  --Menu.hidden = true -- Меню как скрытый пункт
 
   return Menu
 end ---- CharacterMap
+--unit.CharacterMap = nil
 
 ---------------------------------------- Letters etc
 function unit.Chars_Greeks ()
@@ -280,26 +282,30 @@ function unit.Chars_Greeks ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\ ]]
-  local Datas = -- Char + Shift
-                [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./, ]]..
-                [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?|]]..Chars.BS..
-                -- Ctrl + Shift
-                [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./°]]..Chars.CR..
-                [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>? ]]..
-                -- Alt + Shift
-                [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\ ]]..
-                [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?| ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
+  local Datas = -- Char + Shift                                  
+                [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./,1234567890-= ]]..
+                [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?°!@#$%^&*()_+]]..Chars.BS..
+                -- Ctrl + Shift                                  
+                [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./́        []±≈]]..Chars.CR..
+                [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>?        {}∓≉ ]]..
+                -- Alt + Shift                                   
+                [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\1234567890−≡ ]]..
+                [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?|!@#$%^&*()≂≢ ]]..
+                -- Ctrl+Alt + Shift
+                [[                              ʼ  …―          ≍≣ ]]..
+                [[                              ˮ  &‾| #$% &*  ≭≠ ]]
   local Props = {
     Order = Order,
-    Serial = true,
+    Serial = true,                                   
     --Heading = "Order",
     Heading = "Both",
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
-  unit.CompactMenu(Menu)
+  --unit.CompactMenu(Menu)
+  Menu.Props.RectMenu.CompactText = true
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
@@ -311,19 +317,19 @@ function unit.Chars_Cyrils ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\90-= ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
   local Datas = -- Char + Shift
-                [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,90-= ]]..
-                [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,|()_+]]..Chars.BS..
+                [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,1234567890-= ]]..
+                [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,°!@#$%^&*()_+]]..Chars.BS..
                 -- Ctrl + Shift                                      
-                [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ°[]-=]]..Chars.CR..
-                [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ{}_+ ]]..
+                [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ́        []±≈]]..Chars.CR..
+                [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ        {}∓≉ ]]..
                 -- Alt + Shift
-                [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\  -= ]]..
-                [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|  _+ ]]..
+                [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\1234567890−≡ ]]..
+                [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|!@#$%^&*()≂≢ ]]..
                 -- Ctrl+Alt + Shift
-                [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ’ѭѩ…―  -= ]]..
-                [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$”ѬѨ&‾  _+ ]]
+                [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ʼѭѩ…―          ≍≣ ]]..
+                [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$ˮѬѨ&‾| #$% &*  ≭≠ ]]
   local Props = {
     Order = Order,
     Serial = true,
@@ -334,7 +340,8 @@ function unit.Chars_Cyrils ()
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   --logShow(Menu, "Chars_Cyrils", 2)
   unit.UseSpace(Menu)
-  unit.CompactMenu(Menu)
+  --unit.CompactMenu(Menu)
+  Menu.Props.RectMenu.CompactText = true
   unit.ScriptData[Name] = Menu
   
   return Menu
@@ -348,17 +355,17 @@ function unit.MathsSymbols ()
 
   local Order = [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]
   local Datas = -- Char + Shift
-                [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]..
-                [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()+_~{}:"<>?|]]..Chars.BS..
-                -- Ctrl + Shift
-                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮          ⋜⋝≈±∼  ×∕≤≥/́]]..Chars.CR..
-                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ          ≉∓≁⟦⟧⋆ ≰≱\§ ]]..
-                -- Alt + Shift
-                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃        ≼≽≡−≃≺≻⋅ ≲≳/\ ]]..
-                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅        ⋠⋡≢≂≄⊀⊁∗ ≴≵?| ]]..
-                -- Ctrl + Alt
-                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇        ⋞⋟≣≍∽≾≿∘∣⋦⋧…― ]]..
-                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉        ≪≫≠≭⋍⋨⋩∙∤≮≯&‾ ]]
+                [[abcdefghijklmnopqrstuvwxyz1234567890-=`[];',./\ ]]..
+                [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
+                -- Ctrl + Shift                         
+                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮          ⋜⋝±≈∼  ×∕≤≥/́]]..Chars.CR..
+                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ          ∓≉≁⟦⟧⋆ ≰≱\§ ]]..
+                -- Alt + Shift                          
+                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃        ≼≽−≡≃≺≻⋅ ≲≳/\ ]]..
+                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅        ⋠⋡≂≢≄⊀⊁∗ ≴≵?| ]]..
+                -- Ctrl + Alt + Shift
+                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇        ⋞⋟≍≣∽≾≿∘∣⋦⋧…― ]]..
+                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉        ≪≫≭≠⋍⋨⋩∙∤≮≯&‾ ]]
   local Props = {
     Order = Order,
     Serial = true,
