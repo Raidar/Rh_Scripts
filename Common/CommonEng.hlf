@@ -248,7 +248,8 @@ the search will be performed for character with name containing
 the input text (\37.*\- will be added in start of the text).
 
   A show of all characters with input name is only available
-when an amount of these characters is less than half of all characters.
+when the input name contains more than two symbols
+and an amount of these characters is less than half of all characters.
 
  ~Contents~@Contents@       ~Characters map~@CharsMap@
 
