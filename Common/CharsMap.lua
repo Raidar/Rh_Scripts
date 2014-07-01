@@ -61,7 +61,10 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 
 ----------------------------------------
 local CharsList = require "Rh_Scripts.Utils.CharsList"
-local uData = CharsList.Data
+
+local CharsData = CharsList.Data
+local CharsNames  = CharsData and CharsData.Names
+local CharsBlocks = CharsData and CharsData.Blocks
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -109,16 +112,29 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
 ---------------------------------------- Configure
 
+---------------------------------------- ColFilter
+local TColFilter = {
+} ---
+local MColFilter = { __index = TColFilter }
+
 ---------------------------------------- Main class
 local TMain = {
   Guid       = win.Uuid("19500a29-1a9b-4b1b-833c-693d58669963"),
   ConfigGuid = win.Uuid("1991fe2b-e919-480e-8b0a-90b7c960d113"),
 
+  Nomens     = {
+    Guid       = win.Uuid("19ae6fa2-7ceb-4893-b2a7-fd8b783cc365"),
+  }, ---
+
   Blocks     = {
     Guid       = win.Uuid("19b4271d-09c2-4671-af59-b043d1698104"),
   }, ---
-}
+
+} ---
 local MMain     = { __index = TMain }
+setmetatable(TMain.Nomens, MColFilter)
+setmetatable(TMain.Blocks, MColFilter)
+local MNomens   = { __index = TMain.Nomens }
 local MBlocks   = { __index = TMain.Blocks }
 
 -- Создание объекта основного класса.
@@ -160,6 +176,18 @@ local function CreateMain (ArgData)
     --Action    = false,    -- Выбранное действие
     --Effect    = false,    -- Выбранный эффект
 
+    Nomens    = {         -- Объект: Символы
+      Main      = false,    -- Объект основного класса
+
+      -- Текущее состояние:
+      Items     = false,    -- Список пунктов меню
+      Props     = false,    -- Свойства меню
+      Pattern   = "",       -- Паттерн фильтрации
+
+      ActItem   = false,    -- Выбранный пункт меню
+      ItemPos   = false,    -- Позиция выбранного пункта меню
+    }, --
+
     Blocks    = {         -- Объект: Блоки символов
       Main      = false,    -- Объект основного класса
 
@@ -170,8 +198,10 @@ local function CreateMain (ArgData)
 
       ActItem   = false,    -- Выбранный пункт меню
       ItemPos   = false,    -- Позиция выбранного пункта меню
-    },
+    }, --
+
   } --- self
+  self.Nomens.Main = self
   self.Blocks.Main = self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -193,7 +223,9 @@ local function CreateMain (ArgData)
   locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
 
+  setmetatable(self.Nomens, MNomens)
   setmetatable(self.Blocks, MBlocks)
+
   return setmetatable(self, MMain)
 end -- CreateMain
 
@@ -318,7 +350,7 @@ function TMain:MakeProps ()
     MaxHeight = 1 + 1 +
                 self.RowCount +
                 1 +
-                (uData and uData.Blocks and (1 + 2) or 0) +
+                (CharsBlocks and (1 + 2) or 0) +
                 0,
 
     Colors = self.Colors,
@@ -350,7 +382,7 @@ function TMain:MakeProps ()
         end,
       },
     },
-    IsDrawEdges = uData and uData.Blocks,
+    IsDrawEdges = CharsBlocks and true,
 
     --RectItem = {
     --  TextMark = true,
@@ -392,7 +424,7 @@ end ---- Prepare
 end -- do
 ---------------------------------------- ---- Menu
 do
-  local uCP2s = strings.ucp2s
+  local uCP       = CharsList.uCP
   local uCodeName = CharsList.uCodeName
   
 -- Заполнение меню.
@@ -428,9 +460,9 @@ function TMain:FillMenu () --> (table)
     local b = self.CharBase
     for _ = 1, CharRows do
       p = p + ColCount
-      --local s = uCP2s(b, true)
-      t[p + 1].text        = uCP2s(b, true)
-      t[p + ColCount].text = uCP2s(b + CharCols - 1, true)
+      --local s = uCP(b, true)
+      t[p + 1].text        = uCP(b, true)
+      t[p + ColCount].text = uCP(b + CharCols - 1, true)
       b = b + CharCols
     end
   end -- do
@@ -522,13 +554,283 @@ function TMain:LimitChar ()
 end ---- LimitChar
 
 end -- do
+---------------------------------------- ---- ColFilter
+do
+
+function TColFilter:InitFilter ()
+  local self = self
+  local Props = self.Props
+
+  local PatternFmt = Props.PatternFmt or " *[%s]"
+  local FiltersFmt = Props.FiltersFmt or "(%d / %d)"
+  Props.FmtTitle  = Props.DefTitle..PatternFmt
+  if Props.DefBottom == "" then
+    Props.FmtBottom = FiltersFmt
+  else
+    Props.FmtBottom = Props.DefBottom.." "..FiltersFmt
+  end
+
+  -- Сброс фильтра:
+  self.Pattern = ""
+  --self.Pattern = self.BasePattern or ""
+  self.FilterCol = self.FilterCol or 1
+
+  --self:MakeFilter()
+  self:ApplyFilter()
+
+  return true
+end ---- InitFilter
+  
+  local function patfind (Text, Pattern)
+    local Pattern = Pattern
+    if Pattern:sub(-1, -1) == '%' and -- Exclude single escape character
+       Pattern:sub(-2, -2) ~= '%' then Pattern = Pattern:sub(1, -2) end
+    return Text:cfind(Pattern)
+  end -- patfind
+
+  local TNull = tables.Null
+
+function TColFilter:MakeFilter ()
+  local self = self
+  local Items = self.Items
+  if not Items or #Items == 0 then return end
+
+  local Pattern = self.Pattern
+  local FilterCol = self.FilterCol
+
+  local RM = self.Props.RectMenu or TNull
+  local Fixed = RM.Fixed or TNull
+  local ColCount = RM.Cols or 1
+  --logShow(Items, Pattern, 2)
+  
+  local j = 0
+  local i = (Fixed.HeadRows or 0) * ColCount --+ FilterCol
+  local e = #Items - (Fixed.FootRows or 0) * ColCount
+  --logShow({ j, i, e, ColCount, FilterCol, i + FilterCol, Fixed, }, Pattern, 2)
+  while i + FilterCol <= e do
+    local v = Items[i + FilterCol]
+    --if v == nil then logShow(i + FilterCol) end
+    local s = v.conv
+    if not s then
+      s = v.text:lower()
+      v.conv = s
+    end
+
+    local dummy
+    if Pattern and Pattern ~= "" then
+      local fpos, fend = patfind(s, Pattern)
+      if fpos then
+        dummy = false --nil
+        v.RectMenu = v.RectMenu or {}
+        v.RectMenu.TextMark = { fpos, fend }
+      else
+        j = j + 1
+        dummy = true
+        v.RectMenu = v.RectMenu or {}
+        v.RectMenu.TextMark = nil
+      end
+    else
+      dummy = nil
+      v.RectMenu = v.RectMenu or {}
+      v.RectMenu.TextMark = nil
+    end
+
+    for k = i + 1, i + ColCount do
+      local v = Items[k]
+      if v then v.dummy = dummy end
+    end
+
+    i = i + ColCount
+  end -- while
+  --logShow(Items, Pattern, 2)
+  
+  self.Filtered = j
+end ---- MakeFilter
+
+function TColFilter:ApplyFilter ()
+  local self = self
+  local Props = self.Props
+
+  self:MakeFilter()
+
+  Props.Title  = Props.FmtTitle:format(self.Pattern)
+  Props.Bottom = Props.FmtBottom:format(self.Filtered, self.Count)
+end ---- ApplyFilter
+
+  local slen, sconv = string.len, string.lower
+
+  --local CloseFlag  = { isClose = true }
+  local CancelFlag = { isCancel = true }
+  --local CompleteFlags = { isRedraw = false, isRedrawAll = true }
+  local DoChange = { isUpdate = true }
+  local NoChange = { isUpdate = false }
+
+function TColFilter:AssignEvents () --> (bool | nil)
+  local self = self
+
+  local Table = { self.Props, self.Items, self.Keys }
+
+  -- Обработчик нажатия клавиш.
+  local function KeyPress (Input, ItemPos)
+    local SKey = Input.Name --or InputRecordToName(Input)
+    if SKey == "Esc" then return nil, CancelFlag end
+    --if SKey == "Enter" then return end
+    --logShow(Input, SKey)
+    local State = Input.StateName
+    if State ~= "" and State ~= "Shift" then return end
+
+    local Data = self.Items[ItemPos]
+    if not Data then return end
+
+    SKey = Input.KeyName
+    if SKey == "BS" then
+      self.Pattern = self.Pattern:sub(1, -2)
+    else
+      if SKey == "Space" then SKey = " " end
+      if slen(SKey) == 1 then
+        self.Pattern = self.Pattern..sconv(SKey)
+      else
+        return
+      end
+    end -- SKey
+
+    self:ApplyFilter()
+    --logShow({ self.Filtered, self.Count, self.Pattern }, "KeyPress")
+    if self.Filtered == self.Count then
+      self.Pattern = self.Pattern:sub(1, -2)
+      self:ApplyFilter()
+    end
+
+    return Table, DoChange
+  end -- KeyPress
+
+  -- Назначение обработчиков:
+  local RM = self.Props.RectMenu
+  RM.OnKeyPress = KeyPress
+end -- AssignEvents
+
+end -- do
+---------------------------------------- ---- Nomens
+do
+  local TNomens = TMain.Nomens
+  
+function TNomens:MakeProps () --| (Nomens_Props)
+  local self = self
+  if self.Props then return end
+
+  -- Свойства меню названий символов:
+  local Props = {}
+  self.Props = Props
+
+  local Main = self.Main
+  Props.Id = Props.Id or self.Guid
+  Props.HelpTopic = Main.Custom.help.tlink
+  Props.FarArea = Main.FarArea
+
+  local L = Main.LocData
+  Props.DefTitle  = L.NomensCaption
+  Props.DefBottom = self.BasePattern or ""
+
+  -- Свойства RectMenu:
+  local RM = {
+    ReuseItems = true,
+
+    Order = "H",
+    Cols = 1,
+
+    Fixed = {
+      --HeadRows = 1,
+      --FootRows = 0,
+      --HeadCols = 0,
+      --FootCols = 0,
+    },
+
+    --MenuEdge = 2,
+    MenuAlign = "CM",
+
+    LineMax = 1,
+    --TextMax = {
+    --  [1] = RangeLen,
+    --}, --
+
+    --MaxHeight = Main.Props.RectMenu.MaxHeight,
+
+    --Colors = self.Colors,
+
+    --IsStatusBar = true,
+  } -- RM
+  Props.RectMenu = RM
+
+  return true
+end ---- MakeProps
+
+  local uCP = CharsList.uCP
+  local NomenFmt = "%s | %s | %s"
+  local uCodeName = CharsList.uCodeName
+  
+  --local NamesCount = CharsData.NamesCount
+  local NamesStart = CharsData.NamesStart
+  local NamesLimit = CharsData.NamesLimit
+
+function TNomens:MakeItems () --| (Nomens_Items)
+  local self = self
+  local Main = self.Main
+
+  local L = Main.LocData
+
+  local t = {
+    { text = L.NomensColBlockName,
+      Label = true,
+      --RectMenu = self.RectItem,
+    },
+  } ---
+
+  local pattern = self.BasePattern
+  local U = unicode.utf8.char
+
+  local k = 0
+  local Count = self.NomensCount
+  for i = NamesStart, NamesLimit do
+    local c = CharsNames[i]
+    if c then
+      local s = c.name
+      if s and s:lower():match(pattern) then
+        k = k + 1
+
+        t[k] = {
+        --t[k + 0] = {
+          --text = s,
+          text = NomenFmt:format(c.code or uCP(i), U(i), s),
+          Char = i,
+        }
+      end
+    end
+
+    if k >= Count then break end
+  end -- for
+
+  self.Count = k
+  self.Items = t
+
+  return true
+end ---- MakeItems
+
+function TNomens:ShowMenu () --> (item, pos)
+  local self = self
+  self:AssignEvents()
+
+  return usercall(nil, unit.RunMenu,
+                  self.Props, self.Items, self.Keys)
+end ---- ShowMenu
+
+end -- do
 ---------------------------------------- ---- Blocks
 do
   local TBlocks = TMain.Blocks
 
   --local max = math.max
-
-function TBlocks:MakeProps () --| (BlocksProps)
+  
+function TBlocks:MakeProps () --| (Blocks_Props)
   local self = self
   if self.Props then return end
 
@@ -601,17 +903,16 @@ function TBlocks:MakeProps () --| (BlocksProps)
 end ---- MakeProps
 
   local uCP = CharsList.uCP
-  local uBlocks = uData and uData.Blocks or Null
   local BlockRangeFmt = "%s..%s"
 
-function TBlocks:MakeItems () --| (BlocksItems)
+function TBlocks:MakeItems () --| (Blocks_Items)
   local self = self
   if self.Items then return end
 
   local Main = self.Main
 
   local L = Main.LocData
-
+  
   local t = {
     { text = L.BlocksColBlockRange,
       Label = true,
@@ -622,11 +923,11 @@ function TBlocks:MakeItems () --| (BlocksItems)
       --RectMenu = self.RectItem,
     },
   } ---
-
-  self.Count = #uBlocks
+  
+  self.Count = CharsData.BlocksCount
 
   for i = 1, self.Count do
-    local b = uBlocks[i]
+    local b = CharsBlocks[i]
     t[#t + 1] = {
       text = BlockRangeFmt:format(uCP(b.first, true),
                                   uCP(b.last, true)),
@@ -644,137 +945,6 @@ function TBlocks:MakeItems () --| (BlocksItems)
   return true
 end ---- MakeItems
 
-function TBlocks:InitFilter ()
-  local self = self
-  local Props = self.Props
-
-  local PatternFmt = Props.PatternFmt or " *[%s]"
-  local FiltersFmt = Props.FiltersFmt or "(%d / %d)"
-  Props.FmtTitle  = Props.DefTitle..PatternFmt
-  if Props.DefBottom == "" then
-    Props.FmtBottom = FiltersFmt
-  else
-    Props.FmtBottom = Props.DefBottom.." "..FiltersFmt
-  end
-  
-  -- Сброс фильтра:
-  self.Pattern = ""
-  --self:MakeFilter()
-  self:ApplyFilter()
-
-  return true
-end ---- InitFilter
-  
-  local function patfind (Text, Pattern)
-    local Pattern = Pattern
-    if Pattern:sub(-1,-1) == '%' and -- Exclude single escape character
-       Pattern:sub(-2,-2) ~= '%' then Pattern = Pattern:sub(1,-2) end
-    return Text:cfind(Pattern)
-  end -- patfind
-
-function TBlocks:MakeFilter ()
-  local self = self
-  local Items = self.Items
-  if not Items or #Items == 0 then return end
-
-  local Pattern = self.Pattern
-  --logShow(Items, Pattern, 2)
-
-  local i, j = 4, 0
-  while i <= #Items do
-    local r, v = Items[i - 1], Items[i]
-    local s = v.conv
-    if not s then
-      s = v.text:lower()
-      v.conv = s
-    end
-
-    if Pattern and Pattern ~= "" then
-      local fpos, fend = patfind(s, Pattern)
-      if fpos then
-        r.dummy = false --nil
-        v.dummy = false --nil
-        v.RectMenu = v.RectMenu or {}
-        v.RectMenu.TextMark = { fpos, fend }
-      else
-        j = j + 1
-        r.dummy = true
-        v.dummy = true
-        v.RectMenu = v.RectMenu or {}
-        v.RectMenu.TextMark = nil
-      end
-    else
-      r.dummy = nil
-      v.dummy = nil
-      v.RectMenu = v.RectMenu or {}
-      v.RectMenu.TextMark = nil
-    end
-
-    i = i + 2
-  end -- while
-
-  self.Filtered = j
-end ---- MakeFilter
-
-function TBlocks:ApplyFilter ()
-  local self = self
-  local Props = self.Props
-
-  self:MakeFilter()
-
-  Props.Title  = Props.FmtTitle:format(self.Pattern)
-  Props.Bottom = Props.FmtBottom:format(self.Filtered, self.Count)
-end ---- ApplyFilter
-
-  local slen, sconv = string.len, string.lower
-
-  --local CloseFlag  = { isClose = true }
-  local CancelFlag = { isCancel = true }
-  --local CompleteFlags = { isRedraw = false, isRedrawAll = true }
-  local DoChange = { isUpdate = true }
-  local NoChange = { isUpdate = false }
-
-function TBlocks:AssignEvents () --> (bool | nil)
-  local self = self
-
-  local Table = { self.Props, self.Items, self.Keys }
-
-  -- Обработчик нажатия клавиш.
-  local function KeyPress (Input, ItemPos)
-    local SKey = Input.Name --or InputRecordToName(Input)
-    if SKey == "Esc" then return nil, CancelFlag end
-    --if SKey == "Enter" then return end
-    --logShow(Input, SKey)
-    local State = Input.StateName
-    if State ~= "" and State ~= "Shift" then return end
-
-    local Data = self.Items[ItemPos]
-    if not Data then return end
-
-    SKey = Input.KeyName
-    if SKey == "BS" then
-      self.Pattern = self.Pattern:sub(1, -2)
-    elseif slen(SKey) == 1 then
-      self.Pattern = self.Pattern..sconv(SKey)
-    else
-      return
-    end -- SKey
-
-    self:ApplyFilter()
-    --logShow({ self.Filtered, self.Count, self.Pattern }, "KeyPress")
-    if self.Filtered == self.Count then
-      self.Pattern = self.Pattern:sub(1, -2)
-      self:ApplyFilter()
-    end
-
-    return Table, DoChange
-  end -- KeyPress
-
-  -- Назначение обработчиков:
-  local RM = self.Props.RectMenu
-  RM.OnKeyPress = KeyPress
-end -- AssignEvents
-
 function TBlocks:ShowMenu () --> (item, pos)
   local self = self
   self:AssignEvents()
@@ -783,6 +953,33 @@ function TBlocks:ShowMenu () --> (item, pos)
                   self.Props, self.Items, self.Keys)
 end ---- ShowMenu
 
+end -- do
+---------------------------------------- ---- Choose
+do
+
+-- Choose character.
+-- Выбор символа.
+function TMain:ChooseChar (Data)
+
+  local Nomens = self.Nomens
+  Nomens.FilterCol = 1
+  Nomens.NomensCount = self.InputCount
+  Nomens.BasePattern = self.IsCharInput and self.Input
+
+  Nomens:MakeProps()
+  Nomens:MakeItems()
+  Nomens:InitFilter()
+
+  --local Char = Data and Data.Char or 0
+  --Nomens.Props.SelectIndex = (uCodeBlock(Nomens) or 1) * 2 + 2
+  --logShow(Nomens.Props, uCP(Char), 1)
+  
+  Nomens.ActItem, Nomens.ItemPos = Nomens:ShowMenu()
+  farUt.RedrawAll() -- Exclude Nomens menu
+
+  return Nomens.ActItem and Nomens.ActItem.Char
+end ---- ChooseChar
+
   local uCodeBlock = CharsList.uCodeBlock
 
 -- Choose character block.
@@ -790,7 +987,8 @@ end ---- ShowMenu
 function TMain:ChooseBlock (Data)
   --local self = self
   local Blocks = self.Blocks
-
+  Blocks.FilterCol = 2
+  
   Blocks:MakeProps()
   Blocks:MakeItems()
   Blocks:InitFilter()
@@ -798,7 +996,7 @@ function TMain:ChooseBlock (Data)
   local Char = Data and Data.Char or 0
   Blocks.Props.SelectIndex = (uCodeBlock(Char) or 1) * 2 + 2
   --logShow(Blocks.Props, uCP(Char), 1)
-
+  
   Blocks.ActItem, Blocks.ItemPos = Blocks:ShowMenu()
   farUt.RedrawAll() -- Exclude Blocks menu
 
@@ -861,11 +1059,13 @@ function TMain:EditCodeInput (SKey)
 
   self.Input = Input
   if Input ~= "" then
-    self.Props.Bottom = Input
+    self.InputText = Input
   else
     local L = self.LocData
-    self.Props.Bottom = L.InputCodePoint
+    self.InputText = L.InputCodePoint
   end
+
+  self.Props.Bottom = self.InputText
 end ---- EditCodeInput
 
 end -- do
@@ -891,6 +1091,21 @@ function TMain:FindCharInput ()
   return uFindCode(Input, self.Char + 1)
 end ---- FindCharInput
 
+  local uCodeCount = CharsList.uCodeCount
+
+function TMain:CountChars ()
+  --local self = self
+  
+  local Input = self.Input or ""
+  if Input == "" then return end
+
+  if Input:sub(1, 1) ~= "^" then
+    Input = ".*"..Input
+  end
+
+  return uCodeCount(Input)
+end ---- CountChars
+
 function TMain:StartCharInput (Data)
   local self = self
   local L = self.LocData
@@ -911,7 +1126,27 @@ function TMain:GotoCharInput (Data)
   local self = self
 
   self.Char = self:FindCharInput() or Data.Char
+
+  return self:FillInputCount()
 end ---- GotoCharInput
+
+  local NamesCount = CharsData.NamesCount
+
+function TMain:FillInputCount ()
+  local self = self
+  local Input = self.Input
+
+  if Input:len() > 2 then
+    if Input ~= self.PriorInput then
+      self.PriorInput = Input
+      self.InputCount = self:CountChars()
+    end
+    self.Props.Bottom = self.InputText..
+                        (" (%d / %d)"):format(self.InputCount, NamesCount)
+  end
+
+  --return self.InputCount
+end ---- FillInputCount
 
 function TMain:EditCharInput (SKey)
   local self = self
@@ -929,22 +1164,26 @@ function TMain:EditCharInput (SKey)
     end
   else
     --if Input:len() < 4 then
+      if SKey == "Space" then SKey = " " end
       Input = Input..SKey
     --end
   end
 
   self.Input = Input
   if Input ~= "" then
-    self.Props.Bottom = Input
+    self.InputText = Input
   else
     local L = self.LocData
-    self.Props.Bottom = L.InputCharName
+    self.InputText = L.InputCharName
   end
+
+  self.Props.Bottom = self.InputText
 end ---- EditCharInput
 
 end -- do
 ---------------------------------------- ---- Output
 do
+
 -- Вывод символа.
 function TMain:PrintChar (Data)
   --logShow(Data, "PrintChar")
@@ -995,6 +1234,7 @@ do
   local CharInputActions = {
     ["BS"] = true,
     ["CtrlV"] = true,
+    ["Space"] = true,
   } --- CharInputActions
 
   local UniCharInputActions = {
@@ -1039,6 +1279,8 @@ do
     AltF = true,
   } --- AlterActions
 
+  local NamesCount = CharsData.NamesCount
+
 function TMain:AssignEvents () --> (bool | nil)
   local self = self
 
@@ -1067,11 +1309,31 @@ function TMain:AssignEvents () --> (bool | nil)
 
     local isUpdate = true
     if SKey == "CtrlB" then
+      if not CharsBlocks then return end
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
         self.Char = Char
       else
         isUpdate = false
+      end
+      
+    elseif SKey == "CtrlC" and self.IsCharInput then
+
+      local PriorCount = self.InputCount
+      self:FillInputCount()
+      local InputCount = self.InputCount
+
+      --logShow(Count, SKey)
+      --if InputCount and InputCount > 0 and InputCount < 1000 then
+      if InputCount and InputCount > 0 and InputCount < NamesCount / 2 then
+        local Char = self:ChooseChar(Data)
+        if type(Char) == 'number' then
+          self.Char = Char
+        else
+          isUpdate = (InputCount ~= PriorCount)
+        end
+      else
+        isUpdate = (InputCount ~= PriorCount)
       end
       
     elseif SKey == "Divide" then
@@ -1080,6 +1342,8 @@ function TMain:AssignEvents () --> (bool | nil)
         --return MakeUpdate()
       elseif not self.IsCharInput then
         self:StartCodeInput(Data)
+      else
+        isUpdate = false
       end
 
     elseif SKey == "ShiftDivide" then
@@ -1088,11 +1352,15 @@ function TMain:AssignEvents () --> (bool | nil)
         --return MakeUpdate()
       elseif not self.IsCodeInput then
         self:StartCharInput(Data)
+      else
+        isUpdate = false
       end
 
     elseif self.IsCodeInput then
       if CodeInputActions[SKey] then
         self:EditCodeInput(SKey)
+      else
+        isUpdate = false
       end
 
     elseif self.IsCharInput then
@@ -1119,6 +1387,8 @@ function TMain:AssignEvents () --> (bool | nil)
 
       if KeyChar or CharInputActions[SKey] then
         self:EditCharInput(KeyChar or SKey)
+      else
+        isUpdate = false
       end
 
     elseif SKey == "CtrlV" then
@@ -1328,7 +1598,7 @@ function TMain:AssignEvents () --> (bool | nil)
   RM.DoMouseEvent   = true
   RM.OnKeyPress     = KeyPress
   RM.OnNavKeyPress  = NavKeyPress
-  RM.OnEdgeClick    = uData and uData.Blocks and EdgeClick
+  RM.OnEdgeClick    = CharsBlocks and EdgeClick
   --RM.OnSelectItem   = SelectItem
   RM.OnChooseItem   = ChooseItem
 end -- AssignEvents

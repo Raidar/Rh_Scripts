@@ -87,7 +87,7 @@ function unit:ParseNames (FileName) --> (bool | nil)
 
   -- Цикл по строкам файла:
 
-  local last = 0
+  local limit, count = 0, 0
 
   local t = self.Data.Names
   local easy = unit.EasyName
@@ -122,16 +122,19 @@ function unit:ParseNames (FileName) --> (bool | nil)
         name = name:sub(1, 1) == '<' and name or easy(name),
       } ---
 
-      last = cp
+      limit = cp
+      count = count + 1
     end
 
-    self.Data.NamesCount = last
+    self.Data.NamesCount = count
+    self.Data.NamesStart = 0x0
+    self.Data.NamesLimit = limit
 
     --[[
     name = s:match("^\t%= (.+)")
     -- Альтернативное название:
     if name then
-      data = t[last]
+      data = t[limit]
       if not data.alias then data.alias = {} end
       data.alias[#data.alias+1] = name
     end --

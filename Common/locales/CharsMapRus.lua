@@ -5,11 +5,13 @@
 local Data = {
   ----------------------------------------
   Caption       = "Таблица символов",
+  NomensCaption = "Символы",
   BlocksCaption = "Блоки символов",
-
+  
   --
   InputCodePoint    = "Введите кодовую точку",
   InputCharName     = "Введите название символа",
+  NomensColBlockName    = "Название",
   BlocksColBlockRange   = "Диапазон",
   BlocksColBlockName    = "Название",
 

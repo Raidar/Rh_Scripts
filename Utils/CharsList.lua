@@ -114,19 +114,49 @@ end ---- uCharBlockName
 ---------------------------------------- Search
 --do
 
-  local NamesCount = unit.Data.NamesCount
+  local NamesStart = unit.Data.NamesStart
+  local NamesLimit = unit.Data.NamesLimit
 
 function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
-  for k = base or 0x0000, NamesCount do
+  for k = base or NamesStart, NamesLimit do
   --for k = base or 0x0000, (base or 0x0000) + 3 do
+    local c = CharsNames[k]
+    if c then
+      local s = c.name
+      --logShow({ pattern, base, c }, s and s:lower():match(pattern))
+      if s and s:lower():match(pattern) then
+        return k
+      end
+    end
+  end -- for
+end ---- uFindCode
+
+function unit.uCodeCount (pattern) --< (Name) --> (uCode Count)
+  local Result = 0
+
+  -- Fast algo
+  for k, c in pairs(CharsNames) do
+    local s = c.name
+    --logShow({ pattern, base, c }, s and s:lower():match(pattern))
+    if s and s:lower():match(pattern) then
+      Result = Result + 1
+    end
+  end -- for
+
+  --[[
+  -- Slow algo
+  for k = NamesStart, NamesLimit do
     local c = CharsNames[k]
     local s = c and c.name
     --logShow({ pattern, base, c }, s and s:lower():match(pattern))
     if s and s:lower():match(pattern) then
-      return k
+      Result = Result + 1
     end
   end -- for
-end ---- uFindCode
+  --]]
+
+  return Result
+end ---- uCodeCount
 
 end -- do
 ---------------------------------------- main

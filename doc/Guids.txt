@@ -18,6 +18,11 @@ f7684e73-a856-4196-9562-9e829e53a410 -- LuaSpell macro
 [1 -- Common]
 140A8BD3-546D-469B-867B-E0E61F9B41AF -- Common.rhsConfig config
 
+19500a29-1a9b-4b1b-833c-693d58669963 -- Common.CharsMap
+1991fe2b-e919-480e-8b0a-90b7c960d113 -- Common.CharsMap config
+19ae6fa2-7ceb-4893-b2a7-fd8b783cc365 -- Common.CharsMap Names
+19b4271d-09c2-4671-af59-b043d1698104 -- Common.CharsMap Blocks
+
 1B26647B-44B0-4AC6-984D-45CBA59568D0 -- Common.Calendar
 1B537BFD-E907-4836-BEFF-5AC000823A5B -- Common.Calendar config
 

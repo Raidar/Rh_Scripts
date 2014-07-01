@@ -202,15 +202,15 @@ $ #Characters map# (CharsMap)
 
   Special keys:
  \37Num* | Clear\- (Num5)    — ¦the last choosen character.
- \37CtrlB\-                  — ¦choose a character block and go to
-a first character of the chosen block; you can click a block name by mouse.
- \37CtrlV\-                  — ¦go to a character from clipboard.
- \37CtrlShiftV\-             — ¦go to a character with code point from clipboard.
- \37CtrlAltX\-               — ¦go to a character obtained by XLat.
- \37(Shift+) <символ>\-      — ¦go to a character corresponding to key.
+ \37CtrlB\-                  — ¦to show a character blocks
+and to go to a first character of the chosen block.
+ \37CtrlV\-                  — ¦to go to a character from clipboard.
+ \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard.
+ \37CtrlAltX\-               — ¦to go to a character obtained by XLat.
+ \37(Shift+) <символ>\-      — ¦to go to a character corresponding to key.
 
- \37Num/\-                   — ¦go to a ~code point input~@CharsMap_CodeInput@ mode.
- \37ShiftNum/\-              — ¦go to a ~character name input~@CharsMap_CharInput@ mode.
+ \37Num/\-                   — ¦to go to a ~code point input~@CharsMap_CodeInput@ mode.
+ \37ShiftNum/\-              — ¦to go to a ~character name input~@CharsMap_CharInput@ mode.
 
  ~Contents~@Contents@
 
@@ -236,14 +236,19 @@ $ #Characters map#: Character name input
  \371–9, 0, A–Z\-            — ¦to input digits and letters.
  \37^$()%.[]*+-?\-           — ¦to input special symbols.
  \37ShiftNum/\-              — ¦to complete the input.
- \37Enter, NumEnter\-        — ¦go to a character with input name.
+ \37Enter, NumEnter\-        — ¦to go to a character with input name.
  \37CtrlV\-                  — ¦to insert character name from clipboard.
+ \37CtrlC\-                  — ¦to show all characters with input name
+and to go to the choosen character.
 
   A search is performed by a input text as Lua regular expression
 from code point of a character following by selected character.
 If the search from name start is not specified  (with \37^\- symbol),
 the search will be performed for character with name containing
-the input text (\37.*\- will be added in start of the text).
+the input text (\37.*\- will be added in start of the text).
+
+  A show of all characters with input name is only available
+when an amount of these characters is less than half of all characters.
 
  ~Contents~@Contents@       ~Characters map~@CharsMap@
 
@@ -283,7 +288,7 @@ then a start of the previous one / an end of the next one).
 
   Special keys:
  \37Num* | Clear\- (Num5)    — ¦the current date and time.
- \37Num/\-                   — ¦go to a ~date input~@Calendar_Input@ mode.
+ \37Num/\-                   — ¦to go to a ~date input~@Calendar_Input@ mode.
 
     Implemented ~configurations~@<..\Utils\DateTime\>Contents@
 
