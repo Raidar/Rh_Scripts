@@ -1143,6 +1143,9 @@ function TMain:FillInputCount ()
     end
     self.Props.Bottom = self.InputText..
                         (" (%d / %d)"):format(self.InputCount, NamesCount)
+  else
+    self.PriorInput = Input
+    self.InputCount = false
   end
 
   --return self.InputCount
