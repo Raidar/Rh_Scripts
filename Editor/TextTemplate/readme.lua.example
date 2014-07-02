@@ -1739,12 +1739,9 @@ local Data = {
   -- Создатель --> / Сост.: .
   { find = "[ёЁ]"..les.t3rus,   apply = MakeTPL, param = Find.LocOpusFaktor },      -- ё∆∂∂ / Ё∆∂∂
   --{ find = "Ё"..t3rus,          apply = MakeTPL, param = Find.LocOpusFaktor },      -- Ё∆∂∂
-  -- Номер издания --> 2‑е изд.
-  { find = "ё([1-9]?%d)([Ии]з)",    plain = "%1‑е %2д." },                          -- ёⁿⁿиз
-  { find = "`([1-9]?1)([Ee]d)",     plain = "%1st %2." },                           -- `ⁿⁿed
-  { find = "`([1-9]?2)([Ee]d)",     plain = "%1nd %2." },
-  { find = "`([1-9]?3)([Ee]d)",     plain = "%1rd %2." },
-  { find = "`([1-9]?[04-9])([Ee]d)",plain = "%1th %2." },
+  -- Номер издания --> 2 изд.
+  { find = "ё([1-9]?%d)([Ии]з)",    plain = "%1 %2д." },                            -- ёⁿⁿиз
+  { find = "`([1-9]?%d)([Ee]d)",    plain = "%1 %2." },                             -- `ⁿⁿed
   -- Вид изменений в издании --> испр. и доп.
   { find = "ёи"..les.lrusl..les.lrus,
                                 apply = MakeTPL, param = Find.LocOpusEditVaro },    -- ёи∂∂
