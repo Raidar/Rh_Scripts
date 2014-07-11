@@ -1406,9 +1406,10 @@ function TMain:ShowLoop () --> (bool | nil)
     else
       self.ActItem, self.ItemPos = self:ShowMenu()
       if not self.Items or not self.ActItem then
+        -- TODO: Реализовать поддержку макросов на клавишах!
         if Popup.PressKey then EditorProcKey(nil, Popup.PressKey) end
-        return false
-      end -- Отмена по Esc
+        return false -- Отмена по Esc
+      end
       editor.Select(nil, F.BTYPE_NONE) -- Снятие выделения
     end
 
