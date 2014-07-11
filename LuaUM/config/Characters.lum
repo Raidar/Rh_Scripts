@@ -471,17 +471,18 @@ function unit.PunctSymbols ()
   local Menu = unit.ScriptData[Name]
   if Menu then return Menu end
 
-  local Order = [[/agxcdimopqwb`1234567890-\ ]]
+  local Order = [[/agxcdimopqwbv`1234567890-\ ]]
   local Datas = -- Char + Shift
-                [[…́̀̂̌̇̈̄‵′‟”•´‼⁇§¯°ˆ¸˙«»-, ]]..
-                [[․̭̬̣̤̱̋̏‶″‛’‣˝¡¿† ‰ˇ˛¨‹›– ]]..Chars.BS..
+                [[…́̀̂̌̇̈̄‵′‟”•ˈ´‼⁇§¯°ˆ¸˙«»-, ]]..
+                [[․̭̬̣̤̱̋̏‶″‛’‣ˌ˝¡¿† ‰ˇ˛¨‹›– ]]..Chars.BS..
                 -- Ctrl + Shift
-                [[‥̲̍̎̆̑̓̊‷‴„“◦ ⁉⁈‡_‱˘ ˚ʿʾ— ]]..Chars.CR..
-                [[⁝̩͈̮̯̦̥̅ ⁗‚‘⁃˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
+                [[‥̲̍̎̆̑̓̊‷‴„“◦  ⁉⁈‡_‱˘ ˚ʿʾ— ]]..Chars.CR..
+                [[⁝̩͈̮̯̦̥̅ ⁗‚‘⁃ ˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
                 -- Alt + Shift
-                [[   ͑͗̔̉̃ʹʼˋˊ⁌ʻ‽⸘ˌˍ|˂˃˜⁀‿‒  ]]..
-                [[     ̨̰̒ʺˮˎˏ⁍ʽ⁅⁆ˈˉ―˄˅˷⁐⁔   ]]..
-                [[   ̧͔͕͘̕             ⁓     ]]
+                [[   ͑͗̔̉̃ʹʼˋˊ⁌ ʻ‽⸘ˌˍ|˂˃˜⁀‿‒  ]]..
+                [[     ̨̰̒ʺˮˎˏ⁍ ʽ⁅⁆ˈˉ―˄˅˷⁐⁔   ]]..
+                -- Ctrl + Alt + Shift
+                [[   ̧͔͕͘̕              ⁓     ]]
 --[=[
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:

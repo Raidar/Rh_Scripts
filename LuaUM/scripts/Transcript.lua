@@ -470,7 +470,8 @@ local CharChangeSets = {
 unit.CharChangeSets = CharChangeSets
 
 CharChangeSets.SignSuper = {
-  a     = 'ᵃ', b     = 'ᵇ',
+  a     = 'ᵃ', b     = 'ᵇ', c     = 'ᶜ',
+  e     = 'ᵉ',
   h     = 'ʰ',
   i     = 'ⁱ', j     = 'ʲ', k     = 'ᵏ',
   l     = 'ˡ', m     = 'ᵐ', n     = 'ⁿ',
@@ -492,7 +493,8 @@ CharChangeSets.SignSuper = {
 } -- SignSuper
 
 CharChangeSets.SignSuber = {
-  a     = 'ₐ', --b     = '',
+  a     = 'ₐ', --b     = '', c     = '',
+  e     = 'ₑ',
   h     = 'ₕ',
   i     = 'ᵢ', j     = 'ⱼ', k     = 'ₖ',
   l     = 'ₗ', m     = 'ₘ', n     = 'ₙ',

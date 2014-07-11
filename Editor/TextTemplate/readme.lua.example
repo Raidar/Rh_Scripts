@@ -847,7 +847,7 @@ List.LocFormaSpecPaper = {
 
 Fmts.FormaPaper = "Бумага: %s."
 Fmts.FormaNumbPaper = "Бумага: № %s."
-Fmts.FormaSpecPaper = "Бумага: %s. № %s."
+Fmts.FormaSpecPaper = "Бумага: %s. № %s."
 
 local function Loc_FormaPaper (Cfg) --> (string)
   local s = Cfg.Template.Result
@@ -1024,6 +1024,7 @@ List.LocCapitulum = {
   ['Атт']  = "Авантитул",   -- Титул с общей информацией (издательство и т.п.)
   ['Ктт']  = "Контртитул",  -- Титул на языке подлинника / с информацией о серии
   ['Ттт']  = "Титул",       -- Титул на языке перевода / с детальной информацией
+  ['Тты']  = "Титулы",      -- Титулы
   ['Йтт']  = [[
 Авантитул (1)
 Контртитул (2)
