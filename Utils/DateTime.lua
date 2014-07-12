@@ -183,12 +183,11 @@ end ---- FillConfig
 
 end -- do
 ---------------------------------------- Date class
-local TDate = {} -- Класс даты
+local TDate = {}
 
 do
   local MDate = { __index = TDate }
 
--- Создание объекта класса.
 function unit.newDate (y, m, d, config) --> (object)
   local self = {
     y = y or 0, -- Количество лет
@@ -480,12 +479,11 @@ function TDate:dec_w () --> (self)
 end ---- inc_w
 
 ---------------------------------------- Time class
-local TTime = {} -- Класс времени
+local TTime = {}
 
 do
   local MTime = { __index = TTime }
 
--- Создание объекта класса.
 function unit.newTime (h, n, s, z, config) --> (object)
   local self = {
     h = h or 0, -- Количество часов

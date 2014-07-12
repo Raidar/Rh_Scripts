@@ -92,7 +92,6 @@ local TMenu = {
 }
 local MMenu = { __index = TMenu }
 
--- Создание объекта класса меню.
 local function CreateMenu (Properties, Menus, Config) --> (object)
   assert(type(Menus) == 'table')
   Properties = Properties or {}

@@ -333,7 +333,6 @@ local MMain = { __index = TMain }
 
 TMain.PopupGuid = TMain.Guid
 
--- Создание объекта основного класса.
 local function CreateMain (ArgData)
 
   if ArgData == "AutoCfgData" then

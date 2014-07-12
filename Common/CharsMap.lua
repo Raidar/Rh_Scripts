@@ -137,7 +137,6 @@ setmetatable(TMain.Blocks, MColFilter)
 local MNomens   = { __index = TMain.Nomens }
 local MBlocks   = { __index = TMain.Blocks }
 
--- Создание объекта основного класса.
 local function CreateMain (ArgData)
 
   local self = {

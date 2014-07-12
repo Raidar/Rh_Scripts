@@ -82,15 +82,14 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 --} --- DlgTypes
 
 ---------------------------------------- Main class
-local TMain = { -- Информация по умолчанию:
+local TMain = {
   --Guid       = win.Uuid(""),
   --ConfigGuid = win.Uuid(""),
-} --- TMain
+}
 local MMain = { __index = TMain }
 
 local FullNameFmt = "%s%s.%s"
 
--- Создание объекта основного класса.
 local function CreateMain (ArgData) --> (object)
   local self = {
     ArgData   = addNewData(ArgData, unit.DefCfgData),

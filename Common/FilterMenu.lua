@@ -106,7 +106,6 @@ local MMenu = { __index = TMenu }
 --[[
 local tcopy = tables.copy
 
--- Создание объекта класса меню.
 local function CreateMenu (Properties, Items, BreakKeys) --> (object)
   assert(type(Menus) == 'table')
   local Properties = tcopy(Properties or {}, true, pairs, false)

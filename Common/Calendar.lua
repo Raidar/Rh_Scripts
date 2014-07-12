@@ -116,7 +116,6 @@ local TMain = {
 }
 local MMain = { __index = TMain }
 
--- Создание объекта основного класса.
 local function CreateMain (ArgData)
 
   local self = {

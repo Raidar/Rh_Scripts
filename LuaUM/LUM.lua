@@ -77,7 +77,6 @@ local TMenu = {
 }
 local MMenu = { __index = TMenu }
 
--- Создание объекта класса меню.
 local function CreateMenu (Config)
 
   -- Конфигурация LUM:

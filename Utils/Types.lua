@@ -90,7 +90,8 @@ local class = {
   _type_ = 'class',
   _base_ = {},  -- Базовый класс
 } ---
-unit.class = class; setmetatable(class, class_mt)
+unit.class = class
+setmetatable(class, class_mt)
 
 -- Конструктор.
 function class:new (...)

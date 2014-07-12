@@ -33,10 +33,9 @@ local MenuScripts = { -- Скрипты с меню:
 } --- MenuScripts
 
 ---------------------------------------- Menu class
-local TMenu = {} -- Класс меню
+local TMenu = {}
 local MMenu = { __index = TMenu }
 
--- Создание объекта класса меню.
 local function CreateMenu (Properties)--, Items) --> (object)
   local Properties = Properties or {}
   local Options = Properties.Caller or {}

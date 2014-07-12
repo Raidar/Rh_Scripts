@@ -284,17 +284,16 @@ end ---- VisibleCatCount.Pike
 ---------------------------------------- Menu class
 local TMenu = {
   Guid = win.Uuid("2288381c-bcc7-4a75-8a09-b3fa9403795c"),
-} -- Класс меню
+}
 local MMenu = { __index = TMenu }
 
--- Создание объекта класса меню.
-local function CreateMenu (Properties, Items, BreakKeys, Additions) --> (object)
+local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
   local self = {
     Menu = {
       Props     = Properties,
       Items     = Items,
       BreakKeys = BreakKeys,
-      Additions = Additions,
+      Options   = Options,
     }, ---
     Props = 0,
     RectMenu = 0,
@@ -452,7 +451,7 @@ do
 function TMenu:DefinePropInfo () --| Props
   local self = self
   -- Определение области/окна FAR.
-  self.Area = farUt.GetAreaSize(self.Menu.Additions.FarArea)
+  self.Area = farUt.GetAreaSize(self.Menu.Options.FarArea)
   -- self.Area.Width = 80; self.Area.Height = 25 -- TEST only
   -- Корректировка размера.
   --self.Area.Width  = self.Area.Width -- - 2
@@ -1039,7 +1038,7 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
     Props     = Data[1],
     Items     = Data[2],
     BreakKeys = Data[3],
-    Additions = self.Menu.Additions,
+    Options   = self.Menu.Options,
   } -- Menu
   self:DefineAll() -- Определение вида меню
   if Flags.isUpdate == false then return end
@@ -2661,13 +2660,13 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
 --[[ 1. Конфигурирование меню ]]
 
-  local Additions = {
+  local Options = {
     FarArea = Properties and Properties.FarArea or
               farUt.GetBasicAreaType(),
   }
-  --logShow(Additions, "Additions", 1)
+  --logShow(Options, "Options", 1)
   local _Menu = TMenu:isMenu(ShowMenu) and ShowMenu or
-                CreateMenu(Properties, Items, BreakKeys, Additions)
+                CreateMenu(Properties, Items, BreakKeys, Options)
   --logShow(_Menu, "_Menu", 1)
 
   -- Определение вида меню:
