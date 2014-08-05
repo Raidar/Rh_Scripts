@@ -36,7 +36,7 @@ local KeywordsKey = {
   w = 'while',
   x = 'class',
   y = 'property',
-  --z = '',
+  z = 'result',
 
   -- Key variables:
   C = 'Count',
@@ -91,6 +91,7 @@ local KeywordsAdd = {
   --F = 'for @Here do@Back',
   X = 'except',
   Y = 'finally',
+  W = 'when',
   Z = 'then',
 } --- KeywordsAdd
 

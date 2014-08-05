@@ -12,10 +12,10 @@
 local KeywordsKey = {
   -- Key keywords:
   a = 'alter',
-  b = 'BEGIN',
+  b = 'begin',
   c = 'create',
   d = 'default',
-  e = 'END',
+  e = 'end',
   f = 'function',
   g = 'group by',
   h = '',
@@ -34,9 +34,9 @@ local KeywordsKey = {
   u = 'update',
   v = 'value',
   w = 'where',
-  x = 'EXCEPTION',
+  x = 'exception',
   --y = 'connect',
-  z = 'with',
+  z = 'result',
 
   jn = 'join',
   ji = 'inner join',
@@ -50,13 +50,16 @@ local KeywordsKey = {
   yp = 'connect by prior',
 
   -- Key variables:
+  B = 'BEGIN',
   --C = '',
   --D = '',
-  --E = '',
+  E = 'END',
   --J = '',
   R = 'select t.rowid, t.* from ',
   S = 'select * from ',
   --V = '',
+  X = 'EXCEPTION',
+
 } --- KeywordsKey
 
 local function KeywordKey (Cfg)
@@ -68,6 +71,54 @@ local function KeywordKey (Cfg)
 
   return false
 end -- KeywordKey
+
+---------------------------------------- Keywords Add
+local KeywordsAdd = {
+  -- Additonal keywords:
+  --a = '',
+  --b = '',
+  c = 'case',
+  --d = '',
+  --e = '',
+  f = 'false',
+  --g = '',
+  --h = '',
+  --i = '',
+  --j = '',
+  --k = '',
+  --l = '',
+  m = 'message',
+  --n = '',
+  --o = '',
+  --p = '',
+  --q = '',
+  --r = '',
+  --s = '',
+  t = 'true',
+  --u = '',
+  --v = '',
+  w = 'with',
+  --x = '',
+  --y = '',
+  --z = '',
+
+  -- Additional (key)words:
+  --F = 'for @Here do@Back',
+  X = 'except',
+  Y = 'finally',
+  W = 'when',
+  Z = 'then',
+} --- KeywordsAdd
+
+local function KeywordAdd (Cfg)
+  local s = Cfg.Template.Result
+  local sn = s:match("``(%w-)$")
+
+  s = KeywordsAdd[sn]
+  if s then return s end
+
+  return false
+end -- KeywordAdd
 
 --------------------------------------------------------------------------------
 
@@ -84,6 +135,7 @@ local Data = {
   -- Keywords:
   { find = "`%w",   apply = KeywordKey, as = "plain" },
   { find = "`%w%w", apply = KeywordKey, as = "plain" },
+  { find = "``%w",  apply = KeywordAdd, as = "plain" },
 } --- Data
 
 return Data
