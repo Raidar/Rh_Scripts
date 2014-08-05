@@ -14,3 +14,4 @@ Editor/TextTemplate/*.lua
 Others/Result.lud
 Testing/*
 UniUtf/*
+PopupList.lua
