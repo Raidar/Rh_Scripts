@@ -852,7 +852,7 @@ do
   local InputFmtYM  = "^(%d+)%-(%d+)"
   local InputFmtYMD = "^(%d+)%-(%d+)%-(%d+)"
 
-function TMain:ParseInput ()
+function TMain:ParseDateInput ()
   local self = self
   local Date = self.Date:copy()
 
@@ -875,26 +875,26 @@ function TMain:ParseInput ()
   end
 
   return Date:fixMonth():fixDay()
-end ---- ParseInput
+end ---- ParseDateInput
 
-function TMain:StartInput (Date)
+function TMain:StartDateInput (Date)
   local self = self
   local L = self.LocData
 
   self.Input = ""
   self.Props.Bottom = L.InputDate
-  self.IsInput = true
-end ---- StartInput
+  self.IsDateInput = true
+end ---- StartDateInput
 
-function TMain:StopInput (Date)
+function TMain:StopDateInput (Date)
   local self = self
 
-  self.IsInput = false
+  self.IsDateInput = false
   self.Props.Bottom = ""
-  self.Date = self:ParseInput() or Date
-end ---- StopInput
+  self.Date = self:ParseDateInput() or Date
+end ---- StopDateInput
 
-function TMain:EditInput (SKey)
+function TMain:EditDateInput (SKey)
   local self = self
 
   local Input = self.Input
@@ -908,7 +908,47 @@ function TMain:EditInput (SKey)
 
   self.Input = Input
   self.Props.Bottom = Input
-end ---- EditInput
+end ---- EditDateInput
+
+end -- do
+do
+
+function TMain:StartShiftInput (Date)
+  local self = self
+  local L = self.LocData
+
+  self.Input = ""
+  --self.Props.Bottom = L.InputDate
+  self.IsShiftInput = true
+end ---- StartShiftInput
+
+function TMain:StopShiftInput (Date)
+  local self = self
+
+  self.IsShiftInput = false
+  self.Props.Bottom = ""
+  --self.Date = self:ParseDateInput() or Date
+end ---- StopShiftInput
+
+--local
+
+function TMain:EditShiftInput (SKey)
+  local self = self
+
+  local Input = self.Input
+  if SKey == "BS" then
+    if Input ~= "" then Input = Input:sub(1, -2) end
+  else
+    if SKey == "Subtract" then SKey = "-"
+    elseif SKey == "Add" then SKey = "+"
+    end
+
+    Input = Input..SKey
+  end
+
+  self.Input = Input
+  self.Props.Bottom = Input
+end ---- EditShiftInput
 
 end -- do
 ---------------------------------------- ---- Events
@@ -924,7 +964,7 @@ do
     AltDown     = "inc_y",
   } -- DateActions
 
-  local InputActions = {
+  local DateInputActions = {
     ["1"] = true,
     ["2"] = true,
     ["3"] = true,
@@ -938,7 +978,25 @@ do
     ["-"] = true,
     ["BS"] = true,
     ["Subtract"] = true,
-  } --- InputActions
+  } --- DateInputActions
+
+  local ShiftInputActions = {
+    ["1"] = true,
+    ["2"] = true,
+    ["3"] = true,
+    ["4"] = true,
+    ["5"] = true,
+    ["6"] = true,
+    ["7"] = true,
+    ["8"] = true,
+    ["9"] = true,
+    ["0"] = true,
+    ["-"] = true,
+    ["+"] = true,
+    ["BS"] = true,
+    ["Add"]      = true,
+    ["Subtract"] = true,
+  } --- ShiftInputActions
 
 function TMain:AssignEvents () --> (bool | nil)
   local self = self
@@ -972,15 +1030,15 @@ function TMain:AssignEvents () --> (bool | nil)
       Date[Action](Date)
 
     elseif SKey == "Divide" then
-      if self.IsInput then
-        self:StopInput(Date)
+      if self.IsDateInput then
+        self:StopDateInput(Date)
         return MakeUpdate()
       else
-        self:StartInput(Date)
+        self:StartDateInput(Date)
       end
 
-    elseif self.IsInput and InputActions[SKey] then
-      self:EditInput(SKey)
+    elseif self.IsDateInput and DateInputActions[SKey] then
+      self:EditDateInput(SKey)
 
     else
       isUpdate = false
@@ -999,7 +1057,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
-    --if self.IsInput then return end
+    --if self.IsDateInput then return end
 
     local AKey, VMod = AKey, VMod
 
@@ -1153,9 +1211,9 @@ function TMain:AssignEvents () --> (bool | nil)
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
-    if self.IsInput and Kind == "Enter" then
+    if self.IsDateInput and Kind == "Enter" then
       local Date = Data[Data.State]
-      self:StopInput(Date)
+      self:StopDateInput(Date)
 
       return MakeUpdate()
     end
