@@ -276,12 +276,168 @@ TekstChangeSets.SignMaths = {
 -- TekstChangeSets
 ----------------------------------------
 local LiterChangeSets = {
-  GrafRusLat = true,
-  GrafLatRus = true,
-  CharRusLat = true,
-  CharLatRus = true,
+  CharRusLat    = true,
+  CharLatRus    = true,
+
+  CharLatGreek  = true,
+  CharGreekLat  = true,
+
+  GrafRusLat    = true,
+  GrafLatRus    = true,
 } -- LiterChangeSets
 unit.LiterChangeSets = LiterChangeSets
+
+---------------------------------------- Char
+LiterChangeSets.CharLatRus = {
+  -- DO
+
+  ["A"] = 'А',
+  ["B"] = 'Б',
+  ["C"] = 'Ц',
+  ["D"] = 'Д',
+  ["E"] = 'Э',
+  ["F"] = 'Ф',
+  ["G"] = 'Г',
+  ["H"] = 'Х',
+  ["I"] = 'И',
+  ["J"] = 'Й',
+  ["K"] = 'К',
+  ["L"] = 'Л',
+  ["M"] = 'М',
+  ["N"] = 'Н',
+  ["O"] = 'О',
+  ["P"] = 'П',
+  ["Q"] = 'Кв',
+  ["R"] = 'Р',
+  ["S"] = 'С',
+  ["T"] = 'Т',
+  ["U"] = 'У',
+  ["V"] = 'В',
+  ["W"] = 'В',
+  ["X"] = 'Кс',
+  ["Y"] = 'Ы',
+  ["Z"] = 'З',
+
+  ["KH"] = 'Х', ["Kh"] = 'Х',
+  ["YA"] = 'Я', ["Ya"] = 'Я',
+  ["YE"] = 'Е', ["Ye"] = 'Е',
+  ["YI"] = 'И', ["Yi"] = 'И',
+  ["YO"] = 'Ё', ["Yo"] = 'Ё',
+  ["YU"] = 'Ю', ["Yu"] = 'Ю',
+
+  -- END
+} -- CharLatRus
+
+LiterChangeSets.CharRusLat = {
+  -- DO
+
+  ["А"] = 'A',
+  ["Б"] = 'B',
+  ["В"] = 'V',
+  ["Г"] = 'G',
+  ["Д"] = 'D',
+  ["Е"] = 'Ye',
+  ["Ё"] = 'Yo',
+  ["Ж"] = 'J',
+  ["З"] = 'Z',
+  ["И"] = 'I',
+  ["Й"] = 'J',
+  ["К"] = 'K',
+  ["Л"] = 'L',
+  ["М"] = 'M',
+  ["Н"] = 'N',
+  ["О"] = 'O',
+  ["П"] = 'P',
+  ["Р"] = 'R',
+  ["С"] = 'S',
+  ["Т"] = 'T',
+  ["У"] = 'U',
+  ["Ф"] = 'F',
+  ["Х"] = 'H',
+  ["Ц"] = 'C',
+  ["Ч"] = 'Ch',
+  ["Ш"] = 'Sh',
+  ["Щ"] = 'Xh',
+  ["Ъ"] = '\'',
+  ["Ы"] = 'Y',
+  ["Ь"] = '\'',
+  ["Э"] = 'E',
+  ["Ю"] = 'Yu',
+  ["Я"] = 'Ya',
+
+  -- END
+} -- CharRusLat
+
+---------------------------------------- Greek
+LiterChangeSets.CharLatGreek = {
+  -- DO
+
+  ["A"] = 'Α',
+  ["B"] = 'Β',
+  ["C"] = 'Χ',
+  ["D"] = 'Δ',
+  ["E"] = 'Ε',
+  ["F"] = 'Φ',
+  ["G"] = 'Γ',
+  ["H"] = 'Η',
+  ["I"] = 'Ι',
+  ["J"] = 'ϑ',
+  ["K"] = 'Κ',
+  ["L"] = 'Λ',
+  ["M"] = 'Μ',
+  ["N"] = 'Ν',
+  ["O"] = 'Ο',
+  ["P"] = 'Π',
+  ["Q"] = 'Θ',
+  ["R"] = 'Ρ',
+  ["S"] = 'Σ',
+  ["T"] = 'Τ',
+  ["U"] = 'Υ',
+  ["V"] = 'ϐ',
+  ["W"] = 'Ω',
+  ["X"] = 'Ξ',
+  ["Y"] = 'Ψ',
+  ["Z"] = 'Ζ',
+
+  ["v"] = 'ϖ',
+
+  -- END
+} -- CharLatGreek
+
+LiterChangeSets.CharGreekLat = {
+  -- DO
+
+  ["Α"] = 'A',
+  ["Β"] = 'B',
+  ["Χ"] = 'C',
+  ["Δ"] = 'D',
+  ["Ε"] = 'E',
+  ["Φ"] = 'F',
+  ["Γ"] = 'G',
+  ["Η"] = 'H',
+  ["Ι"] = 'I',
+  ["ϑ"] = 'J',
+  ["Κ"] = 'K',
+  ["Λ"] = 'L',
+  ["Μ"] = 'M',
+  ["Ν"] = 'N',
+  ["Ο"] = 'O',
+  ["Π"] = 'P',
+  ["Θ"] = 'Q',
+  ["Ρ"] = 'R',
+  ["Σ"] = 'S',
+  ["Τ"] = 'T',
+  ["Υ"] = 'U',
+  ["ϐ"] = 'V',
+  ["Ω"] = 'W',
+  ["Ξ"] = 'X',
+  ["Ψ"] = 'Y',
+  ["Ζ"] = 'Z',
+
+  ["ϖ"] = 'v',
+
+  -- END
+} -- CharGreekLat
 
 ---------------------------------------- Graf
 LiterChangeSets.GrafLatRus = {
@@ -367,87 +523,6 @@ LiterChangeSets.GrafRusLat = {
   -- END
 } -- GrafRusLat
 
----------------------------------------- Char
-LiterChangeSets.CharLatRus = {
-  -- DO
-
-  ["A"] = 'А',
-  ["B"] = 'Б',
-  ["C"] = 'Ц',
-  ["D"] = 'Д',
-  ["E"] = 'Э',
-  ["F"] = 'Ф',
-  ["G"] = 'Г',
-  ["H"] = 'Х',
-  ["I"] = 'И',
-  ["J"] = 'Й',
-  ["K"] = 'К',
-  ["L"] = 'Л',
-  ["M"] = 'М',
-  ["N"] = 'Н',
-  ["O"] = 'О',
-  ["P"] = 'П',
-  ["Q"] = 'Кв',
-  ["R"] = 'Р',
-  ["S"] = 'С',
-  ["T"] = 'Т',
-  ["U"] = 'У',
-  ["V"] = 'В',
-  ["W"] = 'В',
-  ["X"] = 'Кс',
-  ["Y"] = 'Ы',
-  ["Z"] = 'З',
-
-  ["KH"] = 'Х', ["Kh"] = 'Х',
-  ["YA"] = 'Я', ["Ya"] = 'Я',
-  ["YE"] = 'Е', ["Ye"] = 'Е',
-  ["YI"] = 'И', ["Yi"] = 'И',
-  ["YO"] = 'Ё', ["Yo"] = 'Ё',
-  ["YU"] = 'Ю', ["Yu"] = 'Ю',
-
-  -- END
-} -- CharLatRus
-
-LiterChangeSets.CharRusLat = {
-  -- DO
-
-  ["А"] = 'A',
-  ["Б"] = 'B',
-  ["В"] = 'V',
-  ["Г"] = 'G',
-  ["Д"] = 'D',
-  ["Е"] = 'Ye',
-  ["Ё"] = 'Yo',
-  ["Ж"] = 'J',
-  ["З"] = 'Z',
-  ["И"] = 'I',
-  ["Й"] = 'J',
-  ["К"] = 'K',
-  ["Л"] = 'L',
-  ["М"] = 'M',
-  ["Н"] = 'N',
-  ["О"] = 'O',
-  ["П"] = 'P',
-  ["Р"] = 'R',
-  ["С"] = 'S',
-  ["Т"] = 'T',
-  ["У"] = 'U',
-  ["Ф"] = 'F',
-  ["Х"] = 'H',
-  ["Ц"] = 'C',
-  ["Ч"] = 'Ch',
-  ["Ш"] = 'Sh',
-  ["Щ"] = 'Xh',
-  ["Ъ"] = '\'',
-  ["Ы"] = 'Y',
-  ["Ь"] = '\'',
-  ["Э"] = 'E',
-  ["Ю"] = 'Yu',
-  ["Я"] = 'Ya',
-
-  -- END
-} -- CharRusLat
-
 -- LiterChangeSets
 ----------------------------------------
 local CharChangeSets = {
@@ -458,11 +533,16 @@ local CharChangeSets = {
   SignSuper = true,
   SignSuber = true,
   SignRefer = true,
+
   -- Liter
-  GrafLatRus = true,
-  GrafRusLat = true,
-  CharLatRus = true,
-  CharRusLat = true,
+  CharLatRus    = true,
+  CharRusLat    = true,
+
+  CharLatGreek  = true,
+  CharGreekLat  = true,
+  --
+  GrafLatRus    = true,
+  GrafRusLat    = true,
 
   Tekst = TekstChangeSets,
   Liter = LiterChangeSets,
@@ -534,7 +614,10 @@ local function WidenChangeSets (Base, Kind)
 
   for k, v in pairs(u) do
     t[k] = v
-    t[k:lower()] = v:lower()
+    local l = k:lower()
+    if not t[l] then
+      t[l] = v:lower()
+    end
   end -- for
 
   CharChangeSets[Base][Kind] = t
@@ -575,6 +658,9 @@ GroupChangeSets("Liter", "CharLatRus")
 WidenChangeSets("Liter", "CharRusLat")
 GroupChangeSets("Liter", "CharRusLat")
 
+WidenChangeSets("Liter", "CharLatGreek")
+GroupChangeSets("Liter", "CharLatGreek")
+
 GroupChangeSets("Liter", "GrafLatRus")
 GroupChangeSets("Liter", "GrafRusLat")
 
@@ -593,14 +679,17 @@ local Actions = {
            end
   end, -- default
 
-  SignTyper  = false,
-  SignMaths  = false,
+  SignTyper     = false,
+  SignMaths     = false,
 
-  CharLatRus = false,
-  CharRusLat = false,
+  CharLatRus    = false,
+  CharRusLat    = false,
 
-  GrafLatRus = false,
-  GrafRusLat = false,
+  CharLatGreek  = false,
+  CharGreekLat  = false,
+
+  GrafLatRus    = false,
+  GrafRusLat    = false,
 
 } --- Actions
 unit.Actions = Actions
@@ -681,6 +770,10 @@ Menus.ChangeChar = {
       Function = Execute"CharLatRus", },
     { text = L.CharRusLat,
       Function = Execute"CharRusLat", },
+    { text = L.CharLatGreek,
+      Function = Execute"CharLatGreek", },
+    { text = L.CharGreekLat,
+      Function = Execute"CharGreekLat", },
     { text = L.CharGraf,
       separator = true, },
     { text = L.GrafLatRus,
