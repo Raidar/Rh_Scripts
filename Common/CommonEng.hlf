@@ -289,16 +289,17 @@ then a start of the previous one / an end of the next one).
 
   Special keys:
  \37Num* | Clear\- (Num5)    — ¦the current date and time.
- \37Num/\-                   — ¦to go to a ~date input~@Calendar_Input@ mode.
+ \37Num/\-                   — ¦to go to a ~date input~@Calendar_DateInput@ mode.
+ \37Num+ | Num-\-            — ¦to go to a ~shift input~@Calendar_ShiftInput@ mode.
 
     Implemented ~configurations~@<..\Utils\DateTime\>Contents@
 
  ~Contents~@Contents@
 
-@Calendar_Input
+@Calendar_DateInput
 $ #Calendar for one month#: Date input
 
-  Date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
+  A date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
 where \3AY\-, \3AM\- и \3AD\- are numbers, that represent corresponding year,
 month and day of the inputted date. Missed values are replaced by \3A1\-.
 
@@ -309,6 +310,24 @@ month and day of the inputted date. Missed values are replaced by \3A1\-.
  \37Num/, Enter, NumEnter\-  — ¦to complete the input.
 
   After the input completion the inputted date will be displayed in the window.
+
+ ~Contents~@Contents@       ~Calendar for one month~@Calendar@
+
+@Calendar_ShiftInput
+$ #Calendar for one month#: Shift input
+
+  A shift input is performed in days.
+ A shift direction is defined by "go to mode" key:
+ \37Num+\- — negative shift (backward on calendar),
+ \37Num-\- — positive shift (forward on calendar).
+
+  To input shift use following keys:
+ \371—9, 0\- (digits)        — ¦to input shift digits.
+ \37Num1—Num9\- (Num‑digits) — ¦to input shift digits when NumLock is on.
+ \37Num+, Num-,\-
+ \37Enter, NumEnter\-        — ¦to complete the input.
+
+  After the input completion the shifted date will be displayed in the window.
 
  ~Contents~@Contents@       ~Calendar for one month~@Calendar@
 

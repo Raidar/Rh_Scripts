@@ -891,7 +891,7 @@ function TMain:StopDateInput (Date)
 
   self.IsDateInput = false
   self.Props.Bottom = ""
-  self.Date = self:ParseDateInput() or Date
+  return self:ParseDateInput() or Date
 end ---- StopDateInput
 
 function TMain:EditDateInput (SKey)
@@ -904,6 +904,14 @@ function TMain:EditDateInput (SKey)
     if SKey == "Subtract" then SKey = "-" end
 
     Input = Input..SKey
+
+    -- TEMP: Ограничение на год из-за ширины поля!
+    local y = Input:match(InputFmtY)
+    local l = y:len()
+    if l > 6 then
+      y = y:sub(1, 6)
+      Input = y..Input:sub(l + 1, -1)
+    end
   end
 
   self.Input = Input
@@ -912,13 +920,25 @@ end ---- EditDateInput
 
 end -- do
 do
+  local tonumber = tonumber
 
-function TMain:StartShiftInput (Date)
+function TMain:ParseShiftInput ()
+  local self = self
+  local Date = self.Date:copy()
+
+  local Input = self.Input or ""
+  local Shift = tonumber(Input)
+  --logShow(Shift, Input)
+
+  return Shift and Date:shd(Shift) --or false
+end ---- ParseShiftInput
+
+function TMain:StartShiftInput (Date, Shift)
   local self = self
   local L = self.LocData
 
-  self.Input = ""
-  --self.Props.Bottom = L.InputDate
+  self.Input = Shift
+  self.Props.Bottom = Shift
   self.IsShiftInput = true
 end ---- StartShiftInput
 
@@ -927,10 +947,8 @@ function TMain:StopShiftInput (Date)
 
   self.IsShiftInput = false
   self.Props.Bottom = ""
-  --self.Date = self:ParseDateInput() or Date
+  return self:ParseShiftInput() or Date
 end ---- StopShiftInput
-
---local
 
 function TMain:EditShiftInput (SKey)
   local self = self
@@ -939,9 +957,9 @@ function TMain:EditShiftInput (SKey)
   if SKey == "BS" then
     if Input ~= "" then Input = Input:sub(1, -2) end
   else
-    if SKey == "Subtract" then SKey = "-"
-    elseif SKey == "Add" then SKey = "+"
-    end
+    --if SKey == "Subtract" then SKey = "-"
+    --elseif SKey == "Add" then SKey = "+"
+    --end
 
     Input = Input..SKey
   end
@@ -991,11 +1009,11 @@ do
     ["8"] = true,
     ["9"] = true,
     ["0"] = true,
-    ["-"] = true,
-    ["+"] = true,
+    --["-"] = true,
+    --["+"] = true,
     ["BS"] = true,
-    ["Add"]      = true,
-    ["Subtract"] = true,
+    --["Add"]      = true,
+    --["Subtract"] = true,
   } --- ShiftInputActions
 
 function TMain:AssignEvents () --> (bool | nil)
@@ -1031,14 +1049,45 @@ function TMain:AssignEvents () --> (bool | nil)
 
     elseif SKey == "Divide" then
       if self.IsDateInput then
-        self:StopDateInput(Date)
-        return MakeUpdate()
-      else
+        Date = self:StopDateInput(Date)
+      elseif not self.IsShiftInput then
         self:StartDateInput(Date)
+      else
+        isUpdate = false
+      end
+      
+    elseif SKey == "Add" then
+      if self.IsShiftInput then
+        Date = self:StopShiftInput(Date)
+      elseif not self.IsDateInput then
+        self:StartShiftInput(Date, '+')
+      else
+        isUpdate = false
+      end
+      
+    elseif SKey == "Subtract" then
+      if self.IsShiftInput then
+        Date = self:StopShiftInput(Date)
+      elseif not self.IsDateInput then
+        self:StartShiftInput(Date, '-')
+      else
+        --isUpdate = false
+        self:EditDateInput(SKey)
       end
 
-    elseif self.IsDateInput and DateInputActions[SKey] then
-      self:EditDateInput(SKey)
+    elseif self.IsDateInput then
+      if DateInputActions[SKey] then
+        self:EditDateInput(SKey)
+      else
+        isUpdate = false
+      end
+
+    elseif self.IsShiftInput then
+      if ShiftInputActions[SKey] then
+        self:EditShiftInput(SKey)
+      else
+        isUpdate = false
+      end
 
     else
       isUpdate = false
@@ -1048,6 +1097,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     if isUpdate then
       --self.Date = Date
+      --logShow(Date)
       self.Date = self:LimitDate(Date)
       return MakeUpdate()
     end
@@ -1210,12 +1260,23 @@ function TMain:AssignEvents () --> (bool | nil)
   local function ChooseItem (Kind, ItemPos)
     local Data = self.Items[ItemPos].Data
     if not Data then return end
-
-    if self.IsDateInput and Kind == "Enter" then
+  
+    if Kind == "Enter" then
+      local isUpdate = true
       local Date = Data[Data.State]
-      self:StopDateInput(Date)
 
-      return MakeUpdate()
+      if self.IsDateInput then
+        Date = self:StopDateInput(Date)
+      elseif self.IsShiftInput then
+        Date = self:StopShiftInput(Date)
+      else
+        isUpdate = false
+      end
+    
+      if isUpdate then
+        self.Date = self:LimitDate(Date)
+        return MakeUpdate()
+      end
     end
 
     return nil, CloseFlag
