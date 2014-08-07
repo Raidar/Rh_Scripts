@@ -246,7 +246,7 @@ $ Common keys of menu items: LUM
   #text# (string) — an output text for menu item.
 
   #Kind# (string) — menu item kind.
-    It may not specified, because it is defined by basic keys of sections.
+    It may not specified, because it is defined by basic keys of sections.
 
   #Area# (string) — an execution area of FAR for menu item.
   — ¦The key may have following values:
