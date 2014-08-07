@@ -1341,7 +1341,6 @@ function TMain:AssignEvents () --> (bool | nil)
     elseif SKey == "Divide" then
       if self.IsCodeInput then
         self:StopCodeInput(Data)
-        --return MakeUpdate()
       elseif not self.IsCharInput then
         self:StartCodeInput(Data)
       else
@@ -1351,7 +1350,6 @@ function TMain:AssignEvents () --> (bool | nil)
     elseif SKey == "ShiftDivide" then
       if self.IsCharInput then
         self:StopCharInput(Data)
-        --return MakeUpdate()
       elseif not self.IsCodeInput then
         self:StartCharInput(Data)
       else
