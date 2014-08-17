@@ -17,11 +17,21 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 6. Откройте меню конфигурации "LuaFAR для Редактора".
    Выберите пункт "Rh_Scripts package" и настройте пакет.
 
-Дополнительно:
+Первоначальная настройка:
+
+* Для работы пользовательских меню:
+1. Скопируйте файл "LumBinds.lua.example"
+   из каталога ~Rh_Scripts\LuaEUM\config~
+   в файл "LumBinds.lua" того же каталога, если его там нет.
+2. Скопируйте файл "LumBinds.lua.example"
+   из каталога ~Rh_Scripts\LuaPUM\config~
+   в файл "LumBinds.lua" того же каталога, если его там нет.
 
 * Для работы с меню Tortoise SVN:
-1. Скопируйте файл "TortoiseSVN.cfg.example" в файл "TortoiseSVN.cfg"
-   каталога ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~,
+1. Скопируйте файл "TortoiseSVN.cfg.example"
+   из каталога ~Rh_Scripts\LuaPUM\config~
+   в файл "TortoiseSVN.cfg" каталога
+   ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~,
    если его там нет.
 2. Настройте параметры конфигурации в файле "TortoiseSVN.cfg".
 

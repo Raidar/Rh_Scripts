@@ -15,3 +15,5 @@ Others/Result.lud
 Testing/*
 UniUtf/*
 PopupList.lua
+LuaEUM/config/LumBinds.lua
+LuaPUM/config/LumBinds.lua

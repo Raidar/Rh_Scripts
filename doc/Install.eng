@@ -10,31 +10,40 @@ Install:
 2. Copy ~Rh_Scripts~ directory from downloaded archive
    to ~scripts~ directory of 'LuaFAR for Editor' plugin.
 3. Create "_usermenu.lua" file in plugin directory, if it does not exist.
-   Add following string to the file:
+   Add following string to the file:
 AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 4. Rename "_usermenu.lua.example" to "_usermenu.lua".
 5. Clear plugins cache and reload FAR Manager.
 6. Open configuration menu of 'LuaFAR for Editor'.
    Choose "Rh_Scripts package" item and customize package.
 
-Additions:
+Initial customize:
+
+* To work with user menus:
+1. Copy "LumBinds.lua.example" file
+   from ~Rh_Scripts\LuaEUM\config~ directory
+   to "LumBinds.lua" file in the same directory, if file is absent in it.
+2. Copy "LumBinds.lua.example" file
+   from ~Rh_Scripts\LuaPUM\config~ directory
+   to "LumBinds.lua" file in the same directory, if file is absent in it.
 
 * To work with Tortoise SVN menu:
-1. Copy "TortoiseSVN.cfg.example" file to "TortoiseSVN.cfg" file
+1. Copy "TortoiseSVN.cfg.example" file
+   from ~Rh_Scripts\LuaPUM\config~ directory to "TortoiseSVN.cfg" file
    of ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~ directory,
-   if file is absent in it.
+   if file is absent in it.
 2. Customize configuration parameters in "TortoiseSVN.cfg" file.
 
 * For character map:
 1. Download "NamesList.txt" and "Blocks.txt"
-   from "The Unicode Consortium" site by following links:
+   from "The Unicode Consortium" site by following links:
    http://www.unicode.org/Public/UNIDATA/NamesList.txt
    http://www.unicode.org/Public/UNIDATA/Blocks.txt
 2. Copy downloaded files
    to ~%FarProfile%\data\scripts\Rh_Scripts\data~ directory.
 
 ―――――――
-P.S. It's also recommended view a history of changes
-     for giving an information about new and fixed functions of package.
-     But file with history of changes is only in Russian.
+P.S. It's also recommended view a history of changes
+     for giving an information about new and fixed functions of package.
+     But file with history of changes is in Russian only.
 ―――――――
