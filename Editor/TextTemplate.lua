@@ -384,7 +384,9 @@ function TMain:MakeKit ()
     local FullDir = format("%s.%s.", self.Options.BaseDir,
                                      self.Options.WorkDir)
     local KitCfg = dorequire(FullDir..self.Options.FileName)
-    if KitCfg == nil then return end -- No templates
+    --logShow(KitCfg, "KitCfg", 2)
+    if not KitCfg then return end -- No templates
+    --if KitCfg == nil then return end -- No templates
 
     Kits = {
       _require_ = dorequire,
