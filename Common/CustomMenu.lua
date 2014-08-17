@@ -179,6 +179,7 @@ end ---- SetBaseTitle
 -- Подготовка объекта класса меню (после создания).
 function TMenu:Prepare () --> (bool | nil, error)
   -- Получение базового меню:
+  --logShow(self.Scope.BaseName, self.BaseName)
   if (self.Scope.BaseName or "") ~= "" then
     self.BaseName = self.Scope.BaseName -- Подменю как базовое меню
   end
@@ -192,7 +193,7 @@ function TMenu:Prepare () --> (bool | nil, error)
     self.BaseMenu = self.BaseMenu()
   end
   if type(self.BaseMenu) ~= 'table' then
-    self.Error = self.BaseName
+    self.Error = "Menu not found:\n"..tostring(self.BaseName)
     return -- Нет главного меню
   end
   --logShow(self.BaseMenu, "BaseName: "..self.BaseName, 1)
