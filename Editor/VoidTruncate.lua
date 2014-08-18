@@ -129,7 +129,7 @@ function unit.TruncateFile (keep) --> (number)
   for k = l, l - keep + 1, -1 do
     local s = EditorGetLine(nil, k, 3)
     if s and not s:find(EmptyTruncPat) then
-      --EditorSetPos(nil, Info)
+      EditorSetPos(nil, Info)
       return -q
     end
     q = q + 1

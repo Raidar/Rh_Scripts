@@ -88,6 +88,7 @@ function ProcessEditorInput (rec) --> (bool)
       -- TODO: Make block operation!
       TruncateFile(1)
       local Info = EditorGetInfo()
+      local TotalLines = Info.TotalLines
       --[[
       local SelInfo
       if band(CState, SHIFT) ~= 0 then
@@ -98,34 +99,44 @@ function ProcessEditorInput (rec) --> (bool)
 
       --logShow(Info, "ProcessEditorInput")
 
-      EditorSetPos(nil, Info.TotalLines)
+      EditorSetPos(nil, TotalLines)
+      --EditorSetPos(nil, Info.TotalLines)
       TruncateLine()
 
       --if CState == 0 then UpdateLineEnd() end
 
       if band(CState, SHIFT) ~= 0 then -- Select
         --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
-        --[[
-        SelInfo = SelInfo or {}
-        SelInfo.BlockType = SelInfo.BlockType or
-                            band(CState, ALT) ~= 0 and BT_Column or BT_Stream
-        SelInfo.StartLine = SelInfo.StartLine or Info.CurLine
-        SelInfo.StartPos  = SelInfo.StartPos  or Info.CurPos
-        SelInfo.EndLine   = Info.TotalLines
-        SelInfo.EndPos    = (EditorGetLine(nil, 0, 3) or ""):len()
+        local r = Info.CurLine
+        local h = TotalLines - r + 1
 
-        EditorSetSel(nil, SelInfo)
+        local p = Info.CurPos
+        local s = EditorGetLine(nil, 0, 3)
+        local l = (s or ""):len(); if l == 0 then l = 1 end
+        local w = 0 --l - p + 1 -- Почему ширина д/б = 0 ?
+        --[[
+        logShow({ band(CState, ALT) ~= 0 and "Column" or "Stream",
+                  "y1 = "..r,
+                  "x1 = "..p,
+                  "y2 = "..TotalLines,
+                  "x2 = "..l,
+                  "----------------------------------------",
+                  "w  = "..w,
+                  "h  = "..h,
+                  s,
+                  "----------------------------------------",
+                  Info
+                }, "TruncateLine")
         --]]
 
         EditorSelect(nil,
                      band(CState, ALT) ~= 0 and BT_Column or BT_Stream,
-                     Info.CurLine, Info.CurPos,
-                     (EditorGetLine(nil, 0, 3) or ""):len() - Info.CurPos,
-                     Info.TotalLines - Info.CurLine)
-                     --SelInfo.StartLine, SelInfo.StartPos,
-                     --(EditorGetLine(nil, 0, 3) or ""):len() - SelInfo.StartPos,
-                     --Info.TotalLines - SelInfo.StartLine)
+                     r, p,
+                     w,
+                     h
+                    )
         --logShow(Info, "ProcessEditorInput")
+        --far.AdvControl(F.ACTL_REDRAWALL)
       end
 
     else -- End of line
