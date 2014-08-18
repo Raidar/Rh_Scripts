@@ -90,6 +90,7 @@ do
 function unit.Execute (action, ...)
   local Info = unit.GetInfo()
   local id = Info.EditorID
+  --logShow({ action, ... }, id)
 
   if not UndoRedo(id, Begin_UndoRedo) then
     return nil, "Begin UndoRedo"

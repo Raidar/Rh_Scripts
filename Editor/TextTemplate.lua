@@ -37,6 +37,7 @@ local bshr = bit.rshift
 local win, far, regex = win, far, regex
 local F = far.Flags
 
+local editor = editor
 local EditorGetInfo = editor.GetInfo
 local EditorGetLine = editor.GetString
 local EditorSetPos  = editor.SetPosition
@@ -62,6 +63,7 @@ local addNewData = tables.extend
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"
+local farEdit = require "Rh_Scripts.Utils.Editor"
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -529,13 +531,27 @@ do
   local DelText = EC_Actions.del
   --local BackText = EC_Actions.bs
 
-  local RunMacro = macUt.Execute
+  --local UndoRedo = editor.UndoRedo
+  --local Begin_UndoRedo = F.EUR_BEGIN
+  --local End_UndoRedo   = F.EUR_END
+  --local Undo_UndoRedo  = F.EUR_UNDO
 
+  local function RunApply (Tpl, Cfg) --> (bool)
+    if Tpl.params then
+      return pcall(Tpl.apply, Cfg, unpack(Tpl.params))
+    else
+      return pcall(Tpl.apply, Cfg, Tpl.param)
+    end
+  end -- RunApply
+
+  local RunMacro = macUt.Execute
+  
   local function RunPlain (text) --> (bool)
-    if not EditorInsText(nil, text) then return end
-    EditorRedraw()
-    return true
-  end --
+    --if not EditorInsText(nil, text) then return end
+    --EditorRedraw()
+    --return true
+    return farEdit.Execute(EditorInsText, nil, text)
+  end -- RunPlain
 
 -- Apply found template.
 -- Применение найденного шаблона.
@@ -566,11 +582,14 @@ function TMain:ApplyTemplate ()
 
   if Tpl.apply then  -- Apply-function
     --logShow(Tpl, "apply", 2)
+    --[[
     if Tpl.params then
       isOk, res = pcall(Tpl.apply, Cfg, unpack(Tpl.params))
     else
       isOk, res = pcall(Tpl.apply, Cfg, Tpl.param)
     end
+    --]]
+    isOk, res = RunApply(Tpl, Cfg)
     --logShow({ isOk, res }, "apply", 2)
     if not isOk then
       far.Message(res, "Error using "..unit.DefCustom.name, nil, "wl")
