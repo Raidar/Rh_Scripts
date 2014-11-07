@@ -221,6 +221,7 @@ List.FileTypeCode = {
   hh = "htm",
   hm = "mht",
   hi = "htm+pic",
+  hg = "htm+gif",
   hj = "htm+jpg",
   -- OpenDocument
   ot = "odt",
