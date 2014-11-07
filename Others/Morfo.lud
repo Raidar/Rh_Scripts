@@ -179,7 +179,7 @@ local Data = {
                 parto = "соединительный союз",
                 valor = "Исключение",
                 rus = "или", },
-    nelu    = { part = "J",     
+    nelu    = { part = "J",
                 parto = "соединительный союз",
                 alter = "u-ne",
                 valor = "Отрицание исключения",
