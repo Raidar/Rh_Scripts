@@ -7,7 +7,8 @@ local Data = {
 
   ----------------------------------------
   ChangeSign      = "&Q - Change characters",
-      SignTyper     = "&Q - Typographics",
+      SignFixer     = "&Q - Correction",
+      SignTyper     = "&T - Typographics",
       SignMaths     = "&M - Mathematics",
       SignSuper     = "&= - Superscript",
       SignSuber     = "&- - Subscript",

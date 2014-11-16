@@ -51,10 +51,23 @@ end
 
 ---------------------------------------- Data
 local TekstChangeSets = {
+  SignFixer = true,
   SignTyper = true,
   SignMaths = true,
 } -- TekstChangeSets
 unit.TekstChangeSets = TekstChangeSets
+
+TekstChangeSets.SignFixer = {
+  -- DO
+
+  -- Текст:
+  ["'"]     = 'ʼ',   ["''"]   = 'ʻ',
+  ['...']   = '…',   [',..']  = ',…',
+  ['!..']   = '!…',  ['?..']  = '?…',
+  ['..!']   = '…!',  ['..?']  = '…?',
+
+  -- END
+} -- SignFixer
 
 TekstChangeSets.SignTyper = {
   -- DO
@@ -527,6 +540,7 @@ LiterChangeSets.GrafRusLat = {
 ----------------------------------------
 local CharChangeSets = {
   -- Tekst
+  SignFixer = true,
   SignTyper = true,
   SignMaths = true,
   -- 
@@ -650,6 +664,7 @@ local function GroupChangeSets (Base, Kind)
 end -- GroupChangeSets
 unit.GroupChangeSets = GroupChangeSets
 
+GroupChangeSets("Tekst", "SignFixer")
 GroupChangeSets("Tekst", "SignTyper")
 GroupChangeSets("Tekst", "SignMaths")
 
@@ -679,6 +694,7 @@ local Actions = {
            end
   end, -- default
 
+  SignFixer     = false,
   SignTyper     = false,
   SignMaths     = false,
 
@@ -745,6 +761,8 @@ unit.Menus = Menus
 Menus.ChangeSign = {
   text = L.ChangeSign,
   Items = {
+    { text = L.SignFixer,
+      Function = Execute"SignFixer", },
     { text = L.SignTyper,
       Function = Execute"SignTyper", },
     { text = L.SignMaths,
