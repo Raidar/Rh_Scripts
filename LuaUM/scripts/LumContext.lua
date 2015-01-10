@@ -130,7 +130,7 @@ function detType ()
   if #info > 0 then
     doShow(info, "detType", "d2 _")
   else
-    doShow("No types for detect\n\n'LuaFAR context' pack is required\n", "detType")
+    doShow("No types to detect\n\n'LuaFAR context' pack is required\n", "detType")
   end
 end ---- detType
 

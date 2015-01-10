@@ -318,9 +318,10 @@ local SecNames = {
  aa = "Anons",
   t = "Tekst",  -- Текст
  tt = "Tekst",
- ct = "Kont",   -- Краткое содержание
-  c = "Kontent",-- Содержание (полное)
- cc = "Kontent",
+  k = "Kontent",-- Содержание (полное)
+ kk = "Kontent",
+ kt = "Kont",   -- Краткое содержание
+ ko = "Konto",  -- Содержание‑оглавление
  hh = "Index",  -- Указатель
  hr = "Eraro",  -- Опечатки
   q = "Kvalio", -- Качество
@@ -440,7 +441,7 @@ local SecCombo = List.SecCombo
   local SecBody = Fmts.DefBodyVal:format(
                     Fmts.SectioName:format(List.SectioName.aa),
                     Fmts.SectioName:format(List.SectioName.tt),
-                    Fmts.SectioName:format(List.SectioName.cc),
+                    Fmts.SectioName:format(List.SectioName.kk),
                     SecCombo.qt)
   for _, v in ipairs(List.FreqUsedTypes) do
     local SecEdit = Fmts.EditDefName:format(List.SectioName.ee,
@@ -1098,6 +1099,7 @@ List.LocCapitulum = {
   ['Собл'] = "+Суперобложка",
   --['Ттл']  = "+Титул",
   ['Фзц']  = "+Форзац",
+  ['Нзц']  = "+Нахзац",
   ['Вкл']  = "+Вкладыш",
 } -- LocCapitulum
 Find.DefCapitulum = {
