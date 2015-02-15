@@ -620,7 +620,7 @@ CharChangeSets.SignRefer = {
 ---------------------------------------- Fill
 do
 
--- Extend set for specifed kind by character forms.
+-- Extending set for specifed kind by character forms.
 -- Расширение набора указанного вида с учётом формы символов.
 local function WidenChangeSets (Base, Kind)
   local t = {}
@@ -716,6 +716,7 @@ do
     --logShow(Table)
     return function (block) --> (block)
              local block = block
+             --logShow(block)
              for k = Table[0], 1, -1 do
                local t = Table[k]
                --logShow(t)
@@ -726,6 +727,7 @@ do
                  end
                end
              end
+             --logShow(block)
              return block
            end -- function
   end -- VarLenAction
