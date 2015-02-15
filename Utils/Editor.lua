@@ -732,10 +732,12 @@ function Selection.Process (force, action, ...) --> (bool)
   local block = Selection.Cut(unit.GetInfo(), SelType)
   if not block then return end
 
+  --logShow(block, SelType)
   --logShow({ left, right, block }, SelType)
 
   block = action(block, ...)
   if not block then return end
+  --logShow(block, SelType)
 
   return Selection.Paste(unit.GetInfo(), block, SelType)
 end -- Process
@@ -795,6 +797,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   --logShow(SelInfo, "SelInfo")
 
   local first, last = SelInfo.StartLine, SelInfo.EndLine
+  --logShow({ first, last, SelInfo }, "SelInfo")
   if first == last then
     -- Одна выделенная cтрока
     local LineInfo = unit.GetLine(id, first, 0)
@@ -822,6 +825,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
 
   -- Несколько выделенных cтрок
   local s = unit.GetLine(id, first, 3) or ""
+  --logShow({ first, s }, "First selected line")
   local go = SelInfo.StartPos
   local t = {
     Type = "stream",
@@ -834,9 +838,11 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
 
   for line = first + 1, last - 1 do
     t[#t+1] = unit.GetLine(id, line, 3) or "" -- inners
+    --logShow({ line, LineInfo, t[#t] }, "Some selected info")
   end
 
   local LineInfo = unit.GetLine(id, last, 0)
+  --logShow({ last, LineInfo }, "Last selected line")
   s = LineInfo.StringText
   if s ~= nil then
     local len = s:len()
@@ -845,12 +851,16 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     if pos > 0 and pos <= len then
       t[#t+1] = s:sub(1, pos) -- last
     else
-      t[#t+1] = s..spaces[pos - len] -- last
+      if pos > len then
+        t[#t+1] = s..spaces[pos - len] -- last
+        t.BeyondEnd = true
+        t.Count = t.Count + 1
+      end
       t[#t+1] = "" -- with last EOL
-      t.BeyondEnd = (pos > 0)
-      t.Count = t.Count + 1
+      --logShow({ last, LineInfo, t[#t-1] }, "Last selected info")
     end
   end
+  --logShow({ last, LineInfo, t[#t-1] }, "Last selected info")
 
   if ToPos or ToPos == nil then unit.Goto(Info) end
 
@@ -1000,6 +1010,7 @@ function Selection.Cut (Info, Type) --> (nil|string|table)
   local Type = Type or SelType
 
   local s = Selection.Copy(Info, Type, false)
+  --logShow(s, "Selection.Cut")
 
   Selection.Delete(Info, Type, true)
 
@@ -1022,7 +1033,7 @@ function Selection.PasteStream (Info, block) --> (bool)
     block = tconcat(block, "\r")
   end
 
-  --logShow(block, "Selection.PasteColumn")
+  --logShow(block, "Selection.PasteStream")
   return unit.InsText(Info.EditorID, block)
 end ---- PasteStream
 
