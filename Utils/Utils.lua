@@ -386,9 +386,8 @@ local function Version (kind) --> (string | vary)
 end --
 
 unit.FarVersion = { -- Version info:
-  FAR = { Version(true) },                -- Table of version as numbers
-  VerFAR = Version():match("^%d+%.%d+"),  -- String of version without build
-  LuaFAR = { far.LuafarVersion(true) },   -- Table of version as numbers
+  FAR = { Version(true) },                -- Table with version as numbers
+  VerFAR = Version():match("^%d+%.%d+"),  -- String with version without build
 } --- FarVersion
 
 -- Значение цвета по его индексу Index.
