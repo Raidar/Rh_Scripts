@@ -133,7 +133,9 @@ function unit.GetFileInnerJoin (Args, Props) --> (table | nil, error)
       local u, SError = GetFileData(FullName, nil, Props)
       --if not u then return nil, SError end
       if not isItem and u then isItem = true end
+      --if Args.DefExt == ".lum" then logShow(u, "GetFileInnerJoin: "..Name, "w d1") end
       MergeTable(t, u, Props)
+      --if Args.DefExt == ".lum" then logShow(t, "GetFileInnerJoin: Result", "w d1") end
     end -- if
   end -- for Name
 
@@ -151,6 +153,7 @@ function unit.GetFileJoinEnumData (Args, Props) --> (table | nil, error)
   Props = Props or {}
 
   local t, SError
+  --logShow({ Args = Args, Props = Props }, "GetFileJoinEnumData", "w d2")
   if Props.Join then -- Внешнее объединение:
     t, SError = unit.GetFileOuterJoin(Args, Props)
   else -- Внутреннее объединение (по умолчанию):

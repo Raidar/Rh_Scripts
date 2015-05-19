@@ -217,6 +217,7 @@ function TMenu:Prepare ()
     MenuEnum = ("%s;%s;%s"):format(
                Scope.DefMenu.Before or "", MenuEnum, Scope.DefMenu.After or "")
   end
+  --logShow(MenuEnum, "MenuEnum")
   -- Считывание и разбор файлов меню.
   Args = {
     Base = PluginPath,
@@ -229,9 +230,17 @@ function TMenu:Prepare ()
   Props = { Join = Scope.JoinUMenu or false, }
   --Props = { Join = Scope.JoinUMenu or false, IlkSep = ';' }
   self.Menus, SError = LW.GetFileEnumData(Args, Props)
+
+  --logShow(self, "LUM self", "w d2")
+  --logShow(self.Menus, "LUM Menus", "w d2")
   if not self.Menus then
     self.Error = L:et2("FileDataError", "UMenuFile", SError)
     return
+  end
+
+  if self.Menus.Menu and
+     not self.Config.Scope.BaseName then
+    self.Menus.Menu.text = nil -- Без текста пункта для главного меню!
   end
   --logShow(self.Menus, "self.Menus", 0)
 
@@ -279,7 +288,9 @@ function unit.Execute (Config, ShowMenu)
   local _Menu = CreateMenu(Config)
   if not _Menu then return end
 
+  --logShow(_Menu, "LUM _Menu", "w")
   _Menu:Prepare()
+  --logShow(_Menu, "LUM _Menu", "w d2")
   if _Menu.Error then return nil, _Menu.Error end
 
   if ShowMenu == 'self' then return _Menu end

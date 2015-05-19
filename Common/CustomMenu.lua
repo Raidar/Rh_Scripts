@@ -147,10 +147,10 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
   if not DefMenu then return end
 
   --[[
-  --logShow({ { "Menu",
+  --logShow({ Menu = {
               Name = Menu.Name, Title = Menu.Title,
               Caption = Menu.Caption, text = Menu.text },
-            { "DefMenu",
+            DefMenu = {
               Name = DefMenu.Name, Title = DefMenu.Title,
               Caption = DefMenu.Caption, text = DefMenu.text },
           }, "Menu vs DefMenu")
@@ -1037,8 +1037,8 @@ function TMenu:Run ()
     if isOk == nil then return nil, SError, self.ActItem end
 
     if NoReturnKinds[self.ActItem.Kind] or
-       not self.CurData.UMenu.ReturnToUMenu then 
-       --not self.Config.CfgData.UMenu.ReturnToUMenu then 
+       not self.CurData.UMenu.ReturnToUMenu then
+       --not self.Config.CfgData.UMenu.ReturnToUMenu then
       return true
     end
 
