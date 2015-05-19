@@ -61,6 +61,10 @@ AddToMenu("c", "Update Templates", nil, EditorHandActions, "TT:Update")
   -- Keys information.
 AddToMenu("evp", "&Keys information", nil, SamplesPath.."KeysInfo")
 
+
+---------------------------------------- Commands
+
+
 ---------------------------------------- Residents
 
 
