@@ -82,7 +82,9 @@ local Data = {
     text = L.Subtitles,
     Items = { mSubtitles, },
   },
+
   ["Subtitles"] = mSubtitles,
+  ["Subtitles.CurrentClause"] = mCurrentClause,
 } ---
 
 return Data

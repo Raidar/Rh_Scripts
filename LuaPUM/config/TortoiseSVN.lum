@@ -673,7 +673,7 @@ local Menu, SError = unit.Execute()
 local Data = {
   Menu = Menu,
 
-  ["tSVN"] = Menu and Menu.Items[1],
+  ["TortoiseSVN"] = Menu and Menu.Items[1],
 } ---
 
 return Data

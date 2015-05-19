@@ -477,6 +477,7 @@ local Data = {
     text = L.TemplateInsert,
     Items = { mInsert },
   },
+
   ["Insert"] = mInsert,
 } ---
 

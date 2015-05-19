@@ -153,7 +153,7 @@ local mTruncate = {
 
 ---------------------------------------- Transcript
 local Transcript = require "Rh_Scripts.LuaUM.scripts.Transcript"
-local TranscriptMenus = Transcript.Menus
+local mTranscript = Transcript.Menus
 
 ---------------------------------------- Items/Menu
 local mScripts = {
@@ -162,8 +162,8 @@ local mScripts = {
   Items = {
     mClear,         -- Чистка текста
     mTruncate,      -- Усечение текста
-    TranscriptMenus.ChangeSign,    -- Изменение символов
-    TranscriptMenus.ChangeChar,    -- Транскрибирование
+    mTranscript.ChangeSign,    -- Изменение символов
+    mTranscript.ChangeChar,    -- Транскрибирование
   } -- Items
 } --- mScripts
 
@@ -174,7 +174,12 @@ local Data = {
     Items = { mScripts },
     --Items = { Sep, Scripts },
   },
-  --["Editor Scripts"] = mScripts,
+
+  ["EScripts"] = mScripts,
+  ["EScripts.Clear"]    = mClear,
+  ["EScripts.Truncate"] = mTruncate,
+  ["EScripts.Transcript.ChangeSign"] = mTranscript.ChangeSign,
+  ["EScripts.Transcript.ChangeChar"] = mTranscript.ChangeChar,
 } ---
 
 return Data

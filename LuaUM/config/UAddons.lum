@@ -217,7 +217,8 @@ local Data = {
     Items = { mScripts, },
   },
 
-  --["Addon Scripts"] = mScripts,
+  ["UAddons"] = mScripts,
+  ["UAddons.Calendars"] = mCalendars,
 } ---
 
 return Data

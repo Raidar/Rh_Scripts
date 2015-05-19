@@ -411,7 +411,7 @@ local Data = {
     Items = { mGitCommands, },
   },
 
-  ["GitMenu"] = mGitCommands,
+  ["GitCommands"] = mGitCommands,
 } ---
 
 return Data
