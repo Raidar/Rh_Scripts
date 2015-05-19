@@ -49,6 +49,25 @@ function GlobalVarsData ()
   doShow(_G, "Non-standard globals", "d1 w _")
 end ---- GlobalVarsData
 
+local function ExpandEnv (s)
+  return s:gsub("%%(.-)%%", win.GetEnv)
+end
+
+-- Глобальное окружение --
+function WinEnvironVars ()
+  local t = {
+    Lang = win.GetEnv"FARLANG",
+    Home = win.GetEnv"FARHOME",
+    Profile = win.GetEnv"FARPROFILE",
+    LocalProfile = win.GetEnv"FARLOCALPROFILE",
+    AdminMode = win.GetEnv"FARADMINMODE",
+
+    TestGetEnv = ExpandEnv"%FARPROFILE%",
+  } ---
+  --doShow(_G, "Non-standard globals", "d0 w _")
+  doShow(t, "Environment", "d1 w _")
+end ---- WinEnvironVars
+
 ---------------------------------------- Hello, World!
 
 -- Окно с сообщением --

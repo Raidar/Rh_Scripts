@@ -72,9 +72,10 @@ local Data = {
   OtherScripts      = "&O - Other scripts",
 
   OthQuickInfo      = "Common &information",
-    OthQInfoVers        = "&Versions",
-    OthQInfoGlobal      = "&Global data",
-    OthQInfoPackage     = "&package content",
+    OthQInfoVersions    = "&Versions used",
+    OthQInfoGlobalVars  = "&Global data",
+    OthQInfoPackageUnit = "&package content",
+    OthQInfoEnvironVars = "&Environment values",
 
   OthLFcontext      = "Using LF conte&xt",
     OthLFcDetectType    = "Detect t&ype",

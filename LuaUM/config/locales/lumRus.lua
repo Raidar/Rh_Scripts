@@ -73,9 +73,10 @@ local Data = {
   OtherScripts      = "&O - Разные скрипты",
 
   OthQuickInfo      = "&I - Общая информация",
-    OthQInfoVers        = "&V - Используемые версии",
-    OthQInfoGlobal      = "&G - Глобальные данные",
-    OthQInfoPackage     = "&P - Содержимое package",
+    OthQInfoVersions    = "&V - Используемые версии",
+    OthQInfoGlobalVars  = "&G - Глобальные данные",
+    OthQInfoPackageUnit = "&P - Содержимое package",
+    OthQInfoEnvironVars = "&E - Переменные окружения",
 
   OthLFcontext      = "&X - Применение LF context",
     OthLFcDetectType    = "&Y - Определение типа",

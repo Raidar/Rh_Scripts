@@ -38,19 +38,24 @@ local mQuickInfo = {
   text = L.OthQuickInfo,
   Items = {
     -- LuaFAR version --
-    { text = L.OthQInfoVers,
+    { text = L.OthQInfoVersions,
       Script = "LumScripts.lua",
       Function = "LuaFarVersion",
       Relative = "default", },
     -- Global variables --
-    { text = L.OthQInfoGlobal,
+    { text = L.OthQInfoGlobalVars,
       Script = "LumScripts.lua",
       Function = "GlobalVarsData",
       Relative = "default", },
     -- package content --
-    { text = L.OthQInfoPackage,
+    { text = L.OthQInfoPackageUnit,
       Script = "LumScripts.lua",
       Function = "packageContent",
+      Relative = "default", },
+    -- Windows environment values --
+    { text = L.OthQInfoEnvironVars,
+      Script = "LumScripts.lua",
+      Function = "WinEnvironVars",
       Relative = "default", },
   }, --
 } --- mQuickInfo
@@ -227,7 +232,7 @@ local Data = {
     --Items = { mSeparator, mScripts, },
   },
 
-  --["Other Scripts"] = mScripts,
+  ["UScripts"] = mScripts,
 } ---
 
 return Data
