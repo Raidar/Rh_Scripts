@@ -114,6 +114,7 @@ local DefCfgData = {
     Name = "LuaEUM",
     Title = "LU&M for Editor",
     HotKey = "Alt+Shift+F2",
+    Command = "luaeum",
     BasePath = "ScriptsPath",
     FilePath = [[LuaEUM\\LuaEUM]],
     config = {
@@ -161,6 +162,7 @@ local DefCfgData = {
     Name = "LuaPUM",
     Title = "LU&M for Panels",
     --HotKey = "Alt+Shift+F2",
+    Command = "luapum",
     BasePath = "ScriptsPath",
     FilePath = [[LuaPUM\\LuaPUM]],
     config = {
@@ -176,6 +178,7 @@ local DefCfgData = {
     Name = "LumFLS",
     Title = "&fl scripts LUM",
     --HotKey = "Alt+Shift+F2",
+    Command = "lumfls",
     BasePath = "ScriptsPath",
     FilePath = [[LumFLS\\LumFLS]],
     config = {
@@ -688,6 +691,12 @@ local EditorHandActions = EditorPath.."HandActions"
 
 ]==]--_UM.MenuItems
 ----------------------------------------
+_UM.Commands = [==[
+
+---------------------------------------- Commands
+
+]==]--_UM.Commands
+----------------------------------------
 --MakeResident("Rh_Scripts.Common.Resident")
 _UM.Residents = [==[
 
@@ -697,6 +706,7 @@ _UM.Residents = [==[
 ----------------------------------------
 _UM.AddSepItem  = 'AddToMenu("%s", ":sep:%s")\n'
 _UM.AddMenuItem = 'AddToMenu("%s", %s, %s, %s..%s, %s, %s)'
+_UM.AddCmdItem  = 'AddCommand("%s", %s..%s, %s)'
 _UM.MakeResItem = 'MakeResident(%s..%s)'
 _UM.rhsConfig = [==[
 -- Rh_Scripts pack configurator.
@@ -728,22 +738,21 @@ end -- FixLine
 
 local function GenerateFile (f, Data)
   f:write(_UM.Start)
-  local n, v, w, Area, s
   --logShow(Data, "Data")
 
   f:write(_UM.MenuItems) -- Menu items:
   f:write(_UM.rhsConfig)
   for k = 1, CfgDataSepPos - 1 do
-    n = CfgDataOrder[k]
-    v = Data[n]
-    Area = v.Area
+    local n = CfgDataOrder[k]
+    local v = Data[n]
+    local Area = v.Area
 
     if v.separator then f:write("\n") end
     if v.separator and v.enabled then
       f:write(_UM.AddSepItem:format(Area, v.Title or ""))
 
     else
-      w = v.config
+      local w = v.config
 
       if v.Comment and (v.enabled or
                         (Area:find("c") and w and w.enabled)) then
@@ -751,22 +760,36 @@ local function GenerateFile (f, Data)
       end
 
       if Area ~= "c" and v.enabled then
-        s = _UM.AddMenuItem:format(
-            Area:gsub("c", "", 1), q(v.Title), q(v.HotKey),
-            v.BasePath, p(v.FilePath), q(v.Param1), q(v.Param2))
+        local s = _UM.AddMenuItem:format(Area:gsub("c", "", 1),
+                                         q(v.Title), q(v.HotKey),
+                                         v.BasePath, p(v.FilePath),
+                                         q(v.Param1), q(v.Param2) )
         f:write(FixLine(s), '\n')
       end
 
       --logShow({ Area, w, w and w.enabled }, n, 2)
       --logShow({ Area, w, w and getmetatable(w) }, n, 2)
       if Area:find("c") and w and w.enabled then
-        s = _UM.AddMenuItem:format("c",
-                                   q(w.Title or v.Title), q(w.HotKey),
-                                   w.BasePath or v.BasePath,
-                                   p(w.FilePath or v.FilePath),
-                                   q(w.Param1), q(w.Param2))
+        local s = _UM.AddMenuItem:format("c",
+                                         q(w.Title or v.Title), q(w.HotKey),
+                                         w.BasePath or v.BasePath,
+                                         p(w.FilePath or v.FilePath),
+                                         q(w.Param1), q(w.Param2) )
         f:write(FixLine(s), '\n')
       end
+    end
+  end -- for
+
+  f:write(_UM.Commands) -- Commands:
+  for k = 1, CfgDataSepPos - 1 do
+    n = CfgDataOrder[k]
+    v = Data[n]
+
+    if v.Command and v.enabled then
+      local s = _UM.AddCmdItem:format(v.Command,
+                                      v.BasePath, p(v.FilePath),
+                                      q(v.CmdParam) )
+      f:write(FixLine(s), '\n')
     end
   end -- for
 
