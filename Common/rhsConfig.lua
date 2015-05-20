@@ -487,8 +487,8 @@ local function ConfigForm (Config) --> (dialog)
     D["edti"..n]  = {DI.Edit,    IL,    J, I2-1,  0, 0, 0, 0, 0, ""}
     end
     if Area:find("c") and v.config then
-    D["chkc"..n]  = {DI.Check,   I2,    J, IC-1,  0, 0, 0, 0, 0, 0, 0, ""}
-    D["edtc"..n]  = {DI.Edit,    IC,    J, I3-1,  0, 0, 0, 0, 0, 0, 0, ""}
+    D["chkc"..n]  = {DI.Check,   I2,    J, IC-1,  0, 0, 0, 0, 0, ""}
+    D["edtc"..n]  = {DI.Edit,    IC,    J, I3-1,  0, 0, 0, 0, 0, ""}
     end
   end -- for
 
