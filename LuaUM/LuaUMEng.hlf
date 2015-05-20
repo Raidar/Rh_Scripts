@@ -160,30 +160,30 @@ $ #Menu formation#: LUM
 
 @LUM_MenuBinds
 $ #Binding type to menu#: LUM
-  Binding type to menu is specified with \37LumBinds.lui\- file.
+  Binding type to menu is specified with \37LumBinds.lua\- file.
  Default directory for file is \37<Pack directory>\<LuaUM directory>\config\-.
- (lui is an abbreviation of Lua User Ini.)
   Several bind files may be determined in utility settings.
 
   A type name is used for section name. The section contains following key:
   — #Menu#  — ¦with enumeration of ~menu~@LUM_MenuConts@ files.
 
     \1FExample\-:
-  \3FDefault\37 = \3F{ \3ACaption\37 = "LUM for Editor"\3F,\-
-              \3AAfter\37 = "ULuaEUM;EScripts;UMConfig" \3F},\-
-  \3Fhtml\37 = \3F{ \3AMenu\37 = "UM_Html" \3F},\-
+  \3FDefault\37 = \3F{ \3ACaption\37 = "Some LUM"\3F,\-
+              \3ABefore\37  = "BeforeItem1;BeforeItem2;",\-
+              \3AAfter\37   = "AfterItem1;AfterItem2;UMConfig" \3F},\-
+  \3Fhtml\37 = \3F{ \3AMenu\37 = "HtmlItem1;HtmlItem2" \3F},\-
+  \3Flua\37  = \3F{ \3AMenu\37 = "LuaItem" \3F},\-
 
     Here are:
-  \37Caption \- — ¦caption of main menu.
-  \37J_Html  \- — ¦\37Template Insert\- menu file for \37html\- type.
-  \37J_Lua   \- — ¦\37Template Insert\- menu file for \37lua\- type.
-  \37EScripts\- — ¦menu file with common LuaEUM scripts.
-  \37UScripts\- — ¦menu file with common lua‑scripts.
-  \37UMConfig\- — ¦menu file for configuration of LuaEUM settings.
+  \37Caption \- — ¦caption of main menu.
+  \37Before  \- — ¦list of menus added before menu for specific type.
+  \37After   \- — ¦list of menus added after menu for specific type.
+  \37XxxItemN\- — ¦filename with custom menu.
+  \37UMConfig\- — ¦filename with menu for configuration of LUM settings.
 
   No file extensions may be specified in them,
 default extension for menu is \37.lum\-.
-  A '#=#' section is served for using menu existent type as replacement
+  A '#=#' section is served to use menu existent type as replacement
 for required group (for example, in case of menu identity for this types).
 
  ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
