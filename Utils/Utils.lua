@@ -404,7 +404,7 @@ function unit.GetFarRect () --> (table)
     R.Height = R.Bottom - R.Top + 1
   end
   return R
-end ----
+end ---- GetFarRect
 
 -- Show specified help topic.
 -- Показ заданной темы помощи.

@@ -43,7 +43,7 @@ local isFlag = utils.isFlag
 local addNewData = tables.extend
 
 ----------------------------------------
---local farUt = require "Rh_Scripts.Utils.Utils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
 local unit = {}
@@ -433,10 +433,10 @@ local function ConfigForm (Config) --> (dialog)
   --local A, B = I + 1, M + 2
   -- Some controls' sizes:
   --local SE = 5  -- Small field
-  local DE = 21 -- Desc field
-  local HK = 16 -- HotKey field
-  local TX = 16 -- Text field
-  local CK = 3  -- Check field
+  local HK = DBox.edtHKey       -- HotKey field
+  local DE = DBox.lblDesc + 1   -- Desc field
+  local CK = DBox.chkItem       -- Check field
+  local TX = DBox.edtName       -- Text field
   local I0 =  A +  1; local IH = I0 + HK
   --local I0 =  A + SE; local IH = I0 + HK
   local I1 = IH + DE; local IL = I1 + CK
@@ -588,6 +588,8 @@ end -- SaveDlgData
 
 local ConfigGuid = win.Uuid("140a8bd3-546d-469b-867b-e0e61f9b41af")
 
+local numbers = require 'context.utils.useNumbers'
+
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
   -- Конфигурация:
@@ -604,18 +606,52 @@ function unit.ConfigDlg (Data)
   -- Подготовка:
   Config.DBox = {
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
-    Width = 0, Height = 0,
+    Width  = 0, FixWidth  = 0,
+    Height = 0, FixHeight = 0,
+    edtHKey = 16,   -- x1
+    lblDesc = 20,   -- x1
+    chkItem = 3,    -- x2
+    edtName = 16,   -- x2
   } --
   local DBox = Config.DBox
-  DBox.Width  = 2 +           -- Edge
-                2 +           -- + 2 margins
-                --5 +           -- + 1 column: txt
-                16 + 1 +      -- + 1 column: edt
-                20 +          -- + 1 column: txt
-                (3 + 16) * 2  -- + 2 columns: chk + edt
-          -- Edge + (sep+Btns) + group separators and
-  DBox.Height = 2 + 2 + 1 + 2*2 + -- group empty lines + group item lines
-                #CfgDataOrder - 1
+  DBox.FixWidth  = 2 +                  -- Edge
+                   2 +                  -- + 2 margins
+                   --5 +                -- + 1 column: txt
+                   DBox.edtHKey + 1 +   -- + 1 column: edt
+                   DBox.lblDesc +       -- + 1 column: txt
+                   (DBox.chkItem +
+                    DBox.edtName) * 2   -- + 2 columns: chk + edt
+
+  local FarBox = farUt.GetFarRect()
+  local dWidth = FarBox.Width - DBox.FixWidth - 4
+  if dWidth > 0 then
+    local dName = numbers.divf(dWidth, 4)
+    if dName > 0 then
+      DBox.edtHKey = DBox.edtHKey + dName
+      DBox.edtName = DBox.edtName + dName
+    end
+    DBox.lblDesc = DBox.lblDesc + (dWidth - dName * 3)
+  end
+
+  --DBox.Width = DBox.FixWidth
+  DBox.Width  = 2 +
+                2 +
+                --5 +
+                DBox.edtHKey + 1 +
+                DBox.lblDesc +
+                (DBox.chkItem + DBox.edtName) * 2
+
+  DBox.FixHeight = 2 +                  -- Edge
+                   (1 + 1) +            -- + (button separator + buttons)
+                   1 +                  -- + group separators
+                   2*2 +                -- + group empty lines
+                   #CfgDataOrder - 1    -- + group item lines
+  DBox.Height = DBox.FixHeight
+  --DBox.Height = 2 +
+  --              (1 + 1) +
+  --              1 +
+  --              2*2 +
+  --              #CfgDataOrder - 1
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
   end
