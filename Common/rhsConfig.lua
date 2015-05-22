@@ -627,12 +627,15 @@ function unit.ConfigDlg (Data)
   if dWidth > 0 then
     local dName = numbers.divf(dWidth, 4)
     if dName > 0 then
+      if dName > 4 then dName = 4 end
       DBox.edtHKey = DBox.edtHKey + dName
       DBox.edtName = DBox.edtName + dName
     end
-    DBox.lblDesc = DBox.lblDesc + (dWidth - dName * 3)
+    local dDesc = (dWidth - dName * 3)
+    if dDesc > 5 then dDesc = 5 end
+    DBox.lblDesc = DBox.lblDesc + dDesc
+    --logShow({ dWidth, dName, dDesc, DBox })
   end
-
   --DBox.Width = DBox.FixWidth
   DBox.Width  = 2 +
                 2 +
