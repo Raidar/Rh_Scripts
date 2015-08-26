@@ -434,7 +434,7 @@ end -- do
 
 -- Получение заголовка пункта меню.
 function TMenu:GetItemTitle (Item) --> (string)
-  return Item.Title or Item.Caption or "Menu"
+  return Item and (Item.Title or Item.Caption) or "Menu"
 end ----
 
 do
