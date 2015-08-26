@@ -216,7 +216,7 @@ end ---- SetAutoHotChar
 end -- do
 
 do
-  local ParseHotText = farUt.ParseHotText
+  local ParseHotStr = farUt.ParseHotStr
 
 -- Get hot letters string from items text.
 -- Получение строки горячих букв из текста пунктов.
@@ -227,8 +227,12 @@ function unit.GetMenuHotChars (Items, Count) --> (string | "")
   for k = 1, Count do
     local Item, c, _ = Items[k] -- Текущий пункт
     if not isItemSpeced(Item) then
-      _, c = ParseHotText(Item.text) -- Горячая буква
-      --logShow({ k, c, c and c:upper(), Item }, "Hot char")
+      local s = Item.text
+      -- TODO: Support 'table' type (ParseHotText):
+      if s and type(s) == 'string' then
+        _, c = ParseHotStr(Item.text) -- Горячая буква
+        --logShow({ k, c, c and c:upper(), Item }, "Hot char")
+      end
     end
     t[k] = c and c:upper() or ' ' -- Space
   end

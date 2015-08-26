@@ -665,8 +665,8 @@ end ----
 -- TODO: Попробовать на основе regex.
 -- Parse text string with hot character.
 -- Разбор строки текста с "горячей" буквой.
-function unit.ParseHotText (Str, Hot, isPos) --> (Left, Char, Right)
-  Str, Hot = Str or "", Hot or '&'
+function unit.ParseHotStr (Str, Hot, isPos) --> (Left, Char, Right)
+  local Str, Hot = Str or "", Hot or '&'
   if Str == Hot then return Str, nil, "" end
 
   local HotPos = Str:cfind(Hot, 1, true)
@@ -696,15 +696,49 @@ function unit.ParseHotText (Str, Hot, isPos) --> (Left, Char, Right)
     if isPos then return 0, 0, 1 end
     return nil, nil, Str:gsub(Hot..Hot, Hot)
   end
-end ---- ParseHotText
+end ---- ParseHotStr
 
+do
+  local ParseHotStr = unit.ParseHotStr
+
+-- Get string without hot character.
+-- Получение строки без "горячей" буквы.
+function unit.ClearHotStr (Str, Hot) --> (string)
+  local Left, Char, Right = ParseHotStr(Str, Hot)
+  return (Left or "")..(Char or '')..(Right or "")
+end ---- ClearHotStr
+
+end -- do
+do
+  local tables = require 'context.utils.useTables'
+
+  local ClearHotStr = unit.ClearHotStr
+  
 -- Get text without hot character.
 -- Получение текста без "горячей" буквы.
-function unit.ClearHotText (Str, Hot) --> (string)
-  local Left, Char, Right = unit.ParseHotText(Str, Hot)
-  return (Left or "")..(Char or '')..(Right or "")
+function unit.ClearHotText (Str, Hot)
+  local tp = type(Str)
+  if Str == nil or tp == 'string' then
+    return ClearHotStr(Str, Hot)
+  end
+  if tp ~= 'table' then
+    return Str
+  end
+
+  local t = tables.clone(Str, true, nil)
+  for k = 1, #Str do
+    local v = t[k]
+    local s = ClearHotStr(v, Hot)
+    if v ~= s then
+      t[k] = s
+      break
+    end
+  end
+
+  return t
 end ---- ClearHotText
 
+end -- do
 ---------------------------------------- I/O
 do
   local far_Text = far.Text

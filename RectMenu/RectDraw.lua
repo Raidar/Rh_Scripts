@@ -292,7 +292,7 @@ local function DrawParseText (Rect, Item, Parse) --> (table)
 end -- DrawParseText
 
 ---------------------------------------- Draw item
-local ParseHotText = farUt.ParseHotText
+local ParseHotStr = farUt.ParseHotStr
 
 -- Рисование текста обычного пункта.
 function unit.DrawItemText (Rect, Color, Item, Options)
@@ -303,7 +303,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   -- Разбор текста на части по горячей букве:
   local TextB, TextH, TextE = nil, nil, Item.text
   if Options.isHot then
-    TextB, TextH, TextE = ParseHotText(Item.text, '&')
+    TextB, TextH, TextE = ParseHotStr(Item.text, '&')
   end
   TextB, TextH = TextB or "", TextH or ""
   local Len = TextB:len() + TextH:len() + TextE:len() -- Реальная длина
