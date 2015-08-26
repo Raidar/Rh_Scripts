@@ -43,19 +43,28 @@ local F = far.Flags
 local KEY_EVENT = F.KEY_EVENT
 
 local k = 0x00
+--local c = 0x0000
 
 --far.Message(tostring(KEY_EVENT), "AutoActions")
 --local dbg  = require "context.utils.useDebugs"
---local flog = dbg.open("AC_test.log", "a", "")
-
+--local hex  = dbg.hex8
+--local flog = dbg.open("AA_test.log", "a", "")
 function ProcessEditorInput (rec) --> (bool)
   if rec.EventType == KEY_EVENT then
-    --flog:logtab(rec, "rec", "xv4")
+    --flog:data(rec, "xv4", "rec")
     if rec.KeyDown then
       --k = rec.VirtualKeyCode
-      k = (rec.UnicodeChar or " "):byte() or 0x00
+      local c = rec.ControlKeyState
+      if c == 0x0000 or c == 0x0010 then
+        k = (rec.UnicodeChar or " "):byte() or 0x00
+      else
+        k = 0x00
+      end
+      --flog:logln("*KeyDown:", hex(k))
       --flog:logln(hex(k), "c1", "xv4")
+
     elseif k > 0x20 and k ~= 0x7F then
+      --flog:logln("~KeyDown:", hex(k))
       --flog:logln(hex(k), "c2", "xv4")
       k = 0x00
       --logShow(rec, "rec", "xv4")
@@ -66,6 +75,7 @@ function ProcessEditorInput (rec) --> (bool)
       if not TT_Execute(TT_CfgData) then
         WC_Execute(WC_CfgData)
       end
+
     end
   end -- if
 
