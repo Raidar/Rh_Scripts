@@ -265,20 +265,22 @@ do
 -- Формирование данных в подтаблицах таблицы Language.
 function TMain:FillSubDataPos (Kind) --| Abeco
   local a = self.Language.Abeco
-  local t, l = a[Kind], a.Liter
-  if type(t) ~= 'table' or
-     type(t[1]) ~= 'string' then
+  local aKind = a[Kind]
+  --local aKind, aLiter = a[Kind], a.Liter
+  if type(aKind) ~= 'table' or
+     type(aKind[1]) ~= 'string' then
     return
   end
 
   -- Store positions of letters:
   local Len = 0 -- Max length of sounds
-  for k, v in ipairs(t) do
-    t[v] = k
+  for k = 1, #aKind do
+    local v = aKind[k]
+    aKind[v] = k
     local len = v:len()
     if len > Len then Len = len end
   end
-  t[0] = Len
+  aKind[0] = Len
 end ---- FillSubDataPos
 
 local sformat = string.format
@@ -286,32 +288,34 @@ local sformat = string.format
 -- Формирование строк из подтаблиц таблицы Language.
 function TMain:FillSubDataStr (Kind) --| Abeco
   local a = self.Language.Abeco
-  local o = a.Order
-  local t, u = a[Kind], o[Kind]
-  if type(t) ~= 'table' or
-     type(t[1]) ~= 'string' then
+  local aOrder = a.Order
+  local aKind = a[Kind]
+  if type(aKind) ~= 'table' or
+     type(aKind[1]) ~= 'string' then
     return
   end
 
-  if not u then
-    u = { Liter = true, YeuPat = true, NeuPat = true, }
-    o[Kind] = u
+  local oKind = aOrder[Kind]
+  if not oKind then
+    oKind = { Liter = true, YeuPat = true, NeuPat = true, }
+    aOrder[Kind] = oKind
   end
 
-  local Len = t[0]
+  local Len = aKind[0]
 
   if Len == 1 then
     -- String of letters:
-    u.Literi = tconcat(t)
+    oKind.Literi = tconcat(aKind)
     -- Patterns with letters:
-    u.YeuPat = sformat("[%s]", u.Literi)
-    u.NeuPat = sformat("[^%s]", u.Literi)
+    oKind.YeuPat = sformat("[%s]", oKind.Literi)
+    oKind.NeuPat = sformat("[^%s]", oKind.Literi)
   else
     -- MAYBE:
-    --[[local b = o.Binali[Kind]
-    if b then
-      --logShow(b, Kind)
-      --logShow({ b, o[b.kombo], o.Vokon }, Kind)
+    --[[
+    local bKind = o.Binali[Kind]
+    if bKind then
+      --logShow(bKind, Kind)
+      --logShow({ bKind, aOrder[bKind.kombo], aOrder.Vokon, }, Kind)
     end
     --]]
   end
@@ -322,12 +326,19 @@ end -- do
 -- Заполнение монофтонгов заданного вида.
 function TMain:FillMonoSet (Kind) --| Abeco
   local a = self.Language.Abeco
-  local o, t = a.Order, a[Kind]
+  local aOrder = a.Order
+  local aKind = a[Kind]
+  
+  local oKind = aOrder[Kind]
+  for i = 1, #oKind do
+    local iKind = oKind[i]
+    local q = a[iKind]
+    for j = 1, #q do
+      aKind[#aKind + 1] = q[j]
+    end
 
-  for _, b in ipairs(o[Kind]) do
-    for _, v in ipairs(a[b]) do t[#t + 1] = v end
-    self:FillSubDataPos(b)
-    self:FillSubDataStr(b)
+    self:FillSubDataPos(iKind)
+    self:FillSubDataStr(iKind)
   end
 
   self:FillSubDataPos(Kind)
@@ -337,17 +348,23 @@ end -- FillMonoSet
 -- Формирование сочетаний с диграфными.
 function TMain:FillBinoSets () --| Abeco
   local a = self.Language.Abeco
-  local o = a.Order
+  local aOrder = a.Order
 
-  for n, b in pairs(o.Binali) do
-    local t = a[n]
+  for n, b in pairs(aOrder.Binali) do
+    local aKind = a[n]
     local l = b.liter
     local f = b.flang
 
     if f == "R" then
-      for _, v in ipairs(a[b.kombo]) do t[#t + 1] = v..l end
+      local q = a[b.kombo]
+      for k = 1, #q do
+        aKind[#aKind + 1] = q[k]..l
+      end
     else--if f == "L" then
-      for _, v in ipairs(a[b.kombo]) do t[#t + 1] = l..v end
+      local q = a[b.kombo]
+      for k = 1, #q do
+        aKind[#aKind + 1] = l..q[k]
+      end
     end
 
     self:FillSubDataPos(n)
@@ -355,13 +372,39 @@ function TMain:FillBinoSets () --| Abeco
   end --
 end -- FillBinoSets
 
+function TMain:FillTrinoSets() --| Abeco
+  local a = self.Language.Abeco
+  local aOrder = a.Order
+
+  for n, b in pairs(aOrder.Trinali) do
+    local aKind = a[n]
+    local l = b.literL
+    local r = b.literR
+    --local f = b.flang
+
+    local q = a[b.kombo]
+    for k = 1, #q do
+      aKind[#aKind + 1] = l..q[k]..r
+    end
+
+    self:FillSubDataPos(n)
+    self:FillSubDataStr(n)
+  end --
+end -- FillTrinoSets
+
 -- Заполнение букв.
 function TMain:FillLiterSet (Kind) --| Abeco
   local a = self.Language.Abeco
-  local o, t = a.Order, a[Kind]
+  local aOrder = a.Order
+  local aKind = a[Kind]
 
-  for _, b in ipairs(o[Kind]) do
-    for _, v in ipairs(a[b]) do t[#t + 1] = v end
+  local oKind = aOrder[Kind]
+  for i = 1, #oKind do
+    local iKind = oKind[i]
+    local q = a[iKind]
+    for j = 1, #q do
+      aKind[#aKind + 1] = q[j]
+    end
   end
 
   --self:FillSubDataPos(Kind)
@@ -371,7 +414,7 @@ end -- FillLiterSet
 -- Заполнение Language с учётом имеющихся в нём данных.
 function TMain:FillData () --| Abeco
 
-  local a = self.Language.Abeco
+  --local a = self.Language.Abeco
 
   do -- Заполнение монофтонгов
     self:FillMonoSet("Vokal")
@@ -383,8 +426,9 @@ function TMain:FillData () --| Abeco
   end -- do
 
   do -- Формирование мультифтонгов
-    self:FillBinoSets() -- Формирование дифтонгов
-     -- MAYBE -- Формирование трифтонгов
+    self:FillBinoSets()     -- Формирование дифтонгов
+    -- TODO:
+    --self:FillTrinoSets()    -- Формирование трифтонгов
   end -- do
 
   do -- Заполнение букв
@@ -397,10 +441,10 @@ end ---- FillData
 -- Генерация морфов.
 function TMain:Generate ()
 
-  local D = self.Language
-  local a = D.Abeco
-  local m = D.Morfo
-  local F = D.Formo
+  --local D = self.Language
+  --local a = D.Abeco
+  --local m = D.Morfo
+  --local F = D.Formo
   -- TODO
 end ---- Generate
 
@@ -419,6 +463,7 @@ function TMain:Load ()
 
   self.Language.Abeco = datas.load(Options.AbecoFile, nil, 'change')
   --logShow(self.Language.Abeco, "Abeco")
+  --- TEMP: Exclude Morfo
   self.Language.Morfo = datas.load(Options.MorfoFile, nil, 'change')
   --logShow(self.Language.Morfo, "Morfo")
 end ---- Load
