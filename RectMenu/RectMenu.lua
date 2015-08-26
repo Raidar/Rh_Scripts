@@ -116,12 +116,12 @@ end ----
 local inc2, divm, swap = numbers.inc2, numbers.divm, numbers.swap
 
 -- Получение двойного индекса из одиночного.
-local function i2c (Index, ByCat) --> (Major, Minor)
-  return inc2(divm(Index - 1, ByCat))
+local function i2c (Index, ByLin) --> (Major, Minor)
+  return inc2(divm(Index - 1, ByLin))
 end
 -- Получение одиночного индекса из двойного.
-local function c2i (Major, Minor, ByCat) --> (Index)
-  return (Major - 1) * ByCat + Minor
+local function c2i (Major, Minor, ByLin) --> (Index)
+  return (Major - 1) * ByLin + Minor
 end
 
 -- Получение двойного индекса пункта из одиночного.
@@ -164,12 +164,12 @@ local function tospan (n, span) --> (bool)
          n > span.Max and span.Max or n
 end --
 
----------------------------------------- Catena
+---------------------------------------- Line
 local sqrti = numbers.sqrti
 
--- Count existing catenas (of menu items).
+-- Count existing lines (of menu items).
 -- Количество существующих рядов (пунктов меню).
-local function MenuCatCount (Majors, Minors, Count) --> (number, number)
+local function MenuLinCount (Majors, Minors, Count) --> (number, number)
   if Count == 0 then return 0, 0 end
   local H, L, C = Majors, Minors, Count -- High, Low, Count
 
@@ -194,15 +194,15 @@ local function MenuCatCount (Majors, Minors, Count) --> (number, number)
   else
     return C, 1
   end
-end -- MenuCatCount
+end -- MenuLinCount
 
 ---------------------------------------- ---- Visibility
-local VisibleCatCount = {
+local VisibleLinCount = {
   Base = false,
   Pike = false,
 } ---
 
--- Count visible catenas from start.
+-- Count visible lines from start.
 -- Количество видимых рядов с начала.
 --[[
   -- @params:
@@ -212,7 +212,7 @@ local VisibleCatCount = {
   Base  (number) - номер ряда-базы для отсчёта с начала.
   Fixes  (table) - данные о фиксированных рядах.
 --]]
-function VisibleCatCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
+function VisibleLinCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
   if not Len[Base] then return 0, 0 end
 
   local Base = tospan(Base, Fixes)
@@ -234,16 +234,16 @@ function VisibleCatCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number
   --local sum = farUt.t_isum(Len, Fixes.Min, k - Fixes.Count) + Fixes.Length
   --logShow({ k, Total, Sep, L, sum, Fixes }, "Base", 2)
 
-  -- One cat must be show!
+  -- One line must be show!
   if k < 1 then
     k = 1
     L = Total
   end
 
   return k, L
-end ---- VisibleCatCount.Base
+end ---- VisibleLinCount.Base
 
--- Count visible catenas from end.
+-- Count visible lines from end.
 -- Количество видимых рядов с конца.
 --[[
   -- @params:
@@ -253,7 +253,7 @@ end ---- VisibleCatCount.Base
   Pike  (number) - номер ряда-предела для отсчёта с конца.
   Fixes  (table) - данные о фиксированных рядах.
 --]]
-function VisibleCatCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number)
+function VisibleLinCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number)
   if not Len[Pike] then return 0, 0 end
 
   local Pike = tospan(Pike, Fixes)
@@ -276,10 +276,14 @@ function VisibleCatCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number
   --local sum = farUt.t_isum(Len, k - Fixes.Count, Fixes.Max) + Fixes.Length
   --logShow({ k, Total, Sep, L, sum, Fixes }, "Pike", 2)
 
-  if k < 1 then k = 1; L = Total end -- One cat must be show!
+  -- One line must be show!
+  if k < 1 then
+    k = 1
+    L = Total
+  end
 
   return k, L
-end ---- VisibleCatCount.Pike
+end ---- VisibleLinCount.Pike
 
 ---------------------------------------- Menu class
 local TMenu = {
@@ -590,9 +594,9 @@ function TMenu:DefineDataInfo () --| Data
 
   -- Число заданных пользователем рядов пунктов
   if Data.Shape == "V" then -- Число реальных рядов пунктов
-    Data.Cols, Data.Rows = MenuCatCount(RM.Cols, RM.Rows, Data.Count)
+    Data.Cols, Data.Rows = MenuLinCount(RM.Cols, RM.Rows, Data.Count)
   else -- Data.Shape == "H"
-    Data.Rows, Data.Cols = MenuCatCount(RM.Rows, RM.Cols, Data.Count)
+    Data.Rows, Data.Cols = MenuLinCount(RM.Rows, RM.Cols, Data.Count)
   end
 
   -- Определение наличия разделителей.
@@ -653,8 +657,11 @@ do
     if Hot then return ClearHotText(Text, Hot) else return Text end
   end --
 
-  local slinemax   = strings.linemax   -- Длина ячейки с учётом многих линий
-  local slinecount = strings.linecount -- Высота ячейки с учётом многих линий
+  -- Длина и высота ячейки с учётом многих линий
+  local slinemax   = strings.linemax
+  local slinecount = strings.linecount
+  local tlinemax   = tables.linemax
+  local tlinecount = tables.linecount
 
 -- Информация о пункте и разделителях пунктов меню.
 function TMenu:DefineSpotInfo () --| Zone
@@ -679,10 +686,18 @@ function TMenu:DefineSpotInfo () --| Zone
       if j ~= Col then return 0 end
 
       local s = Item.text -- Длина текста:
+      s = ViewItemText(s, Hot)
+      --far.Show(Item.text, s)
       if not Item.RectMenu.MultiLine then
-        return ViewItemText(s, Hot):len()
+        return s:len()
+      end
+      local tp = type(s)
+      if tp == 'string' then
+        return slinemax(s)
+      elseif tp == 'table' then
+        return tlinemax(s)
       else
-        return slinemax(ViewItemText(s, Hot))
+        return 1
       end
     end -- textLen
 
@@ -714,8 +729,16 @@ function TMenu:DefineSpotInfo () --| Zone
       local s = Item.text -- Высота текста:
       if not Item.RectMenu.MultiLine then
         return 1 -- Одна линия
+      end
+      local tp = type(s)
+      --s = ViewItemText(s, Hot)
+      if tp == 'string' then
+        return slinecount(s)
+        --return slinecount(ViewItemText(s, Hot))
+      elseif tp == 'table' then
+        return tlinemax(s)
       else
-        return slinecount(ViewItemText(s, Hot))
+        return 1
       end
     end -- lineLat
 
@@ -749,41 +772,41 @@ do
   local torange = numbers.torange
 
   -- Задание параметров фиксированных рядов меню.
-  local function MakeFixedCats (Cats, Len, Sep, Count) --| Cats
-    local Cats = Cats
-    if Cats.Head == 0 and Cats.Foot == 0 then return end
+  local function MakeFixedLins (Lins, Len, Sep, Count) --| Lins
+    local Lins = Lins
+    if Lins.Head == 0 and Lins.Foot == 0 then return end
     if Count == 0 then
-      Cats.Head, Cats.Foot = 0, 0
+      Lins.Head, Lins.Foot = 0, 0
       return
     end
 
     local Limit = Count - 1 -- Число:
-    Cats.Head = torange(Cats.Head, 0, Limit)
-    Cats.Foot = torange(Cats.Foot, 0, Limit)
-    if Cats.Head + Cats.Foot > Limit then
-      Cats.Head, Cats.Foot = Limit - Cats.Foot, Limit - Cats.Head
+    Lins.Head = torange(Lins.Head, 0, Limit)
+    Lins.Foot = torange(Lins.Foot, 0, Limit)
+    if Lins.Head + Lins.Foot > Limit then
+      Lins.Head, Lins.Foot = Limit - Lins.Foot, Limit - Lins.Head
     end
-    Cats.Count = Cats.Head + Cats.Foot -- Общее число
-    Cats.Alter = Count - Cats.Count -- Остаток от него
-    if Cats.Count == 0 then return end
+    Lins.Count = Lins.Head + Lins.Foot -- Общее число
+    Lins.Alter = Count - Lins.Count -- Остаток от него
+    if Lins.Count == 0 then return end
 
-    Cats.Min, Cats.Max = Cats.Head + 1, Count - Cats.Foot
-    Cats.All, Cats.Sole = Count, Cats.Max + 1
-    --logShow(Cats, "Cats", 2)
+    Lins.Min, Lins.Max = Lins.Head + 1, Count - Lins.Foot
+    Lins.All, Lins.Sole = Count, Lins.Max + 1
+    --logShow(Lins, "Lins", 2)
 
     -- Суммарная длина (с разделителями):
-    if Cats.Head > 0 then
+    if Lins.Head > 0 then
       local Length = 0
-      for k = 1, Cats.Head do Length = Length + Len[k] end
-      Cats.HeadLen = Length + Cats.Head * Sep
+      for k = 1, Lins.Head do Length = Length + Len[k] end
+      Lins.HeadLen = Length + Lins.Head * Sep
     end
-    if Cats.Foot > 0 then
+    if Lins.Foot > 0 then
       local Length = 0
-      for k = Cats.Sole, Count do Length = Length + Len[k] end
-      Cats.FootLen = Length + (Cats.Foot - 1) * Sep
+      for k = Lins.Sole, Count do Length = Length + Len[k] end
+      Lins.FootLen = Length + (Lins.Foot - 1) * Sep
     end
-    Cats.Length = Cats.HeadLen + Cats.FootLen
-  end -- MakeFixedCats
+    Lins.Length = Lins.HeadLen + Lins.FootLen
+  end -- MakeFixedLins
 
 -- Информация об отображаемой части меню.
 function TMenu:DefineZoneInfo () --| Zone
@@ -814,8 +837,8 @@ function TMenu:DefineZoneInfo () --| Zone
       Min = min2(1, ColCount), Max = ColCount,
     } ---
 
-    MakeFixedCats(FixedRows, self.RowHeight, Data.RowSep, RowCount)
-    MakeFixedCats(FixedCols, self.ColWidth,  Data.ColSep, ColCount)
+    MakeFixedLins(FixedRows, self.RowHeight, Data.RowSep, RowCount)
+    MakeFixedLins(FixedCols, self.ColWidth,  Data.ColSep, ColCount)
     self.FixedRows, self.FixedCols = FixedRows, FixedCols
     --logShow({ self.FixedRows, self.FixedRows }, "Fixed")
   --end --
@@ -1113,7 +1136,7 @@ end ----
 -- Количество видимых строк пунктов меню.
 function TMenu:VisibleRowCount (Row, Kind) --> (number, number)
   local self = self
-  return VisibleCatCount[Kind or "Base"](self.RowHeight, self.Data.RowSep,
+  return VisibleLinCount[Kind or "Base"](self.RowHeight, self.Data.RowSep,
                                          self.Zone.Height, Row, self.FixedRows)
 end ----
 
@@ -1121,7 +1144,7 @@ end ----
 -- Количество видимых столбцов пунктов меню.
 function TMenu:VisibleColCount (Col, Kind) --> (number, number)
   local self = self
-  return VisibleCatCount[Kind or "Base"](self.ColWidth,  self.Data.ColSep,
+  return VisibleLinCount[Kind or "Base"](self.ColWidth,  self.Data.ColSep,
                                          self.Zone.Width,  Col, self.FixedCols)
 end ----
 
@@ -1411,11 +1434,11 @@ function TMenu:CellBase (aCell) --| Zone.Base
     Base.Row = Cell.Row -- Верхняя строка
   else                  -- Нижняя  строка:
     local Fixes = self.FixedRows
-    local Cat = self:VisibleRowCount(Cell.Row, "Pike") - Fixes.Count
-    Cat = Cell.Row - Cat + 1
+    local Lin = self:VisibleRowCount(Cell.Row, "Pike") - Fixes.Count
+    Lin = Cell.Row - Lin + 1
     --logShow({ Base, Pike, Cell }, "Row: "..tostring(Row))
-    if Cat > Base.Row then
-      Base.Row = min2(Cat, Pike.Row)
+    if Lin > Base.Row then
+      Base.Row = min2(Lin, Pike.Row)
     end
   end
 
@@ -1423,11 +1446,11 @@ function TMenu:CellBase (aCell) --| Zone.Base
     Base.Col = Cell.Col -- Левый  столбец
   else                  -- Правый столбец:
     local Fixes = self.FixedCols
-    local Cat = self:VisibleColCount(Cell.Col, "Pike") - Fixes.Count
-    Cat = Cell.Col - Cat + 1
+    local Lin = self:VisibleColCount(Cell.Col, "Pike") - Fixes.Count
+    Lin = Cell.Col - Lin + 1
     --logShow({ Base, Pike, Cell }, "Col: "..tostring(Col))
-    if Cat > Base.Col then
-      Base.Col = min2(Cat, Pike.Col)
+    if Lin > Base.Col then
+      Base.Col = min2(Lin, Pike.Col)
     end
   end
   --logShow({ Base, Cell }, "Cells")
@@ -1810,7 +1833,7 @@ end ---- DoKeyPress
 
 ---------------------------------------- ---- Mouse
 
--- Convert mouse cursor position to cat number.
+-- Convert mouse cursor position to line number.
 -- Преобразование позиции курсора мыши в номер ряда.
 --[[
   -- @params:
@@ -1821,7 +1844,7 @@ end ---- DoKeyPress
   Base  (number) - номер ряда-базы для отсчёта с начала.
   Fixes  (table) - данные о фиксированных рядах.
 --]]
-local function MousePosToCat (Len, Sep, Total, Pos, Base, Fixes) --> (number)
+local function MousePosToLin (Len, Sep, Total, Pos, Base, Fixes) --> (number)
   if Pos >= Total then
     return #Len + 1
   end
@@ -1834,10 +1857,10 @@ local function MousePosToCat (Len, Sep, Total, Pos, Base, Fixes) --> (number)
   until k > Count or L > Pos
 
   k = k - 1
-  --logShow({ k, Total, Sep, L, Pos, Len, Base, Fixes }, "MousePosToCat", 2)
+  --logShow({ k, Total, Sep, L, Pos, Len, Base, Fixes }, "MousePosToLin", 2)
 
   return k
-end -- MousePosToCat
+end -- MousePosToLin
 
 --[[
 -- Проверка позиции курсора мыши за областью прокрутки.
@@ -1872,10 +1895,10 @@ function TMenu:MouseBtnClick (hDlg, Input) --> (bool)
   --]]
 
   --[[ -- DEBUG
-  local r = MousePosToCat(self.RowHeight, self.Data.RowSep,
+  local r = MousePosToLin(self.RowHeight, self.Data.RowSep,
                           self.Zone.Height, y,
                           self.Zone.Base.Row, self.FixedRows)
-  local c = MousePosToCat(self.ColWidth,  self.Data.ColSep,
+  local c = MousePosToLin(self.ColWidth,  self.Data.ColSep,
                           self.Zone.Width,  x,
                           self.Zone.Base.Col, self.FixedCols)
   --]]
@@ -1884,10 +1907,10 @@ function TMenu:MouseBtnClick (hDlg, Input) --> (bool)
   local function MouseClickCell (OldCell) --> (table, number, table)
     local self = self
     local bCell = {
-      Row = MousePosToCat(self.RowHeight, self.Data.RowSep,
+      Row = MousePosToLin(self.RowHeight, self.Data.RowSep,
                           self.Zone.Height, y,
                           self.Zone.Base.Row, self.FixedRows),
-      Col = MousePosToCat(self.ColWidth,  self.Data.ColSep,
+      Col = MousePosToLin(self.ColWidth,  self.Data.ColSep,
                           self.Zone.Width,  x,
                           self.Zone.Base.Col, self.FixedCols),
     } ---
@@ -1941,18 +1964,18 @@ end ---- MouseEdgeClick
 
 ---------------------------------------- ---- Scroll
 do
--- Convert scroll position to cat number.
+-- Convert scroll position to line number.
 -- Преобразование позиции прокрутки в номер ряда.
-local function ScrollPosToCat (ALen, Pos, Cats, Bar) --> (number)
-  --logShow({ ALen, Cats }, Pos, 2)
+local function ScrollPosToLin (ALen, Pos, Lins, Bar) --> (number)
+  --logShow({ ALen, Lins }, Pos, 2)
   if ALen == 1 then return 1 end
   --Pos = max2(Pos - max2(bshr(Bar.Len, 1), 1), 0)
-  --return min2(divr( Pos * (Cats.Alter - 1), (ALen - 1) ) +
-  --            Cats.Min, Cats.Max)
+  --return min2(divr( Pos * (Lins.Alter - 1), (ALen - 1) ) +
+  --            Lins.Min, Lins.Max)
 
-  return min2(divr( (Pos - 1) * (Cats.Alter - 1), (ALen - 1) ) +
-              Cats.Min, Cats.Max)
-end -- ScrollPosToCat
+  return min2(divr( (Pos - 1) * (Lins.Alter - 1), (ALen - 1) ) +
+              Lins.Min, Lins.Max)
+end -- ScrollPosToLin
 
 -- Обработка горизонтальной прокрутки.
 function TMenu:ScrollHClick (hDlg, Input)
@@ -1974,7 +1997,7 @@ function TMenu:ScrollHClick (hDlg, Input)
   local function ScrollHCell (OldCell) --> (table, number, table)
     local bCell = {
       Row = OldCell.Row,
-      Col = ScrollPosToCat(Bar.Length, pos, self.FixedCols, Bar),
+      Col = ScrollPosToLin(Bar.Length, pos, self.FixedCols, Bar),
     } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.L or Shifts.R
 
@@ -2004,7 +2027,7 @@ function TMenu:ScrollVClick (hDlg, Input)
   local function ScrollVCell (OldCell) --> (table, number, table)
     local bCell = {
       Col = OldCell.Col,
-      Row = ScrollPosToCat(Bar.Length, pos, self.FixedRows, Bar),
+      Row = ScrollPosToLin(Bar.Length, pos, self.FixedRows, Bar),
     } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.U or Shifts.D
     --logShow({ OldCell, bCell, dCell, Bar, FixRows }, pos)
@@ -2196,7 +2219,7 @@ function TMenu:DrawMenu ()
                      cMin = 1,            cMax = FixCols.Head, }
     self:DrawMenuPart(A_Cell, A_Rect)
   end
-  -- Top catenas part:
+  -- Top lines part:
   if FixRows.Head > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
                      xMin = xMin + xInc,  yMin = yMin,
@@ -2214,7 +2237,7 @@ function TMenu:DrawMenu ()
                      cMin = FixCols.Sole, cMax = FixCols.All, }
     self:DrawMenuPart(A_Cell, A_Rect)
   end
-  -- Left catenas part:
+  -- Left lines part:
   if FixCols.Head > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
                      xMin = xMin,         yMin = yMin + yInc,
@@ -2235,7 +2258,7 @@ function TMenu:DrawMenu ()
   self.Last = RC_cell( self:DrawMenuPart(A_Cell, A_Rect) )
   --logShow(self.Last, "Last viewed cell")
 
-  -- Right catenas part:
+  -- Right lines part:
   if FixCols.Foot > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
                      xMin = xMax - xDec,  yMin = yMin + yInc,
@@ -2253,7 +2276,7 @@ function TMenu:DrawMenu ()
                      cMin = 1,            cMax = FixCols.Head, }
     self:DrawMenuPart(A_Cell, A_Rect)
   end
-  -- Bottom catenas part:
+  -- Bottom lines part:
   if FixRows.Foot > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
                      xMin = xMin + xInc,  yMin = yMax - yDec,
@@ -2370,10 +2393,10 @@ function TMenu:CalcScrollBars () --| ScrollBars
 end ---- CalcScrollBars
 
 -- Расчёт параметров каретки прокрутки.
-local function ScrollCaret (ALen, Cat, Count) --> (Pos, Len, End)
+local function ScrollCaret (ALen, Lin, Count) --> (Pos, Len, End)
   local Len = max2(1, divr(ALen, Count))
-  local Pos = min2(divr(ALen * (Cat - 1), Count) + 1, ALen)
-  --logShow({ ALen, Cat, Count, '-------', Len, Pos, Pos + Len - 1 }, "ScrollCaret")
+  local Pos = min2(divr(ALen * (Lin - 1), Count) + 1, ALen)
+  --logShow({ ALen, Lin, Count, '-------', Len, Pos, Pos + Len - 1 }, "ScrollCaret")
   if Count > 1 then Len = min2(Len, ALen - Pos + 1) end
 
   return Pos, Len, Pos + Len - 1 -- Допустимые значения
@@ -2582,15 +2605,15 @@ function TMenu:DrawDebugInfo ()
   local self = self
   local Color = self.Colors.Debug
 
-  local function DbgText (x, y, text)
-    HText(x, y, Color, text)
+  local function DbgText (x, y, s)
+    HText(x, y, Color, s)
   end --
 
   local DlgRect = self.DlgRect
   local X, Y = DlgRect.Left, DlgRect.Top
 
-  local function DbgDraw (x, y, text)
-    HText(X + x, Y + y, Color, text)
+  local function DbgDraw (x, y, s)
+    HText(X + x, Y + y, Color, s)
   end --
 
   local Zone = self.Zone
@@ -2861,7 +2884,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработка управления клавиатурой и мышью.
   local function DlgCtrlInput (hDlg, ProcItem, Input) --> (bool)
-  
+
     --logShow(Input, "Event", "d1 x8")
     local EventType = Input.EventType
 
