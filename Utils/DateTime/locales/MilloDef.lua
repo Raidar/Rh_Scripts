@@ -4,7 +4,7 @@
 local Data = {
   ----------------------------------------
   Name = "Milleniums",
-  ["Type.Millenium"] = "Milleniumsʼ calendar",
+  ["Type.Millenium"] = "Milleniums` calendar",
 
   ----------------------------------------
   WeekDay = {
