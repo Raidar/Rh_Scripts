@@ -44,6 +44,8 @@ do
 function unit.GetFileName (Name, Args) --> (string | nil, error)
   local FullName = FullNameFmt:format(Args.Base, Args.Path, Name)
   if fexists(FullName) then return FullName end
+  local FullExtName = FullName..".example"
+  if fexists(FullExtName) then return FullExtName end
   local FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
   if Args.LuaExt ~= Args.DefExt then
@@ -127,16 +129,20 @@ function unit.GetFileInnerJoin (Args, Props) --> (table | nil, error)
   local t, isItem = {}
 
   for Name in Args.CurEnum:gmatch("([^;]+)") do -- Цикл по файлам перечня
+    --logShow(Args, Name)
     local FullName = GetFileName(Name, Args)
     --if not FullName then return nil, Msgs.FileNotFound:format(Name) end
+    --if not FullName then FullName = GetFileName(Name..".example", Args) end
     if FullName then
       local u, SError = GetFileData(FullName, nil, Props)
       --if not u then return nil, SError end
+      --logShow(u, FullName)
       if not isItem and u then isItem = true end
       --if Args.DefExt == ".lum" then logShow(u, "GetFileInnerJoin: "..Name, "w d1") end
       MergeTable(t, u, Props)
       --if Args.DefExt == ".lum" then logShow(t, "GetFileInnerJoin: Result", "w d1") end
     end -- if
+
   end -- for Name
 
   if isItem then return t end
@@ -175,16 +181,19 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
 
   if Args.Enum and Args.Enum ~= "" then
     Args.CurEnum = Args.Enum
+    --logShow(Args, "Args")
     --logShow({ Args, Props }, "Args and Props", 2)
     local t, MError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
     --logShow(Args.CurEnum, MError)
+
   else
     MError = "File enum not specified."
   end
 
   if Args.DefEnum and Args.DefEnum ~= "" then
     Args.CurEnum = Args.DefEnum
+    --logShow(Args, "Args")
     --logShow({ Args, Props }, "Args and Props", 2)
     local t, SError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end

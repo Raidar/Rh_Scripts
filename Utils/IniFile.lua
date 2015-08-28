@@ -411,7 +411,9 @@ end -- isLuaFile
 function unit.GetFileData (Name, Table, Props) --> (table | nil, error)
   if not Name then return nil, Msgs.FileNameNotFound end
 
-  if Name:match("%.lua$") or isLuaFile(Name) then
+  if Name:match("%.lua$") or
+     Name:match("%.lua%.example$") or
+     isLuaFile(Name) then
     return unit.GetLuaData(Name, Table, Props)
   else
     return unit.GetIniData(Name, Table, Props)
