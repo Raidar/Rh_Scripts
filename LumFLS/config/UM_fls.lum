@@ -155,10 +155,12 @@ local mPanelFilter = {
   Items = {
     { text = L.flsPanelFilterRun,
       Script = 'panels/panelfilter.lua',
-      ChunkArgs = { 'filter()' }, },
+      ChunkArgs = { 'filter' }, },
+      --ChunkArgs = { 'filter()' }, },
     { text = L.flsPanelFilterDel,
       Script = 'panels/panelfilter.lua',
-      ChunkArgs = { 'delete_filter()' }, },
+      ChunkArgs = { 'delete_filter' }, },
+      --ChunkArgs = { 'delete_filter()' }, },
   },
   Area = "panels",
 } --- mPanelFilter
