@@ -220,7 +220,8 @@ end ---- Function
 -- Execute: lua script (chunk/function).
 -- Выполнение: lua-скрипт (порция/функция).
 function unit.Script (Chunk, Function, ChunkArgs, Args, ...) --> (res [, error])
-  --logShow({ Function, ChunkArgs, FuncArgs, ... }, Chunk)
+  --logShow({ Function, ChunkArgs, Args }, Chunk)
+  --logShow({ Function, ChunkArgs, Args, ... }, Chunk)
 
   if Chunk == nil then -- Выполнение функции.
     return unit.Function(Function, Args, ...)
