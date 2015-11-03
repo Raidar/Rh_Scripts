@@ -292,19 +292,22 @@ TekstChangeSets.SignMaths = {
 -- TekstChangeSets
 ----------------------------------------
 local LiterChangeSets = {
-  CharRusLat    = true,
-  CharLatRus    = true,
+  CharRusLatin  = true,
+  CharLatinRus  = true,
 
   CharLatGreek  = true,
   CharGreekLat  = true,
 
-  GrafRusLat    = true,
-  GrafLatRus    = true,
+  CharRusExplo  = true,
+  CharExploRus  = true,
+
+  GrafRusLatin  = true,
+  GrafLatinRus  = true,
 } -- LiterChangeSets
 unit.LiterChangeSets = LiterChangeSets
 
----------------------------------------- Char
-LiterChangeSets.CharLatRus = {
+---------------------------------------- Latin
+LiterChangeSets.CharLatinRus = {
   -- DO
 
   ["A"] = 'А',
@@ -342,9 +345,9 @@ LiterChangeSets.CharLatRus = {
   ["YU"] = 'Ю', ["Yu"] = 'Ю',
 
   -- END
-} -- CharLatRus
+} -- CharLatinRus
 
-LiterChangeSets.CharRusLat = {
+LiterChangeSets.CharRusLatin = {
   -- DO
 
   ["А"] = 'A',
@@ -382,7 +385,7 @@ LiterChangeSets.CharRusLat = {
   ["Я"] = 'Ya',
 
   -- END
-} -- CharRusLat
+} -- CharRusLatin
 
 ---------------------------------------- Greek
 LiterChangeSets.CharLatGreek = {
@@ -455,8 +458,98 @@ LiterChangeSets.CharGreekLat = {
   -- END
 } -- CharGreekLat
 
+---------------------------------------- Explo
+LiterChangeSets.CharExploRus = {
+  -- DO
+
+  ["A"] = 'А',
+  ["B"] = 'Б',
+  ["C"] = 'Ц',
+  ["D"] = 'Д',
+  ["E"] = 'Э',
+  ["F"] = 'Ф',
+  ["G"] = 'Г',
+  --["H"] = 'Һ',
+  ["H"] = 'Х',
+  --["I"] = 'И',
+  ["I"] = 'Ы',
+  ["J"] = 'Ь',
+  ["K"] = 'К',
+  ["L"] = 'Л',
+  ["M"] = 'М',
+  ["N"] = 'Н',
+  ["O"] = 'О',
+  ["P"] = 'П',
+  ["Q"] = 'Ж',
+  ["R"] = 'Р',
+  ["S"] = 'С',
+  ["T"] = 'Т',
+  ["U"] = 'У',
+  ["V"] = 'В',
+  --["W"] = 'Ӡ',
+  ["W"] = 'ДЗ',
+  ["X"] = 'Ш',
+  ["Y"] = 'Й',
+  ["Z"] = 'З',
+
+  --["KH"] = 'Х', ["Kh"] = 'Х',
+  ["YA"] = 'Я', ["Ya"] = 'Я',
+  ["YE"] = 'Е', ["Ye"] = 'Е',
+  ["YI"] = 'И', ["Yi"] = 'И',
+  ["YO"] = 'Ё', ["Yo"] = 'Ё',
+  ["YU"] = 'Ю', ["Yu"] = 'Ю',
+
+  ["CJ"] = 'Ч', ["Cj"] = 'Ч',
+  ["IJ"] = 'И', ["Ij"] = 'И',
+  ["XJ"] = 'Щ', ["Xj"] = 'Щ',
+
+  -- END
+} -- CharExploRus
+
+LiterChangeSets.CharRusExplo = {
+  -- DO
+
+  ["А"] = 'A',
+  ["Б"] = 'B',
+  ["В"] = 'V',
+  ["Г"] = 'G',
+  ["Д"] = 'D',
+  ["Е"] = 'Ye',
+  ["Ё"] = 'Yo',
+  ["Ж"] = 'Q',
+  ["З"] = 'Z',
+  --["И"] = 'I',
+  ["И"] = 'Ij',
+  ["Й"] = 'Y',
+  ["К"] = 'K',
+  ["Л"] = 'L',
+  ["М"] = 'M',
+  ["Н"] = 'N',
+  ["О"] = 'O',
+  ["П"] = 'P',
+  ["Р"] = 'R',
+  ["С"] = 'S',
+  ["Т"] = 'T',
+  ["У"] = 'U',
+  ["Ф"] = 'F',
+  ["Х"] = 'H',
+  --["Х"] = 'Kh',
+  ["Ц"] = 'C',
+  ["Ч"] = 'Cj',
+  ["Ш"] = 'X',
+  ["Щ"] = 'Xj',
+  ["Ъ"] = '\'',
+  ["Ы"] = 'I',
+  ["Ь"] = '\'',
+  ["Э"] = 'E',
+  ["Ю"] = 'Yu',
+  ["Я"] = 'Ya',
+
+  -- END
+} -- CharRusExplo
+
 ---------------------------------------- Graf
-LiterChangeSets.GrafLatRus = {
+LiterChangeSets.GrafLatinRus = {
   -- DO
 
   ["1"] = 'Т',  ["2"] = '2',
@@ -492,9 +585,9 @@ LiterChangeSets.GrafLatRus = {
   ["Z"] = '2',  ["z"] = '2',
 
   -- END
-} -- GrafLatRus
+} -- GrafLatinRus
 
-LiterChangeSets.GrafRusLat = {
+LiterChangeSets.GrafRusLatin = {
   -- DO
 
   ["1"] = 'I',  ["2"] = 'Z',
@@ -537,12 +630,12 @@ LiterChangeSets.GrafRusLat = {
   ["Я"] = 'R',  ["я"] = 'R',
 
   -- END
-} -- GrafRusLat
+} -- GrafRusLatin
 
 -- LiterChangeSets
 ----------------------------------------
 local CharChangeSets = {
-  -- Tekst
+  -- Tekst:
   SignFixer = true,
   SignTyper = true,
   SignMaths = true,
@@ -551,16 +644,21 @@ local CharChangeSets = {
   SignSuber = true,
   SignRefer = true,
 
-  -- Liter
-  CharLatRus    = true,
-  CharRusLat    = true,
+  -- Liter\Char:
+  CharLatinRus  = true,
+  CharRusLatin  = true,
 
   CharLatGreek  = true,
   CharGreekLat  = true,
-  --
-  GrafLatRus    = true,
-  GrafRusLat    = true,
 
+  CharExploRus  = true,
+  CharRusExplo  = true,
+
+  -- Liter\Graf:
+  GrafLatinRus  = true,
+  GrafRusLatin  = true,
+
+  -- -- --
   Tekst = TekstChangeSets,
   Liter = LiterChangeSets,
 } --- CharChangeSets
@@ -667,20 +765,28 @@ local function GroupChangeSets (Base, Kind)
 end -- GroupChangeSets
 unit.GroupChangeSets = GroupChangeSets
 
+-- Tekst:
 GroupChangeSets("Tekst", "SignFixer")
 GroupChangeSets("Tekst", "SignTyper")
 GroupChangeSets("Tekst", "SignMaths")
 
-WidenChangeSets("Liter", "CharLatRus")
-GroupChangeSets("Liter", "CharLatRus")
-WidenChangeSets("Liter", "CharRusLat")
-GroupChangeSets("Liter", "CharRusLat")
+-- Liter\Char:
+WidenChangeSets("Liter", "CharLatinRus")
+GroupChangeSets("Liter", "CharLatinRus")
+WidenChangeSets("Liter", "CharRusLatin")
+GroupChangeSets("Liter", "CharRusLatin")
 
 WidenChangeSets("Liter", "CharLatGreek")
 GroupChangeSets("Liter", "CharLatGreek")
 
-GroupChangeSets("Liter", "GrafLatRus")
-GroupChangeSets("Liter", "GrafRusLat")
+WidenChangeSets("Liter", "CharExploRus")
+GroupChangeSets("Liter", "CharExploRus")
+WidenChangeSets("Liter", "CharRusExplo")
+GroupChangeSets("Liter", "CharRusExplo")
+
+-- Liter\Graf:
+GroupChangeSets("Liter", "GrafLatinRus")
+GroupChangeSets("Liter", "GrafRusLatin")
 
 end -- do
 
@@ -697,18 +803,24 @@ local Actions = {
            end
   end, -- default
 
+  -- Tekst:
   SignFixer     = false,
   SignTyper     = false,
   SignMaths     = false,
 
-  CharLatRus    = false,
-  CharRusLat    = false,
+  -- Liter\Char:
+  CharLatinRus  = false,
+  CharRusLatin  = false,
 
   CharLatGreek  = false,
   CharGreekLat  = false,
+  
+  CharExploRus  = false,
+  CharRusExplo  = false,
 
-  GrafLatRus    = false,
-  GrafRusLat    = false,
+  -- Liter\Graf:
+  GrafLatinRus  = false,
+  GrafRusLatin  = false,
 
 } --- Actions
 unit.Actions = Actions
@@ -789,20 +901,24 @@ Menus.ChangeChar = {
   Items = {
     { text = L.CharChar,
       separator = true, },
-    { text = L.CharLatRus,
-      Function = Execute"CharLatRus", },
-    { text = L.CharRusLat,
-      Function = Execute"CharRusLat", },
+    { text = L.CharLatinRus,
+      Function = Execute"CharLatinRus", },
+    { text = L.CharRusLatin,
+      Function = Execute"CharRusLatin", },
     { text = L.CharLatGreek,
       Function = Execute"CharLatGreek", },
     { text = L.CharGreekLat,
       Function = Execute"CharGreekLat", },
+    { text = L.CharExploRus,
+      Function = Execute"CharExploRus", },
+    { text = L.CharRusExplo,
+      Function = Execute"CharRusExplo", },
     { text = L.CharGraf,
       separator = true, },
-    { text = L.GrafLatRus,
-      Function = Execute"GrafLatRus", },
-    { text = L.GrafRusLat,
-      Function = Execute"GrafRusLat", },
+    { text = L.GrafLatinRus,
+      Function = Execute"GrafLatinRus", },
+    { text = L.GrafRusLatin,
+      Function = Execute"GrafRusLatin", },
   } ---
 } --- ChangeChar
 

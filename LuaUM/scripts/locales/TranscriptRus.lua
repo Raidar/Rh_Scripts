@@ -17,13 +17,15 @@ local Data = {
 
   ChangeChar      = "&X - Транскрибирование",
     CharChar      = "Транслитерация",
-      CharLatRus    = "Lat -> Rus",
-      CharRusLat    = "Rus -> Lat",
-      CharLatGreek  = "Lat -> Greek",
-      CharGreekLat  = "Greek -> Lat",
+      CharLatinRus  = "Latin -> Rus",
+      CharRusLatin  = "Rus   -> Latin",
+      CharLatGreek  = "Latin -> Greek",
+      CharGreekLat  = "Greek -> Latin",
+      CharExploRus  = "Explo -> Rus",
+      CharRusExplo  = "Rus   -> Explo",
     CharGraf      = "Трансграфика",
-      GrafLatRus    = "Lat -> Rus",
-      GrafRusLat    = "Rus -> Lat",
+      GrafLatinRus  = "Latin -> Rus",
+      GrafRusLatin  = "Rus   -> Latin",
 
   ----------------------------------------
 } --- Data
