@@ -174,16 +174,16 @@ Liter   -- Строки букв
 
     Binal_A = {
       --j = 'j', y = 'y', -- cedilla
-      j = 'j', y = 'ẏ', -- dot
-      j = 'j', y = 'ƴ', -- hook
-      j = 'ǰ', y = 'y', -- caron
-      j = 'j', y = 'y', -- acute
-      j = 'ɉ', y = 'ɏ', -- stroke
+      --j = 'j', y = 'ẏ', -- dot
+      --j = 'j', y = 'ƴ', -- hook
+      --j = 'ǰ', y = 'y', -- caron
+      --j = 'j', y = 'y', -- acute
+      --j = 'ɉ', y = 'ɏ', -- stroke
       j = 'ĵ', y = 'ŷ', -- circumflex
       --j = 'j', y = 'y',
     },
 
-    Konal_B_Cj = { -- mixed
+    Konal_Cj = { -- mixed
       -- hook: ʋ
       -- acute: l, r, m, n
       -- stroke: b, d, q, p
