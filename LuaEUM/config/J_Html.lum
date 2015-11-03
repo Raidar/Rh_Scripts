@@ -119,13 +119,21 @@ local function ParamTag (tag, param, rest, block) --> (macro)
 end -- ParamTag
 
 ---------------------------------------- Lines
---local format = string.format
+--local substr = string.sub
+local format = string.format
 
-local line_len = 78
+local line_lim = 80
+--local line_len = line_lim - 2
+--local link_len = line_lim - 4
+local note_len = line_lim - 7
+local spec_len = line_lim - 7
+--local line_fmt = "--%s"
+--local link_fmt = "--%s--"
 local note_fmt = "<!--%s-->"
-local line_hymin = format(note_fmt, ('-'):rep(line_len - 5))
-local line_equal = format(note_fmt, ('='):rep(line_len - 5))
-local line_stars = format(note_fmt, ('*'):rep(line_len - 5))
+local spec_fmt = "<!--%s-->"
+local l_hymin = ('-'):rep(line_lim)
+local l_equal = ('='):rep(line_lim)
+local l_stars = ('*'):rep(line_lim)
 
 ---------------------------------------- ----
 local mInsert = {
@@ -156,19 +164,19 @@ local mInsert = {
     { text = "Shift+<a>", Label = true },
     { text = " Ctrl+<a>", Label = true },
     { text = " Alt+<a> ", Label = true },
-    -- - -- ???
+    -- - -- comment
     { text = "-", Label = true },
-    { text = "<!----->",
-      Plain = line_hymin,
+    { text = "<!------->",
+      Plain = format(note_fmt, l_hymin:sub(1, note_len)),
       AccelStr = "-" },
-    { text = "<!--=-->",
-      Plain = line_equal,
+    { text = "<!--===-->",
+      Plain = format(note_fmt, l_equal:sub(1, note_len)),
       AccelStr = "S+-" },
-    { text = "<!--  -->",
+    { text = "<!-- r -->",
       Macro = "<!--  -->@Left@4",
       AccelStr = "C+-" },
-    { text = "<!--*-->",
-      Plain = line_stars,
+    { text = "<!--***-->",
+      Plain = format(spec_fmt, l_stars:sub(1, spec_len)),
       AccelStr = "A+-" },
     -- A -- anchor
     { text = "A", Label = true },

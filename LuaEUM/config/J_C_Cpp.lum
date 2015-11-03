@@ -27,18 +27,25 @@ if L == nil then
 end
 
 ---------------------------------------- Lines
+--local substr = string.sub
 local format = string.format
 
-local line_len = 78
-local note_fmt = "//%s"
-local spec_fmt = "/%s/"
-local line_hymin = format(note_fmt, ('-'):rep(line_len))
-local line_equal = format(note_fmt, ('='):rep(line_len))
---local line_stars = format(note_fmt, ('*'):rep(line_len))
-local line_stars = format(spec_fmt, ('*'):rep(line_len))
+local line_lim = 80
+local line_len = line_lim - 2
+local link_len = line_lim - 4
+--local note_len = line_lim - 2
+local spec_len = line_lim - 4
+local line_fmt = "//%s"
+local link_fmt = "//%s//"
+--local note_fmt = "{%s}"
+local spec_fmt = "/*%s*/"
+local l_hymin = ('-'):rep(line_lim)
+local l_equal = ('='):rep(line_lim)
+local l_stars = ('*'):rep(line_lim)
 
 ---------------------------------------- ----
 -- TODO: Add #ifdef 0 ... #endif
+-- TODO: Add #region 0 ... #endregion
 local mInsert = {
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
@@ -67,20 +74,34 @@ local mInsert = {
     { text = "Shift+<a>", Label = true },
     { text = " Ctrl+<a>", Label = true },
     { text = " Alt+<a> ", Label = true },
-    -- - -- ???
+    -- - -- line comment
     { text = "-", Label = true },
-    { text = "//----",
-      Plain = line_hymin,
+    { text = "//-----//",
+      Plain = format(link_fmt, l_hymin:sub(1, link_len)),
       AccelStr = "-" },
-    { text = "//====",
-      Plain = line_equal,
+    { text = "//=====//",
+      Plain = format(link_fmt, l_equal:sub(1, link_len)),
       AccelStr = "S+-" },
-    { text = "/* block */",
-      Macro = "/*  */@Left@3",
+    { text = "// row //",
+      Macro = "//  //@Left@3",
       AccelStr = "C+-" },
-    { text = "/******/",
-      Plain = line_stars,
+    { text = "//*****//",
+      Plain = format(link_fmt, l_stars:sub(1, link_len)),
       AccelStr = "A+-" },
+    -- = -- block comment
+    { text = "=", Label = true },
+    { text = "//-------",
+      Plain = format(line_fmt, l_hymin:sub(1, line_len)),
+      AccelStr = "=" },
+    { text = "//=======",
+      Plain = format(line_fmt, l_equal:sub(1, line_len)),
+      AccelStr = "S+=" },
+    { text = "/* rem */",
+      Macro = "/*  */@Left@3",
+      AccelStr = "C+=" },
+    { text = "/*******/",
+      Plain = format(spec_fmt, l_stars:sub(1, spec_len)),
+      AccelStr = "A+=" },
     -- B -- block / do-while / break
     { text = "B", Label = true },
     { text = "block",
