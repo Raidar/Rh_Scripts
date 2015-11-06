@@ -1702,7 +1702,31 @@ local UnhotSKeys = {
   [""]      = true,
   [" "]     = true,
   ["Space"] = true,
-} ---
+} --- UnhotSKeys
+
+local AccelSKeys = {
+  ["Shift`"]    = "~",
+  ["Shift1"]    = "!",
+  ["Shift2"]    = "@",
+  ["Shift3"]    = "#",
+  ["Shift4"]    = "$",
+  ["Shift5"]    = "%",
+  ["Shift6"]    = "^",
+  ["Shift7"]    = "&",
+  ["Shift8"]    = "*",
+  ["Shift9"]    = "(",
+  ["Shift0"]    = ")",
+  ["Shift-"]    = "_",
+  ["Shift="]    = "+",
+  ["Shift["]    = "{",
+  ["Shift]"]    = "}",
+  ["Shift;"]    = ":",
+  ["Shift'"]    = '"',
+  ["Shift,"]    = "<",
+  ["Shift."]    = ">",
+  ["Shift\\"]   = "|",
+  ["Shift/"]    = "?",
+} --- AccelSKeys
 
 -- Обработка быстрых клавиш в меню.
 function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
@@ -1712,6 +1736,7 @@ function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
   if RM.NoRapidKey then return end -- TODO: --> Doc!
 
   local StrKey = Input.Name
+  if (StrKey or "") == "" then return end -- No normal key
   --logShow(Input, StrKey)
 
   -- 1. Обработка AccelKeys.
@@ -1732,13 +1757,20 @@ function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
     --logShow({ Input, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
     if SKey and not UnhotSKeys[SKey] then
       local Index = self.HKeys:cfind(SKey, 1, true)
-      local VName = Input.KeyName
-      --logShow({ Index, VName, self.HKeys }, tostring(SKey), "d1 xv8")
-      if not Index and VName:len() == 1 then
-        -- Использование латинской буквы
-        SKey = VName:upper()
-        if SKey and SKey ~= "" then
-          Index = self.HKeys:cfind(SKey, 1, true)
+      --logShow({ Index, self.HKeys }, tostring(SKey), "d1 xv8")
+      if not Index then
+        local VName = StrKey --Input.Name
+        if VName:len() ~= 1 then VName = AccelSKeys[VName] end
+        if not VName then VName = Input.KeyName end
+        --if not VName or VName:len() ~= 1 then VName = Input.KeyName end
+
+        --logShow({ Index, VName, self.HKeys }, tostring(SKey), "d1 xv8")
+        if VName:len() == 1 then
+          -- Использование латинской буквы
+          SKey = VName:upper()
+          if SKey and SKey ~= "" then
+            Index = self.HKeys:cfind(SKey, 1, true)
+          end
         end
       end
       --logShow(self.HKeys, "HKeys : "..tostring(SKey).." at "..tostring(Index), "d1 xv8")
@@ -2977,6 +3009,10 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   if useprofiler then profiler.stop() end
 
   if TMenu:isShow(ShowMenu) then
+    --logShow("Show", "Menu")
+    --local res = _Menu:Show(DlgProc) -- Отображение окна диалога меню
+    --logShow(res, "Menu")
+    --return res
     return _Menu:Show(DlgProc) -- Отображение окна диалога меню
   end
 
