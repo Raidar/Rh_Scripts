@@ -57,14 +57,14 @@ unit.KitGroups = {
 
 -- Данные о наборах.
 unit.KitsData = {
-  CharacterMap  = { Group = "All",   Hot = "_", text = 0, Title = 0, },
+  CharacterMap  = { Group = "All",   Hot = "*", text = 0, Title = 0, },
   Chars_Greeks  = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
   MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, },
   MathsScripts  = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
   --MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
   PunctSymbols  = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
-  Punct_Spaces  = { Group = "Punct", Hot = " ", text = 0, Title = 0, },
+  Punct_Spaces  = { Group = "Punct", Hot = "~", text = 0, Title = 0, },
   Techs_Arrows  = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
   Draws_Boxing  = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
 } -- KitsData
@@ -513,24 +513,31 @@ function unit.Punct_Spaces ()
   if Menu then return Menu end
 
   local Order = {
-    { '   " "', ' ', 'Multiply', }, { ' "-"/Num-', '-', 'Subtract', },
-    { '   "`"', '`', 'Divide',   }, { ' "="/Num+', '=', 'Add',      },
-    --{ '   " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
-    --{ '   "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
+    { '     " "', ' ', }, { ' "-"/Num-', '-', 'Subtract', },
+    { '     "`"', '`', }, { ' "="/Num+', '=', 'Add',      },
+    --{ '     " "', ' ', 'Multiply', }, { ' "-"/Num-', '-', 'Subtract', },
+    --{ '     "`"', '`', 'Divide',   }, { ' "="/Num+', '=', 'Add',      },
+    --{ '     " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
+    --{ '     "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
+    { '     "1"', '1'  }, { '   Num*  ', '=', 'Multiply', },
   } ---
 
   local Datas = {
-    { ' ', 'Thin sp.',    }, { '­', 'Soft hyph.', },
-    { ' ', 'Fig. space ', }, { '‒', 'Fig. dash',  },
+    { ' ', 'Thin space ', }, { '­', 'Soft hyphen', },
+    { ' ', 'Figure spc ', }, { '‒', 'Figure dash', },
+    { ' ', 'Em/3 space ', }, { ' ', ' Math space', },
 
-    { ' ', 'En space',    }, { '–', ' En dash  ', },
-    { ' ', 'Punct. sp. ', }, { '−', '  Minus  ',  },
-
-    { ' ', 'Em space',    }, { '—', ' Em dash  ', },
-    { ' ', 'Hair space ', }, { '‐', ' Hyphen  ',  },
-
-    { ' ', 'N-b. sp.',    }, { '‑', 'N-b. hyph.', },
-    { ' ', 'Narrow nbsp', }, { '‧', 'Hyph. pt.',  },
+    { ' ', ' En  space ', }, { '–', '  En dash  ', },
+    { ' ', 'Punct.space', }, { '−', '   Minus   ', },
+    { ' ', 'Em/4 space ', }, { ' ', '           ', },
+                                     
+    { ' ', ' Em  space ', }, { '—', '  Em dash  ', },
+    { ' ', 'Hair space ', }, { '‐', '  Hyphen   ', },
+    { ' ', 'Em/6 space ', }, { ' ', '           ', },
+                                     
+    { ' ', 'N-b. space ', }, { '‑', 'N-b. hyphen', },
+    { ' ', 'Narrow nbsp', }, { '‧', 'Hyphen. pt.', },
+    { ' ', '           ', }, { '​', 'Zero w. sp.', },
 
     --[[
     { '',  '        ',    }, { '_', '          ', },
@@ -586,8 +593,8 @@ function unit.MakeMenu ()
       { text = gL.Punct, separator = true, },
       unit.PunctSymbols, unit.Punct_Spaces,
 
-      { separator = true, },
-      unit.CharacterMap,
+      --{ separator = true, },
+      --unit.CharacterMap,
     }, -- Items
 
   } ----
