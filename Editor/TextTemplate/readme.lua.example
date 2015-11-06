@@ -620,7 +620,7 @@ List.LocOpusFaktor = {
   ["Кпг"] = "Комп. граф",
   ["Кпп"] = "Комп. подг",
   ["Кпв"] = "Комп. вёр",
-  ["Озв"] = "Отв. за вып",
+  ["Озв"] = "Отв. за вып",
 } -- LocOpusFaktor
 Find.LocOpusFaktor = {
   find = "[ёЁ](%a-)$",
@@ -785,18 +785,18 @@ Find.LocEditFile = { Find.DefEditFile, false, true }
 ---------------------------------------- Illustrations
 -- Иллюстрации.
 List.DefEditIll = {
-  ["b"] = "Bibl. @Here tit.@Back",
-  ["f"] = "Ill.: @Here fig.@Back",
-  ["t"] = "Ill.: @Here tab.@Back",
-  ["i"] = "Ill.: @Here fig.,  tab.@Back",
-  ["l"] = "Ill.: @Here fig.,  tab.- Bibl.:  tit.@Back",
+  ["b"] = "Bibl. @Here tit.@Back",
+  ["f"] = "Ill.: @Here fig.@Back",
+  ["t"] = "Ill.: @Here tab.@Back",
+  ["i"] = "Ill.: @Here fig., tab.@Back",
+  ["l"] = "Ill.: @Here fig., tab.- Bibl.: tit.@Back",
 } -- DefEditIll
 List.LocEditIll = {
-  ["б"] = "Библ.: @Here назв.@Back",
-  ["р"] = "Илл.: @Here рис.@Back",
-  ["т"] = "Илл.: @Here табл.@Back",
-  ["и"] = "Илл.: @Here рис.,  табл.@Back",
-  ["л"] = "Илл.: @Here рис.,  табл.- Библ.:  назв.@Back",
+  ["б"] = "Библ.: @Here назв.@Back",
+  ["р"] = "Илл.: @Here рис.@Back",
+  ["т"] = "Илл.: @Here табл.@Back",
+  ["и"] = "Илл.: @Here рис., табл.@Back",
+  ["л"] = "Илл.: @Here рис., табл.- Библ.: назв.@Back",
 } -- LocEditIll
 Find.DefEditIll = { find = "`il(%a)$", data = List.DefEditIll }
 Find.LocEditIll = { find = "ёил(%a)$", data = List.LocEditIll }
@@ -980,7 +980,7 @@ Find.LocJuraAbr = { Find.DefJuraAbr, false, true }
 -- Простые названия:
 List.DefCapitulum = {
   Cnt  = "Contents",
-  --Tocs = "Table of contents",
+  --Tocs = "Table of contents",
   Desc = "Description",
   Abs  = "Abstract",
   --Frag = "Fragment",
@@ -1063,7 +1063,7 @@ List.LocCapitulum = {
   ['Стт']  = [[
 Авантитул (1)
 Титул оригинала (2)
-Сведения об издании (2)
+Сведения об издании (2)
 ]],
   ['Тто']  = "Титул оригинала", -- Титул на языке подлинника
   ['Огл']  = "Оглавление",
@@ -1203,7 +1203,7 @@ Find.LocCapitAbFaktor = {
   find = "ёОт(%a-)$",
   cvtfind = Lower,
   data = List.LocGenFaktor,
-  format = "От %s",
+  format = "От %s",
 }
 Find.LocCapitPraefo = {
   find = "ёПре(%a-)$",
@@ -1286,7 +1286,7 @@ Find.LocCapitDeFaktor = {
     format = "О %s",
   },
   { data = List.LocAnsFactoz,
-    format = "Об %s",
+    format = "Об %s",
   },
 } --
 Find.LocCapitInformae = {
@@ -1296,7 +1296,7 @@ Find.LocCapitInformae = {
     format = "Сведения о %s"
   },
   { data = List.LocAnsFactoz,
-    format = "Сведения об %s",
+    format = "Сведения об %s",
   },
 } --
 
@@ -1310,7 +1310,7 @@ List.LocGenCapitum = {
 Find.LocCapitDeCapit = {
   find = "ёИз(%a-)$",
   data = List.LocGenCapitum,
-  format = "Из %s",
+  format = "Из %s",
   cvtfind = Lower,
 }
 Find.LocCapitLoCapit = {
@@ -1575,10 +1575,10 @@ Find.LocPublicMoscow = {
 
 -- Редакции издательств:
 List.LocRedactNomen = {
-  ["ЛБ"]  = " лит. по биологии.",
-  ["ЛМН"] = " лит. по мат. наукам.",
-  ["ЛФ"]  = " лит. по физике.",
-  ["ЛХ"]  = " лит. по химии.",
+  ["ЛБ"]  = " лит. по биологии.",
+  ["ЛМН"] = " лит. по мат. наукам.",
+  ["ЛФ"]  = " лит. по физике.",
+  ["ЛХ"]  = " лит. по химии.",
   -------
   ["КЛ"]  = " киберн. лит.",
   ["МЛ"]  = " мат. лит.",
@@ -1588,11 +1588,11 @@ List.LocRedactNomen = {
   ["ФЛ"]  = " физ. лит.",
   ["ХЛ"]  = " хим. лит.",
   -------
-  ["ВТ"] = " лит. по выч. техн.",
-  ["НТ"] = " лит. по нов. техн.",
-  ["МН"] = " лит. по мат. наукам.",
-  ["ИЭ"] = " лит. по информатике и электронике.",
-  ["ФА"] = " лит. по физике и астрономии.",
+  ["ВТ"] = " лит. по выч. техн.",
+  ["НТ"] = " лит. по нов. техн.",
+  ["МН"] = " лит. по мат. наукам.",
+  ["ИЭ"] = " лит. по информатике и электронике.",
+  ["ФА"] = " лит. по физике и астрономии.",
   ["КАГ"] = " косм. иссл., астрономии и геофизики.",
   ["НПФ"] = " науч.‑попул. и науч.‑фантаст. лит.",
   ["НПЮ"] = " науч.‑попул. и юношеск. лит.",
@@ -1607,10 +1607,10 @@ List.LocRedactNomen = {
   ["ФТЛ"] = " физ.‑техн. лит.",
   ["ХТЛ"] = " хим.‑техн. лит.",
   -------
-  ["ИВТ"] = " лит. по информатике и выч. техн.",
-  ["ИНТ"] = " лит. по информатике и нов. техн.",
-  ["ИРТ"] = " лит. по информатике и робототехн.",
-  ["КВТ"] = " лит. по кибернетике и выч. техн.",
+  ["ИВТ"] = " лит. по информатике и выч. техн.",
+  ["ИНТ"] = " лит. по информатике и нов. техн.",
+  ["ИРТ"] = " лит. по информатике и робототехн.",
+  ["КВТ"] = " лит. по кибернетике и выч. техн.",
   -------
   ["БСД"] = " языков Ближн., Средн. и Дальн. Востока.",
 } -- LocRedactNomen
@@ -1637,8 +1637,8 @@ List.LocInstitNomen = {
   ["МОС"]  = "Министерство образования СССР.",
   ["МОН"]  = "Министерство образования и науки РФ.",
   --------
-  ["АНС"]  = "Академия наук СССР (АН СССР).",
-  ["АПНС"] = "Академия педагогических наук СССР (АПН СССР).",
+  ["АНС"]  = "Академия наук СССР (АН СССР).",
+  ["АПНС"] = "Академия педагогических наук СССР (АПН СССР).",
   ["РАН"]  = "Российская академия наук (РАН).",
   ["СО"]   = "Сибирское отделение (СО).",
   ["ДВО"]  = "Дальневосточное отделение (ДВО).",
@@ -1861,9 +1861,9 @@ local Data = {
   { find = "`cpa",  macro = "Copia: @Here ex.@Back",        regex = false },        -- `cpa
   { find = "ётир",  macro = "Тираж: @Here экз.@Back",       regex = false },        -- ётир
   { find = "ётид",  macro = "Тираж: доп. @Here экз.@Back",  regex = false },        -- ётид
-  { find = "ётт(%d)",           macro = "Тираж: %1@Here000 экз.@Back" },            -- ёттⁿ
+  { find = "ётт(%d)",           macro = "Тираж: %1@Here 000 экз.@Back" },            -- ёттⁿ
   { find = "ёттт(%d)",          macro = "Тираж: %1@Here00 экз.@Back" },             -- ётттⁿ
-  { find = "ёт(%d+)т",          macro = "Тираж: %1 @Here000 экз.@Back" },           -- ётⁿⁿт
+  { find = "ёт(%d+)т",          macro = "Тираж: %1 @Here000 экз.@Back" },           -- ётⁿⁿт
   -- Формат: 60¤84/16.
   { find = "`fmt",              macro = "Format: @Here×/.@Back",  regex = false },  -- `fmt
   { find = "ёфмт",              macro = "Формат: @Here×/.@Back",  regex = false },  -- ёфмт
@@ -1904,8 +1904,8 @@ local Data = {
   { find = "```"..alat,         apply = MakeTPL, param  = Find.DefJuraAbr },        -- ```∀
   { find = "ёёё"..arus,         apply = MakeTPL, params = Find.LocJuraAbr },        -- ёёё∀
                             -- TODO: Реализовать общий шаблон.
-  { find = "ёиря",              plain = "изд. на рус. яз.", regex = false },        -- ёиря
-  { find = "ёпря",              plain = "пер. на рус. яз.", regex = false },        -- ёпря
+  { find = "ёиря",              plain = "изд. на рус. яз.", regex = false },        -- ёиря
+  { find = "ёпря",              plain = "пер. на рус. яз.", regex = false },        -- ёпря
 
   --[[Info]]-- Информация:
   { find = "`h`",               macro = "http:///@Left",    regex = false },        -- `h`
@@ -1927,7 +1927,7 @@ local Data = {
   --[[Kont]]-- Содержание:
   -- Текст сноски:
   { find = "ёёнум", regex = false,
-    plain = "* Нумерация страниц по эл. изд." },                                    -- ёёнум
+    plain = "* Нумерация страниц по эл. изд." },                                    -- ёёнум
   { find = "ёёстр", regex = false,
     macro = "* #. Название (Стр. книги/главы/задач/упражнений /@Enter"..
             "Стр. комментариев/ответов/указаний/решений)" },                        -- ёёстр
@@ -1943,7 +1943,7 @@ local Data = {
   { find = "ё"..les.t4ruq,      apply = MakeTPL, param  = Find.LocCapitulum },      -- ё∆∂∂∂
   { find = "ёКр"..les.t4ruq,    apply = MakeTPL, param  = Find.LocBrevisCapit },    -- ёКр∆∂∂
   { find = "ёКЧит",             plain = "К читателю",       regex = false },        -- ёКЧит
-  { find = "`PreTE", macro = "Preface to @Here Edition@Back",    regex = false },   -- `PreTE
+  { find = "`PreTE", macro = "Preface to @Here Edition@Back",    regex = false },   -- `PreTE
   { find = "ёПреКИ", macro = "Предисловие к @Here изданию@Back", regex = false },   -- ёПреКИ
   { find = "ёПреК%d",           apply = MakeTPL, param  = Find.LocCapitPraeNum },   -- ёПреКⁿ
   { find = "ёПреК"..lrus,       apply = MakeTPL, param  = Find.LocCapitPraeLang },  -- ёПреК∂
