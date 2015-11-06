@@ -226,6 +226,7 @@ TekstChangeSets.SignMaths = {
   -- Индексы:
     -- верхние:
   ['^a'] = 'ᵃ',
+  ['^d'] = 'ᵈ',
   ['^h'] = 'ʰ',
   ['^i'] = 'ⁱ', ['^j'] = 'ʲ', ['^k'] = 'ᵏ',
   ['^l'] = 'ˡ', ['^m'] = 'ᵐ', ['^n'] = 'ⁿ',
@@ -666,7 +667,7 @@ unit.CharChangeSets = CharChangeSets
 
 CharChangeSets.SignSuper = {
   a     = 'ᵃ', b     = 'ᵇ', c     = 'ᶜ',
-  e     = 'ᵉ',
+  d     = 'ᵈ', e     = 'ᵉ',
   h     = 'ʰ',
   i     = 'ⁱ', j     = 'ʲ', k     = 'ᵏ',
   l     = 'ˡ', m     = 'ᵐ', n     = 'ⁿ',
