@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Dialog to edit of date/time shift for subtitles.
-  -- Диалог для правки сдвига даты/времени для субтитров.
+  -- Dialog to edit of date/time shift for subtitles.
+  -- Диалог для правки сдвига даты/времени для субтитров.
 --]]
 ----------------------------------------
 --[[ uses:

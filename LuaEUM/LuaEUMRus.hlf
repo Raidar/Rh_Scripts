@@ -1,12 +1,12 @@
 ﻿.Language=Russian,Russian (Русский)
-.PluginContents=Lua User Menu для Редактора
+.PluginContents=Lua User Menu для Редактора
 .Options TabSize=4
 .Options CtrlColorChar=\
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Пользовательское меню Lua для Редактора# (~LuaEUM~)
-  LuaEUM — вариант утилиты LUM, предназначенный для работы в редакторе FAR.
+$ #Пользовательское меню Lua для Редактора# (~LuaEUM~)
+  LuaEUM — вариант утилиты LUM, предназначенный для работы в редакторе FAR.
 
     ~Пункты меню~@LUM_Items@
     ~Файлы утилиты~@LUM_Files@
@@ -37,12 +37,13 @@ $ #Файлы утилиты#: LuaEUM
 $ #Вставка шаблона#: LuaEUM
   Меню "Вставка шаблона" позволяет вставлять стандартные шаблоны текста.
 
-  Рекомендуемая схема назначения шаблонов на клавиши:
+  Рекомендуемая схема назначения шаблонов на клавиши:
 
  \37─\-─┬───────────────┬───────────────┬───────────────┬───────────────┬─
  \37╲ │     <a>       │   Shift+<a>   │   Ctrl+<a>    │   Alt+<a>     │\-
  \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
- \37-\- │ --comment--   │ ==comment==   │ block comment │ **comment**   │
+ \37-\- │ -- comment    │ == comment    │ block comment │ ** comment ** │
+ \37=\- │ -- comment -- │ == comment == │ block comment │ ** comment ** │
  \37A\- │ ?             │ ?             │ ?             │ ?             │
  \37B\- │ block         │ full block    │ repeat-until  │ break         │
  \37 \- │               │               │ do-while      │               │

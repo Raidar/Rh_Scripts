@@ -6,7 +6,7 @@
 
 @Contents
 $ #Scripts samples#
-  Scripts samples are scripts to demonstrate some features of LuaFAR.
+  Scripts samples are scripts to demonstrate some features of LuaFAR.
 
     ~Script files~@Smp_ScriptFiles@
 
@@ -18,7 +18,7 @@ $ #Scripts samples#
 
 @Smp_ScriptFiles
 $ #Script files#: Scripts samples
-    \37GenGUIDs.lua\-   — ¦GUID generation and insert to current editor.
-    \37KeysInfo.lua\-   — ¦Information on keys (InputRecord fields).
+    \37GenGUIDs.lua\-   — ¦GUID generation and insert to current editor.
+    \37KeysInfo.lua\-   — ¦Information on keys (InputRecord fields).
 
  ~Contents~@Contents@

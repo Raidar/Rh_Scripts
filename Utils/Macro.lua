@@ -2,7 +2,7 @@
 
 ----------------------------------------
 --[[ description:
-  -- Working with macro‑templates.
+  -- Working with macro‑templates.
   -- Работа с макросами‑шаблонами.
 --]]
 ----------------------------------------

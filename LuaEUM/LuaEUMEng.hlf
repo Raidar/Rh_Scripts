@@ -1,12 +1,12 @@
 ﻿.Language=English,English
-.PluginContents=Lua User Menu for Editor
+.PluginContents=Lua User Menu for Editor
 .Options TabSize=4
 .Options CtrlColorChar=\
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Lua User Menu for Editor# (~LuaEUM~)
-  LuaEUM is a variant of LUM utility, used to work in FAR editor.
+$ #Lua User Menu for Editor# (~LuaEUM~)
+  LuaEUM is a variant of LUM utility, used to work in FAR editor.
 
     ~Menu items~@LUM_Items@
     ~Files of utility~@LUM_Files@
@@ -21,7 +21,7 @@ $ #Lua User Menu for Editor# (~LuaEUM~)
 @LUM_Items
 $ #Menu items#: LuaEUM
   Submenus:
-    ~Template insert~@LUM_TplIns@ — ¦insert standard templates of text.
+    ~Template insert~@LUM_TplIns@ — ¦insert standard templates of text.
 
  ~Contents~@Contents@
 
@@ -35,14 +35,15 @@ $ #Files of utility#: LuaEUM
 
 @LUM_TplIns
 $ #Template insert#: LuaEUM
-  A "Template insert" menu allows to insert standard templates of text.
+  A "Template insert" menu allows to insert standard templates of text.
 
-  A recommended scheme for binding templates to keys is:
+  A recommended scheme for binding templates to keys is:
 
  \37─\-─┬───────────────┬───────────────┬───────────────┬───────────────┬─
  \37╲ │     <a>       │   Shift+<a>   │   Ctrl+<a>    │   Alt+<a>     │\-
  \37─\-─┼───────────────┼───────────────┼───────────────┼───────────────┼─
- \37-\- │ --comment--   │ ==comment==   │ block comment │ **comment**   │
+ \37-\- │ -- comment    │ == comment    │ block comment │ ** comment ** │
+ \37=\- │ -- comment -- │ == comment == │ block comment │ ** comment ** │
  \37A\- │ ?             │ ?             │ ?             │ ?             │
  \37B\- │ block         │ full block    │ repeat-until  │ break         │
  \37 \- │               │               │ do-while      │               │

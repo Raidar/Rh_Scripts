@@ -6,7 +6,7 @@
 
 @Contents
 $ #Utility scripts#
-  Utility scripts are a set of scripts for use in scripts and utilities.
+  Utility scripts are a set of scripts for use in scripts and utilities.
 
     ~Script files~@Utl_ScriptFiles@
 
@@ -19,62 +19,62 @@ $ #Utility scripts#
 @Utl_ScriptFiles
 $ #Script files#: Utility scripts
     \37Actions.lua\-    — ¦Running actions.
-    \37Binding.lua\-    — ¦Working with binds.
+    \37Binding.lua\-    — ¦Working with binds.
     \37Character.lua\-  — ¦Handling characters.
-    \37CharsList.lua\-  — ¦Unicode characters' list.
-    \37CharsSets.lua\-  — ¦Some Unicode characters and character sets.
+    \37CharsList.lua\-  — ¦Unicode characters` list.
+    \37CharsSets.lua\-  — ¦Some Unicode characters and character sets.
     \37DateTime.lua\-   — ¦Handling date/time.
     \37Dialog.lua\-     — ¦Handling dialogs.
-    \37IniFile.lua\-    — ¦Working with ini/lua files.
+    \37IniFile.lua\-    — ¦Working with ini/lua files.
     \37Keys.lua\-       — ¦Processing keys.
-    \37Macro.lua\-      — ¦Working with ~macro-templates~@Macros@.
-    \37Menu.lua\-       — ¦Working with menus and menu items.
-    \37Types.lua\-      — ¦Working with user data types.
-    \37Utils.lua\-      — ¦Lua and LuaFAR functions.
+    \37Macro.lua\-      — ¦Working with ~macro-templates~@Macros@.
+    \37Menu.lua\-       — ¦Working with menus and menu items.
+    \37Types.lua\-      — ¦Working with user data types.
+    \37Utils.lua\-      — ¦Lua and LuaFAR functions.
 
  ~Contents~@Contents@
 
 @Macros
 $ #Macro‑template# (Macro.lua)
-  Macro‑template is used for #editor# only.
-  It is similar to macro from "true macro processor" plugin.
-An \37@@\- character (aka masyamba) is a key character of macro by default,
-it must be specified action key (macro‑key) after this character.
+  Macro‑template is used for #editor# only.
+  It is similar to macro from "true macro processor" plugin.
+An \37@@\- character (aka masyamba) is a key character of macro by default,
+it must be specified action key (macro‑key) after this character.
 
-  It may specified following macro‑keys:
+  It may specified following macro‑keys:
   — moving cursor:
-   · \37up\-/\37down\-    — ¦up/down within whole file,
-   · \37left\-/\37right\- — ¦left/right within file line,
-   · \37home\-/\37end\-   — ¦to begin/end of file line;
+   · \37up\-/\37down\-    — ¦up/down within whole file,
+   · \37left\-/\37right\- — ¦left/right within file line,
+   · \37home\-/\37end\-   — ¦to begin/end of file line;
   — other actions:
-   · \37nop\-  — ¦no action.
-   · \37bs\-   — ¦deletes a character leftward (of cursor position),
-   · \37bsln\- — ¦as \37bs\-, but with backspace to previous line,
-   · \37del\-  — ¦deletes a character rightward (in cursor position),
-   · \37deln\- — ¦as \37del\-, but with delete an end of current line,
-   · \37enter\-       — ¦inserts a new line without indent,
-   · \37indenter\-    — ¦inserts a new line using indent,
+   · \37nop\-  — ¦no action.
+   · \37bs\-   — ¦deletes a character leftward (of cursor position),
+   · \37bsln\- — ¦as \37bs\-, but with backspace to previous line,
+   · \37del\-  — ¦deletes a character rightward (in cursor position),
+   · \37deln\- — ¦as \37del\-, but with delete an end of current line,
+   · \37enter\-       — ¦inserts a new line without indent,
+   · \37indenter\-    — ¦inserts a new line using indent,
    · \37stop\-/\37resume\- — ¦stops/resumes cursor moving,
-   · \37here\-/\37back\-   — ¦saves current position / returns to this position.
+   · \37here\-/\37back\-   — ¦saves current position / returns to this position.
 
-  It may be defined key character and action repeating count after macro‑key.
-Key character must be repeated to output itself. This character doesn't output
-in the end of macro‑template, therefore it may be used to preserve ending spaces.
+  It may be defined key character and action repeating count after macro‑key.
+Key character must be repeated to output itself. This character doesn`t output
+in the end of macro‑template, therefore it may be used to preserve ending spaces.
 
   Remarks:
   — ¦Saving current position works correctly,
-if an amount of lines before this position doesn't change.
-  — Escape‑sequences of Lua (\n, \t etc.) are supported.
+if an amount of lines before this position doesn`t change.
+  — Escape‑sequences of Lua (\n, \t etc.) are supported.
 
  ~Script files~@Utl_ScriptFiles@
 
 @DateTime
-$ #Handling date and time# (DateTime.lua)
+$ #Handling date and time# (DateTime.lua)
   Classes:
   \37TConfig\-      — ¦Configuration.
-  \37TDate\-        — ¦Class for Date.
-  \37TTime\-        — ¦Class for Time.
+  \37TDate\-        — ¦Class for Date.
+  \37TTime\-        — ¦Class for Time.
 
-    ~Configurations~@<DateTime\>Contents@ of date and time for calendars
+    ~Configurations~@<DateTime\>Contents@ of date and time for calendars
 
  ~Script files~@Utl_ScriptFiles@

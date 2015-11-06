@@ -2,7 +2,7 @@
 
 ----------------------------------------
 --[[ description:
-  -- Working with menus and menu items.
+  -- Working with menus and menu items.
   -- Работа с меню и пунктами меню.
 --]]
 ----------------------------------------

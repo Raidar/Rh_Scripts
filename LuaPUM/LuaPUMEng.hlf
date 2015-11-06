@@ -1,14 +1,14 @@
 ﻿.Language=English,English
-.PluginContents=Lua User Menu for Panels
+.PluginContents=Lua User Menu for Panels
 .Options TabSize=4
 .Options CtrlColorChar=\
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Lua User Menu for Panels# (~LuaPUM~)
-  LuaPUM is a variant of LUM utility, used to work in FAR panels.
+$ #Lua User Menu for Panels# (~LuaPUM~)
+  LuaPUM is a variant of LUM utility, used to work in FAR panels.
 
-    ~Files of utility~@LUM_Files@
+    ~Files of utility~@LUM_Files@
 
   Links:
     ~Rh_Scripts~@<..\doc\>Contents@ pack

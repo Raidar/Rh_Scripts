@@ -6,7 +6,7 @@
 
 @Contents
 $ #Common scripts#
-  Common scripts are a set of scripts for use in utilities.
+  Common scripts are a set of scripts for use in utilities.
 
     ~Script files~@Cmn_ScriptFiles@
 
@@ -20,12 +20,12 @@ $ #Common scripts#
 $ #Script files#: Common scripts
     \37CustomMenu.lua\-     — ¦~Custom menu~@CustomMenu@.
     \37FilterMenu.lua\-     — ¦~Filtration menu~@FilterMenu@
-    \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
-    \37MenuTexter.lua\-     — ¦~Text-maker~@MenuTexter@ of menu items.
+    \37MenuCaller.lua\-     — ¦~Caller of menu~@MenuCaller@ with chosen kind.
+    \37MenuTexter.lua\-     — ¦~Text-maker~@MenuTexter@ of menu items.
 
-    \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
+    \37Calendar.lua\-       — ¦~Calendar for one month~@Calendar@.
     \37CharsMap.lua\-       — ¦~Characters map~@CharsMap@.
-    \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
+    \37CharsMenu.lua\-      — ¦Menu of items to output characters@CharsMenu@.
 
     \37rhsConfig.lua\-      — ¦Rh_Scripts pack ~configurator~@rhsConfig@
 
@@ -33,9 +33,9 @@ $ #Script files#: Common scripts
 
 @CustomMenu
 $ #Custom menu# (CustomMenu)
-  CustomMenu —  is a kind of menu based on Lua‑tables (with user menu).
- It is used in ~LUM~@<..\LuaUM\>Contents@ for output loaded table
-and work with it.
+  CustomMenu is a kind of menu based on Lua‑tables (with user menu).
+ It is used in ~LUM~@<..\LuaUM\>Contents@ for output loaded table
+and work with it.
 
     #Basic links#
       ~Menu control~@<..\LuaUM\>LUM_Control@
@@ -45,12 +45,12 @@ and work with it.
 
 @FilterMenu
 $ #Filtration menu# (FilterMenu)
-  FilterMenu is a kind of menu with feature of filtration for menu items.
- A filtration is perform when user press character keys in menu.
-If a menu item matches the filter conditions, it is output to menu.
+  FilterMenu is a kind of menu with feature of filtration for menu items.
+ A filtration is perform when user press character keys in menu.
+If a menu item matches the filter conditions, it is output to menu.
 
-  Parameters of menu output function is similar to far.Menu() parameters.
-FilterMenu properties are specified as fields of Filter table in Properties.
+  Parameters of menu output function is similar to far.Menu() parameters.
+FilterMenu properties are specified as fields of Filter table in Properties.
 
     ~Menu properties~@FM_Props@
 
@@ -61,45 +61,45 @@ $ #Menu properties#: FilterMenu
   #Pattern# (string) — ¦Initial filter pattern.
 
   #CharsText# (string) — ¦Output format for filter pattern-string.
-  — ¦By default: \37*[%s]\-
-  — ¦Pattern is shown in menu title.
+  — ¦By default: \37*[%s]\-
+  — ¦Pattern is shown in menu title.
 
-  #ItemsText# (string) — ¦Output format for number of output menu items
-from common number of all existing menu items.
-  — ¦By default: \37(%d / %d)\-
-  — ¦Numbers are shown in menu bottom title.
+  #ItemsText# (string) — ¦Output format for number of output menu items
+from common number of all existing menu items.
+  — ¦By default: \37(%d / %d)\-
+  — ¦Numbers are shown in menu bottom title.
 
-  #CheckText# (string) — ¦Output format for used filter name.
-  — ¦By default: \37[%s]\-
-  — ¦Filter name is shown in menu bottom title.
+  #CheckText# (string) — ¦Output format for used filter name.
+  — ¦By default: \37[%s]\-
+  — ¦Filter name is shown in menu bottom title.
 
-  #ShowCheck# (bool) — ¦Flag for output used filter name.
+  #ShowCheck# (bool) — ¦Flag for output used filter name.
 
-  #CheckItem# — ¦~Information for checking menu item~@FM_Props_Check@
-in order to filter.
+  #CheckItem# — ¦~Information for checking menu item~@FM_Props_Check@
+in order to filter.
 
  ~Contents~@Contents@       ~Filtration menu~@FilterMenu@
 
 @FM_Props_Check
 $ #Checking menu item#: FilterMenu
-  Information for checking menu item in order to filter
-may be represent variously:
+  Information for checking menu item in order to filter
+may be represent variously:
 
-  1. #function# — ¦a check function of ~specified format~@FM_Props_CheckItem@.
-    ¦In this mode function must be make a full checking
-of passed parameters and generate correct result.
+  1. #function# — ¦a check function of ~specified format~@FM_Props_CheckItem@.
+    ¦In this mode function must be make a full checking
+of passed parameters and generate correct result.
 
-  2. #string# — ¦a name of ~standard check function~@FM_Props_CheckStds@.
-    ¦Before function call it is made checking for pattern present,
-and text parameter is match to lower case.
+  2. #string# — ¦a name of ~standard check function~@FM_Props_CheckStds@.
+    ¦Before function call it is made checking for pattern present,
+and text parameter is match to lower case.
 
-  3. #table# — ¦a table with ~filtration parameters~@FM_Props_CheckArgs@.
-    ¦In this case wrapper function is created, in which:
-  — ¦all the filtration parameters specified in the table are applied.
-  — ¦function, specified in #CheckItem# is called by method 1 or 2.
+  3. #table# — ¦a table with ~filtration parameters~@FM_Props_CheckArgs@.
+    ¦In this case wrapper function is created, in which:
+  — ¦all the filtration parameters specified in the table are applied.
+  — ¦function, specified in #CheckItem# is called by method 1 or 2.
 
     ~Filtration parameters~@FM_Props_CheckArgs@
-    ~Format of check function~@FM_Props_CheckItem@
+    ~Format of check function~@FM_Props_CheckItem@
     ~Standard check functions~@FM_Props_CheckStds@
 
  ~Contents~@Contents@       ~Menu properties~@FM_Props@
@@ -108,26 +108,26 @@ and text parameter is match to lower case.
 $ #Filtration parameters#: FilterMenu
   #CheckItem# (string, function) — ¦~Check function~@FM_Props_Check@.
 
-  The rest is in order to use in function:
+  The rest is in order to use in function:
 
-  #Sub# (string) — ¦Substring pattern for item text.
-  — ¦It defines pattern of substring compared with filter pattern.
-  — ¦It allows to choose text part that is used in filtration.
-  — ¦It's used on variable position of choosed substring.
-  — ¦If it is no substring, parameters described below are used.
+  #Sub# (string) — ¦Substring pattern for item text.
+  — ¦It defines pattern of substring compared with filter pattern.
+  — ¦It allows to choose text part that is used in filtration.
+  — ¦It`s used on variable position of choosed substring.
+  — ¦If it is no substring, parameters described below are used.
 
-  #Pos# & #End# (number) — ¦Positions of substring for item text.
-  — ¦They are define position of text substring compared with pattern.
-  — ¦They allow to choose text part that is used in filtration.
-  — ¦They are used on fixed position of choosed substring.
+  #Pos# & #End# (number) — ¦Positions of substring for item text.
+  — ¦They are define position of text substring compared with pattern.
+  — ¦They allow to choose text part that is used in filtration.
+  — ¦They are used on fixed position of choosed substring.
 
   #Left# & #Right# (string) — ¦Filter pattern parts.
-  — ¦They are added into start and end of pattern.
-  — ¦They allow do not input changeless part of pattern.
+  — ¦They are added into start and end of pattern.
+  — ¦They allow do not input changeless part of pattern.
 
   #MatchCase# (bool) — ¦Match case comparing indicator.
 
-  #Name# (string) — ¦Filter name for show in menu.
+  #Name# (string) — ¦Filter name for show in menu.
 
  ~Contents~@Contents@       ~Checking menu item~@FM_Props@
 
@@ -140,220 +140,220 @@ $ #Format of check function#: FilterMenu
   \37--]]\-
   \37function\- <name> \37(Text, Pattern, Item) --> (pos, end | nil)\-
     \37--\- Processing \37--\-
-    \37--\- Return nil, if item does not match the conditions, otherwise:
-    \37return fpos, fend --\- Positions for marking menu item text
+    \37--\- Return nil, if item does not match the conditions, otherwise:
+    \37return fpos, fend --\- Positions for marking menu item text
   \37end --\-
 
  ~Contents~@Contents@       ~Checking menu item~@FM_Props@
 
 @FM_Props_CheckStds
 $ #Standard check functions#: FilterMenu
-  #plain# — Usual checking a text for plain pattern.
-    ¦The pattern is considered as a plain text. Function is used by default.
+  #plain# — Usual checking a text for plain pattern.
+    ¦The pattern is considered as a plain text. Function is used by default.
 
-  #pattern# — Simple checking a text for Lua-pattern.
-    ¦The pattern is considered as a Lua regular expression.
+  #pattern# — Simple checking a text for Lua-pattern.
+    ¦The pattern is considered as a Lua regular expression.
 
-  #dos# — Standard checking pathes, file and directory names for pattern.
-    ¦The pattern is considered as expression with wildcards:
-  \37?\- — one character, \37*\- — zero or more characters.
+  #dos# — Standard checking pathes, file and directory names for pattern.
+    ¦The pattern is considered as expression with wildcards:
+  \37?\- — one character, \37*\- — zero or more characters.
 
  ~Contents~@Contents@       ~Checking menu item~@FM_Props@
 
 @MenuCaller
-$ #Caller of menu with chosen kind# (MenuCaller)
-  MenuCaller is a kind of menu to load script with chosen menu kind
-and to run this menu with specified parameters.
+$ #Caller of menu with chosen kind# (MenuCaller)
+  MenuCaller is a kind of menu to load script with chosen menu kind
+and to run this menu with specified parameters.
 
-  First 3 parameters of menu output function is similar to far.Menu() parameters.
-Additional 4th parameter allows to define function for menu call.
+  First 3 parameters of menu output function is similar to far.Menu() parameters.
+Additional 4th parameter allows to define function for menu call.
 
-  MenuCaller properties are specified as fields of Caller table in Properties.
+  MenuCaller properties are specified as fields of Caller table in Properties.
 
  ~Contents~@Contents@
 
 @MenuTexter
-$ #Text‑maker of menu items# (MenuTexter)
-  MenuTexter is a kind of menu with defining needful text format for menu items.
+$ #Text‑maker of menu items# (MenuTexter)
+  MenuTexter is a kind of menu with defining needful text format for menu items.
 
-  First 3 parameters of menu output function is similar to far.Menu() parameters.
-Additional 4th parameter allows to define function for menu call
-(when it is equal \37nil\- far.Menu is used).
-If parameter is equal \37false\- menu items table is returned.
-(Otherwise it is also returned menu items table.)
+  First 3 parameters of menu output function is similar to far.Menu() parameters.
+Additional 4th parameter allows to define function for menu call
+(when it is equal \37nil\- far.Menu is used).
+If parameter is equal \37false\- menu items table is returned.
+(Otherwise it is also returned menu items table.)
 
-  MenuTexter properties are specified as fields of Texter table in Properties.
-These properties@TM_Props@ is similar to properties of user menu display
-(see "Text of menu items"@<..\LuaUM\>LUM_config@ section).
+  MenuTexter properties are specified as fields of Texter table in Properties.
+These properties@TM_Props@ is similar to properties of user menu display
+(see "Text of menu items"@<..\LuaUM\>LUM_config@ section).
 
  ~Contents~@Contents@
 
 @CharsMap
 $ #Characters map# (CharsMap)
-  CharsMap is a script to display a characters map.
+  CharsMap is a script to display a characters map.
   
   Navigation keys:
- \37Alt+(Left|Right)\-       — ¦a previous/next part of the map (±0x0100).
- \37Alt+(Up|Down)\-          — ¦a previous/next section of the map (±0x1000).
- \37Alt+(PgUp|PgDn)\-        — ¦a start part of previous/next section.
- \37Alt+(0-9|A-F)\-          — ¦a start of section with corresponding number.
+ \37Alt+(Left|Right)\-       — ¦a previous/next part of the map (±0x0100).
+ \37Alt+(Up|Down)\-          — ¦a previous/next section of the map (±0x1000).
+ \37Alt+(PgUp|PgDn)\-        — ¦a start part of previous/next section.
+ \37Alt+(0-9|A-F)\-          — ¦a start of section with corresponding number.
  
- \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
+ \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
 
   Special keys:
- \37Num* | Clear\- (Num5)    — ¦the last choosen character.
- \37CtrlB\-                  — ¦to show a character blocks
-and to go to a first character of the chosen block.
- \37CtrlV\-                  — ¦to go to a character from clipboard.
- \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard.
- \37CtrlAltX\-               — ¦to go to a character obtained by XLat.
- \37(Shift+) <символ>\-      — ¦to go to a character corresponding to key.
+ \37Num* | Clear\- (Num5)    — ¦the last choosen character.
+ \37CtrlB\-                  — ¦to show a character blocks
+and to go to a first character of the chosen block.
+ \37CtrlV\-                  — ¦to go to a character from clipboard.
+ \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard.
+ \37CtrlAltX\-               — ¦to go to a character obtained by XLat.
+ \37(Shift+) <символ>\-      — ¦to go to a character corresponding to key.
 
- \37Num/\-                   — ¦to go to a ~code point input~@CharsMap_CodeInput@ mode.
- \37ShiftNum/\-              — ¦to go to a ~character name input~@CharsMap_CharInput@ mode.
+ \37Num/\-                   — ¦to go to a ~code point input~@CharsMap_CodeInput@ mode.
+ \37ShiftNum/\-              — ¦to go to a ~character name input~@CharsMap_CharInput@ mode.
 
  ~Contents~@Contents@
 
 @CharsMap_CodeInput
 $ #Characters map#: Code point input
 
-  Code point input is performed in a hexadecimal format.
+  Code point input is performed in a hexadecimal format.
 
-  To input code point of character use following keys:
- \371—9, 0, A-F\-            — ¦to input the hexadecimal digits.
- \37Num/, Enter, NumEnter\-  — ¦to complete the input.
- \37V\-                      — ¦to insert code point from clipboard.
+  To input code point of character use following keys:
+ \371—9, 0, A-F\-            — ¦to input the hexadecimal digits.
+ \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+ \37V\-                      — ¦to insert code point from clipboard.
  
-  After the input completion a character with the inputted code point
-will be displayed in the window.
+  After the input completion a character with the inputted code point
+will be displayed in the window.
 
  ~Contents~@Contents@       ~Characters map~@CharsMap@
 
 @CharsMap_CharInput
 $ #Characters map#: Character name input
 
-  To input name of character use following keys:
- \371–9, 0, A–Z\-            — ¦to input digits and letters.
- \37^$()%.[]*+-?\-           — ¦to input special symbols.
- \37ShiftNum/\-              — ¦to complete the input.
- \37Enter, NumEnter\-        — ¦to go to a character with input name.
- \37CtrlV\-                  — ¦to insert character name from clipboard.
- \37CtrlC\-                  — ¦to show all characters with input name
-and to go to the choosen character.
+  To input name of character use following keys:
+ \371–9, 0, A–Z\-            — ¦to input digits and letters.
+ \37^$()%.[]*+-?\-           — ¦to input special symbols.
+ \37ShiftNum/\-              — ¦to complete the input.
+ \37Enter, NumEnter\-        — ¦to go to a character with input name.
+ \37CtrlV\-                  — ¦to insert character name from clipboard.
+ \37CtrlC\-                  — ¦to show all characters with input name
+and to go to the choosen character.
 
-  A search is performed by a input text as Lua regular expression
-from code point of a character following by selected character.
-If the search from name start is not specified  (with \37^\- symbol),
-the search will be performed for character with name containing
-the input text (\37.*\- will be added in start of the text).
+  A search is performed by a input text as Lua regular expression
+from code point of a character following by selected character.
+If the search from name start is not specified  (with \37^\- symbol),
+the search will be performed for character with name containing
+the input text (\37.*\- will be added in start of the text).
 
-  A show of all characters with input name is only available
-when the input name contains more than two symbols
-and an amount of these characters is less than half of all characters.
+  A show of all characters with input name is only available
+when the input name contains more than two symbols
+and an amount of these characters is less than half of all characters.
 
  ~Contents~@Contents@       ~Characters map~@CharsMap@
 
 @Calendar
-$ #Calendar for one month# (Calendar)
-  Calendar is a script to display a calendar for one month.
+$ #Calendar for one month# (Calendar)
+  Calendar is a script to display a calendar for one month.
 
-  Area with date information is displayed on the left,
-the calendar itself is displayed on the right.
-  In the area with date information the following is displayed:
-  — ¦a number of the year day is on the left of the fullname of the week day,
-  — ¦a number of the year week is on the right,
-  — ¦the date in \3AYYYY‑MM‑DD\- format is from above,
-  — ¦the time for current date в формате in \3AHH‑NN‑SS\-  format is from below.
-  In the calendar area the following is displayed:
-  — ¦a number of the month week is on the first row,
-  — ¦a number of the year week  is on the last row,
-  — ¦an abbreviated name for the week day is in the last column.
+  Area with date information is displayed on the left,
+the calendar itself is displayed on the right.
+  In the area with date information the following is displayed:
+  — ¦a number of the year day is on the left of the fullname of the week day,
+  — ¦a number of the year week is on the right,
+  — ¦the date in \3AYYYY‑MM‑DD\- format is from above,
+  — ¦the time for current date в формате in \3AHH‑NN‑SS\-  format is from below.
+  In the calendar area the following is displayed:
+  — ¦a number of the month week is on the first row,
+  — ¦a number of the year week  is on the last row,
+  — ¦an abbreviated name for the week day is in the last column.
 
   Navigation keys:
  \37Alt+(Left|Right)\-       — ¦a previous/next month.
  \37Alt+(Up|Down)\-          — ¦a previous/next year.
- \37Alt+(PgUp|PgDn)\-        — ¦a start/end of the month.
- \37Alt+(Home|End)\-         — ¦a start/end of the year.
+ \37Alt+(PgUp|PgDn)\-        — ¦a start/end of the month.
+ \37Alt+(Home|End)\-         — ¦a start/end of the year.
 
- \37Ctrl+(PgUp|PgDn)\-       — ¦a start/end of the decade
-(the current one is used if it is not choosed before,
-then a start of the previous one / an end of the next one).
- \37Ctrl+(Home|End)\-        — ¦a start/end of the century
-(the current one is used if it is not choosed before,
-then a start of the previous one / an end of the next one).
- \37Ctrl+Alt+(PgUp|PgDn)\-   — ¦a start/end of the millenium
-(the current one is used if it is not choosed before,
-then a start of the previous one / an end of the next one).
- \37Ctrl+Alt+(Clear)\-       — ¦a start/end of the 1st year (CE) (a switch).
- \37Ctrl+Alt+(Home|End)\-    — ¦a start of −9999 y. / an end of 9999 y. (CE).
+ \37Ctrl+(PgUp|PgDn)\-       — ¦a start/end of the decade
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+(Home|End)\-        — ¦a start/end of the century
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+Alt+(PgUp|PgDn)\-   — ¦a start/end of the millenium
+(the current one is used if it is not choosed before,
+then a start of the previous one / an end of the next one).
+ \37Ctrl+Alt+(Clear)\-       — ¦a start/end of the 1st year (CE) (a switch).
+ \37Ctrl+Alt+(Home|End)\-    — ¦a start of −9999 y. / an end of 9999 y. (CE).
 
   Special keys:
- \37Num* | Clear\- (Num5)    — ¦the current date and time.
- \37Num/\-                   — ¦to go to a ~date input~@Calendar_DateInput@ mode.
- \37Num+ | Num-\-            — ¦to go to a ~shift input~@Calendar_ShiftInput@ mode.
+ \37Num* | Clear\- (Num5)    — ¦the current date and time.
+ \37Num/\-                   — ¦to go to a ~date input~@Calendar_DateInput@ mode.
+ \37Num+ | Num-\-            — ¦to go to a ~shift input~@Calendar_ShiftInput@ mode.
 
     Implemented ~configurations~@<..\Utils\DateTime\>Contents@
 
  ~Contents~@Contents@
 
 @Calendar_DateInput
-$ #Calendar for one month#: Date input
+$ #Calendar for one month#: Date input
 
-  A date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
+  A date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
 where \3AY\-, \3AM\- и \3AD\- are numbers, that represent corresponding year,
-month and day of the inputted date. Missed values are replaced by \3A1\-.
+month and day of the inputted date. Missed values are replaced by \3A1\-.
 
-  To input date use following keys:
- \371—9, 0\- (digits)        — ¦to input date digits.
- \37Num1—Num9\- (Num‑digits) — ¦to input date digits when NumLock is on.
- \37‑, Num‑\-                — ¦to input separator between the date parts.
- \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+  To input date use following keys:
+ \371—9, 0\- (digits)        — ¦to input date digits.
+ \37Num1—Num9\- (Num‑digits) — ¦to input date digits when NumLock is on.
+ \37‑, Num‑\-                — ¦to input separator between the date parts.
+ \37Num/, Enter, NumEnter\-  — ¦to complete the input.
 
-  After the input completion the inputted date will be displayed in the window.
+  After the input completion the inputted date will be displayed in the window.
 
- ~Contents~@Contents@       ~Calendar for one month~@Calendar@
+ ~Contents~@Contents@       ~Calendar for one month~@Calendar@
 
 @Calendar_ShiftInput
-$ #Calendar for one month#: Shift input
+$ #Calendar for one month#: Shift input
 
-  A shift input is performed in days.
- A shift direction is defined by "go to mode" key:
- \37Num+\- — negative shift (backward on calendar),
- \37Num-\- — positive shift (forward on calendar).
+  A shift input is performed in days.
+ A shift direction is defined by "go to mode" key:
+ \37Num+\- — negative shift (backward on calendar),
+ \37Num-\- — positive shift (forward on calendar).
 
-  To input shift use following keys:
- \371—9, 0\- (digits)        — ¦to input shift digits.
- \37Num1—Num9\- (Num‑digits) — ¦to input shift digits when NumLock is on.
+  To input shift use following keys:
+ \371—9, 0\- (digits)        — ¦to input shift digits.
+ \37Num1—Num9\- (Num‑digits) — ¦to input shift digits when NumLock is on.
  \37Num+, Num-,\-
- \37Enter, NumEnter\-        — ¦to complete the input.
+ \37Enter, NumEnter\-        — ¦to complete the input.
 
-  After the input completion the shifted date will be displayed in the window.
+  After the input completion the shifted date will be displayed in the window.
 
- ~Contents~@Contents@       ~Calendar for one month~@Calendar@
+ ~Contents~@Contents@       ~Calendar for one month~@Calendar@
 
 @rhsConfig
 $ #Rh_Scripts pack configurator# (rhsConfig)
-  rhsConfig is a script to customize Rh_Scripts package.
- It allows to choose only needful menu items and resident modules.
-  A \37rhsConfig.cfgrus\- file is an example of configuration with russian
-names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
+  rhsConfig is a script to customize Rh_Scripts package.
+ It allows to choose only needful menu items and resident modules.
+  A \37rhsConfig.cfgrus\- file is an example of configuration with russian
+names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
 
     ~Menu items~@<..\doc\>RhS_LFE_MenuItems@
     ~Handlers~@<..\doc\>RhS_LFE_Handlers@
-    ~Titles of items~@rhsConfig_Title@
+    ~Titles of items~@rhsConfig_Title@
 
-  \34Notice\-: ¦Resident modules are executed automatically
-when user performes specific actions.
-The execution may corrupt or destroy your information.
-Therefore read carefully a description of operations
-executed by resident modules before using them.
+  \34Notice\-: ¦Resident modules are executed automatically
+when user performes specific actions.
+The execution may corrupt or destroy your information.
+Therefore read carefully a description of operations
+executed by resident modules before using them.
 
  ~Contents~@Contents@
 
 @rhsConfig_Title
 $ #Titles of items#: rhsConfig
   Titles using specifics:
- — ¦To specify item title by default clear current title of this item.
- — ¦To exclude item from LuaFAR for Editor menu use string with one space only.
+ — ¦To specify item title by default clear current title of this item.
+ — ¦To exclude item from LuaFAR for Editor menu use string with one space only.
 
  ~Contents~@Contents@       ~Rh_Scripts configurator~@rhsConfig@

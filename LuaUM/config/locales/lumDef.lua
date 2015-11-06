@@ -64,7 +64,7 @@ local Data = {
     AdnCalendarGrego    = "&G - Gregorean calendar",
     AdnCalendarMillo    = "&M - Milleniums' calendar",
     AdnCalendarHekso    = "&H - Hexadecimal calendar",
-    AdnCalendarMinimum  = "&I - Min-project of calendar",
+    AdnCalendarMinimum  = "&I - Min-project of calendar",
     AdnCalendarPern     = "&P - Pernese calendar",
 
   ----------------------------------------

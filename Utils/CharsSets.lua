@@ -2,7 +2,7 @@
 
 ----------------------------------------
 --[[ description:
-  -- Some Unicode characters and character sets.
+  -- Some Unicode characters and character sets.
   -- Некоторые Unicode‑символы и наборы символов.
 --]]
 ----------------------------------------

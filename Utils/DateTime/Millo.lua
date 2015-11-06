@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- DateTime config for world: Earth-Millenium.
-  -- Конфигурация DateTime для мира: Земля-Тысячелетие.
+  -- DateTime config for world: Earth-Millenium.
+  -- Конфигурация DateTime для мира: Земля-Тысячелетие.
 --]]
 ----------------------------------------
 --[[ uses:

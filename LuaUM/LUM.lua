@@ -67,8 +67,8 @@ local DefScope = {
   BindFileType = bndUt.BindFileType,
   --BindCfg = nil,
   Area = "", -- Неизвестная область
-  MenuView = "far.Menu", -- Вид меню
-  --MenuView = "RectMenu",
+  --MenuView = "far.Menu", -- Вид меню
+  MenuView = "RectMenu", -- Вид меню
 } --- DefScope
 
 ---------------------------------------- Menu class

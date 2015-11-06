@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- DateTime config for world: Default.
-  -- Конфигурация DateTime для мира: Умолчание.
+  -- DateTime config for world: Default.
+  -- Конфигурация DateTime для мира: Умолчание.
 --]]
 ----------------------------------------
 --[[ uses:

@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- DateTime config for world: Pern.
-  -- Конфигурация DateTime для мира: Перн.
+  -- DateTime config for world: Pern.
+  -- Конфигурация DateTime для мира: Перн.
 --]]
 ----------------------------------------
 --[[ uses:

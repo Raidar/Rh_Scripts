@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- DateTime config for world: Earth [hexadecimal].
-  -- Конфигурация DateTime для мира: Земля [16‑ричный].
+  -- DateTime config for world: Earth [hexadecimal].
+  -- Конфигурация DateTime для мира: Земля [16‑ричный].
 --]]
 ----------------------------------------
 --[[ uses:

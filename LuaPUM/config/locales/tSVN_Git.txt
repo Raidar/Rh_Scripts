@@ -7,7 +7,7 @@ C — Commit      / =
 D — Diff        / =
 E — clEan up    / —
 F — Find [changes]      / difF
-G — Graph [of changes]  / =
+G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
 J —

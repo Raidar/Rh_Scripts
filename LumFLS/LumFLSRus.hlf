@@ -5,9 +5,9 @@
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Пользовательское меню Lua для работы с fl_scripts# (~LumFLS~)
-  LumFLS — вариант утилиты LUM, предназначенный для работы
-с набором скриптов #farlua scripts# (fl_scripts) от maxfl.
+$ #Пользовательское меню Lua для работы с fl_scripts# (~LumFLS~)
+  LumFLS — вариант утилиты LUM, предназначенный для работы
+с набором скриптов #farlua scripts# (fl_scripts) от maxfl.
 
     ~Файлы утилиты~@LUM_Files@
 

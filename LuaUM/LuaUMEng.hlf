@@ -6,8 +6,8 @@
 
 @Contents
 $ #Lua User Menu# (~LUM~)
-  LUM is a "Lua User Menu" utility.
- This utility allows to output menu according to used file type.
+  LUM is a "Lua User Menu" utility.
+ This utility allows to output menu according to used file type.
 
     ~Menu organization~@LUM_Organize@
       ~Menu features~@LUM_Features@
@@ -15,15 +15,15 @@ $ #Lua User Menu# (~LUM~)
 
       ~Menu control~@LUM_Control@
       ~Menu structure~@LUM_Structure@
-      ~Own menus creation~@LUM_OwnMenus@
+      ~Own menus creation~@LUM_OwnMenus@
 
     ~Menu formation~@LUM_Formation@
-      ~Binding type to menu~@LUM_MenuBinds@
-      ~Menu file content~@LUM_MenuConts@
+      ~Binding type to menu~@LUM_MenuBinds@
+      ~Menu file content~@LUM_MenuConts@
       ~Menu‑table items~@LUM_MenuItems@
 
-    #Details of menu#
-      ~Files of utility~@LUM_Files@
+    #Details of menu#
+      ~Files of utility~@LUM_Files@
 
   Links:
     ~Rh_Scripts~@<..\doc\>Contents@ pack
@@ -34,138 +34,138 @@ $ #Lua User Menu# (~LUM~)
 @LUM_Files
 $ #Files of utility#: LUM
   Base files:
-    \37LUM.lua\-        — ¦LUM menu: Implementation.
-    \37LumCfg.lua\-     — ¦LUM menu: Settings.
-    \37LumWork.lua\-    — ¦LUM menu: Working with whole menu.
+    \37LUM.lua\-        — ¦LUM menu: Implementation.
+    \37LumCfg.lua\-     — ¦LUM menu: Settings.
+    \37LumWork.lua\-    — ¦LUM menu: Working with whole menu.
 
   Locale files:
-    \37LuaUMDef.lua\-   — ¦LUM locale (English).
-    \37LuaUMRus.lua\-   — ¦LUM locale (Russian).
+    \37LuaUMDef.lua\-   — ¦LUM locale (English).
+    \37LuaUMRus.lua\-   — ¦LUM locale (Russian).
 
   Scripts files:
-    \37FarMacros.lua\-  — ¦FAR macros operation.
+    \37FarMacros.lua\-  — ¦FAR macros operation.
     \37LumContext.lua\- — ¦Context & LUM: Functions calls.
-    \37LumDialog.lua\-  — ¦LUM settings: Calling dialogs.
-    \37LumScripts.lua\- — ¦Examples of simple finctions.
+    \37LumDialog.lua\-  — ¦LUM settings: Calling dialogs.
+    \37LumScripts.lua\- — ¦Examples of simple finctions.
 
  ~Contents~@Contents@
 
 @LUM_Organize
 $ #Menu organization#: LUM
-  LUM loads needed tables with menu from files and uses special
-~table‑driven menu~@<..\Common\>UserMenu@ for output menu and work with it.
+  LUM loads needed tables with menu from files and uses special
+~table‑driven menu~@<..\Common\>UserMenu@ for output menu and work with it.
 
       ~Menu features~@LUM_Features@
       ~Menu examples~@LUM_Examples@
 
       ~Menu control~@LUM_Control@
       ~Menu structure~@LUM_Structure@
-      ~Own menus creation~@LUM_OwnMenus@
+      ~Own menus creation~@LUM_OwnMenus@
 
  ~Contents~@Contents@
 
 @LUM_Features
 $ #Menu features#: LUM
  #Common#:
-  · ¦A binding of file to type described in lua-file.
-  · ¦A binding of type to output menu described in lua-file.
+  · ¦A binding of file to type described in lua-file.
+  · ¦A binding of type to output menu described in lua-file.
   · ¦Supported menus: default, rectangle, searchable, filter.
  #Menu items#:
-  · ¦Kinds: submenus, macros, templates, scripts, and commands.
-  · ¦An assignment of key combos to menu items by various ways.
+  · ¦Kinds: submenus, macros, templates, scripts, and commands.
+  · ¦An assignment of key combos to menu items by various ways.
  #Settings#:
-  · ¦Viewing of LUM default parameters.
-  · ¦Settings of pathes and names for base files of LUM.
-  · ¦Settings of display (view) options of LUM.
-  · ¦An output of main messages with language of FAR interface.
-  · ¦An output of settings dialogs with language of FAR interface.
+  · ¦Viewing of LUM default parameters.
+  · ¦Settings of pathes and names for base files of LUM.
+  · ¦Settings of display (view) options of LUM.
+  · ¦An output of main messages with language of FAR interface.
+  · ¦An output of settings dialogs with language of FAR interface.
  #Own menus#:
-  · ¦Support of own menu settings.
-  · ¦Support of settings for submenus.
-  · ¦Support of own FAR‑help files.
-  · ¦Support of own locales for texts.
-  · ¦An output of defined submenu as main menu.
+  · ¦Support of own menu settings.
+  · ¦Support of settings for submenus.
+  · ¦Support of own FAR‑help files.
+  · ¦Support of own locales for texts.
+  · ¦An output of defined submenu as main menu.
 
  ~Contents~@Contents@
 
 @LUM_Examples
 $ #Menu examples#: LUM
-  Utility for editor outputs user menu, bound to file type,
-member of which is a file opened in the editor.
-  Utility for panels outputs user menu, bound to file type,
-member of which is a current file of active panel.
+  Utility for editor outputs user menu, bound to file type,
+member of which is a file opened in the editor.
+  Utility for panels outputs user menu, bound to file type,
+member of which is a current file of active panel.
 
-    ~LUM for  Editor ~@<..\LuaEUM\>Contents@ (LuaEUM)
-    ~LUM for  Panels ~@<..\LuaPUM\>Contents@ (LuaPUM)
-    ~LUM for fl_scripts~@<..\LumFLS\>Contents@ (LumFLS)
+    ~LUM for Editor~@<..\LuaEUM\>Contents@ (LuaEUM)
+    ~LUM for Panels~@<..\LuaPUM\>Contents@ (LuaPUM)
+    ~LUM for fl_scripts~@<..\LumFLS\>Contents@ (LumFLS)
 
-  See also ~Own menus~@LUM_OwnMenus@.
+  See also ~Own menus~@LUM_OwnMenus@.
 
  ~Contents~@Contents@
 
 @LUM_Control
 $ #Menu control#: LUM
-  Menu control (i.e. manipulating) is approximate to other menus.
+  Menu control (i.e. manipulating) is approximate to other menus.
 
-  Following keys may use for navigation simplification:
- \37BackSpace\- (BS) — ¦jump to supermenu,
+  Following keys may use for navigation simplification:
+ \37BackSpace\- (BS) — ¦jump to supermenu,
  \37Escape  \- (Esc) — ¦menu cancel (exit without choice),
- \37Ctrl+F1 \-       — ¦information about whole menu,
- \37Shift+F1\-       — ¦information about current menu item,
- \37AccelKey\- / \37BreakKey\- — ¦choice of corresponding menu item.
+ \37Ctrl+F1 \-       — ¦information about whole menu,
+ \37Shift+F1\-       — ¦information about current menu item,
+ \37AccelKey\- / \37BreakKey\- — ¦choice of corresponding menu item.
 
-  AccelKey uses current keyboard layout and it responses quickly.
-BreakKey uses latin keyboard layout and it responses slowly.
+  AccelKey uses current keyboard layout and it responses quickly.
+BreakKey uses latin keyboard layout and it responses slowly.
 
  ~Contents~@Contents@       ~Menu organization~@LUM_Organize@
 
 @LUM_Structure
 $ #Menu structure#: LUM
-  They suggest nest menu structure:
-  — ¦menu file oriented to specific type;
-  — ¦default menu file, that are general for all files;
-  — ¦file menu with settings configure recommended for all files.
+  They suggest nest menu structure:
+  — ¦menu file oriented to specific type;
+  — ¦default menu file, that are general for all files;
+  — ¦file menu with settings configure recommended for all files.
 
-  Examples of items-submenus:
+  Examples of items-submenus:
   — #Lua scripts#     — ¦various lua‑scripts.
-  — #Template insert# — ¦insert standard templates of code.
+  — #Template insert# — ¦insert standard templates of code.
   — #Character sets#  — ¦insert characters (from a set).
   …
 
  ~Contents~@Contents@       ~Menu organization~@LUM_Organize@
 
 @LUM_OwnMenus
-$ #Own menus#: LUM
-  The LUM user menu may be used for own menu creation.
-It may use any ~LUM menu~@LUM_Examples@ as base.
+$ #Own menus#: LUM
+  The LUM user menu may be used for own menu creation.
+It may use any ~LUM menu~@LUM_Examples@ as base.
 
-  Configuring of that menu is performed thus:
-it must copy \37LuaEUMer.lua\- or \37LuaPUMer.lua\- to directory of script
-and specify own parameters' values in \37ArgData\- table.
+  Configuring of that menu is performed thus:
+it must copy \37LuaEUMer.lua\- or \37LuaPUMer.lua\- to directory of script
+and specify own parameters' values in \37ArgData\- table.
 
  ~Contents~@Contents@       ~Menu organization~@LUM_Organize@
 
 @LUM_Formation
 $ #Menu formation#: LUM
-  Menu formation is processed with following files:
+  Menu formation is processed with following files:
 
-  — ¦~A file for bind of filetype to menu~@LUM_MenuBinds@
+  — ¦~A file for bind of filetype to menu~@LUM_MenuBinds@
 
-  — ¦~Files with menu for filetypes~@LUM_MenuConts@
-  — ¦~Menu items and menu‑table fields~@LUM_MenuItems@
+  — ¦~Files with menu for filetypes~@LUM_MenuConts@
+  — ¦~Menu items and menu‑table fields~@LUM_MenuItems@
 
-  Binding filenames to type is processed with #LuaFAR context#.
+  Binding filenames to type is processed with #LuaFAR context#.
 
  ~Contents~@Contents@
 
 @LUM_MenuBinds
-$ #Binding type to menu#: LUM
-  Binding type to menu is specified with \37LumBinds.lua\- file.
- Default directory for file is \37<Pack directory>\<LuaUM directory>\config\-.
-  Several bind files may be determined in utility settings.
+$ #Binding type to menu#: LUM
+  Binding type to menu is specified with \37LumBinds.lua\- file.
+ Default directory for file is \37<Pack directory>\<LuaUM directory>\config\-.
+  Several bind files may be determined in utility settings.
 
-  A type name is used for section name. The section contains following key:
-  — #Menu#  — ¦with enumeration of ~menu~@LUM_MenuConts@ files.
+  A type name is used for section name. The section contains following key:
+  — #Menu#  — ¦with enumeration of ~menu~@LUM_MenuConts@ files.
 
     \1FExample\-:
   \3FDefault\37 = \3F{ \3ACaption\37 = "Some LUM"\3F,\-
@@ -174,42 +174,42 @@ $ #Binding type to menu#: LUM
   \3Fhtml\37 = \3F{ \3AMenu\37 = "HtmlItem1;HtmlItem2" \3F},\-
   \3Flua\37  = \3F{ \3AMenu\37 = "LuaItem" \3F},\-
 
-    Here are:
-  \37Caption \- — ¦caption of main menu.
-  \37Before  \- — ¦list of menus added before menu for specific type.
-  \37After   \- — ¦list of menus added after menu for specific type.
+    Here are:
+  \37Caption \- — ¦caption of main menu.
+  \37Before  \- — ¦list of menus added before menu for specific type.
+  \37After   \- — ¦list of menus added after menu for specific type.
   \37XxxItemN\- — ¦filename with custom menu.
-  \37UMConfig\- — ¦filename with menu for configuration of LUM settings.
+  \37UMConfig\- — ¦filename with menu for configuration of LUM settings.
 
-  No file extensions may be specified in them,
-default extension for menu is \37.lum\-.
-  A '#=#' section is served to use menu existent type as replacement
-for required group (for example, in case of menu identity for this types).
+  No file extensions may be specified in them,
+default extension for menu is \37.lum\-.
+  A '#=#' section is served to use menu existent type as replacement
+for required group (for example, in case of menu identity for this types).
 
  ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
 
 @LUM_MenuConts
 $ #Menu file content#: LUM
-  Files with menu allows to form various menus.
- Default directory of the files is \37<Pack directory>\<LuaUM directory>\config\-.
- (lum is an abbreviation of Lua User Menu.)
+  Files with menu allows to form various menus.
+ Default directory of the files is \37<Pack directory>\<LuaUM directory>\config\-.
+ (lum is an abbreviation of Lua User Menu.)
 
-  Menus stores in lua‑scripts files with \37.lum\- or  \37.lua\- extension.
-First line of lum‑file for lua format must begin from \37local\-
-string or \37-- LUM\- string, otherwise file is considered as ini-file.
+  Menus stores in lua‑scripts files with \37.lum\- or \37.lua\- extension.
+First line of lum‑file for lua format must begin from \37local\-
+string or \37-- LUM\- string, otherwise file is considered as ini-file.
 
  ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
 
 @LUM_MenuItems
 $ #Menu‑table items#: LUM
-  Section of item for main menu is simply called #Menu#.
-Menu item sections may contain a menu section name
-which includes them and menu item name itself after ".".
+  Section of item for main menu is simply called #Menu#.
+Menu item sections may contain a menu section name
+which includes them and menu item name itself after ".".
 
-  An item kind and corresponding action is specified with keys.
+  An item kind and corresponding action is specified with keys.
 
     ~Menu item kinds~@LUM_ItemKinds@
-    ~Common keys of items~@LUM_Item_Keys@
+    ~Common keys of items~@LUM_Item_Keys@
     ~Using keyboard keys~@LUM_Keyboard@
 
  ~Contents~@Contents@       ~Menu formation~@LUM_Formation@
@@ -217,230 +217,230 @@ which includes them and menu item name itself after ".".
 @LUM_ItemKinds
 $ #Menu item kinds#: LUM
 
-    ~Label~@LUM_Item_Label@      — ¦is a label item.
+    ~Label~@LUM_Item_Label@      — ¦is a label item.
     ~Submenu~@LUM_Item_Menu@    — ¦outputs submenu.
     ~Separator~@LUM_Item_Separ@  — ¦separates menu items.
-    ~Lua macro~@LUM_Item_Seq@  — ¦runs a Lua macro.
+    ~Lua macro~@LUM_Item_Seq@  — ¦runs a Lua macro.
 
     ~Text template~@LUM_Item_Plain@  — ¦inserts a plain text.
-    ~Macro-template~@LUM_Item_Macro@ — ¦inserts a macro-template.
+    ~Macro-template~@LUM_Item_Macro@ — ¦inserts a macro‑template.
 
-    ~Lua script~@LUM_Item_Script@     — ¦executes a Lua script.
-    ~OS command~@LUM_Item_OS_cmd@     — ¦executes a command of OS.
+    ~Lua script~@LUM_Item_Script@     — ¦executes a Lua script.
+    ~OS command~@LUM_Item_OS_cmd@     — ¦executes a command of OS.
     ~Command line~@LUM_Item_CmdLine@   — ¦executes a command line.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_EnvCfg
-$ #An environment configuration#: LUM
-  An environment configuration table includes:
+$ #An environment configuration#: LUM
+  An environment configuration table includes:
  — ¦user menu settings configuration,
- — ¦information about used menu item.
+ — ¦information about used menu item.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Keys
-$ Common keys of menu items: LUM
-  It may use following additional keys in section for menu item:
+$ Common keys of menu items: LUM
+  It may use following additional keys in section for menu item:
 
-  #text# (string) — an output text for menu item.
+  #text# (string) — an output text for menu item.
 
   #Kind# (string) — menu item kind.
-    It may not specified, because it is defined by basic keys of sections.
+    It may not specified, because it is defined by basic keys of sections.
 
-  #Area# (string) — an execution area of FAR for menu item.
-  — ¦The key may have following values:
+  #Area# (string) — an execution area of FAR for menu item.
+  — ¦The key may have following values:
 \37panels\-, \37editor\-, \37viewer\-, \37dialog\-.
-  — ¦A key absence indicates any area of FAR.
-  — ¦It also use for checking of selection present by insert
-of "\37;selected\-" string after execution area name (or "").
-  — ¦A addition of \37;selected\- after area name (or "")
-indicates a need of selection presence in this area.
+  — ¦A key absence indicates any area of FAR.
+  — ¦It also use for checking of selection present by insert
+of "\37;selected\-" string after execution area name (or "").
+  — ¦A addition of \37;selected\- after area name (or "")
+indicates a need of selection presence in this area.
 
-  #Check# (func) — a function for checking item to include into menu.
-  — ¦Function result define inclusion of item into menu.
-  — ¦An argument is an ~environment configuration~@LUM_Item_EnvCfg@ table.
+  #Check# (func) — a function for checking item to include into menu.
+  — ¦Function result define inclusion of item into menu.
+  — ¦An argument is an ~environment configuration~@LUM_Item_EnvCfg@ table.
 
-  #Selected# (bool) — item selection flag at the first output of menu.
+  #Selected# (bool) — item selection flag at the first output of menu.
 
-  #Inherit#  (bool) — a flag of supermenu properties inheritance (for menu).
+  #Inherit#  (bool) — a flag of supermenu properties inheritance (for menu).
 
-  Menu item may contain other keys, that is supported
-by corresponding menu (see ~MenuView~@LUM_Item_Menu@).
-For example, \37far.Menu\- allows to use following keys:
+  Menu item may contain other keys, that is supported
+by corresponding menu (see ~MenuView~@LUM_Item_Menu@).
+For example, \37far.Menu\- allows to use following keys:
 #checked#, #disable#, #grayed#, #hidden#.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Label
 $ A #Label# item: LUM
-  An item does not process any actions.
+  An item does not process any actions.
 
-  Basic key is #Label# (bool).
-  The key must have a \37true\- value.
+  Basic key is #Label# (bool).
+  The key must have a \37true\- value.
 
-  An item may be used for show items for fixed rows and columns of RectMenu.
+  An item may be used for show items for fixed rows and columns of RectMenu.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Menu
 $ A #Submenu# item: LUM
-  An item outputs submenu.
+  An item outputs submenu.
 
-  Basic key is #Items# (table).
-  The key contains an enumeration of sections for current menu items.
-  It may contain abbreviation of section for item, then the section
-must contain key with a name as this abbreviation and a value as section name.
+  Basic key is #Items# (table).
+  The key contains an enumeration of sections for current menu items.
+  It may contain abbreviation of section for item, then the section
+must contain key with a name as this abbreviation and a value as section name.
 
   Additional keys:
 
   #Title# (string) — a submenu title.
-  — ¦If the key doesn't exist, title is defined as #text# value (excluding "&").
+  — ¦If the key doesn't exist, title is defined as #text# value (excluding "&").
 
-  #MenuView# (string) — a view of output menu.
-    ¦The key may have following values: \37far.Menu\- (by default),
-\37RectMenu\- (rectangular menu), \37FilterMenu\- (filtration menu),
-\37SearchMenu\- (searchable menu).
+  #MenuView# (string) — a view of output menu.
+    ¦The key may have following values: \37far.Menu\- (by default),
+\37RectMenu\- (rectangular menu), \37FilterMenu\- (filtration menu),
+\37SearchMenu\- (searchable menu).
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Separ
 $ A #Separator# item: LUM
-  An item separates menu items.
+  An item separates menu items.
 
-  Basic key is #separator# (bool).
-  The key must have a \37true\- value.
+  Basic key is #separator# (bool).
+  The key must have a \37true\- value.
 
-  It may specified a #text# for text output.
+  It may specified a #text# for text output.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Seq
-$ A #Lua macro# item: LUM
-  An item runs a lua‑macro.
+$ A #Lua macro# item: LUM
+  An item runs a lua‑macro.
 
-  Basic key is #LuaMacro# (string).
-  The key specifies a text with lua macro.
+  Basic key is #LuaMacro# (string).
+  The key specifies a text with lua macro.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Plain
 $ A #Text template# item: LUM
-  An item inserts a plain text.
+  An item inserts a plain text.
 
-  Basic key is #Plain# (string).
-  The key specifies an inserted text.
+  Basic key is #Plain# (string).
+  The key specifies an inserted text.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Macro
 $ A #Macro-template# item: LUM
-  An item inserts a ~macro-template~@<..\Utils\>Macros@.
+  An item inserts a ~macro-template~@<..\Utils\>Macros@.
 
-  Basic key is #Macro# (string).
-  The key specifies an executed macro-template.
+  Basic key is #Macro# (string).
+  The key specifies an executed macro-template.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_Script
-$ A #Lua script# item: LUM
-  An item executes a Lua script or script function.
+$ A #Lua script# item: LUM
+  An item executes a Lua script or script function.
 
-  Basic key is #Script#.
+  Basic key is #Script#.
 
-  Lua-script is specified by followed keys:
-  #Script#    — ¦a filename of script or \37nil\-.
-  #ChunkArgs# — ¦parameters passed to script chunk only.
-  #Function#  — ¦a name of global function in script file or function itself.
-  #Arguments# — ¦parameters passed to chunk and function of script file.
+  Lua-script is specified by followed keys:
+  #Script#    — ¦a filename of script or \37nil\-.
+  #ChunkArgs# — ¦parameters passed to script chunk only.
+  #Function#  — ¦a name of global function in script file or function itself.
+  #Arguments# — ¦parameters passed to chunk and function of script file.
 
   Remarks:
-  — ¦#Script# may be with path relative to scripts directory of LUM menu.
-  — ¦Parameters is specified in the Lua-style and enumerated by ",".
-  — ¦#ChunkArgs# value may specify in end of #Script# within parentheses.
-In this case #ChunkArgs# is parsed as string of arguments.
-  — ¦#Arguments# value may specify in end of #Function# within parentheses.
-In this case #Arguments# is parsed as string of arguments.
+  — ¦#Script# may be with path relative to scripts directory of LUM menu.
+  — ¦Parameters is specified in the Lua-style and enumerated by ",".
+  — ¦#ChunkArgs# value may specify in end of #Script# within parentheses.
+In this case #ChunkArgs# is parsed as string of arguments.
+  — ¦#Arguments# value may specify in end of #Function# within parentheses.
+In this case #Arguments# is parsed as string of arguments.
 
-  A function is executed, if a #Function# is defined and if a script
-is returned a \37(nil, nil)\- value. It is made for compatibility
-with scripts used in menu items of LuaFAR for Editor (see AddToMenu).
+  A function is executed, if a #Function# is defined and if a script
+is returned a \37(nil, nil)\- value. It is made for compatibility
+with scripts used in menu items of LuaFAR for Editor (see AddToMenu).
 
   ~Script execution specifics~@LUM_Item_Script_Spec@
 
 @LUM_Item_Script_Spec
 $ #Script execution specifics#: LUM
   Called Lua-script chunk receives followed arguments:
-  1. ¦A parameter of script chunk from #ChunkArgs#
-     or a script parameters array of script chunk from #Script#
-     or (if #ChunkArgs# is absent) a name of script function from #Function#.
-  2. ¦An environment configuration table, where from script is called:
-     LUM settings and information about menu item.
+  1. ¦A parameter of script chunk from #ChunkArgs#
+     or a script parameters array of script chunk from #Script#
+     or (if #ChunkArgs# is absent) a name of script function from #Function#.
+  2. ¦An environment configuration table, where from script is called:
+     LUM settings and information about menu item.
 
   Called Lua-script function receives followed arguments:
-  1. ¦A parameter of script from #Arguments#
-     or a script parameters array of script from #Function#
+  1. ¦A parameter of script from #Arguments#
+     or a script parameters array of script from #Function#
   2. ¦An ~environment configuration~@LUM_Item_EnvCfg@ table,
-where from script is called.
+where from script is called.
 
-  If script is a module, module name on \37module\- function call
-must be specified explicitly. Do not use compound names for modules.
+  If script is a module, module name on \37module\- function call
+must be specified explicitly. Do not use compound names for modules.
 
-  A #Relative# key allows to use scripts from any directory.
- It may have following values:
-  \37LUM\-      — ¦directory with user menu,
-  \37Plugin\-   — ¦LuaFAR for Editor plugin directory,
-  \37scripts\-  — ¦scripts directory in plugin directory,
-  \37DefUM\-    — ¦LuaUM directory (i.e. a directory with base script LUM.lua),
-  \37default\-  — ¦scripts directory in LuaUM directory (for default scripts).
+  A #Relative# key allows to use scripts from any directory.
+ It may have following values:
+  \37LUM\-      — ¦directory with user menu,
+  \37Plugin\-   — ¦LuaFAR for Editor plugin directory,
+  \37scripts\-  — ¦scripts directory in plugin directory,
+  \37DefUM\-    — ¦LuaUM directory (i.e. a directory with base script LUM.lua),
+  \37default\-  — ¦scripts directory in LuaUM directory (for default scripts).
 
-  If key isn't specified, scripts directory from configurations is used.
-Other values are regarded as path relative to plugin directory.
+  If key isn't specified, scripts directory from configurations is used.
+Other values are regarded as path relative to plugin directory.
 
   ~Lua script~@LUM_Item_Script@
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_OS_cmd
-$ An #OS command# item: LUM
-  An item executes a command of OS.
+$ An #OS command# item: LUM
+  An item executes a command of OS.
 
-  Basic key is #Command# (string).
-  The key specifies an executed OS command.
+  Basic key is #Command# (string).
+  The key specifies an executed OS command.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Item_CmdLine
 $ A #Command line# item: LUM
-  An item executes a command from command line of FAR.
+  An item executes a command from command line of FAR.
 
-  Basic key is #CmdLine# (string).
-  The key specifies an executed command.
+  Basic key is #CmdLine# (string).
+  The key specifies an executed command.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@
 
 @LUM_Keyboard
 $ #Using keyboard keys#: LUM
-  Use keyboard keys for fast selection of menu items
-defining hot keys or/and acceleration keys or break keys for them.
+  Use keyboard keys for fast selection of menu items
+defining hot keys or/and acceleration keys or break keys for them.
 
-  #Hotkey# (hot key)
-  It may define a hot key for menu item.
-It is specified in #text# by "\37&\-" character before selected "hot letter".
-Press <letter> or \37Alt\-+<letter> key for selection of this item.
+  #Hotkey# (hot key)
+  It may define a hot key for menu item.
+It is specified in #text# by "\37&\-" character before selected "hot letter".
+Press <letter> or \37Alt\-+<letter> key for selection of this item.
 
-  Moreover, it may be define special key combination, that is specified
-either in #AccelKey# (full name of key) or in #AccelStr# (short name).
+  Moreover, it may be define special key combination, that is specified
+either in #AccelKey# (full name of key) or in #AccelStr# (short name).
 
   #AccelKey# (acceleration key)
 
-  A key name for #AccelKey# is made, if to remove "\37KEY_\-" prefix
-from inner code name of this key. An information for inner key codes
-is contained in FAR Manager Encyclopedia ("Types and definitions" section,
-"KEY_* — FAR Manager key codes" subsection, "FAR Manager key codes" theme).
-  If a key is a #AccelStr#, modifiers are enumerated before the key
-successively, separating from it with "+" sign, and they are defined
-by following letters:
+  A key name for #AccelKey# is made, if to remove "\37KEY_\-" prefix
+from inner code name of this key. An information for inner key codes
+is contained in FAR Manager Encyclopedia ("Types and definitions" section,
+"KEY_* — FAR Manager key codes" subsection, "FAR Manager key codes" theme).
+  If a key is a #AccelStr#, modifiers are enumerated before the key
+successively, separating from it with "+" sign, and they are defined
+by following letters:
   "\37A\-" — \37Alt\-, "\37C\-" — \37Ctrl\-, "\37S\-" — \37Shift\-.
 
  ~Contents~@Contents@       ~Menu file content~@LUM_MenuConts@

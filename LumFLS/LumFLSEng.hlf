@@ -5,11 +5,11 @@
 .Options CtrlStartPosChar=¦
 
 @Contents
-$ #Lua User Menu for work with fl_scripts# (~LumFLS~)
-  LumFLS is a variant of LUM utility, used to work
-with set of scripts #farlua scripts# (fl_scripts) of maxfl.
+$ #Lua User Menu for work with fl_scripts# (~LumFLS~)
+  LumFLS is a variant of LUM utility, used to work
+with set of scripts #farlua scripts# (fl_scripts) of maxfl.
 
-    ~Files of utility~@LUM_Files@
+    ~Files of utility~@LUM_Files@
 
   Links:
     ~Rh_Scripts~@<..\doc\>Contents@ pack

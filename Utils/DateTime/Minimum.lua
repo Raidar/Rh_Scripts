@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- DateTime config for world: Earth [minimum].
-  -- Конфигурация DateTime для мира: Земля [минимум].
+  -- DateTime config for world: Earth [minimum].
+  -- Конфигурация DateTime для мира: Земля [минимум].
 --]]
 ----------------------------------------
 --[[ uses:

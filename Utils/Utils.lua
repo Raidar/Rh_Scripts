@@ -2,7 +2,7 @@
 
 ----------------------------------------
 --[[ description:
-  -- Lua and LuaFAR functions.
+  -- Lua and LuaFAR functions.
   -- Lua‑ и LuaFAR‑функции.
 --]]
 ----------------------------------------

@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Macros with LuaFAR for Editor plugin.
-  -- Макросы с плагином LuaFAR for Editor.
+  -- Macros with LuaFAR for Editor plugin.
+  -- Макросы с плагином LuaFAR for Editor.
 --]]
 ----------------------------------------
 --[[ uses:
@@ -35,7 +35,7 @@ local Async = function () return mmode(3, 1) end
 local PluginExist = Plugin.Exist
 local PluginMenu, CallPlugin = Plugin.Menu, Plugin.Call
 
----------------------------------------- 'L' -- LuaFAR for Editor
+---------------------------------------- 'L' -- LuaFAR for Editor
 -- [[
 guids.LF4Ed = "6F332978-08B8-4919-847A-EFBB6154C99A"
 

@@ -2,15 +2,15 @@
 ==================
 
 Внимание:
-Не забудьте сохранить свои настройки и скрипты,
-а после установки пакета — восстановить их.
+Не забудьте сохранить свои настройки и скрипты,
+а после установки пакета — восстановить их.
 
 Установка:
-1. Удалите весь каталог ~Rh_Scripts~ в каталоге ~scripts~ плагина.
-2. Скопируйте каталог ~Rh_Scripts~ из скачанного архива в каталог
-   ~scripts~ плагина "LuaFAR для Редактора" (LuaFAR for Editor).
-3. Создайте в каталоге плагина файл "_usermenu.lua", если его нет.
-   Добавьте в этот файл следующую строку:
+1. Удалите весь каталог ~Rh_Scripts~ в каталоге ~scripts~ плагина.
+2. Скопируйте каталог ~Rh_Scripts~ из скачанного архива в каталог
+   ~scripts~ плагина "LuaFAR для Редактора" (LuaFAR for Editor).
+3. Создайте в каталоге плагина файл "_usermenu.lua", если его нет.
+   Добавьте в этот файл следующую строку:
 AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 4. Переименуйте "_usermenu.lua.example" в "_usermenu.lua".
 5. Очистите кэш плагинов и перезагрузите FAR Manager.
@@ -19,25 +19,25 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 
 Первоначальная настройка:
 
-* Для работы пользовательских меню:
+* Для работы пользовательских меню:
 1. Скопируйте файл "LumBinds.lua.example"
-   из каталога ~Rh_Scripts\LuaEUM\config~
-   в файл "LumBinds.lua" того же каталога, если его там нет.
+   из каталога ~Rh_Scripts\LuaEUM\config~
+   в файл "LumBinds.lua" того же каталога, если его там нет.
 2. Скопируйте файл "LumBinds.lua.example"
-   из каталога ~Rh_Scripts\LuaPUM\config~
-   в файл "LumBinds.lua" того же каталога, если его там нет.
+   из каталога ~Rh_Scripts\LuaPUM\config~
+   в файл "LumBinds.lua" того же каталога, если его там нет.
 
-* Для работы с меню Tortoise SVN:
+* Для работы с меню Tortoise SVN:
 1. Скопируйте файл "TortoiseSVN.cfg.example"
-   из каталога ~Rh_Scripts\LuaPUM\config~
+   из каталога ~Rh_Scripts\LuaPUM\config~
    в файл "TortoiseSVN.cfg" каталога
    ~%FarProfile%\data\scripts\Rh_Scripts\LuaPUM\config~,
-   если его там нет.
+   если его там нет.
 2. Настройте параметры конфигурации в файле "TortoiseSVN.cfg".
 
-* Для таблицы символов:
+* Для таблицы символов:
 1. Скачайте файлы "NamesList.txt" и "Blocks.txt"
-   с сайта "The Unicode Consortium" по ссылкам:
+   с сайта "The Unicode Consortium" по ссылкам:
    http://www.unicode.org/Public/UNIDATA/NamesList.txt
    http://www.unicode.org/Public/UNIDATA/Blocks.txt
 2. Скопируйте скачанные файлы в каталог
@@ -45,5 +45,5 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 
 ―――――――
 P.S. Рекомендуется также просмотреть историю изменений
-     для получения информации о новых и исправленных функциях пакета.
+     для получения информации о новых и исправленных функциях пакета.
 ―――――――
