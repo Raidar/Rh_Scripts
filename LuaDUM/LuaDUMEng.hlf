@@ -1,0 +1,32 @@
+﻿.Language=English,English
+.PluginContents=Lua User Menu for Dialog
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Lua User Menu for Dialog# (~LuaDUM~)
+  LuaDUM is a variant of LUM utility, used to work in FAR dialog.
+
+    ~Menu items~@LUM_Items@
+    ~Files of utility~@LUM_Files@
+
+  Links:
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
+    ~Lua User Menu~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~LuaDUM~@Contents@
+
+@LUM_Items
+$ #Menu items#: LuaDUM
+
+ ~Contents~@Contents@
+
+@LUM_Files
+$ #Files of utility#: LuaDUM
+  Files:
+    \37LuaDUM.lua\-     — ¦LuaDUM menu: Implementation.
+    \37LuaDUMer.lua\-   — ¦LuaDUM settings: Configurator.
+
+ ~Contents~@Contents@

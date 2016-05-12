@@ -265,6 +265,7 @@ function TMenu:Run ()
 
   local Cfg_Data = self.Config.CfgData
 
+  --logShow(self, "LUM::TMenu:Run")
   local isOk, SError, ActItem = UMenu(self.Props, self.Menus, self.Config)
 
   --logShow({ isOk, SError }, ActItem.Kind)

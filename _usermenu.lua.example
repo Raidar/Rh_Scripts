@@ -1,5 +1,5 @@
 --[[ Rh_Scripts ]]--
--- This file is auto-generated. Don't edit.
+-- This file is auto-generated. Please, don't edit it.
 
 ----------------------------------------
 --[[ description:
@@ -38,9 +38,15 @@ AddToMenu("c", "LUM for &Editor", nil, ScriptsPath.."LuaEUM\\LuaEUM", "Config")
 AddToMenu("e", nil, "Ctrl+J", ScriptsPath.."LuaEUM\\LuaEUM", "Insert")
   -- Characters kit assigned to key.
 AddToMenu("e", nil, "Ctrl+Shift+H", ScriptsPath.."LuaEUM\\LuaEUM", "Characters")
+-- LUM for Viewer.
+AddToMenu("v", "LU&M for Viewer", nil, ScriptsPath.."LuaVUM\\LuaVUM")
+AddToMenu("c", "LUM for &Viewer", nil, ScriptsPath.."LuaVUM\\LuaVUM", "Config")
 -- LUM for Panels.
 AddToMenu("p", "LU&M for Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM")
 AddToMenu("c", "LUM for &Panels", nil, ScriptsPath.."LuaPUM\\LuaPUM", "Config")
+-- LUM for Dialog.
+AddToMenu("d", "LU&M for Dialog", nil, ScriptsPath.."LuaDUM\\LuaDUM")
+AddToMenu("c", "LUM for &Dialog", nil, ScriptsPath.."LuaDUM\\LuaDUM", "Config")
 -- LUM for farlua scripts.
 AddToMenu("evpd", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS")
 AddToMenu("c", "&fl scripts LUM", nil, ScriptsPath.."LumFLS\\LumFLS", "Config")
@@ -60,7 +66,6 @@ AddToMenu("c", "Update Templates", nil, EditorHandActions, "TT:Update")
 
   -- Keys information.
 AddToMenu("evp", "&Keys information", nil, SamplesPath.."KeysInfo")
-
 
 ---------------------------------------- Commands
 

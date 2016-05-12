@@ -1,0 +1,32 @@
+﻿.Language=Russian,Russian (Русский)
+.PluginContents=Lua User Menu для Диалога
+.Options TabSize=4
+.Options CtrlColorChar=\
+.Options CtrlStartPosChar=¦
+
+@Contents
+$ #Пользовательское меню Lua для Диалога# (~LuaDUM~)
+  LuaDUM — вариант утилиты LUM, предназначенный для работы в диалогах FAR.
+
+    ~Пункты меню~@LUM_Items@
+    ~Файлы утилиты~@LUM_Files@
+
+  Ссылки:
+    ~Rh_Scripts~@<..\doc\>Contents@ pack
+    ~Пользовательское меню Lua~@<..\LuaUM\>Contents@ (LUM)
+
+@Help
+ ~LuaDUM~@Contents@
+
+@LUM_Items
+$ #Пункты меню#: LuaDUM
+
+ ~Содержание~@Contents@
+
+@LUM_Files
+$ #Файлы утилиты#: LuaDUM
+  Файлы:
+    \37LuaDUM.lua\-     — ¦Меню LuaDUM: Реализация.
+    \37LuaDUMer.lua\-   — ¦Настройка LuaDUM: Конфигуратор.
+
+ ~Содержание~@Contents@

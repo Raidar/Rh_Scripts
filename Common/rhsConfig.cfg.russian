@@ -13,10 +13,22 @@ do local t = {}; Data = t
       t["Title"] = "&Текстовые шаблоны"
     end
   end
+  do local t = {}; Data["mLuaVUM"] = t
+    t["Title"] = "LU&M для Просмотра"
+    do local t = {}; Data["mLuaVUM"]["config"] = t
+      t["Title"] = "LUM для П&росмотра"
+    end
+  end
   do local t = {}; Data["mLuaPUM"] = t
     t["Title"] = "LU&M для Панелей"
     do local t = {}; Data["mLuaPUM"]["config"] = t
       t["Title"] = "LUM для  &Панелей"
+    end
+  end
+  do local t = {}; Data["mLuaDUM"] = t
+    t["Title"] = "LU&M для Диалога"
+    do local t = {}; Data["mLuaDUM"]["config"] = t
+      t["Title"] = "LUM для  &Диалога"
     end
   end
   do local t = {}; Data["sLUMs"] = t

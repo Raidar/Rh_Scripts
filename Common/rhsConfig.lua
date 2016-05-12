@@ -69,7 +69,9 @@ local CfgDataOrder = {
   "mLuaEUM",
   "mLuaEUM_Insert",
   "mLuaEUM_ChsKit",
+  "mLuaVUM",
   "mLuaPUM",
+  "mLuaDUM",
   "mLumFLS",
   "sScripts", -- Скрипты:
   "mVoidTruncate",
@@ -156,6 +158,22 @@ local DefCfgData = {
     Comment = "  -- Paired structures handling menu.",
   },
   --]==]
+  mLuaVUM = {
+    Area = "vc",
+    enabled = true,
+    Name = "LuaVUM",
+    Title = "LU&M for Viewer",
+    --HotKey = "Alt+Shift+F2",
+    Command = "luavum",
+    BasePath = "ScriptsPath",
+    FilePath = [[LuaVUM\\LuaVUM]],
+    config = {
+      enabled = true,
+      Title = "LUM for &Viewer",
+      Param1 = "Config",
+    },
+    Comment = "-- LUM for Viewer.",
+  },
   mLuaPUM = {
     Area = "pc",
     enabled = true,
@@ -171,6 +189,22 @@ local DefCfgData = {
       Param1 = "Config",
     },
     Comment = "-- LUM for Panels.",
+  },
+  mLuaDUM = {
+    Area = "dc",
+    enabled = true,
+    Name = "LuaDUM",
+    Title = "LU&M for Dialog",
+    --HotKey = "Alt+Shift+F2",
+    Command = "luadum",
+    BasePath = "ScriptsPath",
+    FilePath = [[LuaDUM\\LuaDUM]],
+    config = {
+      enabled = true,
+      Title = "LUM for &Dialog",
+      Param1 = "Config",
+    },
+    Comment = "-- LUM for Dialog.",
   },
   mLumFLS = {
     Area = "evpdc",
