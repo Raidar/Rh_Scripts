@@ -61,7 +61,7 @@ end -- KeywordKey
 local KeywordsAdd = {
   -- Additonal keywords:
   a = 'abstract',
-  --b = '',
+  b = 'object',
   c = 'switch',
   d = 'dynamic',
   e = 'error',
