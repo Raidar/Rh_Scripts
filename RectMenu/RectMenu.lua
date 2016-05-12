@@ -457,6 +457,7 @@ function TMenu:DefinePropInfo () --| Props
   -- Определение области/окна FAR.
   self.Area = farUt.GetAreaSize(self.Menu.Options.FarArea)
   -- self.Area.Width = 80; self.Area.Height = 25 -- TEST only
+  --logShow(self.Area, self.Menu.Options.FarArea)
   -- Корректировка размера.
   --self.Area.Width  = self.Area.Width -- - 2
   self.Area.Height = self.Area.Height + 1 -- - 3

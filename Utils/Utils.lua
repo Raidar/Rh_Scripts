@@ -551,22 +551,35 @@ unit.FarGetAreaSize = {
   panels = function () -- Панели:
     local APInfo = PanelsGetInfo(nil, 1).PanelRect -- Активная панель
     local PPInfo = PanelsGetInfo(nil, 0).PanelRect -- Пассивная панель
-    return { Width  = APInfo.right - APInfo.left + 1 +
-                      PPInfo.right - PPInfo.left + 1,
-             Height = max2(APInfo.bottom - APInfo.top + 1,
-                           PPInfo.bottom - PPInfo.top + 1), }
+    if APInfo and PPInfo then
+      return { Width  = APInfo.right - APInfo.left + 1 +
+                        PPInfo.right - PPInfo.left + 1,
+               Height = max2(APInfo.bottom - APInfo.top + 1,
+                             PPInfo.bottom - PPInfo.top + 1), }
+    end
   end, -- panels
   editor = function () -- Редактор:
     local Info = EditorGetInfo(nil)
-    return { Width  = Info.WindowSizeX,
-             Height = Info.WindowSizeY, }
+    if Info then
+      return { Width  = Info.WindowSizeX,
+               Height = Info.WindowSizeY, }
+    end
   end, -- editor
   viewer = function () -- Просмотр:
     local Info = ViewerGetInfo(nil)
-    return { Width  = Info.WindowSizeX,
-             Height = Info.WindowSizeY, }
+    if Info then
+      return { Width  = Info.WindowSizeX,
+               Height = Info.WindowSizeY, }
+    end
   end, -- viewer
+  dialog = false,
 } ---
+
+function unit.FarGetAreaSize.dialog () -- Просмотр:
+  return unit.FarGetAreaSize.panels() or
+         unit.FarGetAreaSize.editor() or
+         unit.FarGetAreaSize.viewer()
+end -- dialog
 
 -- Size of current FAR area.
 -- Размер текущей области FAR.
@@ -801,6 +814,7 @@ unit.DialogInsertText = DialogInsertText
 unit.FarInsertText = {
   panels = function (s) return panel.InsertCmdLine(nil, s) end,
   editor = function (s) return editor.InsertText(nil, s) end,
+  viewer = function (s) return true end,
   dialog = function (s) return DialogInsertText(nil, s) end,
 } --- FarInsertText
 

@@ -463,7 +463,7 @@ function Run.Make (Text, MacroKeyChar) --> (table)
     else -- Action key:
       local key = Run.CheckMacroPos(Text, k)
       if s ~= "" then
-        t[#t+1], s = { Action = "text", Text = s }, ""
+        t[#t+1], s = { Action = "text", Text = s, }, ""
       end
 
       if key then
@@ -485,7 +485,7 @@ function Run.Make (Text, MacroKeyChar) --> (table)
   end -- while
 
   if s ~= "" then -- Unsaved rest of text:
-    t[#t+1] = { Action = "text", Text = s }
+    t[#t+1] = { Action = "text", Text = s, }
   end
   --logShow(t, Text)
 
