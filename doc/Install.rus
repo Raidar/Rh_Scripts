@@ -42,6 +42,8 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
    http://www.unicode.org/Public/UNIDATA/Blocks.txt
 2. Скопируйте скачанные файлы в каталог
    ~%FarProfile%\data\scripts\Rh_Scripts\data~.
+3. Удалите файл
+   ~Rh_Scripts\data\CharsData.lua~
 
 ―――――――
 P.S. Рекомендуется также просмотреть историю изменений
