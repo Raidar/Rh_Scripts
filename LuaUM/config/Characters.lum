@@ -358,14 +358,14 @@ function unit.MathsSymbols ()
                 [[abcdefghijklmnopqrstuvwxyz1234567890-=`[];',./\ ]]..
                 [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
                 -- Ctrl + Shift                         
-                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮          ⋜⋝±≈∼  ×∕≤≥/́]]..Chars.CR..
-                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ          ∓≉≁⟦⟧⋆ ≰≱\§ ]]..
-                -- Alt + Shift                          
-                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃        ≼≽−≡≃≺≻⋅ ≲≳/\ ]]..
-                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅        ⋠⋡≂≢≄⊀⊁∗ ≴≵?| ]]..
-                -- Ctrl + Alt + Shift
-                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇        ⋞⋟≍≣∽≾≿∘∣⋦⋧…― ]]..
-                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉        ≪≫≭≠⋍⋨⋩∙∤≮≯&‾ ]]
+                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮        ≺≻⋜⋝±≈∼  ×∕<>/́]]..Chars.CR..
+                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ      ⊀⊁  ∓≉≁⟦⟧⋆ ≮≯\§ ]]..
+                -- Alt + Shift                        
+                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃    ≲≳≾≿≼≽−≡≃（）⋅ ≤≥/\ ]]..
+                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅    ≴≵  ⋠⋡≂≢≄［］∗ ≰≱?| ]]..
+                -- Ctrl + Alt + Shift             
+                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇    ⋦⋧⋨⋩⋞⋟≍≣∽｛｝∘∣  …― ]]..
+                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉          ≭≠⋍＜＞∙∤≪≫&‾ ]]
   local Props = {
     Order = Order,
     Serial = true,
@@ -522,6 +522,8 @@ function unit.Punct_Spaces ()
     { '     "1"', '1'  }, { '   Num*  ', '=', 'Multiply', },
   } ---
 
+  -- Spaces: '            ​'
+  -- Dashes: '‑­—–‒‐‧'
   local Datas = {
     { ' ', 'Thin space ', }, { '­', 'Soft hyphen', },
     { ' ', 'Figure spc ', }, { '‒', 'Figure dash', },
