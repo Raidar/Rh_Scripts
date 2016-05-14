@@ -555,7 +555,6 @@ function unit.Punct_Spaces ()
   } ---
 
   local Cfg = unit.MakeKindConfig(Name, false)
-  --local Menu = unit.MakeKindMenu(Cfg, Props, Datas, "DupleKey")
   Menu = unit.MakeKindMenu(Cfg, Props, Datas, CharsMenu.DefDoubleKeys)
   --logShow(Menu, Name, "w d3")
   unit.ScriptData[Name] = Menu
@@ -572,6 +571,8 @@ function unit.MakeMenu ()
   local gL = unit.KitGroups
 
   CharsMenu = require "Rh_Scripts.Common.CharsMenu"
+
+  --logShow("unit.MakeMenu", "unit.MakeMenu")
 
   return {
     text  = L.ChsKitItem,
@@ -612,6 +613,8 @@ local Data = {
 
   ["Characters"] = unit.MakeMenu,
 } ---
+
+--logShow(Data, "Characters.lum")
 
 return Data
 --------------------------------------------------------------------------------
