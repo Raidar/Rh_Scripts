@@ -311,7 +311,7 @@ local DefCfgData = {
     --Param1 = "WC:Update",
     config = {
       enabled = true,
-      Title = "Update Templates",
+      Title = "Update Te&mplates",
       Param1 = "TT:Update",
     },
   },

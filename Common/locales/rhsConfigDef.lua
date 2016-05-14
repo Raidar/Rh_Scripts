@@ -54,7 +54,7 @@ local Data = {
   cfg_AutoComplete  = "&Auto Completion",
   cfg_TextTemplate  = "&Text Templates",
   cfg_AutoTemplate  = "A&uto Templates",
-  cfg_TT_Update     = "Update Templates",
+  cfg_TT_Update     = "Update Te&mplates",
   cfg_Samples   = "Samples:", -- Samples:
   cfg_KeysInfo      = "&Keys information",
 

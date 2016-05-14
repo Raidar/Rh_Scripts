@@ -55,7 +55,7 @@ local Data = {
   cfg_AutoComplete  = "&АвтоЗавершение",
   cfg_TextTemplate  = "&Текстовые шаблоны",
   cfg_AutoTemplate  = "А&втоШаблоны",
-  cfg_TT_Update     = "Обновить шаблоны",
+  cfg_TT_Update     = "Обновить &шаблоны",
   cfg_Samples   = "Примеры:", -- Samples:
   cfg_KeysInfo      = "Инфо о &клавишах",
 
