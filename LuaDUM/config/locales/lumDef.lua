@@ -1,11 +1,11 @@
---[[ LuaVUM menus: English ]]--
+--[[ LuaDUM menus: English ]]--
 
 --------------------------------------------------------------------------------
 local Data = {
   -- basic
   Separator         = "Separator",
 
-  MainMenu          = "LUM for Viewer",
+  MainMenu          = "LUM for Dialog",
 
   ----------------------------------------
 

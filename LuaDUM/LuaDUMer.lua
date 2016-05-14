@@ -1,16 +1,16 @@
---[[ LuaVUM settings ]]--
+--[[ LuaDUM settings ]]--
 
 ----------------------------------------
 --[[ description:
-  -- LuaVUM settings.
-  -- Настройка LuaVUM.
+  -- LuaDUM settings.
+  -- Настройка LuaDUM.
 --]]
 --------------------------------------------------------------------------------
-local LUM_Path = "scripts\\Rh_Scripts\\LuaVUM\\"
+local LUM_Path = "scripts\\Rh_Scripts\\LuaDUM\\"
 
 local ArgData = {
   Basic = {
-    LuaUMName = "LuaVUM",
+    LuaUMName = "LuaDUM",
     LuaUMPath = LUM_Path,
   }, -- Basic
   Files = {
