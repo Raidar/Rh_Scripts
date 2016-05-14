@@ -1,4 +1,4 @@
---[[ LuaVUM ]]--
+--[[ LuaDUM ]]--
 
 ----------------------------------------
 --[[ description:
@@ -18,7 +18,7 @@ local locale = require 'context.utils.useLocale'
 local Custom = {
   label = "LumBinds",
   name = "lum",
-  path = "Rh_Scripts.LuaVUM.config.",
+  path = "Rh_Scripts.LuaDUM.config.",
   locale = { kind = 'require', },
 } ---
 
@@ -34,7 +34,7 @@ local Data = {
   ["@"] = { -- Информация
     Author = "Aidar",
     pack = "Rh_Scripts",
-    text = "LuaVUM",
+    text = "LuaDUM",
   },
 
   ["="] = { -- Замены:
@@ -48,8 +48,7 @@ local Data = {
 
   back   = { Menu = "UAddons;UScripts;U_DefSep;UMConfig", noDefault = true, },
 
-  --none   = { Menu = "Characters", },
-  none   = { Menu = "J_None", },
+  none   = { Menu = "Characters", },
   --text   = { Menu = "Characters", },
 
 --text
