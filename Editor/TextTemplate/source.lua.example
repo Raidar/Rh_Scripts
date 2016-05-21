@@ -35,7 +35,7 @@ local KeywordsKey = {
   v = 'value',
   w = 'while',
   x = 'class',
-  y = 'property',
+  y = 'object',
   z = 'result',
 
   -- Key variables:
@@ -84,7 +84,7 @@ local KeywordsAdd = {
   v = 'virtual',
   w = 'with',
   --x = '',
-  --y = '',
+  y = 'property',
   --z = '',
 
   -- Additional (key)words:
