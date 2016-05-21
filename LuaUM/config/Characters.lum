@@ -11,6 +11,7 @@
 --local context = context
 local logShow = context.ShowInfo
 
+local tables = require 'context.utils.useTables'
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
@@ -25,21 +26,32 @@ local unit = {}
 ---------------------------------------- Main data
 unit.ScriptName = "Characters"
 unit.ScriptPath = "Rh_Scripts.LuaUM.config"
+unit.HistoryPath= ("%s.%s.%s."):format("scripts",
+                                       unit.ScriptPath,
+                                       unit.ScriptName)
 
 unit.ScriptData = Rh_Scripts[unit.ScriptPath] or {}
 Rh_Scripts[unit.ScriptPath] = unit.ScriptData
 
 ---------------------------------------- Custom
 local DefCustom = {
-  label = "Chars",
-  name = "lum",
-  path = unit.ScriptPath..".",
+  label   = "Chars",
+  name    = "lum",
+  path    = unit.ScriptPath..".",
 
-  locale = { kind = 'require', },
+  history = {
+    field   = "",
+    name    = unit.ScriptName,
+    path    = unit.HistoryPath,
+  },
+  locale  = {
+    kind    = 'require',
+  },
 } --- DefCustom
 
 ---------------------------------------- Locale
-local L, e1, e2 = locale.localize(DefCustom)
+local LocCustom = tables.copy(DefCustom, false, pairs, true)
+local L, e1, e2 = locale.localize(LocCustom)
 if L == nil then
   return locale.showError(e1, e2)
 end
@@ -135,10 +147,17 @@ function unit.MakeKindConfig (Name, Default) --> (table)
   return Config
 end ---- MakeKindConfig
 
+  local tcopy = tables.clone --copy
+
 -- Сформировать меню из набора символов.
 function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
   local Keys = Keys or "AccelKey"
   local Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
+
+  Cfg.DefCustom = Cfg.DefCustom or tcopy(DefCustom, false, pairs, true)
+  local h = Cfg.DefCustom.history
+  if h then h.name = Cfg.Name or h.name end
+  --logShow(h, Cfg.Name)
 
   return CharsMenu.MakeMenu(Cfg, Props, Datas, Keys)
 end ---- MakeKindMenu

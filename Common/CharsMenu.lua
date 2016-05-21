@@ -24,6 +24,7 @@ local logShow = context.ShowInfo
 
 local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
+local datas = require 'context.utils.useDatas'
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
@@ -423,16 +424,18 @@ end ---- SetKeyItemsField
 do
   local tcopy = tables.clone --copy
   local DefMenuAlign = "CM"
+
   --local DefFixedRows = { HeadRows = 1 }
   --local DefFixedCols = { HeadCols = 1 }
   local DefFixedBoth = {
     HeadRows = 1,
     HeadCols = 1,
-  } ---
+  } --- DefFixedBoth
+
   local DefUMenu = {
     TextNamedKeys = false,
     UseMenuTexter = false,
-  } ---
+  } --- DefUMenu
 
   local function set__index (t, u)
     if u then
@@ -447,11 +450,32 @@ do
 
 local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 
---local InsText = editor.InsertText
 local InsText = farUt.InsertText
 
 function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   local Config = Config or {}
+
+  local self = {
+    Name  = Config.Name,
+    text  = Config.text,
+    Title = Config.Title,
+    MenuView = "RectMenu",
+
+    ArgData   = Config,
+    --FarArea   = farUt.GetBasicAreaType(),
+    InsArea   = farUt.GetAreaType(),
+
+    Custom    = false,
+    Options   = false,
+    History   = false,
+    HisData   = false,
+    CfgData   = false,
+
+    -- Текущее состояние:
+    Items     = false,    -- Список пунктов меню
+    Props     = false,    -- Свойства меню
+
+  } --- self
 
   local mItems
 
@@ -467,7 +491,15 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     mItems = unit.MakeItems(Props, Data, Keys)
   end
 
-  local Area = farUt.GetAreaType()
+  self.Items = Config.LazyMake and MakeItems or mItems
+  
+  local Properties = {
+    Id = Guid,
+    Bottom = Config.Bottom,
+
+    RectMenu = false,
+  } --- Properties
+  self.Props = Properties
 
   local mChooseKinds = {
     AKey     = true,
@@ -475,16 +507,35 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     DblClick = true,
   } --- mChooseKinds
 
+  local function StopDrag (Flag)
+    if Flag then
+      self.History:save()
+    end
+
+    return -- unused result
+  end -- StopDrag
+
   local function ChooseItem (Kind, Index)
+
     --logShow({ Index = Index, SelIndex = SelIndex }, Kind)
     --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
-    if not mChooseKinds[Kind or ""] then return nil, CloseFlag end
+    if not mChooseKinds[Kind or ""] then
+      return nil, CloseFlag
+    end
 
     local ActItem = mItems[Index]
-    if not ActItem or not ActItem.Plain then return nil, CloseFlag end
+    if not ActItem or not ActItem.Plain then
+      return nil, CloseFlag
+    end
 
     --if not InsText(nil, ActItem.Plain) then return true end
-    if not InsText(Area, ActItem.Plain, {}) then return nil, CloseFlag end
+    if not InsText(self.InsArea, ActItem.Plain, {}) then
+      return nil, CloseFlag
+    end
+
+    --local F = far.Flags
+    --local DlgRect = SendDlgMessage(hDlg, F.DM_GETDLGRECT, 0)
+    --logShow(self.DlgPos, "DlgPos")
 
     farUt.RedrawAll()
 
@@ -494,23 +545,20 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   local Fixed = Config.Fixed or DefFixedBoth
 
   local RM = Props.RectMenu or {}
-  RM.Cols         = (Props.Size or length(Props.Order)) +
-                    (Fixed == DefFixedBoth and 1 or 0)
-  RM.MenuAlign    = DefMenuAlign
-  RM.MenuEdge     = 2
-  RM.IsStatusBar  = true
-  RM.Fixed        = Fixed
+  RM.Cols           = (Props.Size or length(Props.Order)) +
+                      (Fixed == DefFixedBoth and 1 or 0)
+  RM.MenuAlign      = DefMenuAlign
+  RM.MenuEdge       = 2
+  RM.IsStatusBar    = true
+  RM.Fixed          = Fixed
+  RM.StorePos       = true
   if RM.ReuseItems == nil then RM.ReuseItems = true end
 
-  RM.OnChooseItem = ChooseItem
+  RM.OnStopDrag     = StopDrag
+  RM.OnChooseItem   = ChooseItem
   ----- RM
-  
-  local Properties = {
-    Id = Guid,
-    Bottom = Config.Bottom,
 
-    RectMenu = RM,
-  } --- Properties
+  Properties.RectMenu = RM
 
   --[[
   if Props.___ then
@@ -520,28 +568,31 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     set__index(Properties.RectMenu, Config.Props.RectMenu)
   end
 
-  local CfgData = { UMenu = tcopy(DefUMenu, false, pairs, false) }
+  self.ArgData.Custom = {} -- self.ArgData.Custom or {}
+  --logShow(self.ArgData, "ArgData", "wA d2")
+  self.Custom = datas.customize(self.ArgData.Custom, self.ArgData.DefCustom)
+  self.Options = {} -- addNewData(self.ArgData.Options, unit.DefOptions)
+
+  self.History = datas.newHistory(self.Custom.history.full)
+  --logShow(self.Custom.history, "Custom.history", "wA d2")
+  self.HisData = self.History:field(self.Custom.history.field)
+  --logShow(self.HisData, "HisData", "wA d2")
+
+  local CfgData = { UMenu = false, }
+  CfgData.UMenu = tcopy(DefUMenu, false, pairs, false)
   if set__index(CfgData, Config.CfgData) then
     set__index(CfgData.UMenu, Config.CfgData.UMenu)
   end
+  self.CfgData = CfgData
+  --logShow(self.CfgData, "CfgData", "wA d2")
+
   --[[
   if Props.___ then
     logShow({ Menu = Config, Props = Properties, Cfg = CfgData }, "ChUMenu", 3)
   end
   --]]
 
-  return {
-    Name  = Config.Name,
-    text  = Config.text,
-    Title = Config.Title,
-    MenuView = "RectMenu",
-
-    Props = Properties,
-
-    CfgData = CfgData,
-
-    Items = Config.LazyMake and MakeItems or mItems,
-  } ----
+  return self
 end ---- MakeMenu
 
 end -- do

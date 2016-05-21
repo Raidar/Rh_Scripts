@@ -232,7 +232,7 @@ function TMenu:Prepare ()
   self.Menus, SError = LW.GetFileEnumData(Args, Props)
 
   --logShow(self, "LUM self", "w d2")
-  --logShow(self.Menus, "LUM Menus", "w d2")
+  --logShow(self.Menus, "LUM Menus", "w d3")
   if not self.Menus then
     self.Error = L:et2("FileDataError", "UMenuFile", SError)
     return

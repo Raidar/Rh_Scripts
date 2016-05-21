@@ -515,7 +515,7 @@ function TMenu:CheckItem (Item) --> (bool)
   end
 
   return false
-end ----
+end ---- CheckItem
 
 end -- do
 
@@ -558,6 +558,22 @@ function TMenu:MakeMenuProps () --> (table)
   end
   --]]
 
+  -- Параметры оригинала
+  local HisData = CurMenu.HisData
+  if     HisData == nil then
+    HisData = CurMenu.CfgData
+  elseif type(HisData) == 'string' then
+    HisData = CurMenu[HisData]
+  end
+
+  Props.Origin = {
+    Custom  = CurMenu.Custom,
+    Options = CurMenu.Options,
+    --History = CurMenu.History,
+    HisData = HisData,
+    CfgData = CurMenu.CfgData,
+  } -- Props.Origin
+
   Props.Flags = Props.Flags or F.FMENU_WRAPMODE
   Props.SelectIndex = self.SelPos -- Выбранный пункт
   --logShow(self.Scope.HlpLink, Props.HelpTopic or "HlpLink")
@@ -588,22 +604,24 @@ function TMenu:MakeRunItem () --> (table)
   -- Учёт пунктов только для текущей области.
   if not self:CheckItem(RunItem) then return end
 
-  self.RunCount = self.RunCount + 1
+  local RunPos = self.RunCount + 1
+  self.RunCount = RunPos
   -- Выделение пункта для нового меню.
   if RunItem.Selected and self.isNova then
-    CurMenu.Props.SelectIndex = self.RunCount
+    CurMenu.Props.SelectIndex = RunPos
   end
 
   -- Управление переходом в меню.
   RunItem.Menu = RunItem -- Информация для прямого перехода и...
-  RunItem.Back = { Menu = CurMenu, Pos = self.RunCount, } -- для обратного
+  RunItem.Back = { Menu = CurMenu, Pos = RunPos, } -- для обратного
 
   -- Определение полей пункта меню.
   --self:ChangeProperties({ MenuView = Props.MenuView }, RunItem)
   self:DefineMenuItem(RunItem)
 
-  self.RunMenu[self.RunCount] = RunItem
-  --logShow(RunItem, "RunItem #"..tostring(self.RunCount), 2)
+  self.RunMenu[RunPos] = RunItem
+  --logShow(RunItem, "RunItem #"..tostring(RunPos), 2)
+  --self.RunItem = false
 
   return true
 end ---- MakeRunItem
@@ -660,6 +678,8 @@ end ---- MakeRunMenuItem
 -- Формирование запускаемого меню из текущего меню-таблицы.
 function TMenu:MakeRunMenu () --> (table)
   local CurMenu = self.CurMenu
+  --logShow(CurMenu, "CurMenu", "w d3")
+
   local Items = CurMenu.Items
   if type(Items) == 'function' then
     --logShow(CurMenu, "CurMenu", "w d2")
@@ -667,13 +687,13 @@ function TMenu:MakeRunMenu () --> (table)
   end
   if type(Items) == 'table' then
     CurMenu.Items = Items
+    --logShow(Items, "Items", "w d3")
   else
     CurMenu.Items = { Items }
   end
 
   -- Создание из списка пунктов-таблиц.
   self.RunMenu, self.RunCount = {}, 0
-
   for k = 1, #CurMenu.Items do
     self:MakeRunMenuItem(CurMenu.Items[k], k)
     if self.Error then return end
@@ -902,10 +922,13 @@ do
 -- Показ меню заданного вида.
 function TMenu:ShowMenu (Properties, Items) --> (item, pos)
   if not (Items and Items[1]) then return end
+  --logShow(Items[1], "Items", "w d3")
+
   -- Объединение всех BreakKey.
   local BreakKeys = self:MakeBreakKeys(Items, DefBreakKeys)
   --logShow(BreakKeys, "BreakKeys")
   -- Отображение меню на экране.
+  --logShow(Items[1], "Items")
   return Call(Properties, Items, BreakKeys)
 end ---- ShowMenu
 

@@ -294,20 +294,24 @@ local MMenu = { __index = TMenu }
 local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
   local self = {
     Menu = {
+      -- Исходные данные:
       Props     = Properties,
       Items     = Items,
       BreakKeys = BreakKeys,
       Options   = Options,
     }, ---
+
+    -- Формируемые данные:
     Props = 0,
     RectMenu = 0,
     Flags = 0,
     Area = 0,
     Titles = { Top = "", Bottom = "", Left = "", Right = "", },
 
-    List = tables.create(#Items),
+    List = tables.create(#Items), -- Элементы меню
 
     Data = {
+      -- Представление меню:
       Count = 0, Shift = 0,
       checked = false,
       Shape = 0, Order = 0,
@@ -323,6 +327,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
     SelectIndex = 0, SelIndex = 0,
 
     Zone = {
+      -- Зона меню:
       Base = 0, Pike = 0,
       BoxGage = 0,
       HomeX = 0, HomeY = 0,
@@ -340,7 +345,12 @@ local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
       DlgWidth = 0, DlgHeight = 0,
     }, -- Zone
 
-    Form = 0, DlgFlags = 0, DlgPos = 0,
+    -- Форма окна:
+    Form = 0, FormRect = 0,
+
+    -- Параметры диалога:
+    DlgFlags = 0, DlgRect = 0,
+
   } --- self
 
   return setmetatable(self, MMenu)
@@ -350,38 +360,44 @@ end -- CreateMenu
 -- Проверка на меню.
 function TMenu:isMenu (t) --> (bool | nil)
   if type(t) ~= 'table' then return end
+
   local mt = getmetatable(t._Menu or t)
   return mt and mt.__index == TMenu or false
-end ----
+end ---- isMenu
 
 -- Проверка на показ меню.
 function TMenu:isShow (t) --> (bool | nil)
   if type(t) == 'table' then t = t._Show end
+
   return t ~= false
-end ----
+end ---- isShow
 
 ---------------------------------------- Menu dialog
 
 -- Создание формы окна диалога с меню.
 function TMenu:DialogForm () --> (dialog)
   local Zone = self.Zone
+
   return { { F.DI_USERCONTROL,
              Zone.HomeX,
              Zone.HomeY,
              Zone.LastX + Zone.EmbScrollV,
              Zone.LastY + Zone.EmbScrollH,
-             0, 0, 0, 0, "" } }
+             0, 0, 0, 0, "", }
+         }
 end ---- DialogForm
 
 -- Отображение окна диалога меню.
 function TMenu:Dialog ()
   local self = self
-  local Pos = self.DlgPos
+  local Rect = self.FormRect
 
-  local hDlg = far.DialogInit(self.Props.Id or self.Guid,
-                              Pos.x, Pos.y, Pos.xw, Pos.yh,
+  local Id = self.Props.Id or self.Guid
+  local hDlg = far.DialogInit(Id, Rect.x, Rect.y, Rect.xw, Rect.yh,
                               nil, self.Form, self.DlgFlags, self.DlgProc)
+  self:HandleEvent("OnDialogInit", hDlg, Id, self)
   local iDlg = far.DialogRun(hDlg)
+  self:HandleEvent("OnDialogDone", hDlg, iDlg, self)
   far.DialogFree(hDlg)
   --logShow(iDlg, "iDlg")
 
@@ -431,19 +447,23 @@ end --
 local RedrawAll = farUt.RedrawAll -- it's used instead of Redraw
 
 -- Обновление позиции окна меню.
-function TMenu:Move_Box (hDlg) --| Menu dialog position
-  local Pos = self.DlgPos
-  return SendDlgMessage(hDlg, F.DM_MOVEDIALOG, 1, { X = Pos.x, Y = Pos.y })
-end --
+function TMenu:Move_Dialog (hDlg) --| Menu dialog position
+  local Rect = self.FormRect
+
+  return SendDlgMessage(hDlg, F.DM_MOVEDIALOG, 1,
+                        { X = Rect.x, Y = Rect.y, })
+end -- Move_Dialog
 
 -- Обновление размеров окна меню.
-function TMenu:Resize_Box (hDlg) --| Menu dialog size
-  local Pos = self.DlgPos
-  return SendDlgMessage(hDlg, F.DM_RESIZEDIALOG, 0, { X = Pos.w, Y = Pos.h })
-end --
+function TMenu:Resize_Dialog (hDlg) --| Menu dialog size
+  local Rect = self.FormRect
+
+  return SendDlgMessage(hDlg, F.DM_RESIZEDIALOG, 0,
+                        { X = Rect.w, Y = Rect.h, })
+end -- Resize_Dialog
 
 -- Обновление элементов диалога-меню.
-function TMenu:Update_Dlg (hDlg) --| Menu dialog items
+function TMenu:Update_Dialog (hDlg) --| Menu dialog items
   return SetDlgItem(hDlg, 1, self.Form[1])
 end ----
 
@@ -455,13 +475,19 @@ do
 function TMenu:DefinePropInfo () --| Props
   local self = self
   -- Определение области/окна FAR.
-  self.Area = farUt.GetAreaSize(self.Menu.Options.FarArea)
-  -- self.Area.Width = 80; self.Area.Height = 25 -- TEST only
-  --logShow(self.Area, self.Menu.Options.FarArea)
+  local AreaName = self.Menu.Options.FarArea
+  local Area = farUt.GetAreaSize(AreaName)
+  self.Area = Area
+
+  Area.Name = AreaName
+
+  -- Area.Width = 80; Area.Height = 25 -- TEST only
+  --logShow(Area, AreaName)
+
   -- Корректировка размера.
-  --self.Area.Width  = self.Area.Width -- - 2
-  self.Area.Height = self.Area.Height + 1 -- - 3
-  --logShow(self.Area, "self.Area")
+  --Area.Width  = Area.Width -- - 2
+  Area.Height = Area.Height + 1 -- - 3
+  --logShow(Area, "Area")
 
   -- Заданные свойства меню:
   local Props = tables.copy(self.Menu.Props, true, pairs, false) -- MAYBE: clone + true?!
@@ -886,7 +912,7 @@ function TMenu:DefineZoneInfo () --| Zone
     Zone.Rows, Zone.Height = self:VisibleRowCount(1)
     Zone.MenuWidth  = max2(Zone.Width,  MinWidth)
     Zone.MenuHeight = max2(Zone.Height, MinHeight)
-    --Zone.LastX and Zone.LastY is defined in DefineDBoxInfo
+    --Zone.LastX and Zone.LastY is defined in DefineFormInfo
     --logShow(self.Zone, "self.Zone")
   end --
 
@@ -928,6 +954,7 @@ function TMenu:DefineZoneInfo () --| Zone
                       BoxScroll ~= false and Titles.Right  == ""
     Zone.EmbScrollH = b2n(ScrolledH and not Zone.BoxScrollH)
     Zone.EmbScrollV = b2n(ScrolledV and not Zone.BoxScrollV)
+
     --logShow(self.Zone, "self.Zone")
   end --
 end ---- DefineZoneInfo
@@ -936,8 +963,8 @@ end -- do
 do
   local sfind = string.find
 
--- Информация об окне диалога.
-function TMenu:DefineDBoxInfo () --| (Dlg...)
+-- Информация об окне диалога: Зона меню внутри окна.
+function TMenu:DefineFormZone () --| (Dlg...)
   local self = self
   local Zone, Titles = self.Zone, self.Titles
   --local Data, Zone, Titles = self.Data, self.Zone, self.Titles
@@ -992,48 +1019,84 @@ function TMenu:DefineDBoxInfo () --| (Dlg...)
   -- Размеры окна диалога.
   Zone.DlgWidth  = Zone.BoxWidth  + Zone.BeltWidth
   Zone.DlgHeight = Zone.BoxHeight + Zone.BeltHeight
+
   --logShow(self.Zone, "self.Zone")
-
-  do -- Форма окна:
-    -- TODO: Параметр для выравнивания самого окна: Align.
-    local RM = self.RectMenu
-    self.DlgFlags = RM.MenuOnly and
-                    { FDLG_SMALLDIALOG = 1, FDLG_NODRAWSHADOW = 1 } or
-                    RM.Shadowed == false and { FDLG_NODRAWSHADOW = 1 } or {}
-    local Pos = RM.Position or {} -- Позиция вывода окна:
-    Pos = {
-      x = Pos.x or -1,
-      y = Pos.y or -1,
-      w = Zone.DlgWidth,
-      h = Zone.DlgHeight,
-      xw = 0,
-      yh = 0,
-      -- Отступ = позиция зоны меню -- !?
-      sx = Zone.HomeX,
-      sy = Zone.HomeY,
-    } ---
-    self.DlgPos = Pos
-
-    if Pos.x < 0 then
-      local Delta = self.Area.Width - Pos.w
-      Pos.x = Delta > 0 and bshr(Delta, 1) or 0
-    end
-    if Pos.y < 0 then
-      local Delta = self.Area.Height - Pos.h
-      Pos.y = Delta > 0 and bshr(self.Area.Height - Pos.h, 1) or 0
-    end
-
-    Pos.xw = Pos.x + Pos.w - 1
-    Pos.yh = Pos.y + Pos.h - 1
-    --logShow(self.DlgPos, "Dlg Pos")
-  end --
-
-  -- Задание формы окна диалога меню.
-  self.Form = self:DialogForm()
-  --logShow(self.Form, "Form table", "d2 ft_")
-end ---- DefineDBoxInfo
+end ---- DefineFormZone
 
 end -- do
+do
+  local mFlagNoShadow = { FDLG_NODRAWSHADOW = 1, }
+  local mFlagMenuOnly = { FDLG_SMALLDIALOG = 1, FDLG_NODRAWSHADOW = 1, }
+
+-- Информация об окне диалога: Позиция и размеры окна.
+function TMenu:DefineFormRect () --| (Dlg...)
+  local self = self
+  local Zone = self.Zone
+
+  -- TODO: Параметр для выравнивания самого окна: Align.
+  local RM = self.RectMenu
+  self.DlgFlags = RM.MenuOnly and mFlagMenuOnly or
+                  RM.Shadowed == false and mFlagNoShadow or {}
+
+  -- Позиция вывода окна:
+  local Pos = RM.Position or {}
+  local x, y = Pos.x, Pos.y
+
+  if not x and not y then
+    -- Чтение из конфига
+    local Origin = (self.Menu.Props or Null).Origin or Null
+    --logShow(Origin, "Origin", "w d3")
+    if Origin.HisData then
+      local AreaName = self.Area.Name or "common"
+      local Data = Origin.HisData[AreaName] or Null
+      --logShow(Data, AreaName, "w d3")
+      x, y = Data.x, Data.y
+    end
+  end
+
+  local Rect = {
+    x = x or -1,
+    y = y or -1,
+    w = Zone.DlgWidth,
+    h = Zone.DlgHeight,
+    xw = 0,
+    yh = 0,
+    -- Отступ = позиция зоны меню -- !?
+    sx = Zone.HomeX,
+    sy = Zone.HomeY,
+  } ---
+  self.FormRect = Rect
+
+  if Rect.x < 0 then
+    local Delta = self.Area.Width - Rect.w
+    Rect.x = Delta > 0 and bshr(Delta, 1) or 0
+  end
+  if Rect.y < 0 then
+    local Delta = self.Area.Height - Rect.h
+    Rect.y = Delta > 0 and bshr(Delta, 1) or 0
+  end
+
+  Rect.xw = Rect.x + Rect.w - 1
+  Rect.yh = Rect.y + Rect.h - 1
+
+  --logShow(self.FormRect, "Form Rect")
+end ---- DefineFormRect
+
+end -- do
+
+-- Информация об окне диалога.
+function TMenu:DefineFormInfo () --| (Dlg...)
+  local self = self
+
+  self:DefineFormZone() -- Зона меню внутри окна
+  --logShow(self.Zone, "self.Zone")
+
+  self:DefineFormRect() -- Позиция и размеры окна
+  --logShow(self.Pos, "self.Pos")
+
+  self.Form = self:DialogForm() -- Сама форма окна
+  --logShow(self.Form, "Form table", "d2 ft_")
+end ---- DefineFormInfo
 ----------------------------------------
 
 -- Определение вида меню.
@@ -1047,14 +1110,17 @@ function TMenu:DefineAll () --| (self)
   self:DefineKeysInfo() --| Keys -- Клавиши
   self:DefineSpotInfo() --| Zone -- Место пункта и разделителей
   self:DefineZoneInfo() --| Zone -- Область отображения
-  self:DefineDBoxInfo() --| Dlg... -- Сведения об окне диалога
+  self:DefineFormInfo() --| Dlg... -- Сведения об окне диалога
+
   --logShow(self, "self", "d1 _")
+
+  return self:HandleEvent("OnDefineMenu", nil, self)
 end ---- DefineAll
 
 -- Обновление вида меню.
 function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   local self = self
-  local oldR = self.DlgPos
+  local oldR = self.FormRect
   local isRedraw = Flags.isRedraw
 
   --self = 0 -- TODO: Exclude all fields for right new info!?
@@ -1067,7 +1133,7 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   self:DefineAll() -- Определение вида меню
   if Flags.isUpdate == false then return end
 
-  local newR = self.DlgPos
+  local newR = self.FormRect
   if isRedraw == nil then
     --logShow({ oldR, newR }, "UpdateAll", 2)
     isRedraw = not farUt.isEqual(oldR, newR) and (
@@ -1083,11 +1149,13 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   end
   --logShow({ Flags, Pos, { isUpdate, isRedraw, isRedrawAll } }, "UpdateAll")
 
-  self:Move_Box(hDlg)
-  self:Update_Dlg(hDlg)
-  self:Resize_Box(hDlg)
+  self:Move_Dialog(hDlg)
+  self:Update_Dialog(hDlg)
+  self:Resize_Dialog(hDlg)
   if isRedraw or Flags.isRedrawAll then RedrawAll() end
-  self:Move_Box(hDlg) -- Fix FAR bug!
+  self:Move_Dialog(hDlg) -- Fix FAR bug!
+
+  --return self:HandleEvent("OnUpdateMenu", hDlg, self, Flags, isRedraw)
 end ---- UpdateAll
 
 ---------------------------------------- Menu operation
@@ -1518,11 +1586,12 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
   if Flags.isCancel then
     self.SelIndex = nil
   end
-  if Flags.isClose or Flags.isCancel then
+  if hDlg and
+     (Flags.isClose or Flags.isCancel) then
     return CloseDialog(hDlg)
   end
 
-  if type(Data) == 'table' then
+  if hDlg and type(Data) == 'table' then
     self:UpdateAll(hDlg, Flags, Data)
     return true
   end
@@ -2088,8 +2157,39 @@ end ---- ScrollXClick
 end -- do
 ---------------------------------------- ---- Action
 
+-- Обработка начала перемещения.
+function TMenu:StartDrag (hDlg) --> (bool)
+  self:HandleEvent("OnStartDrag", hDlg)
+
+  -- Настройка запрета перемещения:
+  local UseDrag = self.RectMenu.UseDrag
+  return UseDrag == nil and true or UseDrag
+end ---- StartDrag
+
+-- Обработка конца перемещения.
+function TMenu:StopDrag (hDlg, Flag) --> (bool)
+
+  -- Успешное перемещение
+  if Flag == 0 then
+
+    -- Настройка хранения позиции:
+    if self.RectMenu.StorePos then
+      -- Запись в конфиг
+      local Origin = (self.Menu.Props or Null).Origin or Null
+      if Origin.HisData then
+        local DlgRect = GetRect(hDlg)
+        local AreaName = self.Area.Name or "common"
+        Origin.HisData[AreaName] = { x = DlgRect.Left, y = DlgRect.Top, }
+      end
+    end
+
+  end
+
+  return self:HandleEvent("OnStopDrag", hDlg, Flag)
+end ---- StopDrag
+
 -- Пользовательская обработка выделения пункта.
-function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|boolean)
+function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|bool)
   self.SelectKind = Kind
   --[[local OnSelectItem = self.RectMenu.OnSelectItem
 
@@ -2103,7 +2203,7 @@ function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|boolean)
 end ---- SelectItem
 
 -- Пользовательская обработка выбора пункта.
-function TMenu:ChooseItem (hDlg, Kind, Index, ...) --> (nil|boolean)
+function TMenu:ChooseItem (hDlg, Kind, Index, ...) --> (nil|bool)
   self.ChooseKind = Kind
 
   if not self.RectMenu.OnChooseItem then
@@ -2122,7 +2222,7 @@ function TMenu:DefaultChooseItem (hDlg, Kind, ...) --> (bool)
   -- Исключение обработки "серых" пунктов меню:
   if SelIndex and self.List[SelIndex].grayed then return true end
 
-  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex(), ...)
+  return self:ChooseItem(hDlg, Kind, self:GetSelectIndex(), ...) or false
 end ---- DefaultChooseItem
 
 ---------------------------------------- Menu drawing
@@ -2712,15 +2812,20 @@ end ---- DoMenuDraw
 ---------------------------------------- main
 local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   if not Items then return end
+
+  --logShow(Properties, "Properties", 2)
   --logShow(BreakKeys, "BreakKeys", 2)
+  --logShow(Items.Config, "Items.Config", 1)
+  --logShow(Items.History, "Items.History", 1)
 
 --[[ 1. Конфигурирование меню ]]
 
   local Options = {
     FarArea = Properties and Properties.FarArea or
               farUt.GetBasicAreaType(),
-  }
+  } ---
   --logShow(Options, "Options", 1)
+
   local _Menu = TMenu:isMenu(ShowMenu) and ShowMenu or
                 CreateMenu(Properties, Items, BreakKeys, Options)
   --logShow(_Menu, "_Menu", 1)
@@ -2737,9 +2842,11 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   local function DlgGetCtlColor (hDlg) --> (Color)
     return _Menu.Colors.Form -- Цвет окна
   end
+  --[[ -- DEPRECATED !!!
   local function DlgGetBoxColor (hDlg) --> (Color)
     return _Menu.Colors.DlgBox -- Цвет рамки и текста на рамке
   end
+  --]]
 
 --[[ 2.1. Рисование меню в диалоге ]]
 
@@ -2972,6 +3079,14 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     return true
   end -- DlgPredInput
 
+  local function DlgDragDialog (hDlg, Moment, Flag) --> (bool)
+    if Moment == 0 then
+      return _Menu:StartDrag(hDlg)
+    else
+      return _Menu:StopDrag(hDlg, Flag)
+    end
+  end -- DlgDragDialog
+
   -- Инициализация обработки.
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
     if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
@@ -2995,11 +3110,13 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     [F.DN_INPUT]        = DlgPredInput,
     [F.DN_CONTROLINPUT] = DlgCtrlInput,
+    [F.DN_DRAGGED]      = DlgDragDialog,
 
     [F.DN_CTLCOLORDIALOG]  = DlgGetCtlColor,
-    [F.DN_CTLCOLORDLGITEM] = DlgGetBoxColor,
+    --[F.DN_CTLCOLORDLGITEM] = DlgGetBoxColor,
 
     [F.DN_DRAWDLGITEM] = DlgItemDraw,
+
   } --- Procs
 
   -- Обработчик событий.
