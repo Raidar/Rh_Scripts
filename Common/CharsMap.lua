@@ -78,14 +78,18 @@ unit.RunMenu = usercall(nil, require, "Rh_Scripts.RectMenu.RectMenu")
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
-  name = unit.ScriptName,
-  path = unit.ScriptPath,
+  name    = unit.ScriptName,
+  path    = unit.ScriptPath,
 
-  label = unit.ScriptName,
+  label   = unit.ScriptName,
 
-  help   = { topic = unit.ScriptName, },
-  locale = {
-    kind = 'load',
+  help    = { topic = unit.ScriptName, },
+
+  history = {
+    field   = "",
+  },
+  locale  = {
+    kind    = 'load',
   }, --
 } -- DefCustom
 
@@ -146,6 +150,7 @@ local function CreateMain (ArgData)
     Custom    = false,
     Options   = false,
     History   = false,
+    HisData   = false,
     CfgData   = false,
     --DlgTypes  = unit.DlgTypes,
     LocData   = false,
@@ -209,15 +214,27 @@ local function CreateMain (ArgData)
   self.Options = addNewData(self.ArgData.Options, unit.DefOptions)
 
   self.History = datas.newHistory(self.Custom.history.full)
+  --self.HisData = self.History:field(self.Custom.history.field)
+  --logShow(self.HisData, "HisData", "wA d2")
   self.CfgData = self.History:field(self.Custom.history.field)
 
-  --local CfgData = self.CfgData
+  --self.CfgData = {}
+  local CfgData = self.CfgData
   --self.Menu = CfgData.Menu or {}
   --self.Menu.CompleteKeys = self.Menu.CompleteKeys or unit.CompleteKeys
   --self.Menu.LocalUseKeys = self.Menu.LocalUseKeys or unit.LocalUseKeys
 
-  setmetatable(self.CfgData, { __index = self.ArgData })
-  --logShow(self.CfgData, "CfgData", "w")
+  setmetatable(CfgData, { __index = self.ArgData })
+  --logShow(CfgData, "CfgData", "w")
+
+  -- Учёт изменения формата cfg
+  if not CfgData.Char then
+    local t = CfgData[unit.ScriptName]
+    if t and t.Char then
+      CfgData.Char = t.Char
+      CfgData[unit.ScriptName] = nil
+    end
+  end
 
   locale.customize(self.Custom)
   --logShow(self.Custom, "Custom")
