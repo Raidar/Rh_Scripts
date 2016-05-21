@@ -49,6 +49,8 @@ local Data = {
 
   --dir    = { Menu = "UAddons;UScripts;TortoiseSVN;U_DefSep;UMConfig", },
 
+  none   = { Menu = "Characters", },
+
 } --- Data
 
 return Data
