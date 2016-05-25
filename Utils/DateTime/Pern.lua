@@ -82,6 +82,7 @@ local TConfig = {
   --QuarterPerYear  =  4,   -- Квартальный год: 1 Year          = 4 Quarters
   --MonthPerQuarter =  3,   -- Квартал:         1 Quarter       = 12 / 4 Months
 
+  ZeroYear      = false,    -- Наличие нулевого года
   BaseYear      =  362,     -- Обычный год:     1 Base Year     = 362 Days
   LeapYear      =  363,     -- Високосный год:  1 Leap Year     = 362 + 1 Days
   --MoonMonth     =   28,   -- Лунный месяц:    1 Moon Month    = 28 Days

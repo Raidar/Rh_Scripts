@@ -79,6 +79,7 @@ local TConfig = {
   QuarterPerYear  =  4,     -- Квартальный год: 1 Year          = 4 Quarters
   MonthPerQuarter =  3,     -- Квартал:         1 Quarter       = 12 / 4 Months
 
+  ZeroYear      = false,    -- Наличие нулевого года
   BaseYear      =  364,     -- Обычный год:     1 Base Year     = 364 Days
   LeapYear      =  364,     -- Високосный год:  1 Leap Year     = 364 + 0 Days
   MoonMonth     =   28,     -- Лунный месяц:    1 Moon Month    = 28 Days
@@ -190,6 +191,12 @@ end ---- newConfig
 
 end -- do
 ---------------------------------------- ---- Date
+
+---------------------------------------- ---- ---- Zero
+
+function TConfig:isZeroYear (y) --> (bool)
+  return self.ZeroYear
+end ----
 
 ---------------------------------------- ---- ---- Leap
 -- Check an year for leap year.

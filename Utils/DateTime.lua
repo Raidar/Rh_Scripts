@@ -202,6 +202,7 @@ end -- newDate
 
 end -- do
 ---------------------------------------- ---- Basic
+
 function TDate:data () --> (d, m, y, config)
   local self = self
   return self.y, self.m, self.d, self.config
@@ -216,6 +217,7 @@ function TDate:is (Date) --> (bool)
 end ----
 
 ---------------------------------------- ---- Count
+
 function TDate:getYearMonths () --> (number)
   --local self = self
   return self.config:getYearMonths(self.y)
@@ -257,6 +259,7 @@ function TDate:getWeekMonthOuts () --> (number)
 end ---- getWeekMonthOuts
 
 ---------------------------------------- ---- get+set
+
 function TDate:getYearDay () --> (bool)
   local self = self
   return self.config:getYearDay(self.y, self.m, self.d)
@@ -334,6 +337,11 @@ function TDate:setEraMonth (r) --> (y, m)
 end ---- setEraMonth
 
 ---------------------------------------- ---- Check
+
+function TDate:isZeroYear () --> (number)
+  return self.config:isZeroYear()
+end ----
+
 function TDate:fixMonth () --> (self)
   local self = self
   local m = self.m
@@ -361,6 +369,7 @@ function TDate:fixDay () --> (self)
 end ---- fixDay
 
 ---------------------------------------- ---- Short
+
 function TDate:ymd () --> (number)
   return self:getEraDay()
 end ----
@@ -373,6 +382,7 @@ function TDate:shd (count) --> (self)
 end ---- shd
 
 ---------------------------------------- ---- to & from
+
 function TDate:to_y () --> (number)
   return self.y - 1 + self:getYearDay() / self:getYearDays()
 end ----
@@ -420,6 +430,7 @@ function TDate:from_d (v) --> (self, rest)
 end ----
 
 ---------------------------------------- ---- operations
+
 function TDate:inc_y () --> (self)
   local self = self
 
@@ -499,6 +510,7 @@ end -- newTime
 
 end -- do
 ---------------------------------------- ---- Basic
+
 function TTime:data () --> (h, n, s, z, config)
   local self = self
   return self.h, self.n, self.s, self.z, self.config
@@ -514,12 +526,14 @@ function TTime:is (Time) --> (bool)
 end ----
 
 ---------------------------------------- ---- get+set
+
 function TTime:getDaySec () --> (number)
   local self = self
   return self.config:getDaySec(self.h, self.n, self.s)
 end ----
 
 ---------------------------------------- ---- Short
+
 function TTime:hns () --> (number)
   return self:getDaySec()
 end ----
@@ -556,6 +570,7 @@ function TTime:shs (count) --> (self)
 end ---- shs
 
 ---------------------------------------- ---- to & from
+
 function TTime:to_h () --> (number)
   local self = self
   local c = self.config
@@ -659,6 +674,7 @@ function TTime:from_z (v) --> (self)
 end ---- from_z
 
 ---------------------------------------- ---- operations
+
 function TTime:sum (time) --> (number)
   return self:to_z() + time:to_z()
 end ----
