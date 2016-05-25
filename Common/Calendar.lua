@@ -127,16 +127,17 @@ local function CreateMain (ArgData)
     CfgData   = false,
     --DlgTypes  = unit.DlgTypes,
     LocData   = false,
-    L         = false,
+    Locale    = false,
 
     -- Текущее состояние:
-    DT_cfg    = false,    -- Конфигурация даты+времени
+    Cfg_DT    = false,    -- Конфигурация мира
+    Loc_DT    = false,    -- Локализация конфигурации мира
+
     Date      = false,    -- Дата
     Time      = false,    -- Время
 
     World     = false,    -- Мир
     Type      = false,    -- Тип календаря
-    wL        = false,    -- Локализация конфигурации
 
     YearMin   = false,    -- Минимально допустимый год
     YearMax   = false,    -- Максимально допустимый год
@@ -198,19 +199,19 @@ function TMain:InitData ()
   local CfgData = self.CfgData
   --logShow(CfgData, "CfgData")
 
-  local DT_cfg = datim.newConfig(CfgData.Config)
-  self.DT_cfg = DT_cfg
-  --logShow(DT_cfg, "DT_cfg", "wA d3")
-  
-  self.World    = CfgData.World or DT_cfg.World
-  self.Type     = CfgData.Type or DT_cfg.Type
-  self.wL       = DT_cfg.LocData
+  local Cfg_DT = datim.newConfig(CfgData.Config)
+  self.Cfg_DT = Cfg_DT
+  --logShow(Cfg_DT, "Cfg_DT", "wA d3")
+
+  self.World    = CfgData.World or Cfg_DT.World
+  self.Type     = CfgData.Type or Cfg_DT.Type
+  self.Loc_DT    = Cfg_DT.LocData
 
   --self.YearMin = CfgData.YearMin or 1
-  self.YearMin  = CfgData.YearMin or DT_cfg.YearMin or -9998
-  self.YearMax  = CfgData.YearMax or DT_cfg.YearMax or  9999
-  self.WeekRows = DT_cfg.DayPerWeek + DT_cfg.OutPerWeek
-  self.WeekCols = DT_cfg.MonthDays.WeekMax
+  self.YearMin  = CfgData.YearMin or Cfg_DT.YearMin or -9998
+  self.YearMax  = CfgData.YearMax or Cfg_DT.YearMax or  9999
+  self.WeekRows = Cfg_DT.DayPerWeek + Cfg_DT.OutPerWeek
+  self.WeekCols = Cfg_DT.MonthDays.WeekMax
 
   return true
 end ---- InitData
@@ -234,14 +235,14 @@ function TMain:InitDateTime ()
   local self = self
 
   local CfgData = self.CfgData
-  local DT_cfg = self.DT_cfg
+  local Cfg_DT = self.Cfg_DT
   --logShow(CfgData, "CfgData")
-  --logShow(DT_cfg, "DT_cfg", "w d3")
+  --logShow(Cfg_DT, "Cfg_DT", "w d3")
 
   self.Date = CfgData.Date and CfgData.Date:copy() or
-              datim.newDate(1, 1, 1, DT_cfg)
+              datim.newDate(1, 1, 1, Cfg_DT)
   self.Time = CfgData.Time and CfgData.Time:copy() or
-              datim.newTime(0, 0, 0, DT_cfg)
+              datim.newTime(0, 0, 0, Cfg_DT)
   --logShow(self.Date, "Default Date", "w d1")
 
   return true
@@ -259,15 +260,15 @@ function TMain:Localize ()
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not self.LocData then return end
 
-  self.L = locale.make(self.Custom, self.LocData)
+  self.Locale = locale.make(self.Custom, self.LocData)
 
-  return self.L
+  return self.Locale
 end ---- Localize
 
 function TMain:MakeLocLen () --> (bool)
   local self = self
 
-  local wL = self.wL
+  local wL = self.Loc_DT
   if not wL then return end
 
   --logShow(L, self.World, "w d2")
@@ -345,15 +346,15 @@ function TMain:MakeProps ()
   --local L = self.LocData
   --Props.Title  = L.Calendar
 
-  local wL = self.wL
-  local DT_cfg = self.DT_cfg
+  local wL = self.Loc_DT
+  local Cfg_DT = self.Cfg_DT
 
-  Props.Title = wL[DT_cfg.Type]
-  --Props.Bottom = wL[DT_cfg.Type] -- MAYBE: Keys list?
-  --logShow(Props.Bottom, DT_cfg.Type, "wM d1")
+  Props.Title = wL[Cfg_DT.Type]
+  --Props.Bottom = wL[Cfg_DT.Type] -- MAYBE: Keys list?
+  --logShow(Props.Bottom, Cfg_DT.Type, "wM d1")
 
-  self.TextMax = max(DT_cfg.Formats.DateLen,-- Date length
-                     DT_cfg.Formats.TimeLen,-- Time length
+  self.TextMax = max(Cfg_DT.Formats.DateLen,-- Date length
+                     Cfg_DT.Formats.TimeLen,-- Time length
                      wL.Name:len() + 2,     -- World name
                      wL.WeekDay[0].MaxLen,  -- WeekDay max
                      wL.YearMonth[0].MaxLen -- YearMonth max
@@ -388,6 +389,8 @@ function TMain:MakeProps ()
     Colors = self.Colors,
 
     IsStatusBar = true,
+
+    --IsDebugDraw = true,
   } --- RM
   Props.RectMenu = RM
 
@@ -442,11 +445,11 @@ do
 -- Заполнение информационной части.
 function TMain:FillInfoPart () --> (bool)
   local self = self
-  
+
   local Date = self.Date
   local Time = self.Time
   --local World = self.World
-  local DT_cfg = self.DT_cfg
+  local Cfg_DT = self.Cfg_DT
 
   local RowCount = self.RowCount
   local ItemNames = {
@@ -454,10 +457,10 @@ function TMain:FillInfoPart () --> (bool)
     Year      = RowCount + 3,
     Month     = RowCount + 4,
     Date      = RowCount + 6,
-    Time      = RowCount + 9,
+    Time      = RowCount + 9, -- == + RowCount
     WeekDay   = RowCount + 7,
 
-    YearDay   = RowCount * 0 + 7,
+    YearDay   =                7,
     YearWeek  = RowCount * 2 + 7,
 
     PrevYear  =                3,
@@ -475,14 +478,17 @@ function TMain:FillInfoPart () --> (bool)
 
   } -- ItemNames
 
-  local Formats = DT_cfg.Formats
-  local wL, Null = self.wL, Null
+  local Formats = Cfg_DT.Formats
+  local L, wL = self.LocData, self.Loc_DT
+  --logShow(L, "L", "wA")
   --logShow(wL, "wL", "wA")
-  local WeekDayNames   = (wL or Null).WeekDay or Null
+
+  local Null = Null
+  local WeekDayNames   = (wL or Null).WeekDay   or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
-  -- TODO: Реализовать свойство в TDate!
-  local y = Date.y > 0 and Date.y or Date.y - 1
+  local y = Date:isZeroYear() and y or
+            (Date.y > 0 and Date.y or Date.y - 1)
 
   local ItemDatas = {
     World     = self.World ~= "Terra" and
@@ -496,19 +502,27 @@ function TMain:FillInfoPart () --> (bool)
     YearDay   = Formats.YearDay:format(Date:getYearDay()),
     YearWeek  = Formats.YearWeek:format(Date:getYearWeek()),
 
-    --[[
-    PrevYear  = "<==",
-    NextYear  = "==>",
-    PrevMonth = "<--",
-    NextMonth = "-->",
+    -- [[
+    PrevYear  = L.PrevYear,   --"<==",
+    NextYear  = L.NextYear,   --"==>",
+    PrevMonth = L.PrevMonth,  --"<--",
+    NextMonth = L.NextMonth,  --"-->",
     --]]
   } --- ItemDatas
 
   --[[
   local ItemHints = {
-    World     = Formats.Type:format(wL[DT_cfg.Type]),
+    World     = Formats.Type:format(wL[Cfg_DT.Type]),
   } --- ItemHints
   --]]
+
+  -- (see DateActions.)
+  local ItemActions = {
+    PrevYear  = "dec_y",
+    NextYear  = "inc_y",
+    PrevMonth = "dec_m",
+    NextMonth = "inc_m",
+  } --- ItemActions
 
   local t = self.Items
 
@@ -517,16 +531,26 @@ function TMain:FillInfoPart () --> (bool)
   for k, v in pairs(ItemDatas) do
     local pos = ItemNames[k]
     if pos then
-      if pos < RowCount or pos > RowCount * 2 then
-        t[pos].text = v
-      else
-        t[pos].text = CenterText(v, TextMax)
-      end
+      local item = t[pos]
+      if item then
+        if pos < RowCount or pos > RowCount * 2 then
+          item.text = v
+        else
+          item.text = CenterText(v, TextMax)
+        end
 
-      --[[
-      local hint = ItemHints[k]
-      if hint then t[pos].Hint = hint end
-      --]]
+        local action = ItemActions[k]
+        if action then
+          item.knobed = true
+          --logShow(item, k)
+          item.Action = action
+        end
+
+        --[[
+        local hint = ItemHints[k]
+        if hint then t[pos].Hint = hint end
+        --]]
+      end
     end
   end --
 
@@ -547,11 +571,11 @@ function TMain:FillMainPart () --> (bool)
   local Date = self.Date
   local WeekCols = self.WeekCols
 
-  local DT_cfg = Date.config
-  local Formats = DT_cfg.Formats
-  local DayPerWeek = DT_cfg.DayPerWeek
-  local OutPerWeek = DT_cfg.OutPerWeek
-  
+  local Cfg_DT = Date.config
+  local Formats = Cfg_DT.Formats
+  local DayPerWeek = Cfg_DT.DayPerWeek
+  local OutPerWeek = Cfg_DT.OutPerWeek
+
   local Real = Date:copy()
   Real.d = 1
   --logShow(Real, Date.d, "w d2")
@@ -569,7 +593,7 @@ function TMain:FillMainPart () --> (bool)
     StartWeekDay = StartWeekDay + DayPerWeek
   end
   --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
-  
+
   --Real.StartWeekNumber = StartWeekShift + 1
   --Real.StartWeekNumDay = StartWeekDay - StartWeekShift * DayPerWeek
 
@@ -661,7 +685,7 @@ function TMain:FillMainPart () --> (bool)
       u.text = Text
       u.grayed = (State ~= 0)
       u.RectMenu = {
-        TextMark = DT_cfg.RestWeekDays[j % DayPerWeek],
+        TextMark = Cfg_DT.RestWeekDays[j % DayPerWeek],
       } --
       u.Data = {
         r = j,
@@ -704,7 +728,7 @@ function TMain:FillMainPart () --> (bool)
           u.text = MonthDayFmt:format(b)
           u.grayed = (State ~= 0)
           u.RectMenu = {
-            TextMark = DT_cfg.RestWeekDays[-j],
+            TextMark = Cfg_DT.RestWeekDays[-j],
           } --
           u.Data = {
             r = DayPerWeek + j,
@@ -748,13 +772,15 @@ end ---- FillMainPart
 function TMain:FillNotePart () --> (bool)
   local self = self
 
-  local DT_cfg = self.Date.config
-  local Formats = DT_cfg.Formats
-  local DayPerWeek = DT_cfg.DayPerWeek
-  local OutPerWeek = DT_cfg.OutPerWeek
+  local Cfg_DT = self.Date.config
+  local Formats = Cfg_DT.Formats
+  local DayPerWeek = Cfg_DT.DayPerWeek
+  local OutPerWeek = Cfg_DT.OutPerWeek
 
-  local wL, Null = self.wL, Null
+  local wL = self.Loc_DT
   --logShow(wL, "wL", "wA")
+
+  local Null = Null
   local WeekDayNames = (wL or Null).WeekDay or Null
   local WeekDayShort = WeekDayNames[2] or WeekDayNames[3] or Null
 
@@ -770,7 +796,7 @@ function TMain:FillNotePart () --> (bool)
 
     u.text = WeekDayShort[w % DayPerWeek] or WeekDayFmt:format(w)
     u.RectMenu = {
-      TextMark = DT_cfg.RestWeekDays[w % DayPerWeek],
+      TextMark = Cfg_DT.RestWeekDays[w % DayPerWeek],
     } --
   end
 
@@ -783,7 +809,7 @@ function TMain:FillNotePart () --> (bool)
       --TextMark = true,
     } --
   end
-  
+
   k = k + 1
   t[k].separator = true
 
@@ -802,12 +828,19 @@ function TMain:MakeMenu () --> (table)
   local t = {}
   self.Items = t
 
+  local Fixed = self.Props.RectMenu.Fixed
+
   -- Формирование пунктов:
-  for _ = 1, ColCount do
-    for _ = 1, RowCount do
+  local ColMin, ColMax = Fixed.HeadCols, ColCount - Fixed.FootCols + 1
+  local RowMin, RowMax = Fixed.HeadRows, RowCount - Fixed.FootRows + 1
+  for i = 1, ColCount do
+    for j = 1, RowCount do
       t[#t+1] = {
         text = "",
         Label = true,
+        fixed = i <= ColMin or i >= ColMax
+                or
+                j <= RowMin or j >= RowMax,
       } --
     end
   end --
@@ -836,7 +869,7 @@ function TMain:LimitDate (Date)
     Date.y = self.YearMin
     Date.m = 1
     Date.d = 1
-  
+
   elseif Date.y > self.YearMax then
     Date.y = self.YearMax
     Date.m = Date:getYearMonths()
@@ -1034,7 +1067,7 @@ function TMain:AssignEvents () --> (bool | nil)
     if SKey == "Esc" then return nil, CancelFlag end
     --logShow(SKey, "SKey")
 
-    --local DT_cfg = self.DT_cfg
+    --local Cfg_DT = self.Cfg_DT
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
@@ -1055,7 +1088,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-      
+
     elseif SKey == "Add" then
       if self.IsShiftInput then
         Date = self:StopShiftInput(Date)
@@ -1064,7 +1097,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-      
+
     elseif SKey == "Subtract" then
       if self.IsShiftInput then
         Date = self:StopShiftInput(Date)
@@ -1102,7 +1135,7 @@ function TMain:AssignEvents () --> (bool | nil)
       return MakeUpdate()
     end
 
-    return
+    return false --> Default
   end -- KeyPress
 
   -- Обработчик нажатия клавиш навигации.
@@ -1111,7 +1144,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     local AKey, VMod = AKey, VMod
 
-    local DT_cfg = self.DT_cfg
+    local Cfg_DT = self.Cfg_DT
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
@@ -1121,7 +1154,7 @@ function TMain:AssignEvents () --> (bool | nil)
     Date.d = Data.d
     --logShow({ AKey, VMod, Data }, ItemPos, "w d2")
 
-    local isOuts = DT_cfg.OutPerWeek > 0
+    local isOuts = Cfg_DT.OutPerWeek > 0
 
     local isUpdate = true
     if VMod == 0 then
@@ -1130,17 +1163,17 @@ function TMain:AssignEvents () --> (bool | nil)
         self:InitDateTime()
         return MakeUpdate()
       elseif AKey == "Left"  and Data.c == 1 then
-        --Date:shd(-DT_cfg.DayPerWeek)
-        if State == 0 then Date:shd(-DT_cfg.DayPerWeek) end
+        --Date:shd(-Cfg_DT.DayPerWeek)
+        if State == 0 then Date:shd(-Cfg_DT.DayPerWeek) end
       elseif AKey == "Right" and Data.c == self.WeekCols then
-        --Date:shd(DT_cfg.DayPerWeek)
-        if State == 0 then Date:shd(DT_cfg.DayPerWeek) end
-      elseif AKey == "Up"    and 
+        --Date:shd(Cfg_DT.DayPerWeek)
+        if State == 0 then Date:shd(Cfg_DT.DayPerWeek) end
+      elseif AKey == "Up"    and
              ( Data.r == 1 or isOuts and
-               (Date.d == 1 or Data.r >= DT_cfg.DayPerWeek) ) then
+               (Date.d == 1 or Data.r >= Cfg_DT.DayPerWeek) ) then
          Date:dec_d()
-      elseif AKey == "Down"  and 
-             (Data.r >= DT_cfg.DayPerWeek or
+      elseif AKey == "Down"  and
+             (Data.r >= Cfg_DT.DayPerWeek or
               isOuts and Date.d == Date:getWeekMonthDays()) then
         --logShow({ Date, Date:inc_d() }, AKey)
          --logShow(Date:inc_d(), AKey)
@@ -1240,8 +1273,46 @@ function TMain:AssignEvents () --> (bool | nil)
       return MakeUpdate()
     end
 
-    return
+    return false --> Default
   end -- NavKeyPress
+
+  -- Обработчик нажатия клавиши мыши.
+  local function MouseClick (Cell, Input, ItemPos)
+
+    local Index = Cell.Index
+    if not Index then return end
+    local Item = self.Items[Index]
+    --logShow(Item, Index, "w d2")
+    if not Item then return end
+    if not Item.fixed then return end
+
+    --local Cfg_DT = self.Cfg_DT
+    local Data = self.Items[ItemPos].Data
+    if not Data then return end
+
+    local Date = Data[Data.State]
+    if Data.d <= 0 then return end
+    Date.d = Data.d
+
+    local isUpdate = true
+    local Action = Item.Action
+    if Action then
+      Date[Action](Date)
+    else
+      isUpdate = false
+    end
+
+    self.Time = false
+
+    if isUpdate then
+      --self.Date = Date
+      --logShow(Date)
+      self.Date = self:LimitDate(Date)
+      return MakeUpdate()
+    end
+
+    return false --> Default
+  end -- MouseClick
 
   -- Обработчик выделения пункта.
   local function SelectItem (Kind, ItemPos)
@@ -1260,7 +1331,7 @@ function TMain:AssignEvents () --> (bool | nil)
   local function ChooseItem (Kind, ItemPos)
     local Data = self.Items[ItemPos].Data
     if not Data then return end
-  
+
     if Kind == "Enter" then
       local isUpdate = true
       local Date = Data[Data.State]
@@ -1272,7 +1343,7 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-    
+
       if isUpdate then
         self.Date = self:LimitDate(Date)
         return MakeUpdate()
@@ -1284,10 +1355,11 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Назначение обработчиков:
   local RM = self.Props.RectMenu
-  RM.OnKeyPress = KeyPress
-  RM.OnNavKeyPress = NavKeyPress
-  RM.OnSelectItem = SelectItem
-  RM.OnChooseItem = ChooseItem
+  RM.OnKeyPress     = KeyPress
+  RM.OnNavKeyPress  = NavKeyPress
+  RM.OnMouseClick   = MouseClick
+  RM.OnSelectItem   = SelectItem
+  RM.OnChooseItem   = ChooseItem
 end -- AssignEvents
 
 end --

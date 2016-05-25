@@ -10,6 +10,12 @@ local Data = {
   Time              = "Time",
 
   --
+  PrevYear          = "◀",
+  NextYear          = "▶",
+  PrevMonth         = "◄",
+  NextMonth         = "►",
+
+  --
   InputDate         = "Input date",
   InputTime         = "Input time",
 

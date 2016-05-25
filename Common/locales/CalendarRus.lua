@@ -10,6 +10,13 @@ local Data = {
   Date              = "Дата",
   Time              = "Время",
 
+  --[[
+  PrevYear          = "◀",
+  NextYear          = "▶",
+  PrevMonth         = "◄",
+  NextMonth         = "►",
+  --]]
+
   --
   InputDate         = "Введите дату",
   InputTime         = "Введите время",
