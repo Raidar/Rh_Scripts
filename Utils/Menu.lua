@@ -57,8 +57,12 @@ local isItem = {
   Dimmed = function (item) return item.separator or item.disable end,
   -- Доступный (для навигации, но не выбора) пункт меню.
   Passed = function (item) return item.grayed end,
-  -- Доступный (для выбора, но не навигации) пункт меню.
+  -- Доступный (для выбора, но не навигации) неявный пункт меню.
+  -- (dummy используется только для фильтрации пунктов меню.)
   Picked = function (item) return item.hidden or item.dummy end,
+  -- Доступный (для выбора и, м/б, навигации) явный пункт меню.
+  -- (pinned используется только для выбора пункта мышью.)
+  Knobed = function (item) return item.knobed end,
   Unused = 0,
   Speced = 0,
 } --- isItem
@@ -74,7 +78,7 @@ local isItemUnused = isItem.Unused
 isItem.Speced = function (item)
   return isItem.Dimmed(item) or
          isItem.Passed(item) or
-         isItem.Picked(item) -- Все!
+         isItem.Picked(item) -- Почти все!
 end ----
 local isItemSpeced = isItem.Speced
 

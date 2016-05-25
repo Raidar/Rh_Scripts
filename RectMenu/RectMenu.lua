@@ -701,6 +701,7 @@ function TMenu:DefineSpotInfo () --| Zone
   -- Используемые размеры пункта меню.
   local TextMax = valtotab(RM.TextMax)
   local LineMax = valtotab(RM.LineMax)
+  --logShow(TextMax, "TextMax")
 
   local Count, ColCount, RowCount = Data.Count, Data.Cols, Data.Rows
   local Hot = not isFlag(self.Flags, F.FMENU_SHOWAMPERSAND) and '&'
@@ -729,6 +730,7 @@ function TMenu:DefineSpotInfo () --| Zone
     end -- textLen
 
     local DefTextMax = TextMax[0]
+    --logShow(TextMax, "TextMax", "w d2")
     if DefTextMax == 0 then DefTextMax = false end
     for k = 1, ColCount do -- Макс. длина текста:
       if not TextMax[k] then
@@ -1119,6 +1121,9 @@ end ---- DefineAll
 
 -- Обновление вида меню.
 function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
+
+  --if Flags.isUpdateAll == false then return end
+
   local self = self
   local oldR = self.FormRect
   local isRedraw = Flags.isRedraw
@@ -1548,11 +1553,20 @@ end ---- MoveBase
 
 -- Move to other cell.
 -- Переход на другую ячейку.
+--function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
 function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   local self = self
   local OldIndex = self.SelIndex
   local oCell = RC_cell(Idx2Cell(OldIndex, self.Data))
-  local dCell, NewIndex, nCell = NewIndexCell(oCell)
+  --local dCell, NewIndex, nCell = NewIndexCell(oCell)
+
+  local bCell, dCell, isNew, isWrap = NewIndexCell(oCell)
+
+  local Data = self:HandleEvent("OnMoveToCell", hDlg, Kind,
+                                bCell, dCell, isNew, isWrap)
+  if Data == false then return false end
+
+  local NewIndex, nCell = self:GotoCell(bCell, dCell, isNew, isWrap)
 
   if NewIndex == false then return false end
   if NewIndex == nil then
@@ -1591,7 +1605,10 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
     return CloseDialog(hDlg)
   end
 
-  if hDlg and type(Data) == 'table' then
+  if hDlg and
+     type(Data) == 'table' and
+     Flags.isUpdateAll ~= false then
+
     self:UpdateAll(hDlg, Flags, Data)
     return true
   end
@@ -1755,14 +1772,15 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
     if IsModCtrl(VMod) then -- CTRL:
       if not jCell then return false end
       --logShow({ jCell, dCell }, "Cells (CTRL)")
-      return dCell, self:GotoCell(jCell, dCell, true, isWrap)
+      return jCell, dCell, true, isWrap
+      --return dCell, self:GotoCell(jCell, dCell, true, isWrap)
     end
 
     -- Без модификаторов:
     if not bCell then return false end
     --logShow({ bCell, dCell }, "Cells (No mods)")
 
-    return dCell, self:GotoCell(bCell, dCell, dCell.isNew, isWrap)
+    return bCell, dCell, dCell.isNew, isWrap
   end --
 
   return self:MoveToCell(hDlg, KeyPressCell, AKey)
@@ -1873,7 +1891,10 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
   --logShow({ AKey, Table, Flags }, "OnArrowKeyPress", "w d2")
   Flags = Flags or Null -- or {}
 
-  if type(Data) == 'table' then
+  if hDlg and
+     type(Data) == 'table' and
+     Flags.isUpdateAll ~= false then
+
     self:UpdateAll(hDlg, Flags, Data)
     return true
   end
@@ -1945,21 +1966,71 @@ end ---- DoKeyPress
   Pos   (number) - позиция курсора мыши для отсчёта с начала.
   Base  (number) - номер ряда-базы для отсчёта с начала.
   Fixes  (table) - данные о фиксированных рядах.
+  Fixing  (bool) - возможность использования фиксированных рядов.
 --]]
-local function MousePosToLin (Len, Sep, Total, Pos, Base, Fixes) --> (number)
+local function MousePosToLin (Len, Sep, Total,
+                              Pos, Base,
+                              Fixes, Fixing) --> (number)
   if Pos >= Total then
     return #Len + 1
   end
 
-  local k, L = Base, Fixes.HeadLen
-  local Count = Fixes.Max
+  --logShow({ Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin", "w d2")
+
+  if Fixing then
+
+    -- Heads:
+    local Count  = Fixes.Head or 0
+    local Length = Fixes.HeadLen or 0
+    if Count > 0 and Pos < Length then
+      local k, L = 1, 0
+      repeat
+        L = L + Len[k] + Sep
+        k = k + 1
+      until k > Count or L > Pos
+
+      k = k - 1
+
+      --logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Heads", "w d2")
+
+      return k
+    end
+
+    -- Foots:
+    local Count  = Fixes.Foot or 0
+    local Length = Fixes.FootLen or 0
+    if Count > 0 and Pos >= Total - Length then
+      local k, L = Fixes.All or 0, Total
+      local Limit = Fixes.Sole or k
+      repeat
+        L = L - Len[k] - Sep
+        k = k - 1
+      until k < Limit or L < Pos
+
+      k = k + 1
+
+      --logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Foots", "w d2")
+
+      return k
+    end
+
+  end -- Fixing
+
+  -- Items:
+  local Count = Fixes.Max or 0
+  local k, L = Base, Fixes.HeadLen or 0
   repeat
     L = L + Len[k] + Sep
     k = k + 1
   until k > Count or L > Pos
 
   k = k - 1
-  --logShow({ k, Total, Sep, L, Pos, Len, Base, Fixes }, "MousePosToLin", 2)
+
+--[[
+  if Fixing then
+    logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Items", "w d2")
+  end
+--]]
 
   return k
 end -- MousePosToLin
@@ -1978,64 +2049,100 @@ local function CheckMouseOut (Sep, Total, Pos, Fixes, Less, More) --> (string)
 end -- CheckMouseOut
 --]]
 
--- Обработка обычного нажатия левой кнопки мыши в меню.
-function TMenu:MouseBtnClick (hDlg, Input) --> (bool)
-  local self = self
-  self.DebugClickChar = "M"
+function TMenu:MouseInputToCell (Input) --> (table)
 
   local x, y = Input.x, Input.y
+  --logShow({ x, y }, "MouseBtnClick", "w d2")
 
-  --[[
-  local AKey = CheckMouseOut(self.Data.ColSep, self.Zone.Width,
-                             x, self.FixedCols, "Left", "Right")..
-               CheckMouseOut(self.Data.RowSep, self.Zone.Height,
-                             y, self.FixedRows, "Up", "Down")
-  --logShow({ x, y, }, AKey, 2)
-  if AKey ~= "" then
-    return self:ArrowKeyPress(hDlg, AKey, 0, false)
-  end
-  --]]
-
-  --[[ -- DEBUG
   local r = MousePosToLin(self.RowHeight, self.Data.RowSep,
                           self.Zone.Height, y,
-                          self.Zone.Base.Row, self.FixedRows)
+                          self.Zone.Base.Row, self.FixedRows, true)
   local c = MousePosToLin(self.ColWidth,  self.Data.ColSep,
                           self.Zone.Width,  x,
-                          self.Zone.Base.Col, self.FixedCols)
-  --]]
+                          self.Zone.Base.Col, self.FixedCols, true)
+  local i = self:CellIndex(r, c)
+
+  local t = { X = x, Y = y, Row = r, Col = c, Index = i, }
+
+  --local RM = self.RectMenu
+  if self.RectMenu.IsDebugDraw then
+    self.DebugClickChar = tostring(Input.ClickCount)..
+                          "M"..
+                          tostring(Input.ClickButton)
+    self.DebugClickData = t
+  end
+
+  return t
+end ---- MouseInputToCell
+
+function TMenu:KnobItemClick (hDlg, Cell, Input) --> (bool)
+  local Index = Cell.Index
+  local Item = self.List[Index]
+  if not Item or not Item.knobed then return false end
+
+  --logShow(Item, Index, "w d1")
+  return false
+end ---- KnobItemClick
+
+-- Обработка нажатий кнопки мыши в меню.
+function TMenu:MouseClick (hDlg, Input) --> (bool)
+  local self = self
+
+  local mCell = self:MouseInputToCell(Input)
+
+  local isOk = self:HandleEvent("OnMouseClick", hDlg,
+                                mCell, Input, self:GetSelectIndex())
+  if isOk then return true end
+
+  --logShow(mCell, Index, "w d1")
+  isOk = self:KnobItemClick(hDlg, mCell, Input)
+  if isOk then return true end
+
+  if Input.ClickCount == 2 then
+    --logShow({ mCell, Input }, "DblClick", "w d2")
+    return self:DefaultChooseItem(hDlg, "DblClick")
+  end
+
+  if Input.ClickButton ~= 1 then return false end
 
   -- Переход на новую ячейку по нажатию кнопки мыши.
   local function MouseClickCell (OldCell) --> (table, number, table)
     local self = self
+
     local bCell = {
       Row = MousePosToLin(self.RowHeight, self.Data.RowSep,
-                          self.Zone.Height, y,
+                          self.Zone.Height, Input.y,
                           self.Zone.Base.Row, self.FixedRows),
       Col = MousePosToLin(self.ColWidth,  self.Data.ColSep,
-                          self.Zone.Width,  x,
+                          self.Zone.Width,  Input.x,
                           self.Zone.Base.Col, self.FixedCols),
     } ---
+
     local dCell = {
       Row = sign(bCell.Row - OldCell.Row),
       Col = sign(bCell.Col - OldCell.Col),
     } ---
 
-    return dCell, self:GotoCell(bCell, dCell, true, false)
+    return bCell, dCell, true, false
   end --
 
   return self:MoveToCell(hDlg, MouseClickCell, "Click")
-end ---- MouseBtnClick
+end ---- MouseClick
 
+--[[
 -- Обработка двойного нажатия левой кнопки мыши в меню.
 function TMenu:MouseDblClick (hDlg, Input) --> (bool)
   local self = self
   self.DebugClickChar = "D"
 
-  --local x, y = Input.x, Input.y
+  local mCell = self:MouseInputToCell(Input)
+
+  local isOk = self:HandleEvent("OnMouseDblClick", hDlg)
+  if isOk then return true end
 
   return self:DefaultChooseItem(hDlg, "DblClick")
 end ---- MouseDblClick
+--]]
 
 function TMenu:MouseBorderClick (hDlg, Kind, Input)
   local self = self
@@ -2103,7 +2210,7 @@ function TMenu:ScrollHClick (hDlg, Input)
     } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.L or Shifts.R
 
-    return dCell, self:GotoCell(bCell, dCell, true, true)
+    return bCell, dCell, true, true
   end --
 
   return self:MoveToCell(hDlg, ScrollHCell, "ScrollH")
@@ -2134,7 +2241,7 @@ function TMenu:ScrollVClick (hDlg, Input)
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.U or Shifts.D
     --logShow({ OldCell, bCell, dCell, Bar, FixRows }, pos)
 
-    return dCell, self:GotoCell(bCell, dCell, true, true)
+    return bCell, dCell, true, true
   end --
 
   return self:MoveToCell(hDlg, ScrollVCell, "ScrollV")
@@ -2159,7 +2266,7 @@ end -- do
 
 -- Обработка начала перемещения.
 function TMenu:StartDrag (hDlg) --> (bool)
-  self:HandleEvent("OnStartDrag", hDlg)
+  self:HandleEvent("OnStartDrag", hDlg) --| self.RectMenu.UseDrag
 
   -- Настройка запрета перемещения:
   local UseDrag = self.RectMenu.UseDrag
@@ -2168,10 +2275,8 @@ end ---- StartDrag
 
 -- Обработка конца перемещения.
 function TMenu:StopDrag (hDlg, Flag) --> (bool)
-
   -- Успешное перемещение
   if Flag == 0 then
-
     -- Настройка хранения позиции:
     if self.RectMenu.StorePos then
       -- Запись в конфиг
@@ -2182,7 +2287,6 @@ function TMenu:StopDrag (hDlg, Flag) --> (bool)
         Origin.HisData[AreaName] = { x = DlgRect.Left, y = DlgRect.Top, }
       end
     end
-
   end
 
   return self:HandleEvent("OnStopDrag", hDlg, Flag)
@@ -2759,6 +2863,18 @@ function TMenu:DrawDebugInfo ()
   local Bar = self.StatusBar
   if Bar then
     DbgText(Bar.x, Bar.y, "⟨")
+
+    local Data = self.DebugClickData
+    if type(Data) == 'table' then
+      local s = " (x%d, y%d) => (r%d, c%d) => %d"
+      s = s:format(Data.X or -1,
+                   Data.Y or -1,
+                   Data.Row or -1,
+                   Data.Col or -1,
+                   Data.Index or -1)
+      DbgText(Bar.x + 1, Bar.y, s)
+    end
+
     DbgText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, "⟩")
   end
 
@@ -2889,11 +3005,19 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     return _Menu:DoKeyPress(hDlg, Input)
   end -- DlgKeyInput
 
-  local MouseLeftBtn    = F.FROM_LEFT_1ST_BUTTON_PRESSED
-  local MouseClickDbl   = F.DOUBLE_CLICK
-  local MouseMoved      = F.MOUSE_MOVED
-  local MouseWheeledV   = F.MOUSE_WHEELED
-  local MouseWheeledH   = F.MOUSE_HWHEELED or 0x8 -- FIX
+  local Mouse_ButtonNumbers = {
+    [F.FROM_LEFT_1ST_BUTTON_PRESSED]    =  1,
+    [F.FROM_LEFT_2ND_BUTTON_PRESSED]    =  2,
+    [F.FROM_LEFT_3RD_BUTTON_PRESSED]    =  3,
+    [F.FROM_LEFT_4TH_BUTTON_PRESSED]    =  4,
+    [F.RIGHTMOST_BUTTON_PRESSED]        = -1,
+  } --- Mouse_ButtonNumbers
+
+  local Mouse_LeftBtn   = F.FROM_LEFT_1ST_BUTTON_PRESSED
+  local Mouse_DblClick  = F.DOUBLE_CLICK
+  local Mouse_Moved     = F.MOUSE_MOVED
+  local Mouse_WheeledV  = F.MOUSE_WHEELED
+  local Mouse_WheeledH  = F.MOUSE_HWHEELED or 0x8 -- FIX
 
   -- Обработка прокрутки мышью.
   local function DlgMouseWheel (hDlg, ProcItem, Input) --> (bool)
@@ -2902,10 +3026,10 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     local Delta = bshr(Input.ButtonState, 16)
     if Delta >= 0x8000 then Delta = Delta - 0x10000 end
 
-    if     Input.EventFlags == MouseWheeledV then
+    if     Input.EventFlags == Mouse_WheeledV then
       --logShow({ Delta, Input }, ProcItem, "d3")
       Input.StrName = Delta >= 0 and "MSWheelUp" or "MSWheelDown"
-    elseif Input.EventFlags == MouseWheeledH then
+    elseif Input.EventFlags == Mouse_WheeledH then
       --logShow(Input, ProcItem, "d3 x1")
       Input.StrName = Delta >= 0 and "MSWheelRight" or "MSWheelLeft"
     else
@@ -2924,14 +3048,18 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
     if ProcItem == -1 then return false end
 
-    --logShow({ MouseClickDbl, MouseMoved, '-',
-    --          MouseWheeledV, MouseWheeledH, '-', }, ProcItem, 3)
+    --logShow({ Mouse_DblClick, Mouse_Moved, '-',
+    --          Mouse_WheeledV, Mouse_WheeledH, '-', }, ProcItem, 3)
 
     local Input = Input
     --logShow(Input, ProcItem, 3)
     --if not Input.X then logShow(Input, ProcItem, 3) end
 
-    if Input.ButtonState == MouseLeftBtn then
+    Input.ClickButton = Input.ClickButton or
+                        Mouse_ButtonNumbers[Input.ButtonState or Mouse_LeftBtn]
+    Input.ClickCount  = Input.EventFlags == Mouse_DblClick and 2 or 1
+
+    if Input.ClickButton == 1 then
       local Zone = _Menu.Zone
       local x, y = Input.MousePositionX, Input.MousePositionY
       --logShow({ x, y, Zone = Zone, Input = Input, }, ProcItem, 3)
@@ -3012,11 +3140,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
       end -- do
 
       -- Обработка выбором мышью.
-      if Input.EventFlags == MouseClickDbl then
-        return _Menu:MouseDblClick(hDlg, Input)
-      else
-        return _Menu:MouseBtnClick(hDlg, Input)
-      end
+      return _Menu:MouseClick(hDlg, Input)
     end -- if
 
     return false
@@ -3034,13 +3158,13 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     end
 
     if EventType == F.MOUSE_EVENT then
-      if Input.EventFlags == MouseWheeledV or
-         Input.EventFlags == MouseWheeledH then
+      if Input.EventFlags == Mouse_WheeledV or
+         Input.EventFlags == Mouse_WheeledH then
         return DlgMouseWheel(hDlg, ProcItem, Input) -- FIX
       end
 
       if not _Menu.RectMenu.DoMouseEvent and
-         Input.ButtonState == MouseLeftBtn then
+         Input.ButtonState == Mouse_LeftBtn then
         return DlgMouseInput(hDlg, ProcItem, Input)
       end
     end
@@ -3054,7 +3178,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --logShow(Input, ProcItem, 3)
     if Input.EventType ~= F.MOUSE_EVENT then return true end
 
-    if Input.EventFlags == MouseMoved then return true end
+    if Input.EventFlags == Mouse_Moved then return true end
 
     local Zone = _Menu.Zone
     local DlgRect = GetRect(hDlg)
@@ -3064,13 +3188,13 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     Input.MousePositionX = x - DlgRect.Left - Zone.HomeX
     Input.MousePositionY = y - DlgRect.Top  - Zone.HomeY
 
-    if Input.EventFlags == MouseWheeledV or
-       Input.EventFlags == MouseWheeledH then
+    if Input.EventFlags == Mouse_WheeledV or
+       Input.EventFlags == Mouse_WheeledH then
       --logShow(Input, ProcItem, 3)
       return not DlgMouseWheel(hDlg, ProcItem, Input)
     end
 
-    if Input.ButtonState == MouseLeftBtn then
+    if Input.ButtonState == Mouse_LeftBtn then
       --logShow({ Input, Zone }, ProcItem, 2)
       return not DlgMouseInput(hDlg, ProcItem, Input)
     end
