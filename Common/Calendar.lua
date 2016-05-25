@@ -468,6 +468,9 @@ function TMain:FillInfoPart () --> (bool)
     PrevMonth =                4,
     NextMonth = RowCount * 2 + 4,
 
+    Dec_Date  =                6,
+    Inc_Date  = RowCount * 2 + 6,
+
     Separators = {
                      2,                5,                8, -- 1
       RowCount     + 2, RowCount     + 5, RowCount     + 8, -- 2
@@ -507,6 +510,8 @@ function TMain:FillInfoPart () --> (bool)
     NextYear  = L.NextYear,   --"==>",
     PrevMonth = L.PrevMonth,  --"<--",
     NextMonth = L.NextMonth,  --"-->",
+    Dec_Date  = L.Dec_Date,   --"-",
+    Inc_Date  = L.Inc_Date,   --"+",
     --]]
   } --- ItemDatas
 
@@ -524,6 +529,13 @@ function TMain:FillInfoPart () --> (bool)
     NextMonth = "inc_m",
   } --- ItemActions
 
+  -- (see KeyPress code.)
+  local ItemActionKeys = {
+    Date      = "Divide",
+    Dec_Date  = "Subtract",
+    Inc_Date  = "Add",
+  } --- ItemActionKeys
+
   local t = self.Items
 
   -- Текущая информация:
@@ -539,11 +551,18 @@ function TMain:FillInfoPart () --> (bool)
           item.text = CenterText(v, TextMax)
         end
 
-        local action = ItemActions[k]
-        if action then
-          item.knobed = true
+        local value = ItemActions[k]
+        if value then
+          --item.knobed = true
           --logShow(item, k)
-          item.Action = action
+          item.Action = value
+        end
+
+        value = ItemActionKeys[k]
+        if value then
+          --item.knobed = true
+          --logShow(item, k)
+          item.ActionKey = value
         end
 
         --[[
@@ -940,10 +959,12 @@ function TMain:EditDateInput (SKey)
 
     -- TEMP: Ограничение на год из-за ширины поля!
     local y = Input:match(InputFmtY)
-    local l = y:len()
-    if l > 6 then
-      y = y:sub(1, 6)
-      Input = y..Input:sub(l + 1, -1)
+    if y then
+      local l = y:len()
+      if l > 6 then
+        y = y:sub(1, 6)
+        Input = y..Input:sub(l + 1, -1)
+      end
     end
   end
 
@@ -1295,9 +1316,10 @@ function TMain:AssignEvents () --> (bool | nil)
     Date.d = Data.d
 
     local isUpdate = true
-    local Action = Item.Action
-    if Action then
-      Date[Action](Date)
+    if type(Item.Action) == 'string' then
+      Date[Item.Action](Date)
+    elseif type(Item.ActionKey) == 'string' then
+      return KeyPress({ Name = Item.ActionKey }, ItemPos)
     else
       isUpdate = false
     end

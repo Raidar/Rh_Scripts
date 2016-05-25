@@ -15,6 +15,9 @@ local Data = {
   NextYear          = "▶",
   PrevMonth         = "◄",
   NextMonth         = "►",
+
+  Dec_Date          = "−",
+  Inc_Date          = "+",
   --]]
 
   --

@@ -15,6 +15,9 @@ local Data = {
   PrevMonth         = "◄",
   NextMonth         = "►",
 
+  Dec_Date          = "−",
+  Inc_Date          = "+",
+
   --
   InputDate         = "Input date",
   InputTime         = "Input time",
