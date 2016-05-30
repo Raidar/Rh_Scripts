@@ -22,11 +22,11 @@ local datas = require 'context.utils.useDatas'
 --local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
-local dbgs
+local debugs
 
 local function doShow (...)
-  dbgs = dbgs or require "context.utils.useDebugs"
-  return dbgs.Show(...)
+  debugs = debugs or require "context.utils.useDebugs"
+  return debugs.Show(...)
 end -- doShow
 
 ---------------------------------------- Common

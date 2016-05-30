@@ -46,9 +46,9 @@ local k = 0x00
 --local c = 0x0000
 
 --far.Message(tostring(KEY_EVENT), "AutoActions")
---local dbg  = require "context.utils.useDebugs"
---local hex  = dbg.hex8
---local flog = dbg.open("AA_test.log", "a", "")
+--local debugs = require "context.utils.useDebugs"
+--local hex  = debugs.hex8
+--local flog = debugs.open("AA_test.log", "a", "")
 function ProcessEditorInput (rec) --> (bool)
   if rec.EventType == KEY_EVENT then
     --flog:data(rec, "xv4", "rec")

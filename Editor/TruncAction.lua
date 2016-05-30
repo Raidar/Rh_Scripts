@@ -69,8 +69,8 @@ local ALT, CTRL, SHIFT = CMods.Alt, CMods.Ctrl, CMods.Shift
 --local BT_None = F.BTYPE_NONE
 local BT_Stream, BT_Column = F.BTYPE_STREAM, F.BTYPE_COLUMN
 
---local dbg  = require "context.utils.useDebugs"
---local flog = dbg.open("Trunc_test.log", "a", "")
+--local debugs = require "context.utils.useDebugs"
+--local flog = debugs.open("Trunc_test.log", "a", "")
 
 function ProcessEditorInput (rec) --> (bool)
   --if rec.VirtualKeyCode == VK_END then logShow(rec, "rec", "xv4") end

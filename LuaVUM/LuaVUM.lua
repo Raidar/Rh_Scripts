@@ -30,7 +30,10 @@ local function LuaUserMenu (args)
 
   if not BaseName or BaseName ~= "Config" then
     -- Получение информации о файле в редакторе.
-    Scope.FileName = viewer.GetInfo().FileName
+    local Info = viewer.GetInfo()
+    if not Info then return end
+
+    Scope.FileName = Info.FileName
     Scope.FileType = getFileType()
     -- Функция вставки шаблона для редактора.
     Scope.InsertText = farUt.FarInsertText.viewer

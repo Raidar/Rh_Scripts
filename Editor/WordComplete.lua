@@ -854,7 +854,7 @@ do
   local function SortByFreq (t) --> (table)
     local f = t.Stat
     --logShow(t, "SortByFreq", 2)
-    --local flog = dbg.open("tab_sort.txt")
+    --local flog = debugs.open("tab_sort.txt")
     --flog:logtab(t, "t", 3)
     --flog:close()
 

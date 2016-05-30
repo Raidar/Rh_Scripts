@@ -31,10 +31,16 @@ local function LuaUserMenu (args)
   if not BaseName or BaseName ~= "Config" then
     -- Информация об элементе на активной панели:
     local Item = panel.GetCurrentPanelItem(nil, 1)
+    if not Item then return end
+
     Scope.WorkItem = Item -- Текущий элемент активной панели
     local Name = Item and Item.FileName or ".." -- имя
     --logShow(Item, "Current Item Info", 1)
-    Scope.FileName = panel.GetPanelDirectory(nil, 1).Name.."\\"..Name
+
+    local DirInfo = panel.GetPanelDirectory(nil, 1)
+    if not DirInfo then return end
+
+    Scope.FileName = DirInfo.Name.."\\"..Name
     Scope.FileType = getFileType()
     -- Функция вставки шаблона для панелей
     Scope.InsertText = farUt.FarInsertText.panels

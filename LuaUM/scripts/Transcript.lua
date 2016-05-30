@@ -32,7 +32,7 @@ local unit = {}
 
 ---------------------------------------- Main data
 unit.ScriptName = "Transcript"
-unit.PluginPath = utils.PluginPath
+--unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 ---------------------------------------- Locale

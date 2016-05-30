@@ -50,7 +50,7 @@ local unit = {}
 ---------------------------------------- Main data
 unit.FileName   = "DateTime"
 unit.ScriptName = "DatimShift"
---unit.PluginPath = utils.PluginPath
+--unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 
 ---------------------------------------- ---- Custom

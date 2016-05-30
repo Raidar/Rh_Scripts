@@ -29,16 +29,16 @@ local n2s = numbers.n2s
 local unit = {}
 
 ---------------------------------------- Show
-local dbgs
+local debugs
 
 local function doShow (...)
-  dbgs = dbgs or require "context.utils.useDebugs"
-  return dbgs.Show(...)
+  debugs = debugs or require "context.utils.useDebugs"
+  return debugs.Show(...)
 end -- doShow
 
 local function datShow (...)
-  dbgs = dbgs or require "context.utils.useDebugs"
-  return dbgs.ShowData(...)
+  debugs = debugs or require "context.utils.useDebugs"
+  return debugs.ShowData(...)
 end -- datShow
 
 ---------------------------------------- Datim
@@ -50,7 +50,7 @@ local newTime = Datim.newTime
 
 ---------------------------------------- Main data
 unit.ScriptName = "Subtitles"
-unit.PluginPath = utils.PluginPath
+--unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 ---------------------------------------- ---- Custom
@@ -162,9 +162,9 @@ function unit.ShowClauseAll (title, ...)
     Flags = 'FMENU_SHOWAMPERSAND',
   } ---
 
-  dbgs = dbgs or require "context.utils.useDebugs"
+  debugs = debugs or require "context.utils.useDebugs"
 
-  return far.Menu(props, items, dbgs.BKeys)
+  return far.Menu(props, items, debugs.BKeys)
 end -- ShowClauseAll
 
 -- Показ длины отрезка времени на линии файла и паузы перед ним.

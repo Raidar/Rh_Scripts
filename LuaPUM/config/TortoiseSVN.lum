@@ -276,7 +276,7 @@ function TMain:getStatus () --> (bool)
   self.Status = Formats.Status:format(CfgData.Path, CfgData.Status, Path)
   --logShow({ Path = ItemPath, Status = Status, }, "Item + Status")
   return exec(self.Status)
-  --return exec(self.Status.." "..context.utils.PluginPath..unit.DefCustom.path.."SubWCRevData.txt")
+  --return exec(self.Status.." "..context.utils.PluginWorkPath..unit.DefCustom.path.."SubWCRevData.txt")
 end ---- getStatus
 
 -- Make parameters.
