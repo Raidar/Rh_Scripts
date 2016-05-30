@@ -29,7 +29,7 @@ local utils = require 'context.utils.useUtils'
 --local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 
-local PluginPath = utils.PluginPath
+local WorkerPath = utils.PluginWorkPath
 
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
@@ -171,10 +171,10 @@ function TMenu:Prepare ()
 
   -- Считывание привязок типов к меню.
   Args = {
-    Base = PluginPath,
-    DefExt = ".lua",
-    Enum = Cfg_Files.MenusFile,
-    Path = Cfg_Files.FilesPath,
+    Base    = WorkerPath,
+    DefExt  = ".lua",
+    Enum    = Cfg_Files.MenusFile,
+    Path    = Cfg_Files.FilesPath,
     DefEnum = Cfg_Basic.BindsFile,
     DefPath = Cfg_Basic.CfgUMPath,
   } ---
@@ -220,10 +220,10 @@ function TMenu:Prepare ()
   --logShow(MenuEnum, "MenuEnum")
   -- Считывание и разбор файлов меню.
   Args = {
-    Base = PluginPath,
-    DefExt = ".lum",
-    Enum = MenuEnum,
-    Path = Cfg_Files.MenusPath,
+    Base    = WorkerPath,
+    DefExt  = ".lum",
+    Enum    = MenuEnum,
+    Path    = Cfg_Files.MenusPath,
     DefEnum = Cfg_Basic.UMenuFile,
     DefPath = Cfg_Basic.CfgUMPath,
   } ---

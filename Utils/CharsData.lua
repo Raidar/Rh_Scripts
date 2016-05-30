@@ -34,14 +34,14 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 ---------------------------------------- ---- Config
 
 unit.DefCfgData = { -- Конфигурация по умолчанию:
-  PluginPath    = utils.PluginPath,
-  PluginDataPath= utils.PluginDataPath,
-  FilePath      = "scripts\\Rh_Scripts\\data\\",
-  NamesFile     = "NamesList.txt",
-  BlocksFile    = "Blocks.txt",
+  PluginWorkPath    = utils.PluginWorkPath,
+  PluginDataPath    = utils.PluginDataPath,
+  FilePath          = "scripts\\Rh_Scripts\\data\\",
+  NamesFile         = "NamesList.txt",
+  BlocksFile        = "Blocks.txt",
 
-  DataFile      = "CharsData.lua",
-  DataPath      = "Rh_Scripts.data.CharsData",
+  DataFile          = "CharsData.lua",
+  DataPath          = "Rh_Scripts.data.CharsData",
 } -- DefCfgData
 
 ---------------------------------------- Main class
@@ -299,7 +299,7 @@ function unit:Execute (Data) --> (bool | nil)
   --logShow(unit.DefCfgData, FileName, "d1")
   self:ParseBlocks(FileName)
 
-  FileName = sformat("%s%s%s", CfgData.PluginPath,
+  FileName = sformat("%s%s%s", CfgData.PluginWorkPath,
                      CfgData.FilePath, CfgData.DataFile)
 
   return self:SaveData(FileName)

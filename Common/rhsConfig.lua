@@ -50,7 +50,7 @@ local unit = {}
 
 ---------------------------------------- Main data
 unit.ScriptName = "rhsConfig"
-unit.PluginPath = utils.PluginPath
+unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\Common\\"
 --local umFilePath = "scripts\\Rh_Scripts\\"
 
@@ -116,7 +116,7 @@ local DefCfgData = {
     Name = "LuaEUM",
     Title = "LU&M for Editor",
     HotKey = "Alt+Shift+F2",
-    Command = "luaeum",
+    --Command = "luaeum",
     BasePath = "ScriptsPath",
     FilePath = [[LuaEUM\\LuaEUM]],
     config = {
@@ -164,7 +164,7 @@ local DefCfgData = {
     Name = "LuaVUM",
     Title = "LU&M for Viewer",
     --HotKey = "Alt+Shift+F2",
-    Command = "luavum",
+    --Command = "luavum",
     BasePath = "ScriptsPath",
     FilePath = [[LuaVUM\\LuaVUM]],
     config = {
@@ -196,7 +196,7 @@ local DefCfgData = {
     Name = "LuaDUM",
     Title = "LU&M for Dialog",
     --HotKey = "Alt+Shift+F2",
-    Command = "luadum",
+    --Command = "luadum",
     BasePath = "ScriptsPath",
     FilePath = [[LuaDUM\\LuaDUM]],
     config = {
@@ -883,7 +883,7 @@ end ---- GenerateFile
 -- Создание файла в соответствии с пользовательскими настройками.
 function unit.CreateFile (Data)
   local um = Data.um
-  local umFullName = unit.PluginPath..um.FilePath..um.FileName
+  local umFullName = unit.WorkerPath..um.FilePath..um.FileName
 
   local f = io.open(umFullName, 'r')
   if f then

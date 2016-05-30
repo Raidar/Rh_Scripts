@@ -44,9 +44,9 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 local unit = {}
 
 ---------------------------------------- Main data
-unit.PluginPath = utils.PluginPath
+unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\"
-unit.HelpTopic = "<"..unit.PluginPath..unit.ScriptPath..">Contents"
+unit.HelpTopic = "<"..unit.WorkerPath..unit.ScriptPath..">Contents"
 
 ---------------------------------------- ---- Custom
 local DefCustom = {

@@ -32,8 +32,8 @@ unit.Data = require "Rh_Scripts.Utils.CharsData"
 
 ---------------------------------------- Main data
 unit.ScriptName = "CharsList"
+--local unit.WorkerPath = utils.PluginWorkPath
 unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
---local PluginPath = utils.PluginPath
 
 ---------------------------------------- Naming
 do --- Преобразование в читаемый формат

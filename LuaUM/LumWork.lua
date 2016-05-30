@@ -181,7 +181,6 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
 
   if Args.Enum and Args.Enum ~= "" then
     Args.CurEnum = Args.Enum
-    --logShow(Args, "Args")
     --logShow({ Args, Props }, "Args and Props", 2)
     local t, MError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
@@ -193,7 +192,6 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
 
   if Args.DefEnum and Args.DefEnum ~= "" then
     Args.CurEnum = Args.DefEnum
-    --logShow(Args, "Args")
     --logShow({ Args, Props }, "Args and Props", 2)
     local t, SError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
@@ -202,7 +200,7 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
     SError = "Default enum not specified."
   end
 
-  return nil, MError..'\n'..SError
+  return nil, (MError or "")..'\n'..(SError or "")
 end ---- GetFileEnumData
 
 --------------------------------------------------------------------------------

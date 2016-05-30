@@ -386,8 +386,8 @@ local function Version (kind) --> (string | vary)
 end --
 
 unit.FarVersion = { -- Version info:
-  FAR = { Version(true) },                -- Table with version as numbers
-  VerFAR = Version():match("^%d+%.%d+"),  -- String with version without build
+  FAR       = { Version(true) },            -- Table with version as numbers
+  VerFAR    = Version():match("^%d+%.%d+"), -- String with version without build
 } --- FarVersion
 
 -- Значение цвета по его индексу Index.
@@ -406,19 +406,23 @@ function unit.GetFarRect () --> (table)
   return R
 end ---- GetFarRect
 
+do
+  local DefHelpTopicFlags = { FHELP_USECONTENTS = 1, FHELP_NOSHOWERROR = 1, }
+
 -- Show specified help topic.
 -- Показ заданной темы помощи.
 function unit.ShowHelpTopic (HelpTopic, Flags) --> (bool)
   if not HelpTopic then return nil end
-  Flags = Flags or { FHELP_USECONTENTS = 1, FHELP_NOSHOWERROR = 1 }
+  Flags = Flags or DefHelpTopicFlags
   local File, Topic = HelpTopic:match("%<([^%>]*)%>(.*)$")
   if not File then
-    File, Topic = utils.PluginPath, HelpTopic
+    File, Topic = utils.PluginWorkPath, HelpTopic
   end
   --far.Message(File, Topic)
   return far.ShowHelp(File, Topic, Flags)
 end ---- ShowHelpTopic
 
+end
 ---------------------------------------- Redraw
 -- Redraw all.
 -- Перерисовка всего.
@@ -803,7 +807,7 @@ local function DialogInsertText (hDlg, s)
   end
 
   local id = SendDlgMessage(hDlg, F.DM_GETFOCUS)
-  if not DlgEditItems[ far.GetDlgItem(hDlg, id)[1] ] then
+  if not DlgEditItems[ far.GetDlgItem(hDlg, id)[1] or "" ] then
     return -- Not supported type
   end
 
@@ -841,6 +845,7 @@ local function DialogInsertText (hDlg, s)
     end
   end
 
+  --logShow(text, "text")
   local isOk = SendDlgMessage(hDlg, F.DM_SETTEXT, id, text) and true or false
   if not isOk then return end
 
