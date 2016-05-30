@@ -8,13 +8,13 @@
 Установка:
 1. Удалите весь каталог ~Rh_Scripts~ в каталоге ~scripts~ плагина.
 2. Скопируйте каталог ~Rh_Scripts~ из скачанного архива в каталог
-   ~scripts~ плагина "LuaFAR для Редактора" (LuaFAR for Editor).
+   ~scripts~ плагина 'LuaFAR для Редактора' ('LuaFAR for Editor').
 3. Создайте в каталоге плагина файл "_usermenu.lua", если его нет.
    Добавьте в этот файл следующую строку:
 AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 4. Переименуйте "_usermenu.lua.example" в "_usermenu.lua".
 5. Очистите кэш плагинов и перезагрузите FAR Manager.
-6. Откройте меню конфигурации "LuaFAR для Редактора".
+6. Откройте меню конфигурации 'LuaFAR для Редактора'.
    Выберите пункт "Rh_Scripts package" и настройте пакет.
 
 Первоначальная настройка:
@@ -43,7 +43,7 @@ AddUserFile("scripts/Rh_Scripts/_usermenu.lua")
 2. Скопируйте скачанные файлы в каталог
    ~%FarProfile%\data\scripts\Rh_Scripts\data~.
 3. Удалите файл
-   ~Rh_Scripts\data\CharsData.lua~
+   ~Rh_Scripts\data\CharsData.lua~.
 
 ―――――――
 P.S. Рекомендуется также просмотреть историю изменений

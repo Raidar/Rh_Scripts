@@ -1,62 +1,63 @@
 [Packs]
 
 [F -- Packs]
-F0AA2F42-5352-4D11-B8C7-BAFF33EA3DCA -- Rh_Scripts pack
+f0aa2f42-5352-4d11-b8c7-baff33ea3dca -- Rh_Scripts pack
 f132878d-9671-4cb4-a94b-335b9da87536 -- LFA config pack
 f24e9b90-e122-49c8-8e76-7e09db029c7f -- fl_scripts set
 f333ea9c-380c-4ce3-bdc7-26a1ec1920e5 -- Rh_Presets pack
 f734eb23-4294-4548-9e31-61b03ef17e62 -- Rh_Macros pack
 f7684e73-a856-4196-9562-9e829e53a410 -- LuaSpell macro
+ffbbf294-a780-4452-8ef0-82df38507b42 -- UM Adapter pack
 
 [0 -- LUM]
-00B06FBA-0BB7-4333-8025-BA48B6077435 -- LUM
+00b06fba-0bb7-4333-8025-ba48b6077435 -- LUM
 
-06AF58B5-0837-487C-891D-697A5D8C08BA -- LuaUM.LumCfg Basic config
-07A36F6C-1A94-4CE1-9AAD-D7908DF447E5 -- LuaUM.LumCfg Files config
-082F7E38-B5F6-46C9-A1BB-2D8919872172 -- LuaUM.LumCfg UMenu config
+06af58b5-0837-487c-891d-697a5d8c08ba -- LuaUM.LumCfg Basic config
+07a36f6c-1a94-4ce1-9aad-d7908df447e5 -- LuaUM.LumCfg Files config
+082f7e38-b5f6-46c9-a1bb-2d8919872172 -- LuaUM.LumCfg UMenu config
 
 [1 -- Common]
-140A8BD3-546D-469B-867B-E0E61F9B41AF -- Common.rhsConfig config
+140a8bd3-546d-469b-867b-e0e61f9b41af -- Common.rhsConfig config
 
 19500a29-1a9b-4b1b-833c-693d58669963 -- Common.CharsMap
 1991fe2b-e919-480e-8b0a-90b7c960d113 -- Common.CharsMap config
 19ae6fa2-7ceb-4893-b2a7-fd8b783cc365 -- Common.CharsMap Names
 19b4271d-09c2-4671-af59-b043d1698104 -- Common.CharsMap Blocks
 
-1B26647B-44B0-4AC6-984D-45CBA59568D0 -- Common.Calendar
-1B537BFD-E907-4836-BEFF-5AC000823A5B -- Common.Calendar config
+1b26647b-44b0-4ac6-984d-45cba59568d0 -- Common.Calendar
+1b537bfd-e907-4836-beff-5ac000823a5b -- Common.Calendar config
 
 [2 -- Field]
 
 [3 -- Menu]
-349D77E8-95D5-4BC4-8ADD-7A39798DA4E4 -- RectMenu
-3700ABE9-C460-42B2-9F2E-1FE705B2942A -- CustomMenu
-3751918C-5CD0-4B56-8D32-13898F612930 -- FilterMenu
+349d77e8-95d5-4bc4-8add-7a39798da4e4 -- RectMenu
+3700abe9-c460-42b2-9f2e-1fe705b2942a -- CustomMenu
+3751918c-5cd0-4b56-8d32-13898f612930 -- FilterMenu
 
-3B84D47B-930C-47AB-A211-913C76280491 -- CharsMenu (RectMenu)
+3b84d47b-930c-47ab-a211-913c76280491 -- CharsMenu (RectMenu)
 
 [5 -- Panels]
 
 [6 -- Editor]
-62023165-B8F6-41D6-B468-94CA21D7B34F -- Editor.TextTemplate script
-6227AFFB-5E24-42CE-9EC0-106868FAD0BA -- Editor.TextTemplate config
+62023165-b8f6-41d6-b468-94ca21d7b34f -- Editor.TextTemplate script
+6227affb-5e24-42ce-9ec0-106868fad0ba -- Editor.TextTemplate config
 
-64B26458-1E8B-4844-9585-BECFB1CE8DE3 -- Editor.WordComplete script
-642EB0FD-D297-4855-BD87-DCECFC55BCC4 -- Editor.WordComplete config
+64b26458-1e8b-4844-9585-becfb1ce8de3 -- Editor.WordComplete script
+642eb0fd-d297-4855-bd87-dcecfc55bcc4 -- Editor.WordComplete config
 Editor.WordComplete Words list (RectMenu) == Editor.WordComplete script
 
 [7 -- Viewer]
 
 [A -- Samples]
-A05F1EBC-02AA-4450-9EF8-E12E6DA4BA00 -- Samples.KeysInfo
+a05f1ebc-02aa-4450-9ef8-e12e6da4ba00 -- Samples.KeysInfo
 
 [C -- context]
-C0AFE3A3-FF78-4904-B100-1C366D04EA96 -- LuaFAR context pack
+c0afe3a3-ff78-4904-b100-1c366d04ea96 -- LuaFAR context pack
 context table = LuaFAR context pack
-C05E4187-192B-4C37-8821-06CF75E7B4D1 -- ctxdata table
+c05e4187-192b-4c37-8821-06cf75e7b4d1 -- ctxdata table
 
 [D -- Coloring]
-D1D36A00-7F1B-41F0-9A66-1A252A4FA3A4 -- lfa_config
-D7F001FF-7860-4A24-B9CA-37BEF603F7BC -- LuaSpell
+d1d36a00-7f1b-41f0-9a66-1a252a4fa3a4 -- lfa_config
+d7f001ff-7860-4a24-b9ca-37bef603f7bc -- LuaSpell
 
 ――――――――
