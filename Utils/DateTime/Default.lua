@@ -154,20 +154,22 @@ local TConfig = {
   -- Formats to output.
   -- Форматы для вывода.
   Formats = {
-    World   = "%s",
-    Type    = "%s",
-    Year    = "%04d",
+    World       = "%s",
+    Type        = "%s",
+    Year        = "%04d",
 
-    Date    = "%04d-%02d-%02d",
-    Time    = "%02d:%02d:%02d",
-    DateLen = 10,
-    TimeLen =  8,
+    Date        = "%04d-%02d-%02d",
+    Time        = "%02d:%02d:%02d",
+    DateLen     = 10,
+    TimeLen     =  8,
 
-    YearDay   = "%03d",
-    YearWeek  = "%02d",
-    MonthDay  = "%02d",
-    MonthWeek = "%1d",
-    WeekDay   = "<%1d>",
+    YearDay     = "%03d",
+    YearWeek    = "%02d",
+    --YDayLen     =  3,
+
+    MonthDay    = "%02d",
+    MonthWeek   = "%1d",
+    WeekDay     = "<%1d>",
   }, -- Formats
 
   --LocData = L,

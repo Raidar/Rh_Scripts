@@ -130,21 +130,23 @@ local TConfig = {
   }, -- WeekOuts
 
   Formats = {
-    World   = "%s",
-    Type    = "%s",
-    Year    = "%04d",
+    World       = "%s",
+    Type        = "%s",
+    Year        = "%04d",
 
-    Date    = "%04d-%02d-%03d",
-    Time    = "%03d:%02d:%02d",
-    DateLen = 11,
-    TimeLen =  9,
+    Date        = "%04d-%02d-%03d",
+    Time        = "%03d:%02d:%02d",
+    DateLen     = 11,
+    TimeLen     =  9,
 
-    YearDay   = "%04d",
-    YearWeek  = " %03d",
-    MonthDay  = "%03d",
-    MonthWeek = "%02d",
-    WeekDay   = "<%02d>",
-    DayWeek   = "%03d",
+    YearDay     = "%04d",
+    YearWeek    = " %03d",
+    --YDayLen     =  4,
+
+    MonthDay    = "%03d",
+    MonthWeek   = "%02d",
+    WeekDay     = "<%02d>",
+    DayWeek     = "%03d",
   }, -- Formats
 
   LocData = L,

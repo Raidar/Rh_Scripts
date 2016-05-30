@@ -331,7 +331,7 @@ function TMain:MakeColors ()
   return true
 end ---- MakeColors
 
-  local max = math.max
+  local max, ceil = math.max, math.ceil
 
 function TMain:MakeProps ()
   local self = self
@@ -353,11 +353,19 @@ function TMain:MakeProps ()
   --Props.Bottom = wL[Cfg_DT.Type] -- MAYBE: Keys list?
   --logShow(Props.Bottom, Cfg_DT.Type, "wM d1")
 
-  self.TextMax = max(Cfg_DT.Formats.DateLen,-- Date length
-                     Cfg_DT.Formats.TimeLen,-- Time length
+  local Fmts = Cfg_DT.Formats
+  self.TextMax = max(Fmts.DateLen,          -- Date length
+                     Fmts.TimeLen,          -- Time length
                      wL.Name:len() + 2,     -- World name
                      wL.WeekDay[0].MaxLen,  -- WeekDay max
                      wL.YearMonth[0].MaxLen -- YearMonth max
+                    )
+  local YearLastDay  = Cfg_DT.LeapYear or Cfg_DT.BaseYear or 0
+  local YearLastWeek = ceil(YearLastDay / (Cfg_DT.DayPerWeek or 1))
+  --logShow(Cfg_DT, "Cfg_DT", "wM d3")
+  self.KnobMax = max(Fmts.YDayLen or 0,
+                     Fmts.YearDay:format(YearLastDay):len(),  -- YearDay length
+                     Fmts.YearWeek:format(YearLastWeek):len() -- YearWeek length
                     )
 
   self.InfoRows = 7
@@ -383,7 +391,9 @@ function TMain:MakeProps ()
     MenuAlign = "CM",
 
     TextMax = {
+      [1] = self.KnobMax,
       [2] = self.TextMax,
+      [3] = self.KnobMax,
     }, -- textMax
 
     Colors = self.Colors,
@@ -539,14 +549,16 @@ function TMain:FillInfoPart () --> (bool)
   local t = self.Items
 
   -- Текущая информация:
-  local TextMax = self.TextMax
+  local KnobMax, TextMax = self.KnobMax, self.TextMax
   for k, v in pairs(ItemDatas) do
     local pos = ItemNames[k]
     if pos then
       local item = t[pos]
       if item then
-        if pos < RowCount or pos > RowCount * 2 then
+        if    pos < 0 or pos > RowCount * 3 then
           item.text = v
+        elseif pos < RowCount or pos > RowCount * 2 then
+          item.text = CenterText(v, KnobMax)
         else
           item.text = CenterText(v, TextMax)
         end
@@ -1437,5 +1449,4 @@ end ---- Execute
 
 --------------------------------------------------------------------------------
 return unit
---return unit.Execute()
 --------------------------------------------------------------------------------

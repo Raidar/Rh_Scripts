@@ -63,17 +63,19 @@ local TConfig = tables.clone(cfgBase.TConfig, true)
 TConfig.Type = "Type.Hexadecimal"
 
 TConfig.Formats = {
-  World   = "%s",
-  Type    = "%s",
-  Year    = "0x%03x",
+  World     = "%s",
+  Type      = "%s",
+  Year      = "0x%03x",
 
-  Date    = "%03x-%02x-%02x",
-  Time    = "%02x:%02x:%02x",
-  DateLen = 10,
-  TimeLen =  8,
+  Date      = "%03x-%02x-%02x",
+  Time      = "%02x:%02x:%02x",
+  DateLen   = 10,
+  TimeLen   =  8,
 
   YearDay   = "%03x",
   YearWeek  = " %02x",
+  --YDayLen   =  3,
+
   MonthDay  = "%02x",
   MonthWeek = "%1x",
   WeekDay   = "<%1x>",
