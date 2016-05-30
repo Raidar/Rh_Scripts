@@ -1,15 +1,15 @@
 Rh_Scripts pack
 
 [Info]
-Ver. : 3.2.3.0
-Date : 2016-05-25
+Ver. : 3.3.0.1
+Date : 2016-05-30
 Ware : Freeware
 Lic. : MIT
 Reqs : FAR + LuaFAR v.3.0.4575,
-       LuaFAR for Editor v.3.7.1,
-       LuaFAR context v.3.1.5.0
+       LuaFAR for Editor v.3.7.1 | LuaFAR plugin v.3.0.0.2,
+       LuaFAR context v.3.3.0.1
 Type : Plugin for FAR Manager (Script package)
-Desc : Rh_Scripts package for LuaFAR for Editor
+Desc : Rh_Scripts package
 
 Auth : A.I. Rakhmatullin
        / А.И. Рахматуллин
@@ -23,7 +23,9 @@ Link : http://raidar.github.com/Programs/FarScripts.htm#Rh_Scripts
 Repo : https://github.com/Raidar/Rh_Scripts
 
 [Anons]
-  Rh_Scripts is a package of scripts and utilities for "LuaFAR for Editor".
-  Rh_Scripts pack — пакет скриптов и утилит для "LuaFAR для Редактора".
+  Rh_Scripts is a package of scripts and utilities
+for "LuaFAR for Editor" and "LuaFAR plugin".
+  Rh_Scripts pack — пакет скриптов и утилит
+для "LuaFAR для Редактора" и "LuaFAR plugin".
 
 ―――――――
