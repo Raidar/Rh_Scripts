@@ -188,13 +188,24 @@ function TMenu:Prepare () --> (bool | nil, error)
     return
   end
 
-  self.BaseMenu = self.Menus[self.BaseName]
+  local tp = type(self.BaseName)
+  if     tp == 'string' then
+    self.BaseMenu = self.Menus[self.BaseName]
+  elseif tp == 'function' then
+    self.BaseMenu = self.BaseName
+    self.BaseName = false
+  end
   if type(self.BaseMenu) == 'function' then
     self.BaseMenu = self.BaseMenu()
   end
   if type(self.BaseMenu) ~= 'table' then
+    if self.BaseName == false then self.BaseName = "?" end
     self.Error = "Menu not found:\n"..tostring(self.BaseName)
     return -- Нет главного меню
+  end
+
+  if self.BaseName == false then
+    self.BaseName = self.BaseMenu.Name
   end
   --logShow(self.BaseMenu, "BaseName: "..self.BaseName, 1)
 
@@ -637,6 +648,7 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
   end
 
   if type(Item) == 'table' then
+
     local BaseName
     -- Получение реального пункта меню с его именем:
     BaseName, self.RunItem = tostring(Index), Item
@@ -669,8 +681,10 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
     end --
 
   else
+
     self.Error = self.L:et1("MnuWrongItem", type(Item), CurName, Index)
     return
+
   end
 end ---- MakeRunMenuItem
 
@@ -685,12 +699,29 @@ function TMenu:MakeRunMenu () --> (table)
     --logShow(CurMenu, "CurMenu", "w d2")
     Items = Items()
   end
+
   if type(Items) == 'table' then
     CurMenu.Items = Items
-    --logShow(Items, "Items", "w d3")
+    --logShow(Items, "Items", "w d2")
+
+  elseif Items == nil then
+    --self.RunMenu, self.RunCount = {}, 0
+    --self:MakeRunMenuItem(CurMenu, k)
+    --if self.Error then return end
+    self.ActItem = CurMenu
+    self:DefineItemKind(self.ActItem)
+    local isOk, SError = self:MakeAction()
+    --logShow(CurMenu, "No Items", "w d2")
+    --logShow({ isOk = isOk, error = SError }, self.ActItem.Kind)
+    if isOk == nil then return nil, SError, self.ActItem end
+
+    --logShow(CurMenu, "No Items", "w d2")
+    return true
+
   else
     CurMenu.Items = { Items }
   end
+  --logShow(CurMenu.Items, "CurMenu.Items", "w d2")
 
   -- Создание из списка пунктов-таблиц.
   self.RunMenu, self.RunCount = {}, 0
@@ -733,7 +764,7 @@ do
 -- Определение полного имени скрипта.
 function TMenu:DefineScriptName (Item) --> (string)
   local CfgData = self.Config.CfgData
-  local Path = utils.PluginPath
+  local Path = utils.PluginWorkPath
 
   local ScPath  = "scripts\\"
   local ScName  = Item.Script
@@ -743,13 +774,14 @@ function TMenu:DefineScriptName (Item) --> (string)
   if not RelPath then
     Path = Path..CfgData.Files.LuaScPath -- Каталог скриптов LUM
   else
+    local Cfg_Basic = CfgData.Basic
     local ScriptPath = { -- Перечень специальных путей:
-      Plugin = "",      -- Каталог плагина
-      scripts = ScPath, -- Каталог скриптов плагина
-      LUM     = CfgData.Basic.LuaUMPath,         -- Каталог используемого LUM
-      DefUM   = CfgData.Basic.DefUMPath,         -- Каталог LUM по умолчанию
-      default = CfgData.Basic.DefUMPath..ScPath, -- Каталог скриптов DefUM
-      --Rh_Scripts = ScPath.."Rh_Scripts\\", -- Каталог скриптов пакета
+      Plugin    = "",       -- Каталог плагина
+      scripts   = ScPath,   -- Каталог скриптов плагина
+
+      LUM       = Cfg_Basic.LuaUMPath,          -- Каталог используемого LUM
+      DefUM     = Cfg_Basic.DefUMPath,          -- Каталог LUM по умолчанию
+      default   = Cfg_Basic.DefUMPath..ScPath,  -- Каталог скриптов DefUM
     } ---
 
     Path = Path..(ScriptPath[RelPath] or RelPath)
@@ -935,8 +967,8 @@ end ---- ShowMenu
 end -- do
 
 local function ShowInfo (...)
-  local dbg = require "context.utils.useDebugs"
-  return dbg.Show(...)
+  local debugs = require "context.utils.useDebugs"
+  return debugs.Show(...)
 end --
 
 -- Обработка BreakKeys.
@@ -991,7 +1023,7 @@ function TMenu:ShowLoop ()
 
   repeat
     local ActItem = self.ActItem
-    --logShow(self.ActItem, "self.ActItem", 0)
+    --logShow(self.ActItem, "self.ActItem", "w d2")
     if ActItem.isBack and not ActItem.Menu then
       self.ActItem, self.ItemPos = nil, nil
       return -- Выход из главного меню
@@ -1008,11 +1040,12 @@ function TMenu:ShowLoop ()
       self.Error = self.L:et1("MnuSecNotFound", ActItem.Name or "(none)")
       return
     end
-    --logShow(self.CurMenu, self.CurName, 2)
+    --logShow(self.CurMenu, self.CurName, "w d2")
 
     self:MakeMenuConfig() -- Конфигурация меню
     local Props = self:MakeMenuProps()  -- Свойства меню
     self:MakeRunMenu()
+    --logShow(self.RunMenu, "RunMenu", "w d2")
     if self.Error then return end
 
     -- Формирование текста пунктов меню.
@@ -1088,6 +1121,7 @@ function unit.Menu (Properties, Menus, Config, ShowMenu)
   if _Menu.Error then return nil, _Menu.Error end
 
   if ShowMenu == 'self' then return _Menu end
+  --logShow(_Menu, "_Menu")
   --logShow(Properties.Flags, "Flags")
 
   if useprofiler then profiler.stop() end

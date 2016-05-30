@@ -40,6 +40,7 @@ function unit.CharactersMap ()
   local CharsMap = require "Rh_Scripts.Common.CharsMap"
 
   return {
+    Name = "CharsMap",
     text = L.AdnCharactersMap,
     Function = CharsMap.Execute,
   } ----
@@ -218,6 +219,7 @@ local Data = {
   },
 
   ["UAddons"] = mScripts,
+  ["UAddons.CharsMap"]  = unit.CharactersMap,
   ["UAddons.Calendars"] = mCalendars,
 } ---
 
