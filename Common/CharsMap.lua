@@ -486,7 +486,7 @@ function TMain:FillMenu () --> (table)
   do -- Символы таблицы
     local p = 1               -- Индекс начального пункта строки
     local b = self.CharBase   -- Код символа для текущего пункта
-    local U = unicode.utf8.char
+    local CodeToChar = unicode.utf8.char
 
     local SelChar = self.Char -- Код текущего символа
     local SelIndex            -- Индекс пункта с текущим символом
@@ -495,7 +495,7 @@ function TMain:FillMenu () --> (table)
       p = p + ColCount
 
       for j = 1, CharCols do
-        local c = U(b)
+        local c = CodeToChar(b)
         local f = t[p + j]
 
         f.text = c
@@ -1229,6 +1229,10 @@ do
   
   local u8byte, u8char = strings.u8byte, strings.u8char
 
+  local function CharToCode (s)
+    return u8byte(s:sub(1, 1)) or 0x0000
+  end --
+
   local CodeInputActions = {
     ["1"] = true,
     ["2"] = true,
@@ -1335,24 +1339,50 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         isUpdate = false
       end
-      
-    elseif SKey == "CtrlC" and self.IsCharInput then
 
-      local PriorCount = self.InputCount
-      self:FillInputCount()
-      local InputCount = self.InputCount
+    elseif SKey == "CtrlC" then
+      if self.IsCharInput then
 
-      --logShow(Count, SKey)
-      --if InputCount and InputCount > 0 and InputCount < 1000 then
-      if InputCount and InputCount > 0 and InputCount < NamesCount / 2 then
-        local Char = self:ChooseChar(Data)
-        if type(Char) == 'number' then
-          self.Char = Char
+        local PriorCount = self.InputCount
+        self:FillInputCount()
+        local InputCount = self.InputCount
+
+        --logShow(Count, SKey)
+        --if InputCount and InputCount > 0 and InputCount < 1000 then
+        if InputCount and InputCount > 0 and InputCount < NamesCount / 2 then
+          local Char = self:ChooseChar(Data)
+          if type(Char) == 'number' then
+            self.Char = Char
+          else
+            isUpdate = (InputCount ~= PriorCount)
+          end
         else
           isUpdate = (InputCount ~= PriorCount)
         end
+
       else
-        isUpdate = (InputCount ~= PriorCount)
+        local s = Data.char
+        if type(s) == 'string' and s ~= "" then
+          far.CopyToClipboard(s)
+        end
+
+        isUpdate = false
+      end
+
+    elseif SKey == "CtrlV" then
+      if self.IsCharInput then
+        if CharInputActions[SKey] then
+          self:EditCharInput(SKey)
+        else
+          isUpdate = false
+        end
+      else
+        local s = far.PasteFromClipboard()
+        if type(s) == 'string' and s ~= "" then
+          self.Char = CharToCode(s)
+        else
+          isUpdate = false
+        end
       end
       
     elseif SKey == "Divide" then
@@ -1408,14 +1438,6 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
       end
 
-    elseif SKey == "CtrlV" then
-      local s = far.PasteFromClipboard()
-      if type(s) == 'string' then
-        self.Char = u8byte(s:sub(1, 1))
-      else
-        isUpdate = false
-      end
-
     elseif SKey == "CtrlShiftV" then
       local s = far.PasteFromClipboard()
       if type(s) == 'string' then
@@ -1429,7 +1451,7 @@ function TMain:AssignEvents () --> (bool | nil)
       local s = Data.char
       --local s = u8char(Data.Char)
       local Char = far.XLat(s, 1, 1)
-      Char = Char and Char ~= s and u8byte(Char:sub(1, 1)) or 0x0000
+      Char = Char and Char ~= s and CharToCode(Char)
       if Char ~= 0x0000 then
         self.Char = Char
       else

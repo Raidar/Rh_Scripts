@@ -204,6 +204,7 @@ $ #Characters map# (CharsMap)
  \37Num* | Clear\- (Num5)    — ¦the last choosen character.
  \37CtrlB\-                  — ¦to show a character blocks
 and to go to a first character of the chosen block.
+ \37CtrlC\-                  — ¦to copy the character to clipboard.
  \37CtrlV\-                  — ¦to go to a character from clipboard.
  \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard.
  \37CtrlAltX\-               — ¦to go to a character obtained by XLat.
