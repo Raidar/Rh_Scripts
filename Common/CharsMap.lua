@@ -1062,23 +1062,27 @@ function TMain:EditCodeInput (SKey)
   elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
     --logShow(s, SKey)
-    if type(s) == 'string' then
+    if type(s) == 'string' and s ~= "" then
       s = (s.."0000"):match("^(%x%x%x%x)")
       --logShow(s, SKey)
       if s then Input = s:upper() end
     end
+
   else
     if Input:len() < 4 then
       Input = Input..SKey
     end
+
   end
 
   self.Input = Input
   if Input ~= "" then
     self.InputText = Input
+
   else
     local L = self.LocData
     self.InputText = L.InputCodePoint
+
   end
 
   self.Props.Bottom = self.InputText
@@ -1178,7 +1182,7 @@ function TMain:EditCharInput (SKey)
 
   elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
-    if type(s) == 'string' then
+    if type(s) == 'string' and s ~= "" then
       Input = s
     end
   else
@@ -1371,20 +1375,32 @@ function TMain:AssignEvents () --> (bool | nil)
 
     elseif SKey == "CtrlV" then
       if self.IsCharInput then
-        if CharInputActions[SKey] then
-          self:EditCharInput(SKey)
-        else
-          isUpdate = false
-        end
+        self:EditCharInput(SKey)
+
+      elseif self.IsCodeInput then
+        self:EditCodeInput(SKey)
+
       else
+        -- Paste as Character
         local s = far.PasteFromClipboard()
         if type(s) == 'string' and s ~= "" then
           self.Char = CharToCode(s)
         else
           isUpdate = false
         end
+
       end
       
+    elseif SKey == "CtrlShiftV" then
+      -- Paste as Code Point
+      local s = far.PasteFromClipboard()
+      if type(s) == 'string' then
+        s = (s.."0000"):match("^(%x%x%x%x)")
+        if s then self.Char = tonumber(s, 16) end
+      else
+        isUpdate = false
+      end
+
     elseif SKey == "Divide" then
       if self.IsCodeInput then
         self:StopCodeInput(Data)
@@ -1416,6 +1432,7 @@ function TMain:AssignEvents () --> (bool | nil)
       local UniChar = Input.UnicodeChar
       if UniCharInputActions[UniChar or ""] then
         KeyChar = UniChar
+
       elseif KeyChar:len() == 1 then
         if (Input.StateName == "" or
             Input.StateName == "Shift") then
@@ -1428,21 +1445,14 @@ function TMain:AssignEvents () --> (bool | nil)
         else
           KeyChar = false
         end
+
       else
         KeyChar = false
+
       end
 
       if KeyChar or CharInputActions[SKey] then
         self:EditCharInput(KeyChar or SKey)
-      else
-        isUpdate = false
-      end
-
-    elseif SKey == "CtrlShiftV" then
-      local s = far.PasteFromClipboard()
-      if type(s) == 'string' then
-        s = (s.."0000"):match("^(%x%x%x%x)")
-        if s then self.Char = tonumber(s, 16) end
       else
         isUpdate = false
       end

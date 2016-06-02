@@ -118,8 +118,6 @@ end --
 ---------------------------------------- ---- Item
 do
 
-unit.DefItemOrder = [[abcdefghijklmnopqrstuvwxyz`1234567890-=[]\;',./]]
-
 -- Make menu head.
 -- Формирование пункта-заголовка меню.
 function unit.MakeHeadItem (s) --> (table)
@@ -194,6 +192,9 @@ end ---- MakeCharItem
 
 end -- do
 ---------------------------------------- Items
+
+unit.DefItemOrder = [[abcdefghijklmnopqrstuvwxyz`1234567890-=[]\;',./]]
+
 local length = farUt.length
 
 local MakeCharItem = unit.MakeCharItem
