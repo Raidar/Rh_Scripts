@@ -490,6 +490,7 @@ function TMain:FillInfoPart () --> (bool)
     }, --
 
   } -- ItemNames
+  self.ItemNames = ItemNames
 
   local Formats = Cfg_DT.Formats
   local L, wL = self.LocData, self.Loc_DT
@@ -500,8 +501,7 @@ function TMain:FillInfoPart () --> (bool)
   local WeekDayNames   = (wL or Null).WeekDay   or Null
   local YearMonthNames = (wL or Null).YearMonth or Null
 
-  local y = Date:isZeroYear() and y or
-            (Date.y > 0 and Date.y or Date.y - 1)
+  local y = Date:getNegYear()
 
   local ItemDatas = {
     World     = self.World ~= "Terra" and
@@ -524,6 +524,7 @@ function TMain:FillInfoPart () --> (bool)
     Inc_Date  = L.Inc_Date,   --"+",
     --]]
   } --- ItemDatas
+  self.ItemDatas = ItemDatas
 
   --[[
   local ItemHints = {
@@ -895,7 +896,9 @@ end -- do
 ---------------------------------------- ---- Utils
 -- Limit date.
 -- Ограничение даты.
-function TMain:LimitDate (Date)
+function TMain:LimitDate (Date) --> (Date)
+  local Date = Date
+
   if Date.y < self.YearMin then
     Date.y = self.YearMin
     Date.m = 1
@@ -909,45 +912,130 @@ function TMain:LimitDate (Date)
 
   return Date
 end ---- LimitDate
----------------------------------------- ---- Input
 do
   local tonumber = tonumber
-  local InputFmtY   = "^(%d+)"
-  local InputFmtYM  = "^(%d+)%-(%d+)"
-  local InputFmtYMD = "^(%d+)%-(%d+)%-(%d+)"
+  local FmtDate    = "%04d-%02d-%02d"
+  --local FmtTime    = "%02d:%02d:%02d"
+  local DateFmtY   = "^(%d+)"
+  local DateFmtYM  = "^(%d+)%-(%d+)"
+  local DateFmtYMD = "^(%d+)%-(%d+)%-(%d+)"
+  local DateFmtM   = "^%-(%d+)"
+  local DateFmtMD  = "^%-(%d+)%-(%d+)"
+  local DateFmtD   = "^%-%-(%d+)"
 
-function TMain:ParseDateInput ()
+function TMain:DateToStr (Date, Format) --> (Date)
+  local y = Date:getNegYear()
+  return (Format or FmtDate):format(y, Date.m, Date.d)
+end ---- DateToStr
+
+function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
   local self = self
-  local Date = self.Date:copy()
+  local Date = Default:copy()
 
-  local Input = self.Input or ""
-  if Input == "" then return end
-
-  local _, Count = Input:gsub("-", "")
-
-  if Count == 0 then
-    local y = Input:match(InputFmtY)
-    y = tonumber(y) or 1
-    Date.y, Date.m, Date.d = y, 1, 1
-  elseif Count == 1 then
-    local y, m = Input:match(InputFmtYM)
-    y, m = tonumber(y) or 1, tonumber(m) or 1
-    Date.y, Date.m, Date.d = y, m, 1
-  else
-    local y, m, d = Input:match(InputFmtYMD)
-    y, m, d = tonumber(y) or 1, tonumber(m) or 1, tonumber(d) or 1
-    --logShow({ Count, y, m, d }, Input)
-    Date.y, Date.m, Date.d = y, m, d
+  local StrDate = StrDate or ""
+  if StrDate == "" then return end
+  if StrDate:sub(-1, -1) == "-" then
+    StrDate = StrDate:sub(1, -2) or ""
   end
 
+  local _, Count = StrDate:gsub("-", "")
+  local IsNeg = StrSign == '-'
+
+  if Count == 0 then
+    local y = StrDate:match(DateFmtY)
+    if y and OnlyMatch then return true end
+    y = tonumber(y) or 1
+    Date:put(y, 1, 1)
+
+  elseif Count == 1 then
+    if StrDate:sub(1, 1) == "-" then
+      local m = StrDate:match(DateFmtM)
+      if m and OnlyMatch then return true end
+      m = tonumber(m) or 1
+      Date.m = m
+      --Date:put(Date.y, m, 1)
+      IsNeg = false
+
+    else 
+      local y, m = StrDate:match(DateFmtYM)
+      if (y or m) and OnlyMatch then return true end
+      y, m = tonumber(y) or 1, tonumber(m) or 1
+      Date:put(y, m, 1)
+
+    end
+
+  elseif Count == 2 then
+    if StrDate:sub(1, 2) == "--" then
+      local d = StrDate:match(DateFmtD)
+      --logShow({ d, Date }, StrDate, "w d2")
+      if d and OnlyMatch then return true end
+      d = tonumber(d) or 1
+      Date.d = d
+      --Date:put(Date.y, Date.m, d)
+      IsNeg = false
+
+    elseif StrDate:sub(1, 1) == "-" then
+      local m, d = StrDate:match(DateFmtMD)
+      if (m or d) and OnlyMatch then return true end
+      m, d = tonumber(m) or 1, tonumber(d) or 1
+      Date:put(Date.y, m, d)
+      IsNeg = false
+
+    else 
+      local y, m, d = StrDate:match(DateFmtYMD)
+      if (y or m or d) and OnlyMatch then return true end
+      y, m, d = tonumber(y) or 1, tonumber(m) or 1, tonumber(d) or 1
+      --logShow({ Count, y, m, d }, Input)
+      Date:put(y, m, d)
+
+    end
+
+  else
+    IsNeg = false
+
+  end
+
+  if OnlyMatch then return false end
+
+  if IsNeg then Date:putNegYear(-Date.y) end
+
+  --logShow(Date, StrDate, "w d1")
   return Date:fixMonth():fixDay()
+end ---- StrToDate
+
+function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
+  local StrDate = StrDate or ""
+  if StrDate == "" then return end
+
+  local IsNeg = false
+  if Neged then
+    IsNeg = StrDate:sub(1, 1) == "-"
+    if IsNeg then
+      StrDate = StrDate:sub(2, -1) or ""
+    end
+  end
+  --logShow(Default, StrDate)
+
+  return self:StrToDate(StrDate, IsNeg and '-' or '+', Default, OnlyMatch)
+end ---- PasteToDate
+
+function TMain:MatchYear (StrDate) --> (Date)
+  return StrDate:match(DateFmtY)
+end ---- MatchYear
+
+end -- do
+---------------------------------------- ---- Input
+
+function TMain:ParseDateInput ()
+  return self:StrToDate(self.Input, self.Sign, self.Date)
 end ---- ParseDateInput
 
-function TMain:StartDateInput (Date)
+function TMain:StartDateInput (Date, Sign)
   local self = self
   local L = self.LocData
 
   self.Input = ""
+  self.Sign = Sign == '-' and Sign or ""
   self.Props.Bottom = L.InputDate
   self.IsDateInput = true
 end ---- StartDateInput
@@ -964,15 +1052,34 @@ function TMain:EditDateInput (SKey)
   local self = self
 
   local Input = self.Input
+  local IsCheckYear = false
+
   if SKey == "BS" then
     if Input ~= "" then Input = Input:sub(1, -2) end
+
+  elseif SKey == "CtrlV" then
+    local s = far.PasteFromClipboard()
+    if type(s) == 'string' and s ~= "" then
+      local Date = self.Date
+      if self:StrToDate(s, "", Date, true) then
+        Input = s
+        IsCheckYear = true
+
+      end
+    end
+
   else
     if SKey == "Subtract" then SKey = "-" end
 
     Input = Input..SKey
 
+    IsCheckYear = true
+
+  end
+
+  if IsCheckYear then
     -- TEMP: Ограничение на год из-за ширины поля!
-    local y = Input:match(InputFmtY)
+    local y = self:MatchYear(Input)
     if y then
       local l = y:len()
       if l > 6 then
@@ -983,10 +1090,9 @@ function TMain:EditDateInput (SKey)
   end
 
   self.Input = Input
-  self.Props.Bottom = Input
+  self.Props.Bottom = self.Sign..Input
 end ---- EditDateInput
 
-end -- do
 do
   local tonumber = tonumber
 
@@ -1021,15 +1127,53 @@ end ---- StopShiftInput
 function TMain:EditShiftInput (SKey)
   local self = self
 
+  local SignKeys = {
+    ["-"]       = "-",
+    ["="]       = "+",
+    ["Shift-"]  = "-",
+    ["Shift="]  = "+",
+  } --- SignKeys
+
   local Input = self.Input
   if SKey == "BS" then
     if Input ~= "" then Input = Input:sub(1, -2) end
+
+  elseif SKey == "CtrlV" then
+    local s = far.PasteFromClipboard()
+    if type(s) == 'string' and s ~= "" then
+      s = s:match('^(%d+)')
+      if s and s ~= "" then
+        if s:sub(1, 1) ~= "-" then
+          s = "+"..s
+        end
+
+        Input = s
+
+      end
+    end
+
   else
     --if SKey == "Subtract" then SKey = "-"
     --elseif SKey == "Add" then SKey = "+"
     --end
 
-    Input = Input..SKey
+    if Input == "" then
+      local Sign = SignKeys[SKey]
+      if Sign then
+        Input = Sign..Input
+        SKey = ""
+
+      elseif SKey:match("%d") then
+        Input = "+"..Input..SKey
+        SKey = ""
+
+      end
+    end
+
+    if SKey ~= "" then
+      Input = Input..SKey
+    end
+
   end
 
   self.Input = Input
@@ -1062,8 +1206,10 @@ do
     ["9"] = true,
     ["0"] = true,
     ["-"] = true,
+
     ["BS"] = true,
     ["Subtract"] = true,
+    ["CtrlV"] = true,
   } --- DateInputActions
 
   local ShiftInputActions = {
@@ -1077,11 +1223,15 @@ do
     ["8"] = true,
     ["9"] = true,
     ["0"] = true,
-    --["-"] = true,
-    --["+"] = true,
+    ["-"] = true,
+    ["="] = true,
+    ["Shift-"] = true,
+    ["Shift="] = true,
+
     ["BS"] = true,
     --["Add"]      = true,
     --["Subtract"] = true,
+    ["CtrlV"] = true,
   } --- ShiftInputActions
 
 function TMain:AssignEvents () --> (bool | nil)
@@ -1115,32 +1265,63 @@ function TMain:AssignEvents () --> (bool | nil)
     if Action then
       Date[Action](Date)
 
-    elseif SKey == "Divide" then
+    elseif SKey == "CtrlC" or SKey == "CtrlShiftC" then
+      local s
+      if self.IsDateInput or self.IsShiftInput then
+        s = self.Input
+      else
+        s = self.ItemDatas.Date
+        t = self.ItemDatas.Time
+        if t and t ~= "" and SKey == "CtrlShiftC" then
+          s = s.." "..t
+        end
+      end
+      if type(s) == 'string' and s ~= "" then
+        far.CopyToClipboard(s)
+      end
+
+      isUpdate = false
+
+    elseif SKey == "CtrlV" then
+    --elseif SKey == "CtrlV" or SKey == "CtrlShiftV" then
+      if self.IsDateInput then
+        self:EditDateInput(SKey)
+
+      elseif self.IsShiftInput then
+        self:EditShiftInput(SKey)
+
+      else
+        -- MAYBE: CtrlShiftV - вставка сдвига или отрицательной даты
+        local s = far.PasteFromClipboard()
+        Date = self:PasteToDate(s, true, Date) or Date
+
+      end
+
+    elseif SKey == "Divide" or SKey == "ShiftDivide" then
       if self.IsDateInput then
         Date = self:StopDateInput(Date)
       elseif not self.IsShiftInput then
-        self:StartDateInput(Date)
+        local Sign = SKey == "ShiftDivide" and '-' or '+'
+        self:StartDateInput(Date, Sign)
       else
         isUpdate = false
       end
 
-    elseif SKey == "Add" then
+    elseif SKey == "Add" or SKey == "Subtract" then
       if self.IsShiftInput then
         Date = self:StopShiftInput(Date)
-      elseif not self.IsDateInput then
-        self:StartShiftInput(Date, '+')
-      else
-        isUpdate = false
-      end
 
-    elseif SKey == "Subtract" then
-      if self.IsShiftInput then
-        Date = self:StopShiftInput(Date)
       elseif not self.IsDateInput then
-        self:StartShiftInput(Date, '-')
+        local Sign = SKey == "Subtract" and '-' or '+'
+        self:StartShiftInput(Date, Sign)
+
       else
-        --isUpdate = false
-        self:EditDateInput(SKey)
+        if SKey == "Subtract" then
+          self:EditDateInput(SKey)
+        else
+          isUpdate = false
+        end
+
       end
 
     elseif self.IsDateInput then

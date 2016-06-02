@@ -223,7 +223,7 @@ $ #Characters map#: Code point input
   To input code point of character use following keys:
  \371—9, 0, A-F\-            — ¦to input the hexadecimal digits.
  \37Num/, Enter, NumEnter\-  — ¦to complete the input.
- \37V\-                      — ¦to insert code point from clipboard.
+ \37CtrlV\-                  — ¦to insert a code point from clipboard.
  
   After the input completion a character with the inputted code point
 will be displayed in the window.
@@ -238,7 +238,7 @@ $ #Characters map#: Character name input
  \37^$()%.[]*+-?\-           — ¦to input special symbols.
  \37ShiftNum/\-              — ¦to complete the input.
  \37Enter, NumEnter\-        — ¦to go to a character with input name.
- \37CtrlV\-                  — ¦to insert character name from clipboard.
+ \37CtrlV\-                  — ¦to insert a character name from clipboard.
  \37CtrlC\-                  — ¦to show all characters with input name
 and to go to the choosen character.
 
@@ -290,6 +290,9 @@ then a start of the previous one / an end of the next one).
 
   Special keys:
  \37Num* | Clear\- (Num5)    — ¦the current date and time.
+ \37CtrlC\-                  — ¦to copy the current date to clipboard.
+ \37CtrlShiftC\-             — ¦to copy the current date and time to clipboard.
+ \37CtrlV\-                  — ¦to go to date from clipboard.
  \37Num/\-                   — ¦to go to a ~date input~@Calendar_DateInput@ mode.
  \37Num+ | Num-\-            — ¦to go to a ~shift input~@Calendar_ShiftInput@ mode.
 
@@ -300,15 +303,18 @@ then a start of the previous one / an end of the next one).
 @Calendar_DateInput
 $ #Calendar for one month#: Date input
 
-  A date input is performed in following formats: \3AY\-, \3AY‑M\-, or \3AY‑M‑D\-,
-where \3AY\-, \3AM\- и \3AD\- are numbers, that represent corresponding year,
-month and day of the inputted date. Missed values are replaced by \3A1\-.
+  A date input is performed in following formats:
+\3AY\-, \3AY‑M\-, \3AY‑M‑D\-, \3A‑M\-, \3A‑M-D\-, or \3A‑-D\-,
+where \3AY\-, \3AM\- и \3AD\- are numbers, that represent
+corresponding year, month and day of the inputted date.
+Missed values are replaced by \3A1\- (when \3AY\--part is exists).
 
   To input date use following keys:
  \371—9, 0\- (digits)        — ¦to input date digits.
  \37Num1—Num9\- (Num‑digits) — ¦to input date digits when NumLock is on.
  \37‑, Num‑\-                — ¦to input separator between the date parts.
  \37Num/, Enter, NumEnter\-  — ¦to complete the input.
+ \37CtrlV\-                  — ¦to insert a date from clipboard.
 
   After the input completion the inputted date will be displayed in the window.
 
@@ -324,9 +330,11 @@ $ #Calendar for one month#: Shift input
 
   To input shift use following keys:
  \371—9, 0\- (digits)        — ¦to input shift digits.
+ \37-, +\- (знаки)           — ¦to input shift sign when a shift is empty.
  \37Num1—Num9\- (Num‑digits) — ¦to input shift digits when NumLock is on.
  \37Num+, Num-,\-
  \37Enter, NumEnter\-        — ¦to complete the input.
+ \37CtrlV\-                  — ¦to insert a shift from clipboard.
 
   After the input completion the shifted date will be displayed in the window.
 
