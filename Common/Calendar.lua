@@ -921,6 +921,8 @@ function TMain:ParseDateInput ()
   local Date = self.Date:copy()
 
   local Input = self.Input or ""
+  if Input == "" then return end
+
   local _, Count = Input:gsub("-", "")
 
   if Count == 0 then
