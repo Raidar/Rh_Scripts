@@ -203,9 +203,14 @@ end -- newDate
 end -- do
 ---------------------------------------- ---- Basic
 
-function TDate:data () --> (d, m, y, config)
+function TDate:data () --> (y, m, d, config)
   local self = self
   return self.y, self.m, self.d, self.config
+end ----
+
+function TDate:put (y, m, d) --| (y, m, d)
+  local self = self
+  self.y, self.m, self.d = y or self.y, m or self.m, d or self.d
 end ----
 
 function TDate:copy () --> (object)
@@ -214,6 +219,20 @@ end ----
 
 function TDate:is (Date) --> (bool)
   return self.y == Date.y and self.m == Date.m and self.d == Date.d
+end ----
+
+---------------------------------------- ---- Zero
+
+function TDate:isZeroYear () --> (boolean)
+  return self.config:isZeroYear()
+end ----
+
+function TDate:getNegYear () --> (number)
+  return self:isZeroYear() and y or (self.y > 0 and self.y or self.y - 1)
+end ----
+
+function TDate:putNegYear (y) --> ()
+  self.y = self:isZeroYear() and y or (y > 0 and y or y + 1)
 end ----
 
 ---------------------------------------- ---- Count
@@ -337,10 +356,6 @@ function TDate:setEraMonth (r) --> (y, m)
 end ---- setEraMonth
 
 ---------------------------------------- ---- Check
-
-function TDate:isZeroYear () --> (number)
-  return self.config:isZeroYear()
-end ----
 
 function TDate:fixMonth () --> (self)
   local self = self
@@ -514,6 +529,12 @@ end -- do
 function TTime:data () --> (h, n, s, z, config)
   local self = self
   return self.h, self.n, self.s, self.z, self.config
+end ----
+
+function TTime:put (h, n, s, z) --| (h, n, s, z)
+  local self = self
+  self.h, self.n = h or self.h, n or self.n
+  self.s, self.z = s or self.s, z or self.z
 end ----
 
 function TTime:copy () --> (object)
