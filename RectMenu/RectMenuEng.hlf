@@ -74,7 +74,6 @@ $ #Files of utility#: RectMenu
 @RM_Limits
 $ #Functional constraints#: RectMenu
   A "Rectangular menu" utility has no implemented following features:
-  — ¦Using mouse for navigation on menu and choosing needed menu item.
   — ¦Output separators between menu items for menu viewing usability.
 
   Utility operation (in particular, distinctions from far.Menu)
@@ -106,7 +105,7 @@ $ #Whole menu properties#: RectMenu
 
   #Order# (string) — Output order:
   — ¦It specifies an output of menu items by rows or by columns.
-  — ¦\37"H"\- — horizontal (by default), \37"V"\- — vertical.
+  — ¦\37"H"\- — horizontally (by default), \37"V"\- — vertically.
 
   #Separators# (string) — Separators presence:
   — ¦It allows to output separators between menu items.
@@ -193,7 +192,7 @@ $ #Menu window properties#: RectMenu
 @RM_Props_MenuDraw
 $ #Menu drawing properties#: RectMenu
 
-  #Edges# (table) — Data to draw edges.
+  #Edges# (table) — Data to draw edges and to output text.
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
 
@@ -221,24 +220,34 @@ $ #Menu items properties#: RectMenu
       \37false\- — show never.
       \37nil\-   — show if only checked items exists.
 
-  #CheckedChar# (string) — Character used for checked items.
-  — ¦It allows to specify common character for all checked items.
-
-  #UncheckedChar# (string) — Character used for unchecked items.
-  — ¦It allows to specify common character for all unchecked items.
-
   #CompactText# (bool) — Compact outpout of text.
   — ¦It allows to output item text without first and last spaces.
 
-  #TextMark# — corresponds to the same ~particular item property~@RM_Props_ItemPart@
+  #SpacingChar#,
+  #SeparatorChar#,
+  #CheckedChar#,
+  #UncheckedChar#,
+  #TextMark# — see ~Item properties~@RM_Props_ItemPart@
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
 
 @RM_Props_ItemPart
-$ #Particular item properties#: RectMenu
+$ #Item properties#: RectMenu
   #Hint# (string) — Hint text for menu item.
   — ¦It outputs to "status bar" of menu (below menu).
   — ¦It outputs when menu edge is present (see ~MenuOnly & MenuEdge~@RM_Props_MenuWindow@).
+
+  #SpacingChar# (string) — Character used for empty place.
+  — ¦It allows to specify common character for filling empty space.
+
+  #SeparatorChar# (string) — Character used for separator item.
+  — ¦It allows to specify common character for filling separator item area.
+
+  #CheckedChar# (string) — Character used in checked item.
+  — ¦It allows to specify common mark character for checked items.
+
+  #UncheckedChar# (string) — Character used in unchecked item.
+  — ¦It allows to specify common non‑mark character for unchecked items.
 
   #TextMark# (table) — Selection of text part for menu item.
   — ¦Format:
@@ -281,8 +290,8 @@ and breaking keys (third parameter \37BreakKeys\- of menu output function).
             \37false\- — ¦if it does not have any changes of menu window.
             \37nil\-   — ¦for calling inner handler of menu window.
     \37Flags\- (table) — ¦record table of special handling flags:
-          \37isCancel\- — ¦close window as by cancel.
-          \37isClose\-  — ¦close window as by item choose.
+          \37isCancel\-    — ¦close window as by cancel.
+          \37isClose\-     — ¦close window as by item choose.
           \37isRedraw\-    — ¦redrawing of menu window.
           \37isRedrawAll\- — ¦redrawing of all FAR windows.
 

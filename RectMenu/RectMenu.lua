@@ -504,12 +504,10 @@ function TMenu:DefinePropInfo () --| Props
   RM.MenuEdge = MenuEdge
   RM.Edges = RM.Edges or {}
 
-  if RM.UncheckedChar then  -- Символ не-метки пункта меню: -- First call!
-    RM.UncheckedChar = menUt.checkedChar(RM.UncheckedChar, " ", nil)
-  end
-  if RM.CheckedChar then    -- Символ метки пункта меню:    -- Second call!
-    RM.CheckedChar = menUt.checkedChar(RM.CheckedChar, nil, RM.UncheckedChar)
-  end
+  RM.SpacingChar    = menUt.ItemChar("spacing",   RM.SpacingChar)
+  RM.SeparatorChar  = menUt.ItemChar("separator", RM.SeparatorChar)
+  RM.CheckedChar    = menUt.ItemChar("checked",   RM.CheckedChar)
+  RM.UncheckedChar  = menUt.ItemChar("unchecked", RM.UncheckedChar)
 
   -- Оформление меню:
   if RM.MenuOnly then -- Только меню:
@@ -593,8 +591,8 @@ function TMenu:DefineListInfo () --| List
       -- Свойства пункта:
       local RI = Item.RectMenu or {}
       Item.RectMenu = RI
-      RI.TextMark   = RI.TextMark or RM.TextMark -- Маркировка
-      RI.TextAlign  = RI.TextAlign or "LT" -- Выравнивание
+      RI.TextMark   = RI.TextMark or RM.TextMark    -- Маркировка
+      RI.TextAlign  = RI.TextAlign or "LT"          -- Выравнивание
 
         -- Многострочность текста пункта:
       if RM.MultiLine == nil then
@@ -603,7 +601,7 @@ function TMenu:DefineListInfo () --| List
         RI.MultiLine = RM.MultiLine
       end
 
-      if not checked and Item.checked then checked = true end
+      if checked == nil and Item.checked then checked = true end
     end
   end -- for
 
@@ -2129,21 +2127,6 @@ function TMenu:MouseClick (hDlg, Input) --> (bool)
   return self:MoveToCell(hDlg, MouseClickCell, "Click")
 end ---- MouseClick
 
---[[
--- Обработка двойного нажатия левой кнопки мыши в меню.
-function TMenu:MouseDblClick (hDlg, Input) --> (bool)
-  local self = self
-  self.DebugClickChar = "D"
-
-  local mCell = self:MouseInputToCell(Input)
-
-  local isOk = self:HandleEvent("OnMouseDblClick", hDlg)
-  if isOk then return true end
-
-  return self:DefaultChooseItem(hDlg, "DblClick")
-end ---- MouseDblClick
---]]
-
 function TMenu:MouseBorderClick (hDlg, Kind, Input)
   local self = self
   self.DebugClickChar = "B"
@@ -2334,42 +2317,74 @@ end ---- DefaultChooseItem
 -- Рисование пункта меню.
 function TMenu:DrawMenuItem (Rect, Row, Col)
   local self = self
+  local RM = self.RectMenu
+
   local Index = self:CellIndex(Row, Col)
   --if not Index or Index <= 0 then return end
 
   if Index and Index > 0 then -- Текст пункта меню:
     -- Определение цвета текста для пункта.
-    local Item = self.List[Index]
+    local Item = self.List[Index] or Null
+    local RI = Item.RectMenu or Null
+
     local Selected = self.SelIndex ~= nil and self.SelIndex == Index
     local Color = ItemTextColor(Item, Selected, Rect.Colors)
 
     if Item.separator then -- Вывод пункта-разделителя:
-      return DrawSeparItemText(Rect, Color.normal, Item.text)
+      return DrawSeparItemText(Rect, Color.normal, Item.text,
+                               RI.SeparatorChar or RM.SeparatorChar)
     end
 
     -- Вывод пункта (не разделителя):
     local Options = {
-      Row = Row, Col = Col,         -- Координаты ячейки
-      TextMax = self.TextMax[Col],  -- Макс. длина текста
-      LineMax = self.LineMax[Row],  -- Макс. ширина текста
-      isHot   = self.Props.isHot,   -- Признак использования горячих букв
-      checked = self.Data.checked,  -- Признак отмеченных пунктов
-      Props   = self.RectMenu,      -- Свойства RectMenu
+      Row = Row, Col = Col,             -- Координаты ячейки
+      TextMax   = self.TextMax[Col],    -- Макс. длина текста
+      LineMax   = self.LineMax[Row],    -- Макс. ширина текста
+      isHot     = self.Props.isHot,     -- Признак использования горячих букв
+      checked   = self.Data.checked,    -- Признак отмеченных пунктов
+      RectMenu  = self.RectMenu,        -- Свойства RectMenu
     } --- Options
 
     return DrawItemText(Rect, Color, Item, Options)
   -- [[
   else -- Пустое место под пункт меню:
-    return DrawClearItemText(Rect, Rect.Colors.Form)
+    return DrawClearItemText(Rect, Rect.Colors.Form, RM.SpacingChar)
+
   end -- if
   --]]
 end ---- DrawMenuItem
+
+--[[
+-- Draw menu item.
+-- Рисование пункта меню.
+function TMenu:DrawClearItem (Rect, Row, Col)
+  local self = self
+  local RM = self.RectMenu
+
+  local Index = self:CellIndex(Row, Col)
+  --if not Index or Index <= 0 then return end
+
+  if Index and Index > 0 then -- Текст пункта меню:
+    -- Определение цвета текста для пункта.
+    local Item = self.List[Index] or Null
+    local RI = Item.RectMenu or Null
+
+    return DrawClearItemText(Rect, Rect.Colors.Form,
+                             RI.SpacingChar or RM.SpacingChar)
+
+  else -- Пустое место под пункт меню:
+    return DrawClearItemText(Rect, Rect.Colors.Form, RM.SpacingChar)
+
+  end -- if
+end ---- DrawClearItem
+--]]
 
 -- Draw menu part with specified color.
 -- Рисование части меню заданным цветом.
 function TMenu:DrawMenuPart (A_Cell, A_Rect)
   local self = self
   local Data = self.Data
+  local RM = self.RectMenu
 
   local A_Cell, A_Rect = A_Cell, A_Rect
   local xLim, yLim = A_Rect.xMax, A_Rect.yMax
@@ -2406,7 +2421,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       Rect.x, Rect.w = x, xLim - x -- Заполнение пустоты:
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
-      DrawClearItemText(Rect, ClearColor)
+      DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
     end
 
     r, y = r + 1, y + h + Data.RowSep
@@ -2416,7 +2431,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     Rect.x, Rect.w = A_Rect.xMin, A_Rect.xMax - A_Rect.xMin
     Rect.y, Rect.h = y, yLim - y -- Заполнение пустоты:
     --logShow(Rect, "Draw Spaces by y", 1)
-    DrawClearItemText(Rect, ClearColor)
+    DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
   end -- if
   --logShow({ x, xLim }, "Values")
 
@@ -2749,7 +2764,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeL,
     }
     --logShow(Rect, "DrawZoneEdges: TL")
-    DrawRectText(Rect, Colors.TL or Color, Texts.TL, Item, self)
+    DrawRectText(Rect, Colors.TL or Color,
+                 Texts.TL, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.Top then
@@ -2760,7 +2777,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.BoxWidth,
     }
     --logShow(Rect, "DrawZoneEdges: Top")
-    DrawRectText(Rect, Colors.Top or Color, Texts.Top, Item, self)
+    DrawRectText(Rect, Colors.Top or Color,
+                Texts.Top, RM.SpacingChar,
+                Item, self)
   end
 
   if Texts.TR then
@@ -2771,7 +2790,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeR,
     }
     --logShow(Rect, "DrawZoneEdges: TR")
-    DrawRectText(Rect, Colors.TR or Color, Texts.TR, Item, self)
+    DrawRectText(Rect, Colors.TR or Color,
+                 Texts.TR, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.Left then
@@ -2782,7 +2803,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeL,
     }
     --logShow(Rect, "DrawZoneEdges: Left")
-    DrawRectText(Rect, Colors.Left or Color, Texts.Left, Item, self)
+    DrawRectText(Rect, Colors.Left or Color,
+                 Texts.Left, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.Right then
@@ -2793,7 +2816,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeR,
     }
     --logShow(Rect, "DrawZoneEdges: Right")
-    DrawRectText(Rect, Colors.Right or Color, Texts.Right, Item, self)
+    DrawRectText(Rect, Colors.Right or Color,
+                 Texts.Right, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.BL then
@@ -2804,7 +2829,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeL,
     }
     --logShow(Rect, "DrawZoneEdges: BL")
-    DrawRectText(Rect, Colors.BL or Color, Texts.BL, Item, self)
+    DrawRectText(Rect, Colors.BL or Color,
+                 Texts.BL, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.Bottom then
@@ -2815,7 +2842,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.BoxWidth,
     }
     --logShow(Rect, "DrawZoneEdges: Bottom")
-    DrawRectText(Rect, Colors.Bottom or Color, Texts.Bottom, Item, self)
+    DrawRectText(Rect, Colors.Bottom or Color,
+                 Texts.Bottom, RM.SpacingChar,
+                 Item, self)
   end
 
   if Texts.BR then
@@ -2826,7 +2855,9 @@ function TMenu:DrawZoneEdges ()
       w = Zone.EdgeR,
     }
     --logShow(Rect, "DrawZoneEdges: BR")
-    DrawRectText(Rect, Colors.BR or Color, Texts.BR, Item, self)
+    DrawRectText(Rect, Colors.BR or Color,
+                 Texts.BR, RM.SpacingChar,
+                 Item, self)
   end
 end ---- DrawZoneEdges
 
@@ -2866,13 +2897,13 @@ function TMenu:DrawDebugInfo ()
 
     local Data = self.DebugClickData
     if type(Data) == 'table' then
-      local s = " (x%d, y%d) => (r%d, c%d) => %d"
+      local s = "(x%d, y%d) => (r%d, c%d) => %d"
       s = s:format(Data.X or -1,
                    Data.Y or -1,
                    Data.Row or -1,
                    Data.Col or -1,
                    Data.Index or -1)
-      DbgText(Bar.x + 1, Bar.y, s)
+      DbgText(Bar.x + 1 + 1, Bar.y, s)
     end
 
     DbgText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, "⟩")

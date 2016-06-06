@@ -82,21 +82,62 @@ isItem.Speced = function (item)
 end ----
 local isItemSpeced = isItem.Speced
 
-local defnocheck = " " -- space
-local defchecked = "√" -- 0x221A
+-- Default characters using in menu.
+-- Символы по умолчанию, используемые в меню.
+local DefaultItemChars = {
+  spacing       = " ",  -- space    -- Символ для пустого места
+  separator     = "─",  -- 0x2500   -- Символ для пункта-разделителя
+  checked       = "√",  -- 0x221A   -- Символ метки пункта меню
+  unchecked     = " ",  -- space    -- Символ не-метки пункта меню
+} --- DefaultItemChars
+unit.DefaultItemChars = DefaultItemChars
+
+do
+  local chars = strings.chars
+
+-- String with character repeat of specified kind.
+-- Строка с повторением символа заданного вида.
+function unit.RepChar (kind, char, count)
+  return chars[char or DefaultItemChars[kind or ""]][count]
+end -- RepChar
+
+end -- do
+
+-- Item special character.
+-- Специальный символ пункта.
+--[[
+  -- @params:
+  kind      (s) - вид символа.
+  char      (s) - символ.
+  default   (c) - символ по умолчанию.
+--]]
+function unit.ItemChar (kind, char, default) --> (char)
+  return (type(char)    == 'string' and char:sub(1, 1)   ) or
+         (type(default) == 'string' and default:sub(1, 1)) or
+         DefaultItemChars[kind or ""] or " "
+end ---- ItemChar
 
 -- Item check character.
 -- Символ метки пункта.
 --[[
   -- @params:
-  checked   (b|s) - признак / символ метки.
-  default (c|nil) - символ метки по умолчанию.
-  nocheck (c|nil) - символ неметки по умолчанию.
+  flag          (b) - признак метки.
+  char          (s) - символ (не)метки.
+  checked   (c|nil) - символ по умолчанию для метки.
+  unchecked (c|nil) - символ по умолчанию для неметки.
 --]]
-function unit.checkedChar (checked, default, nocheck) --> (char)
-  if not checked then return nocheck or defnocheck end
-  return checked ~= true and checked:sub(1, 1) or default or defchecked
-end ----
+function unit.checkedChar (flag, char, checked, unchecked) --> (char)
+
+  if type(char) == 'string' then
+    return char:sub(1, 1)
+  end
+
+  if flag then
+    return checked   or DefaultItemChars.checked
+  else
+    return unchecked or DefaultItemChars.unchecked
+  end
+end ---- checkedChar
 
 ---------------------------------------- Menu Keys
 local SKeyToName = keyUt.SKeyToName
