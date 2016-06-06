@@ -913,8 +913,16 @@ function TMain:LimitDate (Date) --> (Date)
   return Date
 end ---- LimitDate
 do
-  local tonumber = tonumber
+--[[
   local FmtDate    = "%04d-%02d-%02d"
+
+function TMain:DateToStr (Date, Format) --> (Date)
+  local y = Date:getNegYear()
+  return (Format or FmtDate):format(y, Date.m, Date.d)
+end ---- DateToStr
+--]]
+
+  local tonumber = tonumber
   --local FmtTime    = "%02d:%02d:%02d"
   local DateFmtY   = "^(%d+)"
   local DateFmtYM  = "^(%d+)%-(%d+)"
@@ -922,11 +930,6 @@ do
   local DateFmtM   = "^%-(%d+)"
   local DateFmtMD  = "^%-(%d+)%-(%d+)"
   local DateFmtD   = "^%-%-(%d+)"
-
-function TMain:DateToStr (Date, Format) --> (Date)
-  local y = Date:getNegYear()
-  return (Format or FmtDate):format(y, Date.m, Date.d)
-end ---- DateToStr
 
 function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
   local self = self
@@ -940,6 +943,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
 
   local _, Count = StrDate:gsub("-", "")
   local IsNeg = StrSign == '-'
+  local OnlyMatch = OnlyMatch
 
   if Count == 0 then
     local y = StrDate:match(DateFmtY)

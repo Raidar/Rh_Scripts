@@ -31,10 +31,9 @@ local far2u = require "far2.utils"
 function LuaFarVersion ()
   local Ver = { '\n',
     "FAR Manager: ", far.AdvControl(F.ACTL_GETFARVERSION), '\n\n',
-    "LuaFAR for Editor: ",
+    "Used plugin: ",
     tostring(far2u and far2u.GetPluginVersion and
              far2u.GetPluginVersion() or -- FAR 3+
-             lf4ed and lf4ed.version and lf4ed.version() or -- FAR 2
              "unknown"), '\n\n',
     "Lua dll version: ", tostring(_G._VERSION), '\n\n',
     "Plugin Path:\n",
