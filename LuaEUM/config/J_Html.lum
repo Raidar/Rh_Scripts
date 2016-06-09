@@ -68,7 +68,8 @@ local function PairTag (tag, block) --> (macro)
 
   -- Выделенный блок есть: блок внутри тега, курсор вне тега:
   --local count = tag:len() + 3
-  return format("@Cut<%s>@Paste</%s>", tag, tag)
+  local block = block and "@Enter" or "" -- блочный элемент
+  return format("@Cut<%s>%s@Paste%s</%s>", tag, block, block, tag)
 end -- PairTag
 
 -- Insert single tag with parameter considering selected block.
