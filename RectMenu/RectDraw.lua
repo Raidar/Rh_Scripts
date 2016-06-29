@@ -27,7 +27,7 @@ local logShow = context.ShowInfo
 
 local tables = require 'context.utils.useTables'
 local numbers = require 'context.utils.useNumbers'
-local strings = require 'context.utils.useStrings'
+--local strings = require 'context.utils.useStrings'
 
 local Null = tables.Null
 
@@ -255,7 +255,7 @@ end -- MakeParseText
 
 local checkedChar = menUt.checkedChar
 
--- [[
+--[[
 -- Разбор текста на отдельные линии по символу новой строки.
 local function RectParseText (Rect, Color, Parse, Item, Options)
   local Parse = Parse

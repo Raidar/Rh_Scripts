@@ -14,7 +14,7 @@
 --------------------------------------------------------------------------------
 
 local type = type
-local pairs = pairs
+--local pairs = pairs
 
 ----------------------------------------
 --local bit = bit64
@@ -389,7 +389,6 @@ do
   local basics = colors.BaseColors
   local make = colors.make
   local getFG, getBG = colors.getFG, colors.getBG
-  local setFG, setBG = colors.setFG, colors.setBG
   
 -- Формирование цветов для меню.
 function unit.MenuColors (Basis) --> (table)
@@ -488,6 +487,7 @@ end ---- FormColors
 
 --[[
   local tpairs = tables.allpairs
+  local setFG, setBG = colors.setFG, colors.setBG
 
 -- Изменение частей цветов меню.
 function unit.ChangeColors (Colors, OldFG, OldBG, NewFG, NewBG) --> (table)

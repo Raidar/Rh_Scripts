@@ -42,7 +42,7 @@ local EditorGetInfo = editor.GetInfo
 local EditorGetLine = editor.GetString
 local EditorSetPos  = editor.SetPosition
 local EditorInsText = editor.InsertText
-local EditorRedraw  = editor.Redraw
+--local EditorRedraw  = editor.Redraw
 
 ----------------------------------------
 local context = context

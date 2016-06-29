@@ -18,7 +18,7 @@
 
 local types = ctxdata.config.types
 
-local utils = require 'context.utils.useUtils'
+--local utils = require 'context.utils.useUtils'
 local numbers = require 'context.utils.useNumbers'
 --local tables = require 'context.utils.useTables'
 local locale = require 'context.utils.useLocale'
@@ -138,7 +138,7 @@ function unit.CurClauseGap (lines) --| (window)
   return datShow(show, L.cap_CurClauseLen, kind)
 end ---- CurClauseGap
 
-local unpack = unpack
+--local unpack = unpack
 
 function unit.ShowClauseAll (title, ...)
   local args = {...}
@@ -176,7 +176,8 @@ function unit.CurClauseAll () --| (window)
   local difGap = SubsDatim.getClauseGap(tp)
 
   local showLen       = unit.getClauseShowData(difLen, 0)
-  local showGap, kind = unit.getClauseShowData(difGap, 0)
+  local showGap       = unit.getClauseShowData(difGap, 0)
+  --local showGap, kind = unit.getClauseShowData(difGap, 0)
 
   return unit.ShowClauseAll(L.cap_CurClauseAll,
                             L.cap_CurClauseLen, showLen,

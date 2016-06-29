@@ -679,7 +679,7 @@ end ---- ApplyFilter
   local CancelFlag = { isCancel = true }
   --local CompleteFlags = { isRedraw = false, isRedrawAll = true }
   local DoChange = { isUpdate = true }
-  local NoChange = { isUpdate = false }
+  --local NoChange = { isUpdate = false }
 
 function TColFilter:AssignEvents () --> (bool | nil)
   local self = self
@@ -782,7 +782,7 @@ end ---- MakeProps
 
   local uCP = CharsList.uCP
   local NomenFmt = "%s | %s | %s"
-  local uCodeName = CharsList.uCodeName
+  --local uCodeName = CharsList.uCodeName
   
   --local NamesCount = CharsData.NamesCount
   local NamesStart = CharsData.NamesStart
@@ -1231,7 +1231,8 @@ do
   local CancelFlag = { isCancel = true }
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }
   
-  local u8byte, u8char = strings.u8byte, strings.u8char
+  local u8byte = strings.u8byte
+  --local u8byte, u8char = strings.u8byte, strings.u8char
 
   local function CharToCode (s)
     return u8byte(s:sub(1, 1)) or 0x0000

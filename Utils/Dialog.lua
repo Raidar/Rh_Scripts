@@ -18,9 +18,9 @@ local pairs, ipairs = pairs, ipairs
 local tonumber, tostring = tonumber, tostring
 
 ----------------------------------------
-local bit = bit64
-local band, bor = bit.band, bit.bor
-local bshl, bshr = bit.lshift, bit.rshift
+--local bit = bit64
+--local band, bor = bit.band, bit.bor
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local win, far = win, far

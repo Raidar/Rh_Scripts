@@ -46,7 +46,7 @@ function unit.GetFileName (Name, Args) --> (string | nil, error)
   if fexists(FullName) then return FullName end
   local FullExtName = FullName..".example"
   if fexists(FullExtName) then return FullExtName end
-  local FullExtName = FullName..Args.DefExt
+  FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
   if Args.LuaExt ~= Args.DefExt then
     local FullExtName = FullName..Args.LuaExt

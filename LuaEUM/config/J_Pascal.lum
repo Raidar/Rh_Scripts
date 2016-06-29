@@ -31,11 +31,11 @@ end
 local format = string.format
 
 local line_lim = 80
-local line_len = line_lim - 2
+--local line_len = line_lim - 2
 local link_len = line_lim - 4
 local note_len = line_lim - 2
 local spec_len = line_lim - 4
-local line_fmt = "//%s"
+--local line_fmt = "//%s"
 local link_fmt = "//%s//"
 local note_fmt = "{%s}"
 local spec_fmt = "(*%s*)"

@@ -22,7 +22,7 @@ local setmetatable = setmetatable
 ----------------------------------------
 local logShow = context.ShowInfo
 
-local strings = require 'context.utils.useStrings'
+--local strings = require 'context.utils.useStrings'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 

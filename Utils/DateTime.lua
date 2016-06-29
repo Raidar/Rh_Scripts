@@ -228,7 +228,7 @@ function TDate:isZeroYear () --> (boolean)
 end ----
 
 function TDate:getNegYear () --> (number)
-  return self:isZeroYear() and y or (self.y > 0 and self.y or self.y - 1)
+  return self:isZeroYear() and self.y or (self.y > 0 and self.y or self.y - 1)
 end ----
 
 function TDate:putNegYear (y) --> ()

@@ -101,7 +101,7 @@ local ItemChecks = { -- Проверки на шаблон:
 local TMenu = {
   Guid = win.Uuid("3751918c-5cd0-4b56-8d32-13898f612930"),
 }
-local MMenu = { __index = TMenu }
+--local MMenu = { __index = TMenu }
 
 --[[
 local tcopy = tables.copy

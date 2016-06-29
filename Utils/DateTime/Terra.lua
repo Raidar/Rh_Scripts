@@ -13,7 +13,7 @@
 --]]
 --------------------------------------------------------------------------------
 
-local setmetatable = setmetatable
+--local setmetatable = setmetatable
 
 ----------------------------------------
 --local context = context
@@ -22,7 +22,7 @@ local logShow = context.ShowInfo
 local numbers = require 'context.utils.useNumbers'
 local locale = require 'context.utils.useLocale'
 
-local divf  = numbers.divf
+--local divf  = numbers.divf
 local divm  = numbers.divm
 
 --------------------------------------------------------------------------------

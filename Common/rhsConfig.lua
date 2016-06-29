@@ -533,7 +533,7 @@ local function ConfigForm (Config) --> (dialog)
     J = J + 1
     local n = CfgDataOrder[k]
     local v = Data[n]
-    local Area = v.Area
+    --local Area = v.Area
 
     --D["txta"..n]  = {DI.Text,     A,    J, I0-2,  0, 0, 0, 0, 0, Area}
     D["txtrk"..n] = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:config("Res_Keys_"..v.Name)}

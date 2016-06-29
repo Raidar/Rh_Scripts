@@ -145,11 +145,11 @@ local function CreateMain (ArgData)
     WeekRows  = false,    -- Число строк для дней в неделе
     WeekCols  = false,    -- Число столбцов для недель в месяце
 
-    InfoRows = false,     -- Количество строк с информацией
-    InfoCols = false,     -- Количество столбцов с информацией
-    RowLimit = false,     -- Ограничение на количество строк
-    RowCount = false,     -- Количество строк меню
-    ColCount = false,     -- Количество стобцов меню
+    InfoRows  = false,    -- Количество строк с информацией
+    InfoCols  = false,    -- Количество столбцов с информацией
+    RowLimit  = false,    -- Ограничение на количество строк
+    RowCount  = false,    -- Количество строк меню
+    ColCount  = false,    -- Количество стобцов меню
 
     Fetes     = false,    -- Даты событий
 
@@ -224,6 +224,7 @@ function TMain:InitFetes ()
 
   Options.FeteName = self.World
 
+  --logShow(Options, "Options", "w d3")
   self.Fetes = prequire(Options.BaseDir..Options.FeteName) or {}
   --logShow(self.Fetes, "Fetes", "w d3")
 
@@ -908,6 +909,7 @@ function TMain:LimitDate (Date) --> (Date)
     Date.y = self.YearMax
     Date.m = Date:getYearMonths()
     Date.d = Date:getWeekMonthDays()
+
   end
 
   return Date
@@ -932,7 +934,7 @@ end ---- DateToStr
   local DateFmtD   = "^%-%-(%d+)"
 
 function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
-  local self = self
+  --local self = self
   local Date = Default:copy()
 
   local StrDate = StrDate or ""
@@ -1113,7 +1115,7 @@ end ---- ParseShiftInput
 
 function TMain:StartShiftInput (Date, Shift)
   local self = self
-  local L = self.LocData
+  --local L = self.LocData
 
   self.Input = Shift
   self.Props.Bottom = Shift
@@ -1270,7 +1272,7 @@ function TMain:AssignEvents () --> (bool | nil)
       Date[Action](Date)
 
     elseif SKey == "CtrlC" or SKey == "CtrlShiftC" then
-      local s
+      local s, t
       if self.IsDateInput or self.IsShiftInput then
         s = self.Input
       else

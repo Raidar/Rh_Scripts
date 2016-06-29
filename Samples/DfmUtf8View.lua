@@ -11,7 +11,7 @@
   -- group: Samples.
 --]]
 --------------------------------------------------------------------------------
-local _G = _G
+--local _G = _G
 
 local tonumber = tonumber
 
@@ -29,7 +29,8 @@ function unit.DfmUtf8ToAnsi (s) --> (string)
   local Len = s:len()
 
   local t = {}
-  local k, d = 1, ""
+  local k = 1
+  --local k, d = 1, ""
   while k <= Len do
     local c = s:sub(k, k)
 

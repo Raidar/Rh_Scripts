@@ -8,13 +8,13 @@
 --------------------------------------------------------------------------------
 
 local pairs = pairs
-local unpack = unpack
+--local unpack = unpack
 
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
 
-local utils = require 'context.utils.useUtils'
+--local utils = require 'context.utils.useUtils'
 local strings = require 'context.utils.useStrings'
 local locale = require 'context.utils.useLocale'
 
@@ -22,7 +22,7 @@ local locale = require 'context.utils.useLocale'
 local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
-local RedrawAll = farUt.RedrawAll
+--local RedrawAll = farUt.RedrawAll
 
 local farBlock = farEdit.Block
 local farSelect = farEdit.Selection

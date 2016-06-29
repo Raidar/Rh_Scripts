@@ -15,10 +15,10 @@
 --------------------------------------------------------------------------------
 
 local unpack = unpack
-local setmetatable = setmetatable
+--local setmetatable = setmetatable
 
-local modf = math.modf
-local floor = math.floor
+--local modf = math.modf
+--local floor = math.floor
 
 local format = string.format
 
@@ -102,8 +102,10 @@ do
   -- Формирование шаблонов линий с захватами времён.
   -- Формирование функций разбора / сбора строки со временем.
 
+  local sub
+
     -- ASSA
-  local sub = TplKit.sub_assa
+  sub = TplKit.sub_assa
   sub.linecap = format("^%s(%s)%s(%s)%s$",
                        "(.-%: %d%,)",
                        sub.timepat, --"(.-)",
@@ -121,7 +123,7 @@ do
   end
 
     -- SRT
-  local sub = TplKit.sub_srt
+  sub = TplKit.sub_srt
   sub.linecap = format("^(%s)%s(%s)%s$",
                        sub.timepat, --"(.-)",
                        "( %-%-%> )",

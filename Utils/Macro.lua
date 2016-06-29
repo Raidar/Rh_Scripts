@@ -30,7 +30,7 @@ local math = math
 local min, max = math.min, math.max
 
 ----------------------------------------
-local far, editor = far, editor
+--local far, editor = far, editor
 --local F = far.Flags
 
 ----------------------------------------

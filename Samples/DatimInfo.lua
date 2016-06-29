@@ -70,7 +70,7 @@ Info[#Info+1] = "getEraMonth  = "..("%d"):format(EraMonth)
 Info[#Info+1] = "divEraMonth  = "..("%04d-%02d"):format(c:divEraMonth(EraMonth))
 Info[#Info+1] = SepLine
 
-local t = datim.newTime(dt.hour, dt.min, dt.sec)
+--local t = datim.newTime(dt.hour, dt.min, dt.sec)
 --logShow(t, "TTime", "w")
 
 far.Show(unpack(Info))

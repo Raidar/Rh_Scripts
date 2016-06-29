@@ -8,13 +8,13 @@
 --------------------------------------------------------------------------------
 
 local pairs = pairs
-local unpack = unpack
+--local unpack = unpack
 
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
 
-local strings = require 'context.utils.useStrings'
+--local strings = require 'context.utils.useStrings'
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------

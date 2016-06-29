@@ -7,6 +7,8 @@
 --]]
 --------------------------------------------------------------------------------
 
+local format = string.format
+
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
@@ -31,7 +33,6 @@ if L == nil then
 end
 
 ---------------------------------------- Internal
-local format = string.format
 
 -- Quote text considering selected block.
 -- Вставка кавычек в текст с учётом выделенного блока.
@@ -121,7 +122,6 @@ end -- ParamTag
 
 ---------------------------------------- Lines
 --local substr = string.sub
-local format = string.format
 
 local line_lim = 80
 --local line_len = line_lim - 2

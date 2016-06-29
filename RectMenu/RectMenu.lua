@@ -32,7 +32,8 @@ end
 local bit = bit64
 --local band, bor = bit.band, bit.bor
 --local bnot, bxor = bit.bnot, bit.bxor
-local bshl, bshr = bit.lshift, bit.rshift
+local bshr = bit.rshift
+--local bshl, bshr = bit.lshift, bit.rshift
 
 ----------------------------------------
 local win, far = win, far
@@ -686,7 +687,7 @@ do
   local slinemax   = strings.linemax
   local slinecount = strings.linecount
   local tlinemax   = tables.linemax
-  local tlinecount = tables.linecount
+  --local tlinecount = tables.linecount
 
 -- Информация о пункте и разделителях пунктов меню.
 function TMenu:DefineSpotInfo () --| Zone
@@ -1977,9 +1978,11 @@ local function MousePosToLin (Len, Sep, Total,
 
   if Fixing then
 
+    local Count, Length = 0, 0
+    
     -- Heads:
-    local Count  = Fixes.Head or 0
-    local Length = Fixes.HeadLen or 0
+    Count  = Fixes.Head or 0
+    Length = Fixes.HeadLen or 0
     if Count > 0 and Pos < Length then
       local k, L = 1, 0
       repeat
@@ -1995,8 +1998,8 @@ local function MousePosToLin (Len, Sep, Total,
     end
 
     -- Foots:
-    local Count  = Fixes.Foot or 0
-    local Length = Fixes.FootLen or 0
+    Count  = Fixes.Foot or 0
+    Length = Fixes.FootLen or 0
     if Count > 0 and Pos >= Total - Length then
       local k, L = Fixes.All or 0, Total
       local Limit = Fixes.Sole or k

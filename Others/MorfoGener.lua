@@ -29,7 +29,7 @@ local F = far.Flags
 --local context = context
 local logShow = context.ShowInfo
 
-local utils = require 'context.utils.useUtils'
+--local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
@@ -143,7 +143,7 @@ do
 
   local DI = dlgUt.DlgItemType
   local DIF = dlgUt.DlgItemFlag
-  local ListItems = dlgUt.ListItems
+  --local ListItems = dlgUt.ListItems
 
 function TMain:ConfigForm () --> (dialog)
   local DBox = self.DBox
@@ -153,7 +153,7 @@ function TMain:ConfigForm () --> (dialog)
   local H = DBox.Height - (isSmall and 1 or 2)
   local W = DBox.Width  - (isSmall and 0 or 2)
   local M = bshr(W, 1) -- Medium -- Width/2
-  local Q = bshr(M, 1) -- Quarta -- Width/4
+  --local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
   local A, B = I + 2, M + 2
 
