@@ -54,6 +54,23 @@ local Data = {
     ChsDraws_Boxing     = "Boxing",
 
   ----------------------------------------
+  -- Quotes and brackets:
+  LuaQuoteText      = "&Quotes/brackets",
+    LuaEnquote          = "&Quote text",
+      LuaEnquoteQuotes      = "Quotes",
+      LuaEnquoteBrackets    = "Brackets",
+      LuaEnquoteOthers      = "Others",
+      LuaEnquoteComments    = "Comments",
+      LuaEnquoteMarkers     = "Markers",
+      LuaEnquoteSpecials    = "Specials",
+        LuaQuoteReplace     = " (replacing)",
+    LuaDequote          = "&Dequote text",
+      LuaDequoteSingle      = "Any &single",
+      LuaDequoteDouble      = "Any &double",
+      LuaDequoteXmlComment  = "&Xml comment",
+      LuaDequoteLuaComment  = "&Lua comment",
+
+  ----------------------------------------
   -- Addon scripts
   AddonScripts      = "&A - Additions",
   

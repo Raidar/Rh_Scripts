@@ -13,23 +13,6 @@ local Data = {
   TplInsItem        = "&J - Template insert",
 
   ----------------------------------------
-  -- Quotes and brackets:
-  LuaQuoteText      = "&Quotes/brackets",
-    LuaEnquote          = "&Quote text",
-      LuaEnquoteQuotes      = "Quotes",
-      LuaEnquoteBrackets    = "Brackets",
-      LuaEnquoteOthers      = "Others",
-      LuaEnquoteComments    = "Comments",
-      LuaEnquoteMarkers     = "Markers",
-      LuaEnquoteSpecials    = "Specials",
-        LuaQuoteReplace     = " (replacing)",
-    LuaDequote          = "&Dequote text",
-      LuaDequoteSingle      = "Any &single",
-      LuaDequoteDouble      = "Any &double",
-      LuaDequoteXmlComment  = "&Xml comment",
-      LuaDequoteLuaComment  = "&Lua comment",
-
-  ----------------------------------------
   -- Lua scripts:
   LuaScripts        = "&S - Lua scripts",
   LuaScripting      = "Lua-scripts samples",

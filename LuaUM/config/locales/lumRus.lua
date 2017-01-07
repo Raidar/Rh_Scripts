@@ -55,6 +55,23 @@ local Data = {
     ChsDraws_Boxing     = "Рамки",
 
   ----------------------------------------
+  -- Quotes and brackets:
+  LuaQuoteText      = "&Q - Кавычки/скобки",
+    LuaEnquote          = "&Q - Закавычивание",
+      LuaEnquoteQuotes      = "Кавычки",
+      LuaEnquoteBrackets    = "Скобки",
+      LuaEnquoteOthers      = "Другие",
+      LuaEnquoteComments    = "Комментарии",
+      LuaEnquoteMarkers     = "Маркеры",
+      LuaEnquoteSpecials    = "Специальные",
+        LuaQuoteReplace     = " (замена)",
+    LuaDequote          = "&D - Раскавычивание",
+      LuaDequoteSingle      = "&S - Любое одинарное",
+      LuaDequoteDouble      = "&D - Любое двойное",
+      LuaDequoteXmlComment  = "&X - Комментарий XML",
+      LuaDequoteLuaComment  = "&L - Комментарий Lua",
+
+  ----------------------------------------
   -- Addon scripts
   AddonScripts      = "&A - Дополнения",
 

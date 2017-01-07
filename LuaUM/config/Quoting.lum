@@ -16,10 +16,10 @@ local logShow = context.ShowInfo
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
---local farUt = require "Rh_Scripts.Utils.Utils"
+local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
-local farBlock = farEdit.Block
+local farBlock  = farEdit.Block
 local farSelect = farEdit.Selection
 
 --local RedrawAll = farUt.RedrawAll
@@ -31,12 +31,14 @@ local unit = {}
 local Custom = {
   label = "Quoting",
   name = "lum",
-  path = "Rh_Scripts.LuaEUM.config.",
+  path = "Rh_Scripts.LuaUM.config.",
   locale = { kind = 'require' },
+
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Internal
@@ -44,17 +46,35 @@ local Text = {
   Enquote = false,
   Dequote = false,
   Requote = false,
+
 } ---
 
 function Text.Enquote (Args, Cfg)
-  return farSelect.Enquote(unpack(Args))
-end ----
+
+  local Area = farUt.GetAreaType()
+  --logShow(Args, Area)
+  if Area == "editor" then
+    return farSelect.Enquote(unpack(Args))
+
+  elseif Args and Args[1] and Args[2] then
+    return farUt.InsertText(Area, Args[1]..Args[2])
+
+  end
+end ---- Enquote
 
 function Text.Dequote (Args, Cfg)
-  return farSelect.Dequote(unpack(Args))
-end ----
+
+  local Area = farUt.GetAreaType()
+  if Area == "editor" then
+    return farSelect.Dequote(unpack(Args))
+
+  end
+end ---- Dequote
 
 function Text.Requote (Args, Cfg)
+
+  local Area = farUt.GetAreaType()
+  if Area ~= "editor" then return end
 
   local function Requote (block) --> (block)
     if block == nil then
@@ -69,11 +89,13 @@ function Text.Requote (Args, Cfg)
   end --
 
   return farSelect.Process(true, Requote)
+
 end ---- Requote
 
 ---------------------------------------- Separator
 local mSeparator = {
   separator = true,
+
 } ---
 
 ---------------------------------------- Enquote
@@ -203,13 +225,15 @@ function unit.EnquoteItems ()
       end
     else
       u = v
+
     end
 
     t[#t + 1] = u
+
   end -- for
 
   --logShow(t, "mEnquote", "", { tnaming = false, astable = true })
-  
+
   return t
 end ---- EnquoteItems
 
@@ -268,14 +292,14 @@ end ---- DequoteItems
 local mDequote = {
   text = L.LuaDequote,
 
-  Items = unit.DequoteItems, 
+  Items = unit.DequoteItems,
 } --- mDequote
 
 ---------------------------------------- Items/Menu
 local mQuoting = {
   text = L.LuaQuoteText,
-  Area = "editor",
-  
+  --Area = "editor",
+
   Items = {
     mEnquote,   -- Закавычивание
     mDequote,   -- Раскавычивание
