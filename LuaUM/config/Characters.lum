@@ -47,6 +47,7 @@ local DefCustom = {
   locale  = {
     kind    = 'require',
   },
+
 } --- DefCustom
 
 ---------------------------------------- Locale
@@ -54,6 +55,7 @@ local LocCustom = tables.copy(DefCustom, false, pairs, true)
 local L, e1, e2 = locale.localize(LocCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Items
@@ -65,6 +67,7 @@ unit.KitGroups = {
   Punct = true,
   Techs = true,
   Draws = true,
+
 } -- KitGroups
 
 -- Данные о наборах.
@@ -79,6 +82,7 @@ unit.KitsData = {
   Punct_Spaces  = { Group = "Punct", Hot = "~", text = 0, Title = 0, },
   Techs_Arrows  = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
   Draws_Boxing  = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
+
 } -- KitsData
 
 do
@@ -91,6 +95,7 @@ do
 -- Localize value in gL.
 for k in pairs(gL) do
   gL[k] = L["Chs"..k]
+
 end --
 
   local KitsData = unit.KitsData
@@ -99,8 +104,10 @@ end --
 for k, v in pairs(KitsData) do
   local text = L["Chs"..k] or k
   v.text  = textFmt:format(v.Hot, text)
+
   local gl = gL[v.Group]
   v.Title = gl and titleFmt:format(gl, text) or text
+
 end --
 
 end -- do
@@ -131,6 +138,7 @@ do
 
 -- Таблица для конфигурации меню.
 function unit.MakeKindConfig (Name, Default) --> (table)
+
   local Config = {}
   local Default = Default == nil and true or Default
   if Default then Config.__index = DefConfig end
@@ -142,15 +150,18 @@ function unit.MakeKindConfig (Name, Default) --> (table)
 
   if Default then
     return setmetatable(Config, Config)
+
   end
 
   return Config
+
 end ---- MakeKindConfig
 
   local tcopy = tables.clone --copy
 
 -- Сформировать меню из набора символов.
 function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
+
   local Keys = Keys or "AccelKey"
   local Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
 
@@ -160,25 +171,30 @@ function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
   --logShow(h, Cfg.Name)
 
   return CharsMenu.MakeMenu(Cfg, Props, Datas, Keys)
+
 end ---- MakeKindMenu
 
 end -- do
 
 -- Использовать пробелы как обычные символы.
 function unit.UseSpace (Menu) --| Menu.Items
+
   CharsMenu.SetLabelItemsText(Menu.Items, " ", "_")
   CharsMenu.SetKeyItemsField(Menu.Items, "Space$", false)
+
   --return Menu
 end ----
 
 -- Использовать компактное меню для умещения на экране.
 function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
+
   local RM = Menu.Props.RectMenu
   --RM.BoxKind = ""
   --RM.Shadowed = false
   --RM.MenuEdgeH = 0
   RM.CompactText = true
   RM.Separators = "V"
+
 end ---- CompactMenu
 
 ---------------------------------------- Characters ----
@@ -195,21 +211,27 @@ end -- do
 
 ---------------------------------------- CharacterMap
 function unit.CharacterMap ()
+
   local Name = "CharacterMap"
   local Menu = unit.ScriptData[Name]
+
+  --[[
   if Menu then
     --logShow(Menu, Name, "w d0")
-    --[[
     if type(Menu) == 'function' then
       Menu = Menu()
       unit.ScriptData[Name] = Menu
+
     elseif type(Menu) == 'table' and
            type(Menu.Items) == 'function' then
       Menu.Items = Menu.Items()
+
     end
-    --]]
-    return Menu
   end
+  --]]
+
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = "0123456789ABCDEF"
 
@@ -221,9 +243,11 @@ function unit.CharacterMap ()
 
   local Datas = {
     " ",
+
   } ---
   for k = 1, CharMax do
     Datas[#Datas + 1] = U(k)
+
   end
 
   local strings = require 'context.utils.useStrings'
@@ -232,6 +256,7 @@ function unit.CharacterMap ()
   local KeyOrder = { [0] = "────" }
   for k = CharMin, CharMax, CharCols do
     KeyOrder[#KeyOrder + 1] = uCP2s(k, true)
+
   end
 
   local Props = {
@@ -269,11 +294,13 @@ function unit.CharacterMap ()
       TitleFG     = basics.black,
       --StatusBarFG = basics.black,
       ScrollBarFG = basics.black,
+
     } --- Basis
 
     local menUt = require "Rh_Scripts.Utils.Menu"
     Props.RectMenu.Colors = menUt.FormColors(Basis)
     --logShow(Cfg.Colors, "Colors", "w d2 xv8")
+
   end -- do
 
   --[[
@@ -282,6 +309,7 @@ function unit.CharacterMap ()
     unit.ScriptData[Name] = Menu
 
     return Menu
+
   end -- MakeMenu
 
   return MakeMenu
@@ -292,14 +320,17 @@ function unit.CharacterMap ()
   --Menu.hidden = true -- Меню как скрытый пункт
 
   return Menu
+
 end ---- CharacterMap
 --unit.CharacterMap = nil
 
 ---------------------------------------- Letters etc
 function unit.Chars_Greeks ()
+
   local Name = "Chars_Greeks"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
   local Datas = -- Char + Shift                                  
@@ -319,6 +350,7 @@ function unit.Chars_Greeks ()
     Serial = true,                                   
     --Heading = "Order",
     Heading = "Both",
+
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
@@ -329,12 +361,15 @@ function unit.Chars_Greeks ()
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- Chars_Greeks
 
 function unit.Chars_Cyrils ()
+
   local Name = "Chars_Cyrils"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
   local Datas = -- Char + Shift
@@ -354,6 +389,7 @@ function unit.Chars_Cyrils ()
     Serial = true,
     --Heading = "Order",
     Heading = "Both",
+
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
@@ -364,13 +400,16 @@ function unit.Chars_Cyrils ()
   unit.ScriptData[Name] = Menu
   
   return Menu
+
 end ---- Chars_Cyrils
 
 ---------------------------------------- Mathematics
 function unit.MathsSymbols ()
+
   local Name = "MathsSymbols"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]
   local Datas = -- Char + Shift
@@ -389,6 +428,7 @@ function unit.MathsSymbols ()
     Order = Order,
     Serial = true,
     Heading = "Both",
+
   } ---
 
   local SVKeyFuncs = CharsMenu.SVKeyFuncs
@@ -398,6 +438,7 @@ function unit.MathsSymbols ()
     SVKeyFuncs.C,           SVKeyFuncs.CS,
     SVKeyFuncs.A,           SVKeyFuncs.AS,
     SVKeyFuncs.CA,          SVKeyFuncs.CAS,
+
   } --- Keys
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
@@ -408,12 +449,15 @@ function unit.MathsSymbols ()
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- MathsSymbols
 
 function unit.MathsScripts ()
+
   local Name = "MathsScripts"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[1234567890=-`[]abcdefghijklmnopqrstuvwxyz/\ ]]
   local Datas = -- Char + Shift
@@ -429,6 +473,7 @@ function unit.MathsScripts ()
     Order = Order,
     Serial = true,
     Heading = "Both",
+
   } ---
 
   local SVKeyFuncs = CharsMenu.SVKeyFuncs
@@ -438,6 +483,7 @@ function unit.MathsScripts ()
     SVKeyFuncs.C,           SVKeyFuncs.CS,
     SVKeyFuncs.A,           SVKeyFuncs.AS,
     SVKeyFuncs.CA,          SVKeyFuncs.CAS,
+
   } --- Keys
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
@@ -448,13 +494,16 @@ function unit.MathsScripts ()
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- MathsScripts
 
 ---------------------------------------- Technology
 function unit.Techs_Arrows ()
+
   local Name = "Techs_Arrows"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = "aijklmnprstuvxy"
   local Datas = -- Char + Shift
@@ -469,12 +518,14 @@ function unit.Techs_Arrows ()
     Order = Order,
     Serial = true,
     Heading = "Both",
+
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- TechsArrows
 
 ---------------------------------------- Punctuation
@@ -486,9 +537,11 @@ qw  - quote
 b   - bullet
 --]]
 function unit.PunctSymbols ()
+
   local Name = "PunctSymbols"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[/agxcdimopqwbv`1234567890-\ ]]
   local Datas = -- Char + Shift
@@ -513,10 +566,12 @@ function unit.PunctSymbols ()
   \x0483-\x0487 Combining Cyrillic
   etc
 --]=]
+
   local Props = {
     Order = Order,
     Serial = true,
     Heading = "Both",
+
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
@@ -524,12 +579,15 @@ function unit.PunctSymbols ()
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- PunctSymbols
 
 function unit.Punct_Spaces ()
+
   local Name = "Punct_Spaces"
   local Menu = unit.ScriptData[Name]
-  if Menu then return Menu end
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
 
   local Order = {
     { '     " "', ' ', }, { ' "-"/Num-', '-', 'Subtract', },
@@ -539,7 +597,8 @@ function unit.Punct_Spaces ()
     --{ '     " "', ' ', 'MULTIPLY', }, { ' "-"/Num-', '-', 'SUBTRACT', },
     --{ '     "`"', '`', 'DIVIDE',   }, { ' "="/Num+', '=', 'ADD',      },
     { '     "1"', '1'  }, { '   Num*  ', '=', 'Multiply', },
-  } ---
+
+  } --- Order
 
   -- Spaces: '            ​'
   -- Dashes: '‑­—–‒‐‧'
@@ -564,14 +623,16 @@ function unit.Punct_Spaces ()
     { '',  '        ',    }, { '_', '          ', },
     { '',  '           ', }, { '',  '         ',  },
     --]]
-  } ---
+
+  } --- Datas
 
   local Props = {
     Order = Order,
     Serial = true,
     Heading = "Both",
     --___ = true, -- DEBUG
-  } ---
+
+  } --- Props
 
   local Cfg = unit.MakeKindConfig(Name, false)
   Menu = unit.MakeKindMenu(Cfg, Props, Datas, CharsMenu.DefDoubleKeys)
@@ -579,6 +640,7 @@ function unit.Punct_Spaces ()
   unit.ScriptData[Name] = Menu
 
   return Menu
+
 end ---- Punct_Spaces
 
 --------------------------------------------------------------------------------
@@ -587,11 +649,12 @@ end ---- Punct_Spaces
 
 ---------------------------------------- ---- Menu
 function unit.MakeMenu ()
-  local gL = unit.KitGroups
+
+  --logShow("unit.MakeMenu", "unit.MakeMenu")
 
   CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
-  --logShow("unit.MakeMenu", "unit.MakeMenu")
+  local gL = unit.KitGroups
 
   return {
     text  = L.ChsKitItem,
@@ -620,6 +683,7 @@ function unit.MakeMenu ()
     }, -- Items
 
   } ----
+
 end ---- MakeMenu
 
 ---------------------------------------- Data

@@ -46,8 +46,10 @@ local SKEY_SymNames = keyUt.SKEY_SymNames
 -- Клавиша-символ для VK_.
 local function SVKeyValue (s) --> (string)
   if not s or s == "" then return s end
+
   --return s:upper()
   return SKEY_SymNames[s] or s:len() == 1 and s:upper() or s
+
 end --
 unit.SVKeyValue = SVKeyValue
 
@@ -57,16 +59,19 @@ unit.SVKeyValue = SVKeyValue
 local SModKeyPat = "%s%s"
 local SKeyModifs = {
   'S', 'C', 'CS', 'A', 'AS', 'CA', 'CAS',
-} ---
---local UsedModifs = SKeyModifs
+
+} --- SKeyModifs
+
 local UsedModifs = {
   'Shift', 'Ctrl', 'CtrlShift',
   'Alt', 'AltShift', 'CtrlAlt', 'CtrlAltShift',
-} ---
+
+} --- UsedModifs
 
 --[[
 local function SModifKey (s, m, f) --> (string)
   return SModKeyPat:format(m, f(s))
+
 end --
 --unit.SModifKey = SModifKey
 --]]
@@ -74,14 +79,18 @@ end --
 -- Комбинации для VK_.
 local SVKeyFuncs = {
   S = 0, C = 0, A = 0, CS = 0, AS = 0, CA = 0, CAS = 0,
-} ---
+
+} --- SVKeyFuncs
 unit.SVKeyFuncs = SVKeyFuncs
 
 for k = 1, #SKeyModifs do
   local m = SKeyModifs[k]
+
   SVKeyFuncs[m] = function (s)
+
     --return SModifKey(s, UsedModifs[k], SVKeyValue)
     return SModKeyPat:format(UsedModifs[k], SVKeyValue(s))
+
   end
 end
 
@@ -95,6 +104,7 @@ unit.DefActionKeys = {
   SVKeyFuncs.C,  SVKeyFuncs.CS,
   SVKeyFuncs.A,  SVKeyFuncs.AS,
   SVKeyFuncs.CA, SVKeyFuncs.CAS,
+
 } --- DefActionKeys
 unit.DefDoubleKeys = { unit.DefActionKeys, unit.DefActionKeys, }
 
@@ -102,14 +112,17 @@ local DefKeyOrder = { [0] = ""; "" }
 unit.DefKeyOrder = DefKeyOrder
 for _, m in ipairs(SKeyModifs) do
   DefKeyOrder[#DefKeyOrder+1] = m..'+'
+
 end
 
 -- Получение функции для комбинации.
 local function GetKeyFunc (m) --> (func|nil)
-  local m = m or ""
+  m = m or ""
   if m == "" then return unit.SVKeyValue end
   if m:sub(-1, -1) == '+' then m = m:sub(1, -2) end
+
   return SVKeyFuncs[m]
+
 end --
 --unit.GetKeyFunc = GetKeyFunc
 
@@ -127,6 +140,7 @@ function unit.MakeHeadItem (s) --> (table)
   } ---
 
   return t
+
 end ---- MakeHeadItem
 
 --[[
@@ -135,6 +149,7 @@ function unit.MakeItemText (s) --> (text, Plain)
   if type(s) ~= 'table' then return s, s end
 
   return s[2], s[1]
+
 end ---- MakeItemText
 --]]
 
@@ -147,10 +162,13 @@ local function MakeItemKey (item, Keys, key, char)
   local key = item.AccelKey
   if not key then
     item.AccelKey = keys(char)
+
   elseif type(key) == 'string' then
     item.AccelKey = { item.AccelKey, keys(char) }
+
   elseif type(key) == 'table' then
     key[#key + 1] = keys(char)
+
   end
 end -- MakeItemKey
 unit.MakeItemKey = MakeItemKey
@@ -158,7 +176,6 @@ unit.MakeItemKey = MakeItemKey
 -- Make menu item.
 -- Формирование пункта меню.
 function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
-  local text = text
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
 
@@ -166,7 +183,9 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
     text = text,
     Plain = x,
     RectMenu = Props.RectItem,
+
   } ---
+
   --if text == "" or text == " " then t.grayed = true end
   if text == "" or text == " " then t.disable = true end
 
@@ -174,9 +193,11 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   if Hint == true then
     if x:len() == 1 then
       t.Hint = uCharCodeName(x)
+
     end
   elseif Hint then
     t.Hint = Hint
+
   end
 
   local char = char
@@ -185,9 +206,11 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   char = x and char or char[3]
   if char and char ~= "" and not Keys.Kind then
     MakeItemKey(t, Keys[2], key, char)
+
   end
 
   return t
+
 end ---- MakeCharItem
 
 end -- do
@@ -231,6 +254,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
   local tp = type(Data)
   if tp ~= 'string' and tp ~= 'table' then
     return nil, "Data type is not valid"
+
   end
 
   local Order = Properties.Order or unit.DefItemOrder
@@ -240,11 +264,13 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
   local Size = Properties.Size or length(Order)
   if not Size or Size < 1 then
     return nil, "Order size is not valid"
+
   end
 
   local dLen = length(Data)
   if not dLen or dLen < 1 then
     return nil, "Data length is not valid"
+
   end
 
   local Count = Properties.Count or
@@ -254,6 +280,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
   local ItemProps = {
     Hint = Properties.Hint == nil and true or Properties.Hint,
     RectItem = Properties.RectItem or {},
+
   } --- ItemProps
 
   local Heading = Properties.Heading or "Order"
@@ -270,14 +297,17 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
     if kk == true then
       for _, m in ipairs(KeyOrder) do
         Keys[#Keys+1] = GetKeyFunc(m)
+
       end
     end
     --logShow({ tp, Keys }, "Used Keys", "#qd1")
   elseif kk == 'string' then
     if Keys == "None" then
       Keys = { Kind = "None" }
+
     else
       Keys = unit.DefActionKeys
+
     end
   end -- if
 
@@ -297,6 +327,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   if Heading == "Both" then
     t[#t+1] = MakeHeadItem(KeyOrder[0]) -- Angle Head
+
   end
 
   if Properties.Serial then -- Последовательная выборка
@@ -308,9 +339,12 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         if s ~= "" then
           t[#t+1] = MakeHeadItem(capt(j)) -- Head
+
         end
         --logShow({ Order:sub(j, j), MakeHeadItem(Order:sub(j, j)) }, "Head Loop", "#qd1")
+
         i, j = i + iLen, j + 1
+
       end
     end
 
@@ -319,6 +353,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
       --logShow(KeyOrder[k] or "", "MakeHeadItem")
       if Heading ~= "Order" then
         t[#t+1] = MakeHeadItem(KeyOrder[k] or "") -- SubHead
+
       end
 
       local j = 1
@@ -328,10 +363,15 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         if s ~= "" then
           t[#t+1] = MakeCharItem(s, Keys, k, capt(j), ItemProps)
+
         end
+
         i, j = i + iLen, j + 1
+
       end
+
       k = k + 1
+
     end
 
   else -- Across -- Пересекающая выборка
@@ -343,9 +383,12 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         if s ~= "" then
           t[#t+1] = MakeHeadItem(KeyOrder[k] or "") -- Head
+
         end
         --logShow({ capt(j) }, "Head Loop", "#qd1")
+
         i, k = i + iLen, k + 1
+
       end
     end
 
@@ -355,6 +398,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
       --logShow(KeyOrder[k] or "", "MakeHeadItem")
       if Heading ~= "Keys" then
         t[#t+1] = MakeHeadItem(d) -- SubHead
+
       end
 
       local k = 1
@@ -364,16 +408,22 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ s, d }, "Char Loop", "#qd1")
         if s ~= "" then
           t[#t+1] = MakeCharItem(s, Keys, k, d, ItemProps)
+
         end
+
         i, k = i + iLen, k + 1
+
       end
+
       j = j + 1
+
     end
 
   end -- if Serial
 
   --logShow(t, "Items", "#qd1")
   return t
+
 end ---- MakeItems
 
 -- Change texts for items-labels with specified text.
@@ -386,16 +436,18 @@ end ---- MakeItems
 function unit.SetLabelItemsText (Items, Text, Value) --|> Items
   assert(type(Items) == 'table')
 
-  local Text  = Text or " "
-  local Value = Value or '" "'
+  Text  = Text or " "
+  Value = Value or '" "'
 
   for _, v in pairs(Items) do
     if v.Label and v.text == Text then
       v.text = Value
+
     end
   end
 
   return Items
+
 end ---- SetLabelItemsText
 
 -- Change fields for items with specified keys' pattern.
@@ -409,16 +461,18 @@ end ---- SetLabelItemsText
 function unit.SetKeyItemsField (Items, Pattern, Field, Value) --|> Items
   assert(type(Items) == 'table')
 
-  local Pattern = Pattern or "Space$"
-  local Field   = Field or "disable"
+  Pattern = Pattern or "Space$"
+  Field   = Field or "disable"
 
   for _, v in pairs(Items) do
     if (v.AccelKey or ""):find(Pattern) then
       v[Field] = Value
+
     end
   end
 
   return Items
+
 end ---- SetKeyItemsField
 
 ---------------------------------------- main
@@ -431,19 +485,23 @@ do
   local DefFixedBoth = {
     HeadRows = 1,
     HeadCols = 1,
+
   } --- DefFixedBoth
 
   local DefUMenu = {
     TextNamedKeys = false,
     UseMenuTexter = false,
+
   } --- DefUMenu
 
   local function set__index (t, u)
     if u then
       t.__index = u
+
       return setmetatable(t, t)
+
     end
-  end --
+  end -- set__index
 
   local CloseFlag  = { isClose = true }
   --local CancelFlag = { isCancel = true }
@@ -454,7 +512,7 @@ local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 local InsText = farUt.InsertText
 
 function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
-  local Config = Config or {}
+  Config = Config or {}
 
   local self = {
     Name  = Config.Name,
@@ -485,20 +543,24 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   local function MakeItems ()
     mItems = unit.MakeItems(Props, Data, Keys)
     --logShow(mItems, "mItems", "w d2")
+
     return mItems
+
   end --
 
   if not Config.LazyMake then
     mItems = unit.MakeItems(Props, Data, Keys)
+
   end
 
   self.Items = Config.LazyMake and MakeItems or mItems
-  
+
   local Properties = {
     Id = Guid,
     Bottom = Config.Bottom,
 
     RectMenu = false,
+
   } --- Properties
   self.Props = Properties
 
@@ -522,16 +584,19 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
     if not mChooseKinds[Kind or ""] then
       return nil, CloseFlag
+
     end
 
     local ActItem = mItems[Index]
     if not ActItem or not ActItem.Plain then
       return nil, CloseFlag
+
     end
 
     --if not InsText(nil, ActItem.Plain) then return true end
     if not InsText(self.InsArea, ActItem.Plain, {}) then
       return nil, CloseFlag
+
     end
 
     --local F = far.Flags
@@ -541,6 +606,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     farUt.RedrawAll()
 
     return true
+
   end -- ChooseItem
 
   local Fixed = Config.Fixed or DefFixedBoth
@@ -567,6 +633,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   --]]
   if set__index(Properties, Config.Props) then
     set__index(Properties.RectMenu, Config.Props.RectMenu)
+
   end
 
   self.ArgData.Custom = {} -- self.ArgData.Custom or {}
@@ -583,9 +650,17 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   CfgData.UMenu = tcopy(DefUMenu, false, pairs, false)
   if set__index(CfgData, Config.CfgData) then
     set__index(CfgData.UMenu, Config.CfgData.UMenu)
+
   end
   self.CfgData = CfgData
   --logShow(self.CfgData, "CfgData", "wA d2")
+
+  self.UpdateInsArea = function ()
+    self.InsArea = farUt.GetAreaType()
+
+    return self
+
+  end -- UpdateInsArea
 
   --[[
   if Props.___ then
@@ -594,6 +669,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   --]]
 
   return self
+
 end ---- MakeMenu
 
 end -- do
