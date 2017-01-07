@@ -233,6 +233,7 @@ local function CreateMain (ArgData)
     if t and t.Char then
       CfgData.Char = t.Char
       CfgData[unit.ScriptName] = nil
+
     end
   end
 
@@ -243,6 +244,7 @@ local function CreateMain (ArgData)
   setmetatable(self.Blocks, MBlocks)
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -254,20 +256,20 @@ do
   local max, min = math.max, math.min
 
 function TMain:InitData ()
-  local self = self
+
   --local CfgData = self.CfgData
 
   self.CharCount = self.CharRows * self.CharCols
   self.CharBase = min(max(self.CharBase or 0x0000, self.CharMin), self.CharMax)
 
   return true
+
 end ---- InitData
 
   local divf = numbers.divf
 
 -- Инициализация символа.
 function TMain:InitChar ()
-  local self = self
 
   local CfgData = self.CfgData
   --logShow(CfgData, "CfgData")
@@ -278,6 +280,7 @@ function TMain:InitChar ()
   --logShow(self, "TMain", "w d1")
 
   return true
+
 end ---- InitChar
 
 end -- do
@@ -286,7 +289,6 @@ do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
-  local self = self
 
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
@@ -295,6 +297,7 @@ function TMain:Localize ()
   self.L = locale.make(self.Custom, self.LocData)
 
   return self.L
+
 end ---- Localize
 
 function TMain:MakeColors ()
@@ -315,12 +318,12 @@ function TMain:MakeColors ()
   self.Colors = menUt.FormColors(Basis)
 
   return true
+
 end ---- MakeColors
 
   local uBlockName = CharsList.uBlockName
 
 function TMain:MakeProps ()
-  local self = self
 
   self.RowCount = 1 + self.CharRows + 1
   self.ColCount = 1 + self.CharCols + 1
@@ -361,6 +364,7 @@ function TMain:MakeProps ()
       [0] = 1,
       [1] = self.DigitNum,
       [self.ColCount] = self.DigitNum,
+
     }, --
 
     MaxHeight = 1 + 1 +
@@ -403,6 +407,7 @@ function TMain:MakeProps ()
     --RectItem = {
     --  TextMark = true,
     --},
+
   } --- RM
   Props.RectMenu = RM
 
@@ -410,9 +415,11 @@ function TMain:MakeProps ()
 
   self.RectItem = {
     TextMark = true,
+
   } --
 
   return true
+
 end ---- MakeProps
 
 local Msgs = {
@@ -430,11 +437,13 @@ function TMain:Prepare ()
     self.Error = Msgs.NoLocale
     return
     --self.LocData = {} -- DEBUG only
+
   end
 
   self:MakeColors()
 
   return self:MakeProps()
+
 end ---- Prepare
 
 end -- do
@@ -442,10 +451,9 @@ end -- do
 do
   local uCP       = CharsList.uCP
   local uCodeName = CharsList.uCodeName
-  
+
 -- Заполнение меню.
 function TMain:FillMenu () --> (table)
-  local self = self
 
   local CharRows, CharCols = self.CharRows, self.CharCols
   local RowCount, ColCount = self.RowCount, self.ColCount
@@ -467,6 +475,7 @@ function TMain:FillMenu () --> (table)
       local s = Order:sub(k, k)
       t[1 + k].text = s
       t[l + k].text = s
+
     end
   end -- do
 
@@ -480,6 +489,7 @@ function TMain:FillMenu () --> (table)
       t[p + 1].text        = uCP(b, true)
       t[p + ColCount].text = uCP(b + CharCols - 1, true)
       b = b + CharCols
+
     end
   end -- do
 
@@ -503,31 +513,34 @@ function TMain:FillMenu () --> (table)
         f.RectMenu = self.RectItem
 
         f.Data = {
-          Char = b,
-          char = c,
+          Char = b, -- Код символа
+          char = c, -- Сам символ
           r = i,
           c = j,
           --p = p + j,
+
         } --
 
         if not SelIndex and b == SelChar then
           SelIndex = p + j
+
         end
 
         b = b + 1
+
       end
     end --
-  
+
     self.Props.SelectIndex = SelIndex
 
   end -- do
 
   return true
+
 end ---- FillMenu
 
 -- Формирование меню.
 function TMain:MakeMenu () --> (table)
-  local self = self
 
   local RowCount, ColCount = self.RowCount, self.ColCount
 
@@ -540,13 +553,16 @@ function TMain:MakeMenu () --> (table)
       t[#t+1] = {
         text = "",
         Label = true,
+
       } --
+
     end
   end --
 
   self:FillMenu() -- Таблица символов
 
   return true
+
 end -- MakeMenu
 
 -- Формирование таблицы символов.
@@ -555,6 +571,7 @@ function TMain:Make () --> (table)
   self.Items = false -- Сброс меню (!)
 
   return self:MakeMenu()
+
 end -- Make
 
 end -- do
@@ -565,8 +582,10 @@ do
 -- Limit character.
 -- Ограничение символа.
 function TMain:LimitChar ()
+
   self.Char = min(max(self.Char, self.CharMin), self.CharMax)
   self.CharBase = divf(self.Char, self.CharCount) * self.CharCount
+
 end ---- LimitChar
 
 end -- do
@@ -574,16 +593,17 @@ end -- do
 do
 
 function TColFilter:InitFilter ()
-  local self = self
-  local Props = self.Props
 
+  local Props = self.Props
   local PatternFmt = Props.PatternFmt or " *[%s]"
   local FiltersFmt = Props.FiltersFmt or "(%d / %d)"
   Props.FmtTitle  = Props.DefTitle..PatternFmt
   if Props.DefBottom == "" then
     Props.FmtBottom = FiltersFmt
+
   else
     Props.FmtBottom = Props.DefBottom.." "..FiltersFmt
+
   end
 
   -- Сброс фильтра:
@@ -595,19 +615,22 @@ function TColFilter:InitFilter ()
   self:ApplyFilter()
 
   return true
+
 end ---- InitFilter
-  
+
   local function patfind (Text, Pattern)
     local Pattern = Pattern
     if Pattern:sub(-1, -1) == '%' and -- Exclude single escape character
        Pattern:sub(-2, -2) ~= '%' then Pattern = Pattern:sub(1, -2) end
+
     return Text:cfind(Pattern)
+
   end -- patfind
 
   local TNull = tables.Null
 
 function TColFilter:MakeFilter ()
-  local self = self
+
   local Items = self.Items
   if not Items or #Items == 0 then return end
 
@@ -618,7 +641,7 @@ function TColFilter:MakeFilter ()
   local Fixed = RM.Fixed or TNull
   local ColCount = RM.Cols or 1
   --logShow(Items, Pattern, 2)
-  
+
   local j = 0
   local i = (Fixed.HeadRows or 0) * ColCount --+ FilterCol
   local e = #Items - (Fixed.FootRows or 0) * ColCount
@@ -630,6 +653,7 @@ function TColFilter:MakeFilter ()
     if not s then
       s = v.text:lower()
       v.conv = s
+
     end
 
     local dummy
@@ -639,38 +663,45 @@ function TColFilter:MakeFilter ()
         dummy = false --nil
         v.RectMenu = v.RectMenu or {}
         v.RectMenu.TextMark = { fpos, fend }
+
       else
         j = j + 1
         dummy = true
         v.RectMenu = v.RectMenu or {}
         v.RectMenu.TextMark = nil
+
       end
     else
       dummy = nil
       v.RectMenu = v.RectMenu or {}
       v.RectMenu.TextMark = nil
+
     end
 
     for k = i + 1, i + ColCount do
       local v = Items[k]
       if v then v.dummy = dummy end
+
     end
 
     i = i + ColCount
+
   end -- while
   --logShow(Items, Pattern, 2)
-  
+
   self.Filtered = j
+
 end ---- MakeFilter
 
 function TColFilter:ApplyFilter ()
-  local self = self
+
   local Props = self.Props
 
   self:MakeFilter()
 
   Props.Title  = Props.FmtTitle:format(self.Pattern)
   Props.Bottom = Props.FmtBottom:format(self.Filtered, self.Count)
+
 end ---- ApplyFilter
 
   local slen, sconv = string.len, string.lower
@@ -682,12 +713,12 @@ end ---- ApplyFilter
   --local NoChange = { isUpdate = false }
 
 function TColFilter:AssignEvents () --> (bool | nil)
-  local self = self
 
   local Table = { self.Props, self.Items, self.Keys }
 
   -- Обработчик нажатия клавиш.
   local function KeyPress (Input, ItemPos)
+
     local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --if SKey == "Enter" then return end
@@ -701,12 +732,15 @@ function TColFilter:AssignEvents () --> (bool | nil)
     SKey = Input.KeyName
     if SKey == "BS" then
       self.Pattern = self.Pattern:sub(1, -2)
+
     else
       if SKey == "Space" then SKey = " " end
       if slen(SKey) == 1 then
         self.Pattern = self.Pattern..sconv(SKey)
+
       else
         return
+
       end
     end -- SKey
 
@@ -715,23 +749,26 @@ function TColFilter:AssignEvents () --> (bool | nil)
     if self.Filtered == self.Count then
       self.Pattern = self.Pattern:sub(1, -2)
       self:ApplyFilter()
+
     end
 
     return Table, DoChange
+
   end -- KeyPress
 
   -- Назначение обработчиков:
   local RM = self.Props.RectMenu
   RM.OnKeyPress = KeyPress
+
 end -- AssignEvents
 
 end -- do
 ---------------------------------------- ---- Nomens
 do
   local TNomens = TMain.Nomens
-  
+
 function TNomens:MakeProps () --| (Nomens_Props)
-  local self = self
+
   if self.Props then return end
 
   -- Свойства меню названий символов:
@@ -778,18 +815,19 @@ function TNomens:MakeProps () --| (Nomens_Props)
   Props.RectMenu = RM
 
   return true
+
 end ---- MakeProps
 
   local uCP = CharsList.uCP
   local NomenFmt = "%s | %s | %s"
   --local uCodeName = CharsList.uCodeName
-  
+
   --local NamesCount = CharsData.NamesCount
   local NamesStart = CharsData.NamesStart
   local NamesLimit = CharsData.NamesLimit
 
 function TNomens:MakeItems () --| (Nomens_Items)
-  local self = self
+
   local Main = self.Main
 
   local L = Main.LocData
@@ -819,20 +857,23 @@ function TNomens:MakeItems () --| (Nomens_Items)
           text = NomenFmt:format(c.code or uCP(i), U(i), s),
           Char = i,
         }
+
       end
     end
 
     if k >= Count then break end
+
   end -- for
 
   self.Count = k
   self.Items = t
 
   return true
+
 end ---- MakeItems
 
 function TNomens:ShowMenu () --> (item, pos)
-  local self = self
+
   self:AssignEvents()
 
   return usercall(nil, unit.RunMenu,
@@ -845,9 +886,9 @@ do
   local TBlocks = TMain.Blocks
 
   --local max = math.max
-  
+
 function TBlocks:MakeProps () --| (Blocks_Props)
-  local self = self
+
   if self.Props then return end
 
   -- Свойства меню блоков символов:
@@ -870,6 +911,7 @@ function TBlocks:MakeProps () --| (Blocks_Props)
     local RangeValueLen = 4 + 2 + 4
     if RangeNameLen >= RangeValueLen then
       RangeLen = RangeNameLen
+
     else
       RangeLen = RangeValueLen
       local spaces = strings.spaces
@@ -916,19 +958,20 @@ function TBlocks:MakeProps () --| (Blocks_Props)
   --} --
 
   return true
+
 end ---- MakeProps
 
   local uCP = CharsList.uCP
   local BlockRangeFmt = "%s..%s"
 
 function TBlocks:MakeItems () --| (Blocks_Items)
-  local self = self
+
   if self.Items then return end
 
   local Main = self.Main
 
   local L = Main.LocData
-  
+
   local t = {
     { text = L.BlocksColBlockRange,
       Label = true,
@@ -939,7 +982,7 @@ function TBlocks:MakeItems () --| (Blocks_Items)
       --RectMenu = self.RectItem,
     },
   } ---
-  
+
   self.Count = CharsData.BlocksCount
 
   for i = 1, self.Count do
@@ -950,19 +993,22 @@ function TBlocks:MakeItems () --| (Blocks_Items)
       Label = true,
       --RectMenu = self.RectItem,
     }
+
     t[#t + 1] = {
       text = b.name,
       Char = b.first,
     }
+
   end
 
   self.Items = t
 
   return true
+
 end ---- MakeItems
 
 function TBlocks:ShowMenu () --> (item, pos)
-  local self = self
+
   self:AssignEvents()
 
   return usercall(nil, unit.RunMenu,
@@ -977,10 +1023,13 @@ do
 -- Выбор символа.
 function TMain:ChooseChar (Data)
 
+  if not self.Input then return end
+
   local Nomens = self.Nomens
   Nomens.FilterCol = 1
   Nomens.NomensCount = self.InputCount
-  Nomens.BasePattern = self.IsCharInput and self.Input
+  --Nomens.BasePattern = self.IsCharInput and self.Input
+  Nomens.BasePattern = self.IsCharInput and self.Input or self.Input
 
   Nomens:MakeProps()
   Nomens:MakeItems()
@@ -989,11 +1038,12 @@ function TMain:ChooseChar (Data)
   --local Char = Data and Data.Char or 0
   --Nomens.Props.SelectIndex = (uCodeBlock(Nomens) or 1) * 2 + 2
   --logShow(Nomens.Props, uCP(Char), 1)
-  
+
   Nomens.ActItem, Nomens.ItemPos = Nomens:ShowMenu()
   farUt.RedrawAll() -- Exclude Nomens menu
 
   return Nomens.ActItem and Nomens.ActItem.Char
+
 end ---- ChooseChar
 
   local uCodeBlock = CharsList.uCodeBlock
@@ -1001,10 +1051,10 @@ end ---- ChooseChar
 -- Choose character block.
 -- Выбор блока символов.
 function TMain:ChooseBlock (Data)
-  --local self = self
+
   local Blocks = self.Blocks
   Blocks.FilterCol = 2
-  
+
   Blocks:MakeProps()
   Blocks:MakeItems()
   Blocks:InitFilter()
@@ -1012,11 +1062,12 @@ function TMain:ChooseBlock (Data)
   local Char = Data and Data.Char or 0
   Blocks.Props.SelectIndex = (uCodeBlock(Char) or 1) * 2 + 2
   --logShow(Blocks.Props, uCP(Char), 1)
-  
+
   Blocks.ActItem, Blocks.ItemPos = Blocks:ShowMenu()
   farUt.RedrawAll() -- Exclude Blocks menu
 
   return Blocks.ActItem and Blocks.ActItem.Char
+
 end ---- ChooseBlock
 
 end -- do
@@ -1025,40 +1076,40 @@ do
   local tonumber = tonumber
 
 function TMain:FindCodeInput ()
-  --local self = self
 
   local Input = self.Input or ""
   if Input == "" then return end
 
   return tonumber(Input, 16)
+
 end ---- FindCodeInput
 
 function TMain:StartCodeInput (Data)
-  local self = self
+
   local L = self.LocData
 
   self.Input = ""
   self.Props.Bottom = L.InputCodePoint
   self.IsCodeInput = true
+
 end ---- StartCodeInput
 
 function TMain:StopCodeInput (Data)
-  local self = self
 
   self.IsCodeInput = false
   self.Props.Bottom = ""
   self.Char = self:FindCodeInput() or Data.Char
+
 end ---- StopCodeInput
 
 function TMain:EditCodeInput (SKey)
-  local self = self
 
   local Input = self.Input
   if SKey == "BS" then
     if Input ~= "" then
       Input = Input:sub(1, -2)
-    end
 
+    end
   elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
     --logShow(s, SKey)
@@ -1066,13 +1117,13 @@ function TMain:EditCodeInput (SKey)
       s = (s.."0000"):match("^(%x%x%x%x)")
       --logShow(s, SKey)
       if s then Input = s:upper() end
-    end
 
+    end
   else
     if Input:len() < 4 then
       Input = Input..SKey
-    end
 
+    end
   end
 
   self.Input = Input
@@ -1086,6 +1137,7 @@ function TMain:EditCodeInput (SKey)
   end
 
   self.Props.Bottom = self.InputText
+
 end ---- EditCodeInput
 
 end -- do
@@ -1094,113 +1146,127 @@ do
   local uFindCode = CharsList.uFindCode
 
 function TMain:FindCharInput ()
-  --local self = self
-  
+
   local Input = self.Input or ""
   if Input == "" then return end
 
   if Input:sub(1, 1) ~= "^" then
     Input = ".*"..Input
+
   end
+
   --if Input:sub(-1, -1) ~= "$" then
   --  Input = Input..".*"
+  --
   --end
 
   --logShow(self, Input)
   --return u8byte(Input:sub(1, 1)) -- TEMP
   return uFindCode(Input, self.Char + 1)
+
 end ---- FindCharInput
 
   local uCodeCount = CharsList.uCodeCount
 
 function TMain:CountChars ()
-  --local self = self
-  
+
   local Input = self.Input or ""
   if Input == "" then return end
 
   if Input:sub(1, 1) ~= "^" then
     Input = ".*"..Input
   end
+  --logShow(Input, "CountChars")
 
   return uCodeCount(Input)
 end ---- CountChars
 
 function TMain:StartCharInput (Data)
-  local self = self
+
   local L = self.LocData
 
   self.Input = ""
   self.Props.Bottom = L.InputCharName
   self.IsCharInput = true
+
 end ---- StartCharInput
 
 function TMain:StopCharInput (Data)
-  local self = self
 
   self.IsCharInput = false
   self.Props.Bottom = ""
+
 end ---- StopCharInput
 
 function TMain:GotoCharInput (Data)
-  local self = self
 
   self.Char = self:FindCharInput() or Data.Char
 
   return self:FillInputCount()
+
 end ---- GotoCharInput
 
   local NamesCount = CharsData.NamesCount
 
 function TMain:FillInputCount ()
-  local self = self
-  local Input = self.Input
 
-  if Input:len() > 2 then
+  local Input = self.Input
+  if Input and Input:len() > 2 then
     if Input ~= self.PriorInput then
       self.PriorInput = Input
+      --logShow(Input, "FillInputCount")
       self.InputCount = self:CountChars()
+
     end
-    self.Props.Bottom = self.InputText..
+
+    self.Props.Bottom = (self.InputText or self.Input)..
                         (" (%d / %d)"):format(self.InputCount, NamesCount)
   else
     self.PriorInput = Input
     self.InputCount = false
+
+    self.Props.Bottom = ""
+
   end
 
   --return self.InputCount
+
 end ---- FillInputCount
 
 function TMain:EditCharInput (SKey)
-  local self = self
 
   local Input = self.Input
   if SKey == "BS" then
     if Input ~= "" then
       Input = Input:sub(1, -2)
-    end
 
+    end
   elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
     if type(s) == 'string' and s ~= "" then
       Input = s
+
     end
   else
     --if Input:len() < 4 then
       if SKey == "Space" then SKey = " " end
       Input = Input..SKey
+
     --end
   end
 
   self.Input = Input
   if Input ~= "" then
     self.InputText = Input
+
   else
     local L = self.LocData
     self.InputText = L.InputCharName
+
   end
 
   self.Props.Bottom = self.InputText
+
 end ---- EditCharInput
 
 end -- do
@@ -1212,16 +1278,17 @@ function TMain:PrintChar (Data)
   --logShow(Data, "PrintChar")
   if type(Data.char) == 'string' then
     return farUt.InsertText(nil, Data.char)
+
   end
 end ---- PrintChar
 
 -- Сохранение данных.
 function TMain:SaveData (Data)
-  local self = self
 
   self.CfgData.Char = Data.Char
 
   return self.History:save()
+
 end ---- SaveData
 
 end -- do
@@ -1230,12 +1297,13 @@ do
   local CloseFlag  = { isClose = true }
   local CancelFlag = { isCancel = true }
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }
-  
+
   local u8byte = strings.u8byte
   --local u8byte, u8char = strings.u8byte, strings.u8char
 
   local function CharToCode (s)
     return u8byte(s:sub(1, 1)) or 0x0000
+
   end --
 
   local CodeInputActions = {
@@ -1257,12 +1325,14 @@ do
     ["F"] = true,
     ["BS"] = true,
     ["CtrlV"] = true,
+
   } --- CodeInputActions
 
   local CharInputActions = {
     ["BS"] = true,
     ["CtrlV"] = true,
     ["Space"] = true,
+
   } --- CharInputActions
 
   local UniCharInputActions = {
@@ -1284,6 +1354,7 @@ do
     --["'"] = true,
     --[":"] = true,
     --[";"] = true,
+
   } --- UniCharInputActions
 
   local tonumber = tonumber
@@ -1305,20 +1376,22 @@ do
     AltD = true,
     AltE = true,
     AltF = true,
+
   } --- AlterActions
 
   local NamesCount = CharsData.NamesCount
 
 function TMain:AssignEvents () --> (bool | nil)
-  local self = self
 
   local function MakeUpdate () -- Обновление!
     farUt.RedrawAll()
     self:Make()
     --logShow(self.Items, "MakeUpdate")
     if not self.Items then return nil, CloseFlag end
+
     --logShow(ItemPos, hex(FKey))
     return { self.Props, self.Items, self.Keys }, CompleteFlags
+
   end -- MakeUpdate
 
   -- Обработчик нажатия клавиш.
@@ -1341,11 +1414,13 @@ function TMain:AssignEvents () --> (bool | nil)
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
         self.Char = Char
+
       else
         isUpdate = false
-      end
 
-    elseif SKey == "CtrlC" then
+      end
+    elseif SKey == "CtrlF" then
+      -- WARN: Код пока частично дублируется в обоих ветках!
       if self.IsCharInput then
 
         local PriorCount = self.InputCount
@@ -1358,21 +1433,55 @@ function TMain:AssignEvents () --> (bool | nil)
           local Char = self:ChooseChar(Data)
           if type(Char) == 'number' then
             self.Char = Char
+
           else
             isUpdate = (InputCount ~= PriorCount)
+
           end
         else
           isUpdate = (InputCount ~= PriorCount)
+
         end
 
       else
-        local s = Data.char
-        if type(s) == 'string' and s ~= "" then
-          far.CopyToClipboard(s)
+        local c = CharsNames[Data.Char]
+        self.Input = (c and c.name or ""):lower()
+        --logShow({ self.Input }, Data.char)
+
+        --local PriorCount = self.InputCount
+        self:FillInputCount()
+        local InputCount = self.InputCount
+
+        --logShow({ self.Input, InputCount }, Data.char)
+
+        if InputCount and InputCount > 0 and InputCount < NamesCount / 2 then
+          local Char = self:ChooseChar(Data)
+          if type(Char) == 'number' then
+            self.Char = Char
+
+          else
+            isUpdate = false
+            --isUpdate = (InputCount ~= PriorCount)
+
+          end
+        else
+          isUpdate = false
+          --isUpdate = (InputCount ~= PriorCount)
+
         end
 
-        isUpdate = false
+        self.Input = ""
+        self:FillInputCount()
+
       end
+    elseif SKey == "CtrlC" then
+      local s = Data.char
+      if type(s) == 'string' and s ~= "" then
+        far.CopyToClipboard(s)
+
+      end
+
+      isUpdate = false
 
     elseif SKey == "CtrlV" then
       if self.IsCharInput then
@@ -1386,47 +1495,54 @@ function TMain:AssignEvents () --> (bool | nil)
         local s = far.PasteFromClipboard()
         if type(s) == 'string' and s ~= "" then
           self.Char = CharToCode(s)
+
         else
           isUpdate = false
+
         end
 
       end
-      
     elseif SKey == "CtrlShiftV" then
       -- Paste as Code Point
       local s = far.PasteFromClipboard()
       if type(s) == 'string' then
         s = (s.."0000"):match("^(%x%x%x%x)")
         if s then self.Char = tonumber(s, 16) end
+
       else
         isUpdate = false
-      end
 
+      end
     elseif SKey == "Divide" then
       if self.IsCodeInput then
         self:StopCodeInput(Data)
+
       elseif not self.IsCharInput then
         self:StartCodeInput(Data)
+
       else
         isUpdate = false
-      end
 
+      end
     elseif SKey == "ShiftDivide" then
       if self.IsCharInput then
         self:StopCharInput(Data)
+
       elseif not self.IsCodeInput then
         self:StartCharInput(Data)
+
       else
         isUpdate = false
-      end
 
+      end
     elseif self.IsCodeInput then
       if CodeInputActions[SKey] then
         self:EditCodeInput(SKey)
+
       else
         isUpdate = false
-      end
 
+      end
     elseif self.IsCharInput then
       --logShow(Input, SKey)
       local KeyChar = Input.KeyName
@@ -1440,13 +1556,15 @@ function TMain:AssignEvents () --> (bool | nil)
           KeyChar = KeyChar:lower()
         --if Input.StateName == "" then
         --  KeyChar = KeyChar:lower()
+        --
         --elseif Input.StateName == "Shift" then
         --  -- Nothing to do
         --  KeyChar = KeyChar:lower()
+
         else
           KeyChar = false
-        end
 
+        end
       else
         KeyChar = false
 
@@ -1454,10 +1572,11 @@ function TMain:AssignEvents () --> (bool | nil)
 
       if KeyChar or CharInputActions[SKey] then
         self:EditCharInput(KeyChar or SKey)
+
       else
         isUpdate = false
-      end
 
+      end
     elseif SKey == "CtrlAltX" then
       local s = Data.char
       --local s = u8char(Data.Char)
@@ -1465,10 +1584,11 @@ function TMain:AssignEvents () --> (bool | nil)
       Char = Char and Char ~= s and CharToCode(Char)
       if Char ~= 0x0000 then
         self.Char = Char
+
       else
         isUpdate = false
-      end
 
+      end
     elseif AlterActions[SKey] then
       self.Char = tonumber(Input.UnicodeChar.."000", 16)
       --logShow(self.Char, SKey)
@@ -1479,23 +1599,27 @@ function TMain:AssignEvents () --> (bool | nil)
          (Input.StateName == "" or
           Input.StateName == "Shift") then
         self.Char = Char
+
       else
         isUpdate = false
+
       end
     end -- SKey
 
     if isUpdate then
       self:LimitChar()
       return MakeUpdate()
+
     end
 
     return
+
   end -- KeyPress
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
     --if self.IsCodeInput then return end
-    
+
     local AKey, VMod = AKey, VMod
 
     local Data = self.Items[ItemPos].Data
@@ -1524,8 +1648,8 @@ function TMain:AssignEvents () --> (bool | nil)
         self.Char = Data.Char + self.CharCount
       else
         isUpdate = false
-      end
 
+      end
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
@@ -1535,8 +1659,8 @@ function TMain:AssignEvents () --> (bool | nil)
         self.Char = self.CharMax
       else
         isUpdate = false
-      end
 
+      end
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
@@ -1556,20 +1680,24 @@ function TMain:AssignEvents () --> (bool | nil)
         self.Char = Base + (Data.Char - self.CharBase) + self.CharPass
       else
         isUpdate = false
+
       end
 
     --elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
 
     else
       isUpdate = false
+
     end
 
     if isUpdate then
       self:LimitChar()
       return MakeUpdate()
+
     end
 
     return
+
   end -- NavKeyPress
 
   -- Обработчик нажатия мыши на отступе.
@@ -1586,24 +1714,30 @@ function TMain:AssignEvents () --> (bool | nil)
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
         self.Char = Char
+
       else
         isUpdate = false
+
       end
     else
       isUpdate = false
+
     end
 
     if isUpdate then
       self:LimitChar()
       return MakeUpdate()
+
     end
 
     return
+
   end -- EdgeClick
 
 --[[
   -- Обработчик выделения пункта.
   local function SelectItem (Kind, ItemPos)
+
     local Data = self.Items[ItemPos].Data
     --logShow(Data, ItemPos, "w d2")
     if not Data then return end
@@ -1613,11 +1747,13 @@ function TMain:AssignEvents () --> (bool | nil)
     self.Date.d = Data.d
 
     return self:FillInfoPart()
+
   end -- SelectItem
 --]]
 
   -- Обработчик выбора пункта.
   local function ChooseItem (Kind, ItemPos)
+
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
@@ -1630,17 +1766,20 @@ function TMain:AssignEvents () --> (bool | nil)
         self:GotoCharInput(Data)
       else
         isUpdate = false
+
       end
 
       if isUpdate then
         self:LimitChar()
         return MakeUpdate()
+
       end
     end
 
     self:SaveData(Data)
 
     return nil, CloseFlag
+
   end -- ChooseItem
 
   -- Назначение обработчиков:
@@ -1651,6 +1790,7 @@ function TMain:AssignEvents () --> (bool | nil)
   RM.OnEdgeClick    = CharsBlocks and EdgeClick
   --RM.OnSelectItem   = SelectItem
   RM.OnChooseItem   = ChooseItem
+
 end -- AssignEvents
 
 end --
@@ -1658,12 +1798,14 @@ end --
 
 function TMain:Apply () --> (item, pos)
   return self:PrintChar(self.ActItem.Data)
+
 end ---- Apply
 
 ---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
   return usercall(nil, unit.RunMenu, self.Props, self.Items, self.Keys)
+
 end ---- ShowMenu
 
 -- Вывод календаря.
@@ -1680,6 +1822,7 @@ function TMain:Show () --> (bool | nil)
   if self.ActItem then return self:Apply() end
 
   return true
+
 end -- Show
 
 ---------------------------------------- ---- Run
@@ -1688,6 +1831,7 @@ function TMain:Run () --> (bool | nil)
   self:AssignEvents()
 
   return self:Show()
+
 end -- Run
 
 ---------------------------------------- main
@@ -1708,6 +1852,7 @@ function unit.Execute (Data) --> (bool | nil)
   if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
+
 end ---- Execute
 
 --------------------------------------------------------------------------------
