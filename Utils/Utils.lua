@@ -61,19 +61,23 @@ local function _isEqual (t, u) --> (bool)
   local typeT, typeU, equal = type(t), type(u)
   if typeT ~= 'table' or typeU ~= 'table' then
     return typeT == typeU and t == u
+
   end
 
   for k, v in pairs(t) do
     if u[k] == nil then return false end
     equal = _isEqual(v, u[k])
     if not equal then return false end
+
   end
 
   for k, _ in pairs(u) do
     if t[k] == nil then return nil end
+
   end
 
   return true
+
 end -- _isEqual
 unit.isEqual = _isEqual
 
@@ -82,10 +86,12 @@ function unit.t_gsub (t, name, pattern, replace) --> (table)
   for k, v in pairs(t) do
     if not name or (name and k:find(name)) then
       t[k] = v:gsub(pattern, replace)
+
     end
   end
 
   return t
+
 end ---- t_gsub
 
 -- Maximum of field values for table array-part.
@@ -98,6 +104,7 @@ function unit.t_imax (t, count) --> (number)
     local v = t[k]
     if v then
       m, i = v, k
+
       break
     end
   end
@@ -107,9 +114,11 @@ function unit.t_imax (t, count) --> (number)
   for k = i+1, count or #t do
     local v = t[k]
     if v and v > m then m = v end
+
   end
 
   return m
+
 end ---- t_imax
 
 -- Sum of field values for table array-part.
@@ -119,9 +128,11 @@ function unit.t_isum (t, first, last, step) --> (number)
 
   for k = first or 1, last or #t, step or 1 do
     s = s + (t[k] or 0)
+
   end
 
   return s
+
 end ---- t_isum
 
 -- Преобразование значения в таблицу с полем [0].
@@ -133,9 +144,11 @@ function unit.valtotab (v, key, default) --> (table)
   if v == nil then
     if default == nil then return end
     v = default
+
   end
 
   return { [key] = v }
+
 end ---- valtotab
 
 ---------------------------------------- Package
@@ -147,6 +160,7 @@ do
 function unit.getvalue (env, name) --> (value)
   local isOk, var = pcall(getevar, env, name)
   if isOk then return var end
+
 end ----
 
 -- Get a global variable (with possible creation)
@@ -157,9 +171,11 @@ function unit.getglobal (varname, default) --> (var)
   default = default == nil and {} or default
   if getevar(_G, varname) == nil then
     _G[varname] = default
+
   end
 
   return _G[varname]
+
 end ---- getglobal
 
   local require = require
@@ -170,9 +186,11 @@ end ---- getglobal
 local function newrequire (modname, dorequire)
   if pkg_loaded[modname] then
     pkg_loaded[modname] = nil
+
   end
 
   return (dorequire or require)(modname)
+
 end ----
 unit.newrequire = newrequire
 
@@ -184,6 +202,7 @@ local function prequire (modname)
   local isOk, res = pcall(require, modname)
   --far.Message(Result, tostring(isOk))
   return isOk and res
+
 end ----
 unit.prequire = prequire
 
@@ -191,6 +210,7 @@ unit.prequire = prequire
 -- Вариант require с обязательной перезагрузкой в защищённом режиме.
 function unit.newprequire (modname)
   return newrequire(modname, prequire)
+
 end --
 
 end -- do
@@ -200,12 +220,14 @@ end -- do
 -- Вызов функции.
 function unit.fcall (f, ...)
   return f(...)
+
 end ----
 
 -- Check pcall function result.
 -- Проверка результата функции pcall.
 function unit.pcheck (isOk, ...)
   if isOk then return ... end
+
 end ----
 
 do
@@ -215,6 +237,7 @@ do
 -- Защищённый вызов функции.
 function unit.pfcall (f, ...)
   return unit.pcheck(pcall(f, ...))
+
 end ----
 
 end -- do
@@ -236,10 +259,13 @@ function unit.ffind (env, name) --> (function | nil, error)
   --logShow(package.loaded[f], f, "d2 _ns")
   if getvalue(env, f) then
     f = env
+
   elseif getvalue(_G, f) then
     f = _G
+
   else
     return nil, sFieldNotFoundError:format(f, name) -- Ошибка
+
   end
 
   -- Разбор всех компонент имени.
@@ -247,13 +273,16 @@ function unit.ffind (env, name) --> (function | nil, error)
     --logShow(s, Name)
     if not getvalue(f, s) then
       return nil, sFieldNotFoundError:format(s, name) -- Ошибка
+
     end
     f = f[s]
     --logShow(f, s)
+
   end
   --logShow(f, name)
 
   return f
+
 end ---- ffind
 
 end -- do
@@ -264,10 +293,12 @@ end -- do
 -- Приведение пути к формату Windows.
 function unit.FileWPath (path) --> (string)
   return path:gsub("/", "\\")
+
 end ----
 -- Приведение пути к формату Unix.
 function unit.FileUPath (path) --> (string)
   return path:gsub("\\", "/")
+
 end ----
 
 -- Adding a trailing slash to path.
@@ -279,8 +310,10 @@ function unit.ChangeSlash (path, slash) --> (string)
   local path = (path or ""):gsub("\\", slash)
   if path:find("[/\\]", -1) then
     return path
+
   else
     return path..slash
+
   end
 end ---- ChangeSlash
 
@@ -289,20 +322,24 @@ function unit.ParseFileName (filepath) --> (path, fullname, name, ext)
    -- Разделение полного пути на собственно путь и полное имя.
   local path, fullname = filepath:match("^(.*[/\\])([^/\\]*)$")
   if not path then fullname = filepath end -- Нет пути к файлу
+
   -- Разделение полного имени на собственно имя и расширение.
   if fullname == "" then fullname = nil end -- Нет полного имени
   if not fullname then return path, nil, nil, nil end -- Только путь
   local name, ext = fullname:match("^(.*)%.([^%.]*)$")
   if not name and not ext then name = fullname end -- Только имя
   if ext == "" then ext = nil end -- Нет расширения файла
+
   -- Путь к файлу, Имя с расширением, Имя файла, Расширение файла.
   return path, fullname, name, ext
+
 end ---- ParseFileName
 
 -- Разбор полного пути файла: с наличием пути и файла с расширением.
 function unit.ParseFullName (fullpath) --> (path, fullname, name, ext)
   -- Путь к файлу, Имя с расширением, Имя файла, Расширение файла.
   return fullpath:match("^(.-[/\\])(([^/\\]*)%.([^/\\%.]*))$")
+
 end ---- ParseFullName
 
 -- Adding a path of modules to EnvPath.
@@ -312,8 +349,11 @@ function unit.AddEnvPath (BasePath, ModulePath, ModuleName, EnvPath) --> (string
     local Path = unit.ChangeSlash(BasePath..CurPath)..ModuleName -- Полный путь.
     -- Настройка путей для поиска модулей.
     if not EnvPath:find(Path, 1, true) then EnvPath = Path..';'..EnvPath end
-  end -- for
+
+  end
+
   return EnvPath
+
 end ---- AddEnvPath
 
 local package = package
@@ -322,11 +362,14 @@ local package = package
 -- Добавление пути к используемым lua-модулям.
 function unit.AddLuaPath (BasePath, ModulePath) --> (bool)
   package.path = unit.AddEnvPath(BasePath, ModulePath, "?.lua", package.path)
+
 end
+
 -- Adding a path of used dll-modules.
 -- Добавление пути к используемым dll-модулям.
 function unit.AddLibPath (BasePath, ModulePath) --> (bool)
   package.cpath = unit.AddEnvPath(BasePath, ModulePath, "?.dll", package.cpath)
+
 end
 
 ---------------------------------------- -- File
@@ -358,6 +401,7 @@ function unit.CheckFileCP (filename) --> (string)
   f:close()
 
   return unit.CheckLineCP(s)
+
 end ---- CheckFileCP
 
 end -- do
@@ -374,6 +418,7 @@ function unit.length (v) --> (number)
   if tp == 'table' then return #v end
 
   return v ~= nil and 1 or 0
+
 end ---- length
 
 end -- do
@@ -383,16 +428,19 @@ end -- do
 -- Версия of FAR.
 local function Version (kind) --> (string | vary)
   return far.AdvControl(F.ACTL_GETFARVERSION, kind)
+
 end --
 
 unit.FarVersion = { -- Version info:
   FAR       = { Version(true) },            -- Table with version as numbers
   VerFAR    = Version():match("^%d+%.%d+"), -- String with version without build
+
 } --- FarVersion
 
 -- Значение цвета по его индексу Index.
 function unit.IndexColor (Index) --> (table)
   return farAdvControl(F.ACTL_GETCOLOR, Index)
+
 end ----
 
 -- Position & size of FAR window.
@@ -402,8 +450,11 @@ function unit.GetFarRect () --> (table)
   if R then
     R.Width  = R.Right - R.Left + 1
     R.Height = R.Bottom - R.Top + 1
+
   end
+
   return R
+
 end ---- GetFarRect
 
 do
@@ -417,9 +468,12 @@ function unit.ShowHelpTopic (HelpTopic, Flags) --> (bool)
   local File, Topic = HelpTopic:match("%<([^%>]*)%>(.*)$")
   if not File then
     File, Topic = utils.PluginWorkPath, HelpTopic
+
   end
+
   --far.Message(File, Topic)
   return far.ShowHelp(File, Topic, Flags)
+
 end ---- ShowHelpTopic
 
 end
@@ -428,6 +482,7 @@ end
 -- Перерисовка всего.
 function unit.RedrawAll ()
   return farAdvControl(F.ACTL_REDRAWALL)
+
 end --
 
 -- Run function with followed redrawing.
@@ -435,6 +490,7 @@ end --
 function unit.RunWithRedraw (f, ...)
   f(...)
   return farAdvControl(F.ACTL_REDRAWALL)
+
 end ----
 
 ---------------------------------------- Window
@@ -442,6 +498,7 @@ end ----
 -- Получение информации об окне.
 function unit.GetWindowInfo (pos) --> (table)
   return farAdvControl(F.ACTL_GETWINDOWINFO, pos or 0)
+
 end ----
 
 -- Switch to specified FAR window.
@@ -449,6 +506,7 @@ end ----
 function unit.SetCurrentWindow (pos) --> (bool)
   local isOk = farAdvControl(F.ACTL_SETCURRENTWINDOW, pos or 1)
   if isOk then return farAdvControl(F.ACTL_COMMIT) end
+
 end ----
 
 -- Switch to FAR panels window.
@@ -456,6 +514,7 @@ end ----
 function unit.SwitchToPanels (CmdLine) --> (bool | nil, error)
   if not panel.CheckPanelsExist() then
     return nil, "No panels window"
+
   end
 
   local Info = farAdvControl(F.ACTL_GETWINDOWINFO, 0)
@@ -464,16 +523,19 @@ function unit.SwitchToPanels (CmdLine) --> (bool | nil, error)
   if Info.Type ~= F.WTYPE_PANELS then
     if not unit.SetCurrentWindow() then
       return nil, "No switch to panels window"
+
     end
   end
 
   return true
+
 end ---- SwitchToPanels
 
 ---------------------------------------- Plugin API
 -- Call function in "user" mode.
 function unit.usercall (newcfg, f, ...)
   return f(...)
+
 end
 
 if rawget(_G, 'lf4ed') then
@@ -490,7 +552,9 @@ if rawget(_G, 'lf4ed') then
     local sError
     isOk, sError = f(...)
     if oldcfg then lfed_cfg(oldcfg) end -- Старый конфиг
+
     return isOk, sError
+
   end --
 
 end -- if
@@ -503,6 +567,7 @@ do
 -- [[
 function unit.urequire (modname)
   return unit.usercall(nil, require, modname)
+
 end
 --]]
 
@@ -518,6 +583,7 @@ unit.FarAreaTypes = {
   [F.WTYPE_DIALOG] = "dialog",
   [F.WTYPE_VMENU]  = "vmenu",
   [F.WTYPE_HELP]   = "help",
+
 } --- AreaTypes
 
 -- Type of specified/current area.
@@ -528,6 +594,7 @@ unit.FarAreaTypes = {
 --]]
 function unit.GetAreaType (pos) --> (string)
   return unit.FarAreaTypes[unit.GetWindowInfo(pos).Type]
+
 end
 
 -- Check to basic FAR area.
@@ -536,6 +603,7 @@ unit.FarIsBasicAreaType = {
   panels = true,
   editor = true,
   viewer = true,
+
 } --
 
 -- Type of basic (for specified/current) area.
@@ -544,14 +612,17 @@ function unit.GetBasicAreaType (pos) --> (string)
   local Result = unit.GetAreaType(pos)
   if unit.FarIsBasicAreaType[Result] then
     return Result
+
   else
     return unit.GetAreaType(0)
+
   end
 end ---- GetBasicAreaType
 
 -- Get size of specified FAR area.
 -- Получение размера заданной области.
 unit.FarGetAreaSize = {
+
   panels = function () -- Панели:
     local APInfo = PanelsGetInfo(nil, 1).PanelRect -- Активная панель
     local PPInfo = PanelsGetInfo(nil, 0).PanelRect -- Пассивная панель
@@ -562,6 +633,7 @@ unit.FarGetAreaSize = {
                              PPInfo.bottom - PPInfo.top + 1), }
     end
   end, -- panels
+
   editor = function () -- Редактор:
     local Info = EditorGetInfo(nil)
     if Info then
@@ -569,6 +641,7 @@ unit.FarGetAreaSize = {
                Height = Info.WindowSizeY, }
     end
   end, -- editor
+
   viewer = function () -- Просмотр:
     local Info = ViewerGetInfo(nil)
     if Info then
@@ -576,13 +649,16 @@ unit.FarGetAreaSize = {
                Height = Info.WindowSizeY, }
     end
   end, -- viewer
+
   dialog = false,
-} ---
+
+} --- FarGetAreaSize
 
 function unit.FarGetAreaSize.dialog () -- Просмотр:
   return unit.FarGetAreaSize.panels() or
          unit.FarGetAreaSize.editor() or
          unit.FarGetAreaSize.viewer()
+
 end -- dialog
 
 -- Size of current FAR area.
@@ -591,11 +667,13 @@ function unit.GetAreaSize (Type, pos) --> (table | nil)
   local Type = Type or unit.GetAreaType(pos) or ""
   if unit.FarGetAreaSize[Type] then
     return unit.FarGetAreaSize[Type]()
+
   end
 end ---- GetAreaSize
 
 ---------------------------------------- FAR item
 unit.FarGetAreaItemName = {
+
   panels = function () -- Панели:
     local Item = panel.GetCurrentPanelItem(nil, 1)
     local Name = Item and Item.FileName or ".."
@@ -605,17 +683,24 @@ unit.FarGetAreaItemName = {
     --logShow({ Name, Dir, Item }, "AreaItem Name")
     if Name == ".." then
       return Dir
+
     else
       return Dir:sub(-1, -1) == "\\" and (Dir..Name) or (Dir.."\\"..Name)
+
     end
   end, -- panels
+
   editor = function () -- Редактор:
     return EditorGetInfo(nil).FileName
+
   end, -- editor
+
   viewer = function () -- Просмотр:
     return ViewerGetInfo(nil).FileName
+
   end, -- viewer
-} ---
+
+} --- FarGetAreaItemName
 
 -- Name of current item in FAR area.
 -- Имя текущего элемента в области FAR.
@@ -623,6 +708,7 @@ function unit.GetAreaItemName (Type, pos) --> (string | nil)
   local Type = Type or unit.GetAreaType(pos) or ""
   if unit.FarGetAreaItemName[Type] then
     return unit.FarGetAreaItemName[Type]()
+
   end
 end ----
 
@@ -636,9 +722,11 @@ function unit.PanelsSelCount (handle, kind)
   Result = panel.GetSelectedPanelItem(handle, kind, 1)
   if Result then
     return b2n(isFlag(Result.Flags, F.PPIF_SELECTED))
+
   end
 
   return 0
+
 end ---- PanelsSelCount
 
 -- Type of selected block.
@@ -648,10 +736,12 @@ local BlockTypes = {
   None    = F.BTYPE_NONE,
   Stream  = F.BTYPE_STREAM,
   Column  = F.BTYPE_COLUMN,
+
   -- names
   [F.BTYPE_NONE]   = "none",
   [F.BTYPE_STREAM] = "stream",
   [F.BTYPE_COLUMN] = "column",
+
 } --- BlockTypes
 unit.BlockTypes = BlockTypes
 
@@ -659,6 +749,7 @@ unit.BlockTypes = BlockTypes
 -- Тип выделенного блока в редакторе.
 function unit.EditorSelType (id) --> (string)
   return BlockTypes[EditorGetInfo(id).BlockType]
+
 end ----
 
 -- Check selection presence.
@@ -667,6 +758,7 @@ local FarIsSelection = {
   panels = function () return unit.PanelsSelCount(nil, 1) > 0 end,
   editor = function () return unit.EditorSelType() ~= "none" end,
   --TODO: Add function for dialog area
+
 } --- FarIsSelection
 unit.FarIsSelection = FarIsSelection
 
@@ -675,6 +767,7 @@ unit.FarIsSelection = FarIsSelection
 function unit.IsSelection (Area) --> (bool)
   if FarIsSelection[Area] then
     return FarIsSelection[Area]()
+
   end
 end ----
 
@@ -696,9 +789,11 @@ function unit.ParseHotStr (Str, Hot, isPos) --> (Left, Char, Right)
     if Str:sub(k, k) ~= Hot then
       -- При нечётном 1-й Hot -- ссылка на букву.
       if Hots % 2 ~= 0 then Pos = k - Hots + 1 end
+
       break -- При чётном -- нет ссылки на букву.
     else
       Hots = Hots + 1 -- Подсчёт количества Hot
+
     end
   end
 
@@ -712,6 +807,7 @@ function unit.ParseHotStr (Str, Hot, isPos) --> (Left, Char, Right)
   else
     if isPos then return 0, 0, 1 end
     return nil, nil, Str:gsub(Hot..Hot, Hot)
+
   end
 end ---- ParseHotStr
 
@@ -723,6 +819,7 @@ do
 function unit.ClearHotStr (Str, Hot) --> (string)
   local Left, Char, Right = ParseHotStr(Str, Hot)
   return (Left or "")..(Char or '')..(Right or "")
+
 end ---- ClearHotStr
 
 end -- do
@@ -730,16 +827,18 @@ do
   local tables = require 'context.utils.useTables'
 
   local ClearHotStr = unit.ClearHotStr
-  
+
 -- Get text without hot character.
 -- Получение текста без "горячей" буквы.
 function unit.ClearHotText (Str, Hot)
   local tp = type(Str)
   if Str == nil or tp == 'string' then
     return ClearHotStr(Str, Hot)
+
   end
   if tp ~= 'table' then
     return Str
+
   end
 
   local t = tables.clone(Str, true, nil)
@@ -748,11 +847,13 @@ function unit.ClearHotText (Str, Hot)
     local s = ClearHotStr(v, Hot)
     if v ~= s then
       t[k] = s
+
       break
     end
   end
 
   return t
+
 end ---- ClearHotText
 
 end -- do
@@ -765,6 +866,7 @@ do
 -- Вывод текста горизонтально.
 function unit.HText (X, Y, Color, Str)
   return far_Text(X, Y, Color, Str)
+
 end ----
 --]]
 
@@ -777,6 +879,7 @@ function unit.VText (X, Y, Color, Str)
   for k = 1, #Str do
     far_Text(X, Y, Color, Str:sub(k, k))
     Y = Y + 1
+
   end
 end ---- VText
 
@@ -784,6 +887,7 @@ end ---- VText
 -- Вывод текста вертикально с "обратными" координатами.
 function unit.YText (Y, X, Color, Str)
   return unit.VText(X, Y, Color, Str)
+
 end
 
 end -- do
@@ -793,6 +897,7 @@ do
     [F.DI_EDIT]     = true,
     [F.DI_FIXEDIT]  = true,
     [F.DI_COMBOBOX] = true,
+
   } ---
   local SendDlgMessage = far.SendDlgMessage
 
@@ -804,11 +909,13 @@ local function DialogInsertText (hDlg, s)
     local Info = farAdvControl(F.ACTL_GETWINDOWINFO, 0)
     if Info.Type ~= F.WTYPE_DIALOG then return false end
     hDlg = Info.Id
+
   end
 
   local id = SendDlgMessage(hDlg, F.DM_GETFOCUS)
   if not DlgEditItems[ far.GetDlgItem(hDlg, id)[1] or "" ] then
     return -- Not supported type
+
   end
 
   local PosInfo
@@ -842,8 +949,9 @@ local function DialogInsertText (hDlg, s)
         PosInfo = nil
 
       end
-    end
-  end
+    end -- if-else
+
+  end -- if
 
   --logShow(text, "text")
   local isOk = SendDlgMessage(hDlg, F.DM_SETTEXT, id, text) and true or false
@@ -851,9 +959,11 @@ local function DialogInsertText (hDlg, s)
 
   if PosInfo then
     isOk = SendDlgMessage(hDlg, F.DM_SETEDITPOSITION, id, PosInfo)
+
   end
 
   return isOk
+
 end ---- DialogInsertText
 unit.DialogInsertText = DialogInsertText
 
@@ -864,13 +974,17 @@ unit.FarInsertText = {
   editor = function (s) return editor.InsertText(nil, s) end,
   viewer = function (s) return true end,
   dialog = function (s) return DialogInsertText(nil, s) end,
+
 } --- FarInsertText
 
 -- Insert text in specified FAR area.
 -- Вставка текста в заданной области.
 function unit.InsertText (Area, Text) --> (bool | number)
-  local Insert = unit.FarInsertText[Area or unit.GetAreaType()]
+  local Insert = unit.FarInsertText[Area or unit.GetAreaType()] or
+                 function () end -- заглушка
+
   return Insert(Text)
+
 end ---- InsertText
 
 end -- do

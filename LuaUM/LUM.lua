@@ -53,6 +53,7 @@ local KindErrors = {
   Program  = "Program_Error",
   CmdLine  = "CmdLine_Error",
   Unknown  = "UAction_Error",
+
 } --- KindErrors
 
 ----------------------------------------
@@ -69,11 +70,13 @@ local DefScope = {
   Area = "", -- Неизвестная область
   --MenuView = "far.Menu", -- Вид меню
   MenuView = "RectMenu", -- Вид меню
+
 } --- DefScope
 
 ---------------------------------------- Menu class
 local TMenu = {
   Guid = win.Uuid("00b06fba-0bb7-4333-8025-ba48b6077435"),
+
 }
 local MMenu = { __index = TMenu }
 
@@ -84,6 +87,7 @@ local function CreateMenu (Config)
   if not Config.__index then -- Загрузка конфигурации по умолчанию:
     Config.__index = (require "Rh_Scripts.LuaUM.LumCfg").GetDefConfig()
     setmetatable(Config, Config)
+
   end
   Config.Id = Config.Id or TMenu.Guid
 
@@ -98,9 +102,11 @@ local function CreateMenu (Config)
     DefConfig = Config.__index,
     Scope     = Scope,
     DefScope  = DefScope,
+
   } --- self
 
   return setmetatable(self, MMenu)
+
 end -- CreateMenu
 
 ---------------------------------------- Menu locale
@@ -116,6 +122,7 @@ function TMenu:Localize ()
   --[[
   if not Scope.LocData then
     return nil, e1, e2
+
   end
   --]]
 
@@ -141,6 +148,7 @@ function TMenu:Localize ()
   L.MenuItem = L:t2("UMenuItem", "UMenuName") -- Пункт меню
 
   return L
+
 end ---- Localize
 
 ---------------------------------------- Menu making
@@ -177,10 +185,12 @@ function TMenu:Prepare ()
     Path    = Cfg_Files.FilesPath,
     DefEnum = Cfg_Basic.BindsFile,
     DefPath = Cfg_Basic.CfgUMPath,
+
   } ---
   local BindsData, SError = LW.GetFileEnumData(Args, Props)
   if not BindsData then
     self.Error = L:et2("FileDataError", "BindsFile", SError)
+
     return
   end
   --logShow(BindsData, "BindsData")
@@ -226,6 +236,7 @@ function TMenu:Prepare ()
     Path    = Cfg_Files.MenusPath,
     DefEnum = Cfg_Basic.UMenuFile,
     DefPath = Cfg_Basic.CfgUMPath,
+
   } ---
   Props = { Join = Scope.JoinUMenu or false, }
   --Props = { Join = Scope.JoinUMenu or false, IlkSep = ';' }
@@ -235,12 +246,14 @@ function TMenu:Prepare ()
   --logShow(self.Menus, "LUM Menus", "w d3")
   if not self.Menus then
     self.Error = L:et2("FileDataError", "UMenuFile", SError)
+
     return
   end
 
   if self.Menus.Menu and
      not self.Config.Scope.BaseName then
     self.Menus.Menu.text = nil -- Без текста пункта для главного меню!
+
   end
   --logShow(self.Menus, "self.Menus", 0)
 
@@ -250,10 +263,12 @@ function TMenu:Prepare ()
   self.Props.Id = self.Props.Id or self.Config.Id
   if not self.Props.MenuView then
     self.Props.MenuView = Scope.MenuView
+
   end
   --logShow(self.Props, "Properties", 2)
 
   return true
+
 end -- Prepare
 
 ---------------------------------------- ---- Show
@@ -277,10 +292,12 @@ function TMenu:Run ()
                    L.MenuItem, ActItem.Name, SError or "")
     else
       return L:error(SError)
+
     end
   end
 
   return isOk, SError
+
 end ---- Run
 
 ---------------------------------------- main
@@ -298,6 +315,7 @@ function unit.Execute (Config, ShowMenu)
   --logShow(Properties.Flags, "Flags")
 
   return _Menu:Run()
+
 end ---- Execute
 
 --------------------------------------------------------------------------------

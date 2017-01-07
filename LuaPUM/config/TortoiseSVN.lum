@@ -231,7 +231,6 @@ end ---- isSubversioned
 -- Parse SVN status.
 -- Разбор статуса SVN.
 function TMain:ParseStatus ()
-  local self = self
 
   local Status = self:getStatus() or ""
   --logShow(Status, "Status", "w d2")
@@ -333,7 +332,7 @@ end ---- Run
 -- Show SVN status.
 -- Показ статуса SVN.
 function unit.ShowStatus (self)
-  local self = self
+
   local Status = self.Status
   utils.message(self.LocData.wSVN_status,
                 Status:match(isStatus.Text) or Status, "l")
@@ -498,7 +497,7 @@ unit.Kinds = {
 -- Make menu items list.
 -- Формирование списка пунктов.
 function TMain:MakeItems (Operations, Kinds) --> (Items)
-  local self = self
+
   local L = self.LocData
 
   local CfgData = self.CfgData
@@ -562,7 +561,6 @@ do
 -- Get bottom caption for menu.
 -- Получение нижней надписи для меню.
 function TMain:GetMenuBottom ()
-  local self = self
 
   local MenuWidth = self.CfgData.ItemWidth + 3
   if self.IsMoreCols then MenuWidth = MenuWidth * 2 end
@@ -584,7 +582,7 @@ end ---- GetMenuBottom
 -- Make menu.
 -- Формирование меню.
 function TMain:MakeMenu () --> (Menu)
-  local self = self
+
   local L = self.LocData
 
   self:Prepare()

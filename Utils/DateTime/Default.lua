@@ -184,6 +184,7 @@ do
 unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
+
   local self = Config or {}
 
   if Config and getmetatable(self) == MConfig then return self end
@@ -197,6 +198,7 @@ end -- do
 ---------------------------------------- ---- ---- Zero
 
 function TConfig:isZeroYear (y) --> (bool)
+
   return self.ZeroYear
 end ----
 
@@ -209,6 +211,7 @@ end ----
   result (bool) - true if year is a leap year.
 --]]
 function TConfig:isLeapYear (y) --> (bool)
+
   return false
 end ----
 
@@ -220,6 +223,7 @@ end ----
   result (number) - extra days in leap year.
 --]]
 function TConfig:getLeapDays (y) --> (bool)
+
   return self:isLeapYear(y) and 1 or 0
 end ----
 
@@ -243,7 +247,7 @@ end ---- getYearMonths
   result (number) - weeks count in year.
 --]]
 function TConfig:getYearWeeks (y) --> (number)
-  local self = self
+
   return self:getYearWeek(self:getYearLastDay(y)) -
          self:getYearWeek(y + 1, 1, 1)
 end ---- getYearWeeks
@@ -256,6 +260,7 @@ end ---- getYearWeeks
   result (number) - days count in year.
 --]]
 function TConfig:getYearDays (y) --> (number)
+
   return self.BaseYear + self:getLeapDays(y)
 end ---- getYearDays
 
@@ -268,6 +273,7 @@ end ---- getYearDays
   result (number) - day count in month.
 --]]
 function TConfig:getMonthDays (y, m) --> (number)
+
   return self.MonthDays[m]
 end ---- getMonthDays
 
@@ -280,6 +286,7 @@ end ---- getMonthDays
   result (number) - day of week for last day of prior month.
 --]]
 function TConfig:getWeekDays (y, m) --> (number)
+
   return self.WeekDays[m]
 end ---- getWeekDays
 
@@ -292,6 +299,7 @@ end ---- getWeekDays
   result (number) - day count in month.
 --]]
 function TConfig:getWeekMonthDays (y, m) --> (number)
+
   return self.MonthDays[m]
 end ---- getWeekMonthDays
 
@@ -304,6 +312,7 @@ end ---- getWeekMonthDays
   result (number) - day count in month.
 --]]
 function TConfig:getWeekMonthOuts (y, m) --> (number)
+
   return 0
 end ---- getWeekMonthOuts
 
@@ -318,7 +327,7 @@ end ---- getWeekMonthOuts
   d (number) - day.
 --]]
 function TConfig:getYearLastDay (y) --> (number)
-  --local self = self
+
   local m = self:getYearMonths(y)
   return y, m, self:getMonthDays(y, m)
 end ---- getYearLastDay
@@ -333,6 +342,7 @@ end ---- getYearLastDay
   result (number) - day of year.
 --]]
 function TConfig:getYearDay (y, m, d) --> (number)
+
   return d + self.YearDays[m - 1]
 end ---- getYearDay
 
@@ -346,7 +356,6 @@ end ---- getYearDay
   d (number) - day.
 --]]
 function TConfig:divYearDay (y, r) --> (m, d)
-  local self = self
 
   local LastMonth = self:getYearMonths(y)
 
@@ -378,7 +387,6 @@ end ---- divYearDay
   result (number) - week of year.
 --]]
 function TConfig:getYearWeek (y, m, d, f) --> (number)
-  local self = self
 
   local DayPerWeek = self.DayPerWeek
   local YearStartDay = self:getWeekNumDay(y, 1, 1)
@@ -400,7 +408,7 @@ end ---- getYearWeek
   result (number) - week of month.
 --]]
 function TConfig:getMonthWeek (y, m, d) --> (number)
-  local self = self
+
   return self:getYearWeek(y, m, d, 1) - self:getYearWeek(y, m, 1, 1) + 1
 end ---- getMonthWeek
 
@@ -418,7 +426,7 @@ end ---- getMonthWeek
   1 - первый день недели, ..., 0 - последний день недели.
 --]]
 function TConfig:getWeekDay (y, m, d) --> (number)
-  local self = self
+
   return (self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 
@@ -432,7 +440,7 @@ end ---- getWeekDay
   result (number) - day of week as 1..DayPerWeek.
 --]]
 function TConfig:getWeekNumDay (y, m, d) --> (number)
-  local self = self
+
   local wday = self:getWeekDay(y, m, d)
   return wday == 0 and self.DayPerWeek or wday
 end ---- getWeekNumDay
@@ -451,7 +459,6 @@ end ---- getWeekNumDay
 -- TODO: Учесть OutPerWeek и вненедельные дни!
 -- Посмотреть, что лучше: -1 или DeyPerWeek + 1 !
 function TConfig:getMonthWeekDay (y, m, mw, wd) --> (number)
-  local self = self
 
   local DayPerWeek = self.DayPerWeek
 
@@ -480,7 +487,7 @@ end ---- getMonthWeekDay
   result (number) - day of common era.
 --]]
 function TConfig:getEraDay (y, m, d) --> (number)
-  local self = self
+
   return (y - 1) * self.BaseYear + self:getYearDay(y, m, d)
 end ---- getEraDay
 
@@ -494,6 +501,7 @@ end ---- getEraDay
   d (number) - day.
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
+
   local e, i = e, 1
   if e <= 0 then
     e, i = -e, -1
@@ -540,6 +548,7 @@ end ---- divEraDay
   result (number) - month of common era.
 --]]
 function TConfig:getEraMonth (y, m) --> (number)
+
   return (y - 1) * self.MonthPerYear + m
 end ---- getEraMonth
 
@@ -552,6 +561,7 @@ end ---- getEraMonth
   m (number) - month.
 --]]
 function TConfig:divEraMonth (r) --> (y, m)
+
   local MonthPerYear = self.MonthPerYear
   local y, m = divm(r, MonthPerYear)
 
@@ -571,7 +581,6 @@ end ---- divEraMonth
   result (bool) - true if date is correct.
 --]]
 function TConfig:isDate (y, m, d) --> (y, m, d)
-  local self = self
 
   return (m > 0) and (m <= self.MonthPerYear) and
          (d > 0) and (d <= self:getMonthDays(y, m))
@@ -580,13 +589,13 @@ end ---- isDate
 -- Fix year for year ±1.
 -- Исправление года для года ±1.
 function TConfig:fixYear (date, shift) --> (date)
+
   return date
 end ---- fixYear
 
 -- Fix month day for year ±1.
 -- Исправление дня месяца для года ±1.
 function TConfig:fixYearMonthDay (date) --> (date)
-  local date = date
 
   if date.d < 1 then
     date.d = 1
@@ -604,8 +613,7 @@ end ---- fixYearMonthDay
 -- Fix year and month for month ±1.
 -- Исправление месяца и года для месяца ±1.
 function TConfig:fixYearMonth (date) --> (date)
-  local self = self
-  local date = date
+
   local MonthPerYear = self.MonthPerYear
 
   if date.m == 0 then
@@ -627,8 +635,6 @@ end ---- fixYearMonth
 -- Fix month day for day ±1.
 -- Исправление дня месяца для дня ±1.
 function TConfig:fixMonthDay (date) --> (date)
-  local self = self
-  local date = date
 
   --logShow(date, self:getMonthDays(date.y, date.m))
 
@@ -657,7 +663,7 @@ end ---- fixMonthDay
   result (number) - second count in day.
 --]]
 function TConfig:getDaySec (h, n, s) --> (number)
-  --local self = self
+
   return s + (n + h * self.MinPerHour) * self.SecPerMin
 end ---- getDaySec
 
@@ -673,7 +679,6 @@ end ---- getDaySec
   result (bool) - true if time is correct.
 --]]
 function TConfig:isTime (h, n, s, z) --> (y, m, d)
-  local self = self
 
   return (h >= 0) and (h <= self.HourPerDay) and
          (n >= 0) and (n <= self.MinPerHour) and

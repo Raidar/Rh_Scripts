@@ -95,12 +95,12 @@ end ---- fillCfgTime
 -- Fill month days with additional data.
 -- Заполнение дней месяцев дополнительными данными.
 function unit.fillMonthDaysData (MonthDays, DayPerWeek) --|> (MonthDays)
-  local MonthDays = MonthDays
+
   local Min, Max = MonthDays[1], MonthDays[1]
   for k = 2, #MonthDays do
-     local v = MonthDays[k]
-     if v < Min then Min = v end
-     if v > Max then Max = v end
+    local v = MonthDays[k]
+    if v < Min then Min = v end
+    if v > Max then Max = v end
   end
 
   MonthDays.Min = Min
@@ -115,13 +115,12 @@ end ---- fillMonthDaysData
 -- Find year days by months' days.
 -- Нахождение дней в году по дням в месяцах.
 function unit.findYearDays (MonthDays) --|> (YearDays)
-  local MonthDays = MonthDays
 
   local Sum = 0
   local YearDays = { [0] = 0, }
   for k = 1, #MonthDays do
-     Sum = Sum + MonthDays[k]
-     YearDays[k] = Sum
+    Sum = Sum + MonthDays[k]
+    YearDays[k] = Sum
   end
 
   return YearDays
@@ -130,7 +129,6 @@ end ---- findYearDays
 -- Find week days for last days of prior months.
 -- Нахождение дней недели для последних дней предыдущих месяцев.
 function unit.findWeekDays (YearDays, DayPerWeek) --|> (YearDays)
-  local YearDays, DayPerWeek = YearDays, DayPerWeek
 
   local WeekDays = {}
   for k = 1, #YearDays do
@@ -204,16 +202,17 @@ end -- do
 ---------------------------------------- ---- Basic
 
 function TDate:data () --> (y, m, d, config)
-  local self = self
+
   return self.y, self.m, self.d, self.config
 end ----
 
 function TDate:put (y, m, d) --| (y, m, d)
-  local self = self
+
   self.y, self.m, self.d = y or self.y, m or self.m, d or self.d
 end ----
 
 function TDate:copy () --> (object)
+
   return unit.newDate(self:data())
 end ----
 
@@ -224,68 +223,70 @@ end ----
 ---------------------------------------- ---- Zero
 
 function TDate:isZeroYear () --> (boolean)
+
   return self.config:isZeroYear()
 end ----
 
 function TDate:getNegYear () --> (number)
+
   return self:isZeroYear() and self.y or (self.y > 0 and self.y or self.y - 1)
 end ----
 
 function TDate:putNegYear (y) --> ()
+
   self.y = self:isZeroYear() and y or (y > 0 and y or y + 1)
 end ----
 
 ---------------------------------------- ---- Count
 
 function TDate:getYearMonths () --> (number)
-  --local self = self
+
   return self.config:getYearMonths(self.y)
 end ----
 
 function TDate:getYearWeeks () --> (bool)
-  --local self = self
+
   return self.config:getYearWeeks(self.y)
 end ----
 
 function TDate:getYearDays () --> (bool)
-  --local self = self
+
   return self.config:getYearDays(self.y)
 end ----
 
 function TDate:getMonthWeeks () --> (number)
-  local self = self
+
   return self.config:getMonthWeek(self.y, self.m, self:getMonthDays())
 end ----
 
 function TDate:getMonthDays () --> (number)
-  local self = self
+
   return self.config:getMonthDays(self.y, self.m)
 end ----
 
 function TDate:getWeekDays () --> (number)
-  local self = self
+
   return self.config:getWeekDays(self.y, self.m)
 end ----
 
 function TDate:getWeekMonthDays () --> (number)
-  local self = self
+
   return self.config:getWeekMonthDays(self.y, self.m)
 end ---- getWeekMonthDays
 
 function TDate:getWeekMonthOuts () --> (number)
-  local self = self
+
   return self.config:getWeekMonthOuts(self.y, self.m)
 end ---- getWeekMonthOuts
 
 ---------------------------------------- ---- get+set
 
 function TDate:getYearDay () --> (bool)
-  local self = self
+
   return self.config:getYearDay(self.y, self.m, self.d)
 end ----
 
 function TDate:setYearDay (r) --> (m, d)
-  local self = self
 
   local m, d = self.config:divYearDay(self.y, r)
   self.m = m
@@ -295,42 +296,41 @@ function TDate:setYearDay (r) --> (m, d)
 end ---- setYearDay
 
 function TDate:getYearWeek () --> (number)
-  local self = self
+
   return self.config:getYearWeek(self.y, self.m, self.d)
 end ----
 
 function TDate:getMonthWeek () --> (number)
-  local self = self
+
   return self.config:getMonthWeek(self.y, self.m, self.d)
 end ----
 
 function TDate:getWeekDay () --> (number)
-  local self = self
+
   return self.config:getWeekDay(self.y, self.m, self.d)
 end ----
 
 function TDate:getWeekNumDay () --> (number)
-  local self = self
+
   return self.config:getWeekNumDay(self.y, self.m, self.d)
 end ----
 
 function TDate:getMonthWeekDay (mw, wd) --> (number)
-  local self = self
+
   return self.config:getMonthWeekDay(self.y, self.m, mw, wd)
 end ----
 
 function TDate:setMonthWeekDay (mw, wd) --> (number)
-  local self = self
+
   self.d = self.config:getMonthWeekDay(self.y, self.m, mw, wd)
 end ----
 
 function TDate:getEraDay () --> (number)
-  local self = self
+
   return self.config:getEraDay(self.y, self.m, self.d)
 end ----
 
 function TDate:setEraDay (r) --> (self)
-  local self = self
 
   local y, m, d = self.config:divEraDay(r)
   self.y = y
@@ -341,12 +341,11 @@ function TDate:setEraDay (r) --> (self)
 end ---- setEraDay
 
 function TDate:getEraMonth () --> (number)
-  local self = self
+
   return self.config:getEraMonth(self.y, self.m)
 end ----
 
 function TDate:setEraMonth (r) --> (y, m)
-  local self = self
 
   local y, m = self.config:divEraMonth(r)
   self.y = y
@@ -358,7 +357,7 @@ end ---- setEraMonth
 ---------------------------------------- ---- Check
 
 function TDate:fixMonth () --> (self)
-  local self = self
+
   local m = self.m
   if m < 0 then
     self.m = 1
@@ -371,7 +370,7 @@ function TDate:fixMonth () --> (self)
 end ---- fixMonth
 
 function TDate:fixDay () --> (self)
-  local self = self
+
   local d = self.d
   if d < 0 then
     self.d = 1
@@ -392,26 +391,28 @@ end ----
 -- Shift by specified day count.
 -- Сдвиг на заданное число дней.
 function TDate:shd (count) --> (self)
-  local self = self
+
   return self:setEraDay(self:getEraDay() + count)
 end ---- shd
 
 ---------------------------------------- ---- to & from
 
 function TDate:to_y () --> (number)
+
   return self.y - 1 + self:getYearDay() / self:getYearDays()
 end ----
 
 function TDate:to_m () --> (number)
+
   return self:getEraMonth() - 1 + self.d / self:getMonthDays()
 end ----
 
 function TDate:to_d () --> (number)
+
   return self:getYearDay()
 end ----
 
 function TDate:from_y (v) --> (self, rest)
-  local self = self
 
   local w, v = modf(v)
   self.y = w + 1
@@ -424,7 +425,6 @@ function TDate:from_y (v) --> (self, rest)
 end ----
 
 function TDate:from_m (v) --> (self, rest)
-  local self = self
 
   local w, v = modf(v)
   self.y, self.m = self:divEraMonth(w + 1)
@@ -436,7 +436,6 @@ function TDate:from_m (v) --> (self, rest)
 end ----
 
 function TDate:from_d (v) --> (self, rest)
-  local self = self
 
   local w, v = modf(v)
   self.y, self.m, self.d = self:divEraDay(w)
@@ -447,7 +446,6 @@ end ----
 ---------------------------------------- ---- operations
 
 function TDate:inc_y () --> (self)
-  local self = self
 
   self.y = self.y + 1
   self.config:fixYear(self, 1)
@@ -456,7 +454,6 @@ function TDate:inc_y () --> (self)
 end ---- inc_y
 
 function TDate:dec_y () --> (self)
-  local self = self
 
   self.y = self.y - 1
   self.config:fixYear(self, -1)
@@ -465,7 +462,6 @@ function TDate:dec_y () --> (self)
 end ---- dec_y
 
 function TDate:inc_m () --> (self)
-  local self = self
 
   self.m = self.m + 1
 
@@ -473,7 +469,6 @@ function TDate:inc_m () --> (self)
 end ---- inc_m
 
 function TDate:dec_m () --> (self)
-  local self = self
 
   self.m = self.m - 1
 
@@ -481,7 +476,6 @@ function TDate:dec_m () --> (self)
 end ---- dec_m
 
 function TDate:inc_d () --> (self)
-  local self = self
 
   self.d = self.d + 1
 
@@ -489,7 +483,6 @@ function TDate:inc_d () --> (self)
 end ---- inc_d
 
 function TDate:dec_d () --> (self)
-  local self = self
 
   self.d = self.d - 1
 
@@ -497,10 +490,12 @@ function TDate:dec_d () --> (self)
 end ---- dec_d
 
 function TDate:inc_w () --> (self)
+
   return self:shd(self.config.DayPerWeek)
 end ---- inc_w
 
 function TDate:dec_w () --> (self)
+
   return self:shd(-self.config.DayPerWeek)
 end ---- inc_w
 
@@ -527,21 +522,23 @@ end -- do
 ---------------------------------------- ---- Basic
 
 function TTime:data () --> (h, n, s, z, config)
-  local self = self
+
   return self.h, self.n, self.s, self.z, self.config
 end ----
 
 function TTime:put (h, n, s, z) --| (h, n, s, z)
-  local self = self
+
   self.h, self.n = h or self.h, n or self.n
   self.s, self.z = s or self.s, z or self.z
 end ----
 
 function TTime:copy () --> (object)
+
   return unit.newTime(self:data())
 end ----
 
 function TTime:is (Time) --> (bool)
+
   return self.h == Time.h and self.n == Time.n and
          self.s == Time.s and self.z == Time.z
 end ----
@@ -549,13 +546,14 @@ end ----
 ---------------------------------------- ---- get+set
 
 function TTime:getDaySec () --> (number)
-  local self = self
+
   return self.config:getDaySec(self.h, self.n, self.s)
 end ----
 
 ---------------------------------------- ---- Short
 
 function TTime:hns () --> (number)
+
   return self:getDaySec()
 end ----
 
@@ -565,25 +563,25 @@ end ----
   result (number) - milliseconds as fraction of second.
 --]]
 function TTime:msec () --> (number)
+
   return self.z / self.config.MSecPerSec
 end ----
 
 -- Количество десятых долей секунды в миллисекундах.
 function TTime:dz () --> (number)
-  --local self = self
+
   return round(self.z / self.config.MSecPerDSec)
 end ----
 
 -- Количество сотых долей секунды в миллисекундах.
 function TTime:cz () --> (number)
-  --local self = self
+
   return round(self.z / self.config.MSecPerCSec)
 end ----
 
 -- Shift by specified second count.
 -- Сдвиг на заданное число cекунд.
 function TTime:shs (count) --> (self)
-  local self = self
 
   local count = self:to_s() + count
 
@@ -593,7 +591,7 @@ end ---- shs
 ---------------------------------------- ---- to & from
 
 function TTime:to_h () --> (number)
-  local self = self
+
   local c = self.config
   return ( (self.z / c.MSecPerSec +
             self.s) / c.SecPerMin +
@@ -601,7 +599,7 @@ function TTime:to_h () --> (number)
 end ----
 
 function TTime:to_n () --> (number)
-  local self = self
+
   local c = self.config
   return (self.z / c.MSecPerSec +
           self.s) / c.SecPerMin +
@@ -619,7 +617,7 @@ function TTime:to_s () --> (number)
 end ----
 
 function TTime:to_z () --> (number)
-  local self = self
+
   local c = self.config
   return self.z +
          ( self.s +
@@ -630,7 +628,7 @@ function TTime:to_z () --> (number)
 end ----
 
 function TTime:from_h (v) --> (self)
-  local self = self
+
   local c, v = self.config, v
 
   self.h, v = modf(v)
@@ -642,7 +640,7 @@ function TTime:from_h (v) --> (self)
 end ---- from_h
 
 function TTime:from_n (v) --> (self)
-  local self = self
+
   local c, v = self.config, v
 
   local x = c.MinPerHour
@@ -675,7 +673,7 @@ function TTime:from_s (v) --> (self)
 end ---- from_s
 
 function TTime:from_z (v) --> (self)
-  local self = self
+
   local c, v = self.config, v
 
   local x
@@ -697,20 +695,22 @@ end ---- from_z
 ---------------------------------------- ---- operations
 
 function TTime:sum (time) --> (number)
+
   return self:to_z() + time:to_z()
 end ----
 
 function TTime:dif (time) --> (number)
+
   return self:to_z() - time:to_z()
 end ----
 
 function TTime:add (time) --> (self)
-  --local self = self
+
   return self:from_z(self:summ(time))
 end ----
 
 function TTime:sub (time) --> (self)
-  --local self = self
+
   return self:from_z(self:diff(time))
 end ----
 

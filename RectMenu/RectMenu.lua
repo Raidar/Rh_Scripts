@@ -390,7 +390,7 @@ end ---- DialogForm
 
 -- Отображение окна диалога меню.
 function TMenu:Dialog ()
-  local self = self
+
   local Rect = self.FormRect
 
   local Id = self.Props.Id or self.Guid
@@ -407,7 +407,7 @@ end ---- Dialog
 
 -- Выполнение показа меню.
 function TMenu:Show (DlgProc)
-  local self = self
+
   self.DlgProc = DlgProc
   local iDlg = self:Dialog()
   --logShow(Result, "Result")
@@ -474,7 +474,7 @@ do
 
 -- Информация о свойствах (и флагах) меню.
 function TMenu:DefinePropInfo () --| Props
-  local self = self
+
   -- Определение области/окна FAR.
   local AreaName = self.Menu.Options.FarArea
   local Area = farUt.GetAreaSize(AreaName)
@@ -559,7 +559,7 @@ local isItemPicked = menUt.isItem.Picked
 
 -- Информация о списке пунктов меню.
 function TMenu:DefineListInfo () --| List
-  local self = self
+
   local Items = self.Menu.Items
   local List, RM = self.List, self.RectMenu
   --local Data, List, RM = self.Data, self.List, self.RectMenu
@@ -613,7 +613,7 @@ end ----- DefineListInfo
 
 -- Информация о существующей части меню.
 function TMenu:DefineDataInfo () --| Data
-  local self = self
+
   local Data, Props, RM = self.Data, self.Props, self.RectMenu
   Data.Shape = RM.Shape or "V" -- Форма меню
   Data.Order = RM.Order or "H" -- Порядок вывода
@@ -653,7 +653,7 @@ do
 
 -- Управление специальными комбинациями клавиш.
 function TMenu:DefineKeysInfo () --| AKeys, BKeys
-  local self = self
+
   local Data = self.Data
   -- Горячие буквы-клавиши пунктов меню.
   self.HKeys = SetMenuHotChars(self.List, Data.Count, self.Flags)
@@ -691,7 +691,7 @@ do
 
 -- Информация о пункте и разделителях пунктов меню.
 function TMenu:DefineSpotInfo () --| Zone
-  local self = self
+
   --local Data, List = self.Data, self.List
   --local Props, RM = self.Props, self.RectMenu
   local Data, List, RM = self.Data, self.List, self.RectMenu
@@ -838,7 +838,7 @@ do
 
 -- Информация об отображаемой части меню.
 function TMenu:DefineZoneInfo () --| Zone
-  local self = self
+
   local Data, Zone, RM = self.Data, self.Zone, self.RectMenu
   local RowCount, ColCount = Data.Rows, Data.Cols
 
@@ -966,7 +966,7 @@ do
 
 -- Информация об окне диалога: Зона меню внутри окна.
 function TMenu:DefineFormZone () --| (Dlg...)
-  local self = self
+
   local Zone, Titles = self.Zone, self.Titles
   --local Data, Zone, Titles = self.Data, self.Zone, self.Titles
 
@@ -1031,7 +1031,7 @@ do
 
 -- Информация об окне диалога: Позиция и размеры окна.
 function TMenu:DefineFormRect () --| (Dlg...)
-  local self = self
+
   local Zone = self.Zone
 
   -- TODO: Параметр для выравнивания самого окна: Align.
@@ -1087,7 +1087,6 @@ end -- do
 
 -- Информация об окне диалога.
 function TMenu:DefineFormInfo () --| (Dlg...)
-  local self = self
 
   self:DefineFormZone() -- Зона меню внутри окна
   --logShow(self.Zone, "self.Zone")
@@ -1102,7 +1101,7 @@ end ---- DefineFormInfo
 
 -- Определение вида меню.
 function TMenu:DefineAll () --| (self)
-  local self = self
+
   --logShow(self, "RectMenu", 1)
   -- DO NOT CHANGE ORDER!
   self:DefinePropInfo() --| Props -- Свойства
@@ -1123,7 +1122,6 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
 
   --if Flags.isUpdateAll == false then return end
 
-  local self = self
   local oldR = self.FormRect
   local isRedraw = Flags.isRedraw
 
@@ -1168,7 +1166,7 @@ local isItemDimmed = menUt.isItem.Dimmed
 -- Check index to allowability.
 -- Проверка индекса на допустимость.
 function TMenu:isIndex (Index) --> (bool)
-  local self = self
+
   return Index and Index > 0 and self.List[Index] and
          -- Недоступный (для управления) пункт:
          not isItemDimmed(self.List[Index])
@@ -1177,7 +1175,7 @@ end ----
 -- Check index to scrollability.
 -- Проверка индекса на прокрутку.
 function TMenu:isScrolled (Index) --> (bool)
-  local self = self
+
   local r, c = Idx2Cell(Index, self.Data)
 
   return inspan(r, self.FixedRows) and inspan(c, self.FixedCols)
@@ -1194,7 +1192,6 @@ end ----
 -- Check index of item for scrollable cell.
 -- Проверка индекса пункта для прокручиваемой ячейки.
 function TMenu:isScrollIndex (Row, Col) --> (Index)
-  local self = self
 
   if outspan(Row, self.FixedRows) or
      outspan(Col, self.FixedCols) then
@@ -1208,7 +1205,7 @@ end ----
 -- Count visible rows of menu items.
 -- Количество видимых строк пунктов меню.
 function TMenu:VisibleRowCount (Row, Kind) --> (number, number)
-  local self = self
+
   return VisibleLinCount[Kind or "Base"](self.RowHeight, self.Data.RowSep,
                                          self.Zone.Height, Row, self.FixedRows)
 end ----
@@ -1216,7 +1213,7 @@ end ----
 -- Count visible columns of menu items.
 -- Количество видимых столбцов пунктов меню.
 function TMenu:VisibleColCount (Col, Kind) --> (number, number)
-  local self = self
+
   return VisibleLinCount[Kind or "Base"](self.ColWidth,  self.Data.ColSep,
                                          self.Zone.Width,  Col, self.FixedCols)
 end ----
@@ -1224,7 +1221,7 @@ end ----
 -- Count menu items visible in area.
 -- Число видимых в области пунктов меню.
 function TMenu:VisibleZoneCount () --> (number, number, number)
-  local self = self
+
   local Base = self.Zone.Base
 
   local VisRows = self:VisibleRowCount(Base.Row)
@@ -1237,7 +1234,7 @@ end ---- VisibleZoneCount
 -- Index for selected menu item or 0.
 -- Индекс выбранного пункта меню или 0.
 function TMenu:GetSelectIndex () --> (number)
-  local self = self
+
   -- Индекс выделенного пункта меню
   -- не обязательно совпадает с выделенным индексом!
   return self.SelIndex and self.List[self.SelIndex].Index or 0
@@ -1255,7 +1252,7 @@ end ----
 -- Find item suitable for navigation to select.
 -- Поиск подходящего для навигации пункта для выделения.
 function TMenu:FitSelected (SelIndex) --> (number)
-  local self = self
+
   local List = self.List
 
   local k = SelIndex
@@ -1281,7 +1278,6 @@ do
 -- Get cell with allowable index value.
 -- Получение ячейки с допустимым значением индекса.
 function TMenu:FitCell (Row, Col) --> (Row, Col)
-  local self = self
 
   -- Поиск по строке:
   local Row = Row
@@ -1325,7 +1321,7 @@ end ---- FitCell
 -- Define cell considering scrollability.
 -- Определение ячейки с учётом прокрутки.
 function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
-  local self = self
+
   local Row, Col = Row, Col
 
   if dRow ~= 0 then -- Ячейка по строкам:
@@ -1389,7 +1385,7 @@ end ---- WrapCell
 -- Получение подходящей ячейки по строке.
 function TMenu:FindRowCell (Row, Col, dRow) --> (Index, Cell)
   --assert(dRow > 0)
-  local self = self
+
   local Fixes = self.FixedRows
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Row = Row + dRow
@@ -1402,7 +1398,7 @@ end ---- FindRowCell
 -- Получение подходящей ячейки по столбцу.
 function TMenu:FindColCell (Row, Col, dCol) --> (Index, Cell)
   --assert(dCol > 0)
-  local self = self
+
   local Fixes = self.FixedCols
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Col = Col + dCol
@@ -1439,7 +1435,7 @@ end ---- FindCell
   isWrap (bool) - цикличность прокрутки.
 --]]
 function TMenu:GotoCell (aCell, dCell, isNew, isWrap) --> (SelIndex, Cell)
-  local self = self
+
   --logShow({ aCell, dCell, isNew, isWrap }, "GotoCell")
   --if not isWrap then logShow({ aCell, dCell, isNew, isWrap }, "GotoCell") end
 
@@ -1497,7 +1493,7 @@ end ---- GotoCell
 -- Define base item to show selected menu item.
 -- Определение базового пункта для показа выделенного пункта меню.
 function TMenu:CellBase (aCell) --| Zone.Base
-  local self = self
+
   -- Выбор начального базового пункта меню.
   local Cell = aCell
   local Base, Pike = self.Zone.Base, self.Zone.Pike
@@ -1532,7 +1528,7 @@ end ---- CellBase
 -- Change base menu item (to show unallowable items).
 -- Изменение базового пункта меню (для показа недоступных пунктов).
 function TMenu:MoveBase (dCell, aBase) --| Zone.Base
-  local self = self
+
   local Base, Pike = self.Zone.Base, self.Zone.Pike
 
   -- Выбор базового пункта меню.
@@ -1554,7 +1550,7 @@ end ---- MoveBase
 -- Переход на другую ячейку.
 --function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
 function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
-  local self = self
+
   local OldIndex = self.SelIndex
   local oCell = RC_cell(Idx2Cell(OldIndex, self.Data))
   --local dCell, NewIndex, nCell = NewIndexCell(oCell)
@@ -1589,7 +1585,7 @@ end -- do
 
 -- Обработка пользовательского события.
 function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
-  local self = self
+
   local RunEvent = self.RectMenu[Event]
   if not RunEvent then return end
 
@@ -1644,7 +1640,7 @@ local Shifts = {
   3. Абсолютная величина отсчёта "прыжкового" перемещения.
 --]]
 function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
-  local self = self
+
   local Data, Zone = self.Data, self.Zone
   local Base = self.Zone.Base
 
@@ -1817,7 +1813,7 @@ local AccelSKeys = {
 
 -- Обработка быстрых клавиш в меню.
 function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
-  local self = self
+
   local RM = self.RectMenu
   --local Ctrl, RM = self.Ctrl, self.RectMenu
   if RM.NoRapidKey then return end -- TODO: --> Doc!
@@ -1881,7 +1877,7 @@ end ---- RapidKeyPress
 
 -- Пользовательская обработка клавиш навигации.
 function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
-  local self = self
+
   local OnNavKeyPress = self.RectMenu.OnNavKeyPress
   if not OnNavKeyPress then return end
 
@@ -1908,7 +1904,7 @@ end ---- UserKeyPress
 
 -- Обработчик нажатия клавиши.
 function TMenu:DoKeyPress (hDlg, Input) --> (bool)
-  local self = self
+
   --logShow(self, "self", 1)
   local SelIndex = self.SelIndex
   --logShow(Input, SelIndex, "d1 x8")
@@ -2087,7 +2083,6 @@ end ---- KnobItemClick
 
 -- Обработка нажатий кнопки мыши в меню.
 function TMenu:MouseClick (hDlg, Input) --> (bool)
-  local self = self
 
   local mCell = self:MouseInputToCell(Input)
 
@@ -2131,7 +2126,7 @@ function TMenu:MouseClick (hDlg, Input) --> (bool)
 end ---- MouseClick
 
 function TMenu:MouseBorderClick (hDlg, Kind, Input)
-  local self = self
+
   self.DebugClickChar = "B"
 
   local Data = self:HandleEvent("OnBorderClick", hDlg, Kind, Input)
@@ -2144,7 +2139,7 @@ function TMenu:MouseBorderClick (hDlg, Kind, Input)
 end ---- MouseBorderClick
 
 function TMenu:MouseEdgeClick (hDlg, Kind, Input)
-  local self = self
+
   self.DebugClickChar = "E"
 
   local Data = self:HandleEvent("OnEdgeClick", hDlg, Kind, Input,
@@ -2174,7 +2169,7 @@ end -- ScrollPosToLin
 
 -- Обработка горизонтальной прокрутки.
 function TMenu:ScrollHClick (hDlg, Input)
-  local self = self
+
   self.DebugClickChar = "H"
 
   local pos = Input.X
@@ -2204,7 +2199,7 @@ end ---- ScrollHClick
 
 -- Обработка вертикальной прокрутки.
 function TMenu:ScrollVClick (hDlg, Input)
-  local self = self
+
   self.DebugClickChar = "V"
 
   local pos = Input.Y
@@ -2235,7 +2230,7 @@ end ---- ScrollVClick
 
 -- Обработка "пересечения" полос прокрутки.
 function TMenu:ScrollXClick (hDlg, Input)
-  local self = self
+
   self.DebugClickChar = "X"
 
   local Data = self:HandleEvent("OnScrollXClick", hDlg, Input)
@@ -2305,7 +2300,7 @@ end ---- ChooseItem
 
 -- Обработка выбора пункта по умолчанию.
 function TMenu:DefaultChooseItem (hDlg, Kind, ...) --> (bool)
-  local self = self
+
   local SelIndex = self.SelIndex
   --logShow(self.List[SelIndex], SelIndex)
 
@@ -2319,7 +2314,7 @@ end ---- DefaultChooseItem
 -- Draw menu item.
 -- Рисование пункта меню.
 function TMenu:DrawMenuItem (Rect, Row, Col)
-  local self = self
+
   local RM = self.RectMenu
 
   local Index = self:CellIndex(Row, Col)
@@ -2361,7 +2356,7 @@ end ---- DrawMenuItem
 -- Draw menu item.
 -- Рисование пункта меню.
 function TMenu:DrawClearItem (Rect, Row, Col)
-  local self = self
+
   local RM = self.RectMenu
 
   local Index = self:CellIndex(Row, Col)
@@ -2385,7 +2380,7 @@ end ---- DrawClearItem
 -- Draw menu part with specified color.
 -- Рисование части меню заданным цветом.
 function TMenu:DrawMenuPart (A_Cell, A_Rect)
-  local self = self
+
   local Data = self.Data
   local RM = self.RectMenu
 
@@ -2445,7 +2440,7 @@ end ---- DrawMenuPart
 -- Draw list of visible menu items.
 -- Рисование списка видимых пунктов меню.
 function TMenu:DrawMenu ()
-  local self = self
+
   local Zone = self.Zone
   local FixRows, FixCols = self.FixedRows, self.FixedCols
   local Base, FixedColors = Zone.Base, self.Colors.Fixed
@@ -2585,7 +2580,6 @@ end -- DrawTitleLine
 
 -- Рисование рамки вокруг меню.
 function TMenu:DrawBorderLine () -- --| Border
-  local self = self
 
   local Color, Colors = self.Colors.Border, self.Colors.Borders
   local BoxChars = SymsBoxChars[self.RectMenu.BoxKind]
@@ -2622,7 +2616,7 @@ end ---- DrawBorderLine
 
 -- Информация о полосах прокрутки меню.
 function TMenu:CalcScrollBars () --| ScrollBars
-  local self = self
+
   local Zone, DlgRect = self.Zone, self.DlgRect
 
   -- Расчёт параметров прокруток.
@@ -2682,7 +2676,7 @@ end -- ScrollBar
 
 -- Рисование полос прокрутки меню.
 function TMenu:DrawScrollBars ()
-  local self = self
+
   local Zone = self.Zone
 
   -- Проверка необходимости полосы прокрутки.
@@ -2725,7 +2719,7 @@ function TMenu:DrawScrollBars ()
 end ---- DrawScrollBars
 
 function TMenu:DrawStatusBar ()
-  local self = self
+
   local Zone = self.Zone
   if Zone.EdgeB < 1 then return end
 
@@ -2749,7 +2743,7 @@ function TMenu:DrawStatusBar ()
 end ---- DrawStatusBar
 
 function TMenu:DrawZoneEdges ()
-  local self = self
+
   local Zone, RM = self.Zone, self.RectMenu
 
   local Texts  = RM.Edges.Texts  or Null
@@ -2865,7 +2859,7 @@ function TMenu:DrawZoneEdges ()
 end ---- DrawZoneEdges
 
 function TMenu:DoUserDraw ()
-  local self = self
+
   local RunEvent = self.RectMenu.OnDrawMenu
   if not RunEvent then return end
 
@@ -2873,7 +2867,7 @@ function TMenu:DoUserDraw ()
 end ---- DoUserDraw
 
 function TMenu:DrawDebugInfo ()
-  local self = self
+
   local Color = self.Colors.Debug
 
   local function DbgText (x, y, s)
@@ -2919,7 +2913,6 @@ end ---- DrawDebugInfo
 
 -- Обработчик рисования меню.
 function TMenu:DoMenuDraw (DlgRect)
-  local self = self
 
   --logShow(DlgRect, "DoMenuDraw")
   if DlgRect then

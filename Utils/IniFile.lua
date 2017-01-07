@@ -107,9 +107,16 @@ local function MergeTable (Table, Merged, Props) --> (Table | nil, error)
   for s, d in pairs(Merged) do
     local Field = Table[s]
     if Field then
-      for k, v in pairs(Merged[s]) do
-        Field[k] = MergeField(Field[k], v, Props)
-      end -- for
+      if type(Field) == 'table' and type(d) == 'table' then
+        --local Campo = Merged[s]
+        --for k, v in pairs(Campo) do
+        for k, v in pairs(d) do
+          Field[k] = MergeField(Field[k], v, Props)
+        end
+      else
+        Table[s] = { Field, d }
+      end
+
     else
       Table[s] = d
     end

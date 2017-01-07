@@ -79,6 +79,7 @@ do
 unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
+
   local self = Config or {}
 
   if Config and getmetatable(self) == MConfig then return self end
@@ -95,11 +96,11 @@ end -- do
 ---------------------------------------- ---- ---- Count
 
 function TConfig:getWeekDays (y, m) --> (number)
+
   return self.WeekDays[m]
 end ---- getWeekDays
 
 function TConfig:getWeekMonthDays (y, m) --> (number)
-  local self = self
 
   if m ~= self.MonthPerYear then
     return self.MonthDays[m]
@@ -109,7 +110,6 @@ function TConfig:getWeekMonthDays (y, m) --> (number)
 end ---- getWeekMonthDays
 
 function TConfig:getWeekMonthOuts (y, m) --> (number)
-  local self = self
 
   if m == 2 then
     return self:getLeapDays(y)
@@ -122,7 +122,7 @@ end ---- getWeekMonthOuts
 
 -- TODO: Изменить для учёта постоянства! При этом установить OutWeek < 0 ?
 function TConfig:getWeekDay (y, m, d) --> (number)
-  --local self = self
+
   return (self:getWeekDays(y, m) + d) % self.DayPerWeek
 end ---- getWeekDay
 

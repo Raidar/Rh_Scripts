@@ -166,25 +166,26 @@ Liter   -- Строки букв
   Binal_A = { 'j', 'y', }, -- Диграфные
   Binal_B = {
 
-    j = { Konal_m = '¸', Konal_k = '̧',
-          Vokal_m = '˛', Vokal_k = '̨',
+    j = { Konal_m = '¸', Konal_k = '̧', -- cedilla
+          Vokal_m = '˛', Vokal_k = '̨', -- ogonek
         },
-    y = { Vokal_m = '˘', Vokal_k = '̆',
+    y = { Vokal_m = '˘', Vokal_k = '̆', -- breve
         },
 
     Binal_A = {
-      --j = 'j', y = 'y', -- cedilla
-      --j = 'j', y = 'ẏ', -- dot
-      --j = 'j', y = 'ƴ', -- hook
-      --j = 'ǰ', y = 'y', -- caron
-      --j = 'j', y = 'y', -- acute
+      --j = ' ', y = ' ', -- cedilla
+      --j = ' ', y = 'ẏ', -- dot
+      --j = ' ', y = 'ƴ', -- hook
+      --j = 'ǰ', y = ' ', -- caron
+      --j = ' ', y = ' ', -- acute
       --j = 'ɉ', y = 'ɏ', -- stroke
+      --j = ' ', y = 'ȳ', -- macron
       j = 'ĵ', y = 'ŷ', -- circumflex
       --j = 'j', y = 'y',
     },
 
     Konal_Cj = { -- mixed
-      -- hook: ʋ
+      -- hook: v
       -- acute: l, r, m, n
       -- stroke: b, d, q, p
       --b = 'ƀ', d = 'đ', g = 'g', v = 'ʋ', z = 'z', q = 'ꝗ', w = 'w',
@@ -208,11 +209,11 @@ Liter   -- Строки букв
       --l = 'ŀ', r = 'ṙ', m = 'ṁ', n = 'ṅ',
       --h = 'ḣ',
 
-      -- hook: d, g, v, z, p, t, k, f, c, m, n
-      -- hook tail: q
-      -- ?: b, w, s, x, l, r, h
-      --b = 'b', d = 'ɗ', g = 'ɠ', v = 'ʋ', z = 'ȥ', q = 'Ɋ', w = 'ⱳ',
-      --p = 'ƥ', t = 'ƭ', k = 'ƙ', f = 'ƒ', s = 's', x = 'x', c = 'ƈ',
+      -- hook: g, v, z, q, p, t, k, f, s, c, m, n
+      -- topbar: b, d
+      -- ?: w, x, l, r, h
+      --b = 'ƃ', d = 'ƌ', g = 'ɠ', v = 'ʋ', z = 'ȥ', q = 'ʠ', w = 'ⱳ',
+      --p = 'ƥ', t = 'ƭ', k = 'ƙ', f = 'ƒ', s = 'ʂ', x = 'x', c = 'ƈ',
       --l = 'l', r = 'r', m = 'ɱ', n = 'ɲ',
       --h = 'h',
 
@@ -265,6 +266,7 @@ Liter   -- Строки букв
     Vokal_Yo = { -- breve
       a = 'ă', e = 'ĕ', i = 'ĭ', o = 'ŏ', u = 'ŭ',
 
+      --a = 'a', e = 'e', i = 'i', o = 'o', u = 'u',
       --a = 'a', e = 'e', i = 'i', o = 'o', u = 'u',
     },
     Vokal_Oy = {},

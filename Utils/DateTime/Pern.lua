@@ -173,6 +173,7 @@ do
 unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
+
   local self = Config or {}
 
   if Config and getmetatable(self) == MConfig then return self end
@@ -187,13 +188,13 @@ end -- do
 ---------------------------------------- ---- ---- Leap
 
 function TConfig:isLeapYear (y) --> (bool)
+
   return y % 6 == 0
 end ----
 
 ---------------------------------------- ---- ---- Count
 
 function TConfig:getMonthDays (y, m) --> (number)
-  --local self = self
 
   if m ~= 12 then
     return self.MonthDays[m]
@@ -203,13 +204,13 @@ function TConfig:getMonthDays (y, m) --> (number)
 end ---- getMonthDays
 
 function TConfig:getWeekMonthDays (y, m) --> (number)
+
   return self:getMonthDays(y, m)
 end ---- getWeekMonthDays
 
 ---------------------------------------- ---- ---- get+div
 
 function TConfig:getWeekDay (y, m, d) --> (number)
-  local self = self
 
   local r, s = divm(y - 1, 6)   --   6⋅r + s
 
@@ -228,7 +229,6 @@ function TConfig:getEraDay (y, m, d) --> (number)
 end ---- getEraDay
 
 function TConfig:divEraDay (e) --> (y, m, d)
-  local self = self
 
   local e, i = e, 1
   if e <= 0 then

@@ -195,7 +195,7 @@ end -- CreateMain
 do
 
 function TMain:InitData ()
-  local self = self
+
   local CfgData = self.CfgData
   --logShow(CfgData, "CfgData")
 
@@ -219,7 +219,7 @@ end ---- InitData
   local prequire = farUt.prequire
 
 function TMain:InitFetes ()
-  local self = self
+
   local Options = self.Options
 
   Options.FeteName = self.World
@@ -233,8 +233,6 @@ end ---- InitFetes
 
 -- Инициализация даты/времени.
 function TMain:InitDateTime ()
-  local self = self
-
   local CfgData = self.CfgData
   local Cfg_DT = self.Cfg_DT
   --logShow(CfgData, "CfgData")
@@ -255,7 +253,6 @@ do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
-  local self = self
 
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
@@ -267,8 +264,6 @@ function TMain:Localize ()
 end ---- Localize
 
 function TMain:MakeLocLen () --> (bool)
-  local self = self
-
   local wL = self.Loc_DT
   if not wL then return end
 
@@ -302,7 +297,6 @@ function TMain:MakeLocLen () --> (bool)
 end ---- MakeLocLen
 
 function TMain:MakeFetes ()
-  local self = self
 
   local Fetes = self.Fetes
   if not Fetes then return end
@@ -335,7 +329,6 @@ end ---- MakeColors
   local max, ceil = math.max, math.ceil
 
 function TMain:MakeProps ()
-  local self = self
 
   -- Свойства меню:
   local Props = self.CfgData.Props or {}
@@ -444,6 +437,7 @@ do
   local spaces = strings.spaces
   -- Центрирование выводимого текста. -- TEMP: До реализации в RectMenu!
   local function CenterText (Text, Max) --> (string)
+
     local Text = Text or ""
     local Len = Text:len()
     if Len >= Max then return Text end
@@ -455,7 +449,6 @@ do
 
 -- Заполнение информационной части.
 function TMain:FillInfoPart () --> (bool)
-  local self = self
 
   local Date = self.Date
   local Time = self.Time
@@ -599,7 +592,6 @@ end ---- FillInfoPart
 -- Заполнение основной части.
 -- TODO: Переделать под отдельный вывод месяцев с учётом вненедельных дат!
 function TMain:FillMainPart () --> (bool)
-  local self = self
 
   local Date = self.Date
   local WeekCols = self.WeekCols
@@ -803,7 +795,6 @@ end ---- FillMainPart
 
 -- Заполнение пояснительной части.
 function TMain:FillNotePart () --> (bool)
-  local self = self
 
   local Cfg_DT = self.Date.config
   local Formats = Cfg_DT.Formats
@@ -851,7 +842,6 @@ end ---- FillNotePart
 
 -- Формирование меню.
 function TMain:MakeMenu () --> (table)
-  local self = self
 
   local RowCount, ColCount = self.RowCount, self.ColCount
   -- Запоминание позиций для заполнения:
@@ -898,7 +888,6 @@ end -- do
 -- Limit date.
 -- Ограничение даты.
 function TMain:LimitDate (Date) --> (Date)
-  local Date = Date
 
   if Date.y < self.YearMin then
     Date.y = self.YearMin
@@ -934,7 +923,7 @@ end ---- DateToStr
   local DateFmtD   = "^%-%-(%d+)"
 
 function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
-  --local self = self
+
   local Date = Default:copy()
 
   local StrDate = StrDate or ""
@@ -1010,6 +999,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
 end ---- StrToDate
 
 function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
+
   local StrDate = StrDate or ""
   if StrDate == "" then return end
 
@@ -1037,7 +1027,6 @@ function TMain:ParseDateInput ()
 end ---- ParseDateInput
 
 function TMain:StartDateInput (Date, Sign)
-  local self = self
   local L = self.LocData
 
   self.Input = ""
@@ -1047,16 +1036,13 @@ function TMain:StartDateInput (Date, Sign)
 end ---- StartDateInput
 
 function TMain:StopDateInput (Date)
-  local self = self
-
   self.IsDateInput = false
   self.Props.Bottom = ""
+
   return self:ParseDateInput() or Date
 end ---- StopDateInput
 
 function TMain:EditDateInput (SKey)
-  local self = self
-
   local Input = self.Input
   local IsCheckYear = false
 
@@ -1103,7 +1089,6 @@ do
   local tonumber = tonumber
 
 function TMain:ParseShiftInput ()
-  local self = self
   local Date = self.Date:copy()
 
   local Input = self.Input or ""
@@ -1114,7 +1099,6 @@ function TMain:ParseShiftInput ()
 end ---- ParseShiftInput
 
 function TMain:StartShiftInput (Date, Shift)
-  local self = self
   --local L = self.LocData
 
   self.Input = Shift
@@ -1123,16 +1107,13 @@ function TMain:StartShiftInput (Date, Shift)
 end ---- StartShiftInput
 
 function TMain:StopShiftInput (Date)
-  local self = self
-
   self.IsShiftInput = false
   self.Props.Bottom = ""
+
   return self:ParseShiftInput() or Date
 end ---- StopShiftInput
 
 function TMain:EditShiftInput (SKey)
-  local self = self
-
   local SignKeys = {
     ["-"]       = "-",
     ["="]       = "+",
@@ -1241,7 +1222,6 @@ do
   } --- ShiftInputActions
 
 function TMain:AssignEvents () --> (bool | nil)
-  local self = self
 
   local function MakeUpdate () -- Обновление!
     farUt.RedrawAll()
