@@ -28,6 +28,7 @@ local Actions = {
   AutoCfg = "ConfigDlg", -- Auto-mode -- Автоматический режим
   -- Обновление
   --Update = "Update",
+
 } --- Actions
 
 local Packs = {
@@ -35,6 +36,7 @@ local Packs = {
   TT = require "Rh_Scripts.Editor.TextTemplate",
   -- WordCompletion -- Завершение слов:
   WC = require "Rh_Scripts.Editor.WordComplete",
+
 } --- Packs
 
 ---------------------------------------- main

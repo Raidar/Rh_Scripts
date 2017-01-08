@@ -7,6 +7,8 @@ local Data = {
   btn_Close  = "Close",
   btn_Cancel = "Cancel",
 
+  ----------------------------------------
+
   -- Settings dialogs titles.
   cap_Dialog  = "Word Completion: Settings",
   cap_DlgAuto = "Auto Completion: Settings",
@@ -64,6 +66,8 @@ local Data = {
   cfg_UndueOut = "Cancel on &undue keys",       -- u --
   cfg_LoneAuto = "&Autocompletion on one word", -- a --
   cfg_TailOnly = "Add only u&ntyped chars",     -- n -
+
+  ----------------------------------------
 } --- Data
 
 return Data

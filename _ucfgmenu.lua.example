@@ -13,7 +13,9 @@ local farError = function (Msg) return far.Message(Msg, CErrorTitle, nil, 'e') e
 
 if rawget(_G, 'context') == nil then
   farError(SInstallError:format"LuaFAR context is required!")
+
   return false
+
 end
 
 ---------------------------------------- Items

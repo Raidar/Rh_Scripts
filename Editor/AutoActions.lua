@@ -34,7 +34,9 @@ local WC_CfgData = WC.AutoCfgData
 -- Using AutoTemplates on Word Completion.
 -- Использование АвтоШаблонов при Завершении слов.
 local function TT_CharPress (FarKey, Char)
+
   return TT_Execute(TT_CfgData)
+
 end --
 WC_CfgData.OnCharPress = TT_CharPress
 
@@ -50,6 +52,7 @@ local k = 0x00
 --local hex  = debugs.hex8
 --local flog = debugs.open("AA_test.log", "a", "")
 function ProcessEditorInput (rec) --> (bool)
+
   if rec.EventType == KEY_EVENT then
     --flog:data(rec, "xv4", "rec")
     if rec.KeyDown then
@@ -57,28 +60,34 @@ function ProcessEditorInput (rec) --> (bool)
       local c = rec.ControlKeyState
       if c == 0x0000 or c == 0x0010 then
         k = (rec.UnicodeChar or " "):byte() or 0x00
+
       else
         k = 0x00
+
       end
+
       --flog:logln("*KeyDown:", hex(k))
       --flog:logln(hex(k), "c1", "xv4")
 
     elseif k > 0x20 and k ~= 0x7F then
       --flog:logln("~KeyDown:", hex(k))
       --flog:logln(hex(k), "c2", "xv4")
+
       k = 0x00
       --logShow(rec, "rec", "xv4")
       --flog:logtab(rec, "rec", "xv4")
       TT_CfgData.FileType = editors.current.type
       --logShow(TT_CfgData, "TT_CfgData", 1)
-      --TextTemplate(TT_CfgData)
+
       if not TT_Execute(TT_CfgData) then
         WC_Execute(WC_CfgData)
+
       end
 
     end
   end -- if
 
   return false
+
 end ---- ProcessEditorInput
 --------------------------------------------------------------------------------

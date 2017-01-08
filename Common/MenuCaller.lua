@@ -30,6 +30,7 @@ local MenuScripts = { -- Скрипты с меню:
   FilterMenu = "Rh_Scripts.Common.FilterMenu",  -- Фильтрационное меню
   MenuTexter = "Rh_Scripts.Common.MenuTexter",  -- Формирователь текста для меню
   --VKeyboard  = "Rh_Scripts.Common.VKeyboard",   -- "Виртуальная клавиатура"
+
 } --- MenuScripts
 
 ---------------------------------------- Menu class
@@ -37,7 +38,8 @@ local TMenu = {}
 local MMenu = { __index = TMenu }
 
 local function CreateMenu (Properties)--, Items) --> (object)
-  local Properties = Properties or {}
+
+  Properties = Properties or {}
   local Options = Properties.Caller or {}
 
   local self = {
@@ -47,9 +49,11 @@ local function CreateMenu (Properties)--, Items) --> (object)
     Kind      = Options.Kind or Properties.MenuView,
 
     Run       = false, -- Вид запускаемого меню
+
   } --- self
 
   return setmetatable(self, MMenu)
+
 end -- CreateMenu
 
 ---------------------------------------- Menu making
@@ -58,9 +62,11 @@ do
 
 -- Определение вида запускаемого меню.
 function TMenu:DefineKind () --| (self.ShowMenu)
+
   local Script = MenuScripts[self.Kind]
   -- Загрузка скрипта меню или использование стандартного меню.
   self.Run = Script and self.Require(Script) or far_Menu
+
 end ----
 
 end -- do
@@ -68,6 +74,7 @@ end -- do
 
 function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
                     --| (Menu) and/or --> (Menu|Items)
+
   if not Items or not Items[1] then return end
 
   local _Menu = CreateMenu(Properties)--, Items)
@@ -79,9 +86,11 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
   -- Вывод меню / Возврат самого меню
   if not _Menu.Call then
     return _Menu.Run(Properties, Items, BreakKeys, ShowMenu)
+
   end
 
   return _Menu.Call(_Menu.Run, Properties, Items, BreakKeys, ShowMenu)
+
 end ---- Menu
 
 --------------------------------------------------------------------------------

@@ -82,6 +82,7 @@ unit.DefCustom = {
 
   help   = { topic = unit.ScriptName },
   locale = { kind = 'load' },
+
 } -- DefCustom
 
 ----------------------------------------
@@ -90,6 +91,7 @@ unit.DefOptions = {
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = unit.ScriptName,
   FileName = "kit_config",
+
 } -- DefOptions
 
 ---------------------------------------- ---- Config
@@ -102,6 +104,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
   UsePoint = false,  -- Использование символа '.' как "магического".
   UseInside  = true, -- Использование внутри слов.
   UseOutside = true, -- Использование вне слов.
+
 } -- DefCfgData
 
 ----------------------------------------
@@ -127,6 +130,7 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
     SuitName = ScriptAutoName,
   }, --
   --]]
+
 } -- AutoCfgData
 
 ---------------------------------------- ---- Types
@@ -140,12 +144,14 @@ unit.DlgTypes = { -- Типы элементов диалога:
   UsePoint = "chk",
   UseInside  = "chk",
   UseOutside = "chk",
+
 } -- DlgTypes
 
 ---------------------------------------- Main class
 local TMain = {
   Guid       = win.Uuid("62023165-b8f6-41d6-b468-94ca21d7b34f"),
   ConfigGuid = win.Uuid("6227affb-5e24-42ce-9ec0-106868fad0ba"),
+
 }
 local MMain = { __index = TMain }
 
@@ -163,6 +169,7 @@ local function CreateMain (ArgData)
     DlgTypes  = unit.DlgTypes,
 
     Current   = false,
+
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -180,6 +187,7 @@ local function CreateMain (ArgData)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -192,6 +200,7 @@ do
 
 -- Форма конфигурации.
 function TMain:ConfigForm () --> (dialog)
+
   local DBox = self.DBox
   local isAuto = self.Custom.isAuto
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
@@ -219,10 +228,13 @@ function TMain:ConfigForm () --> (dialog)
   --D.sep           = {DI.Text,     0,   J1,   0,  0, 0, 0, DIF.SeparLine, L:fmtsep"TypedWord"}
   D.txtCharEnum   = {DI.Text,     A, J1+1, M-T,  0, 0, 0, 0, 0, L:config"CharEnum"}
   D.edtCharEnum   = {DI.Edit,   M-T, J1+1,   M,  0, 0, 0, 0, 0, ""}
+
   if isAuto then
-  D.txtCharsMin   = {DI.Text, B+S+1, J1+1, W-1,  0, 0, 0, 0, 0, L:config"CharsMin"}
-  D.edtCharsMin   = {DI.Edit,     B, J1+1, B+S,  0, 0, 0, 0, 0, ""}
+    D.txtCharsMin = {DI.Text, B+S+1, J1+1, W-1,  0, 0, 0, 0, 0, L:config"CharsMin"}
+    D.edtCharsMin = {DI.Edit,     B, J1+1, B+S,  0, 0, 0, 0, 0, ""}
+
   end
+
   D.chkUseMagic   = {DI.Check,    A, J1+2,   M,  0, 0, 0, 0, 0, L:config"UseMagic"}
   D.chkUsePoint   = {DI.Check,    A, J1+3,   M,  0, 0, 0, 0, 0, L:config"UsePoint"}
   D.chkUseInside  = {DI.Check,    B, J1+3,   W,  0, 0, 0, 0, 0, L:config"UseInside"}
@@ -234,6 +246,7 @@ function TMain:ConfigForm () --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
+
 end -- ConfigForm
 
 function TMain:ConfigBox ()
@@ -249,6 +262,7 @@ function TMain:ConfigBox ()
     Width     = 0,
     Height    = 0,
     Flags     = isSmall and F.FDLG_SMALLDIALOG or nil,
+
   } -- DBox
   self.DBox = DBox
 
@@ -256,11 +270,14 @@ function TMain:ConfigBox ()
           -- Edge + (sep+Btns) + group separators and
   DBox.Height = 2 + 2 + 1*2 + -- group empty lines + group item lines
                 DBox.cSlab
+
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
+
   end
 
   return DBox
+
 end ---- ConfigBox
 
 -- Настройка конфигурации.
@@ -287,6 +304,7 @@ function unit.ConfigDlg (Data)
     _Main.History:save()
 
     return true
+
   end
 end ---- ConfigDlg
 
@@ -298,6 +316,7 @@ do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
+
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not self.LocData then return end
@@ -305,6 +324,7 @@ function TMain:Localize ()
   self.L = locale.make(self.Custom, self.LocData)
 
   return self.L
+
 end ---- Localize
 
 end -- do
@@ -315,6 +335,7 @@ local find = {
   none = 0,
   lua  = function (s, pat) return s:cfind(pat) end,
   far  = function (s, pat, flags) return far_find(s, pat, 1, flags) end,
+
 } --- find
 find.none = find.lua
 
@@ -322,16 +343,30 @@ local gsub = {
   none = function (s, pat, res) return res end,
   lua  = function (s, pat, res) return s:gsub(pat, res, 1) end,
   far  = function (s, pat, res, flags) return far_gsub(s, pat, res, 1, flags) end,
+
 } --- gsub
 
 -- Поиск строки с учётом вида регэкспа.
 local function sfind (s, pat, flags, regex) --> (number | nil)
-  if find[regex] then return find[regex](s, pat, flags) end
+
+  local f = find[regex]
+  if f then
+    return f(s, pat, flags)
+
+  end
+
 end --
 
 -- Глобальная замена в строке с учётом вида регэкспа.
 local function sgsub (s, pat, res, flags, regex) --> (number | nil)
-  if res and gsub[regex] then return gsub[regex](s, pat, res, flags) end
+
+  if not res then return end
+
+  local f = gsub[regex]
+  if f then
+    return f(s, pat, res, flags)
+
+  end
 end --
 
 ---------------------------------------- ---- KitSuit
@@ -344,7 +379,9 @@ local CharControl = chrUt.CharControl
 -- -- Get kit templates for type tp.
 -- -- Получение шаблонов набора для типа tp.
 function TMain:TypeKit (Kits, tp)
+
   --logShow(Kits, tp, 2)
+
   local Kit = Kits[tp]
   if type(Kit) == 'table' then return Kit end
 
@@ -363,10 +400,12 @@ function TMain:TypeKit (Kits, tp)
     --if Cfg then addNewData(Kit, Cfg) end -- For separate use!
     --if k == 'source' then logShow({ Cfg, w }, "Fill: "..k, 1) end
     Kit.CharControl = CharControl(Kit)
+
   end
   --logShow(Kit, tp, 2)
 
   return Kit
+
 end -- TypeKit
 
 do
@@ -394,12 +433,15 @@ function TMain:MakeKit ()
       _require_ = dorequire,
       _FullDir_ = FullDir,
       _KitCfg_  = KitCfg,
+
     } --
     unit.KitSuit[self.Options.SuitName] = Kits
+
   end
   --logShow(Kits, "Kits", 2)
 
   return self:TypeKit(Kits, self.Current.FileType)
+
 end -- MakeKit
 
 end -- do
@@ -417,6 +459,7 @@ function TMain:MakeProps ()
   self.Current = { FileType = Cfg.FileType or curFileType() }
 
   return true
+
 end -- MakeProps
 
 end -- do
@@ -428,6 +471,7 @@ function TMain:Prepare ()
   self:MakeProps()
 
   return self:MakeKit()
+
 end -- Prepare
 
 ---------------------------------------- ---- Words
@@ -464,6 +508,7 @@ function TMain:FindTemplates () --> (table)
     if Ctrl then
       Word, Slab = Ctrl:atPosWord(CurCfg.Line, CurCfg.Pos)
       noSkip = Ctrl:isWordUse(Word, Slab) -- Проверка на пропуск
+
       --[[
       logShow({ { Word, Slab, noSkip },
                 { Cfg.CharEnum, Cfg.UseInside,
@@ -471,11 +516,13 @@ function TMain:FindTemplates () --> (table)
                 { Ctrl.cfg.CharEnum, Ctrl.cfg.UseInside,
                   Ctrl.cfg.UseOutside, Ctrl.cfg.CharsMin } }, tp, 2)
       --]]
+
     end
 
     if noSkip then
       local q = 0 -- (!)
       local K_rex = Kit.regex
+
       -- Цикл поиска по всем шаблонам:
       for k, v in ipairs(Kit) do
         local f = v.find
@@ -498,15 +545,20 @@ function TMain:FindTemplates () --> (table)
             tLast = {
               Tpl = v, Find = f, sPos = p, qPos = q, regex = regex,
               Type = tp, Index = k, --Kit = Kit, -- DEBUG
+
             } --
             --logShow({ k, f, t[#t], tLast }, tp)
+
             if #t == 0 then
               t[1] = tLast
+
             elseif (Ctrl and q and q == 1 and t[#t].qPos == 1) or
                    (not Ctrl   and p == 1 and t[#t].sPos == 1) then
               t[#t+1] = tLast
+
             else
               t[#t] = tLast
+
             end
           end
         end -- if p
@@ -514,13 +566,16 @@ function TMain:FindTemplates () --> (table)
     end -- if noSkip
 
     tp = Kit.inherit ~= false and cfgNextType(tp, Kits._KitCfg_)
+
   end -- while
 
   --logShow(tLast, "FindTemplates Last")
   --if #t > 0 then logShow(t, "FindTemplates") end
   --if #t > 0 then logShow(t[#t], t[#t] and tostring(t[#t].Type)) end
   --if #t > 0 then logShow(t[#t], self.Options.SuitName) end
+
   return tLast and t --or nil
+
 end -- FindTemplates
 
 ---------------------------------------- Main control
@@ -537,20 +592,26 @@ do
   --local Undo_UndoRedo  = F.EUR_UNDO
 
   local function RunApply (Tpl, Cfg) --> (bool)
+
     if Tpl.params then
       return pcall(Tpl.apply, Cfg, unpack(Tpl.params))
+
     else
       return pcall(Tpl.apply, Cfg, Tpl.param)
+
     end
   end -- RunApply
 
   local RunMacro = macUt.Execute
   
   local function RunPlain (text) --> (bool)
+
     --if not EditorInsText(nil, text) then return end
     --EditorRedraw()
     --return true
+
     return farEdit.Execute(EditorInsText, nil, text)
+
   end -- RunPlain
 
 -- Apply found template.
@@ -585,41 +646,53 @@ function TMain:ApplyTemplate ()
     --[[
     if Tpl.params then
       isOk, res = pcall(Tpl.apply, Cfg, unpack(Tpl.params))
+
     else
       isOk, res = pcall(Tpl.apply, Cfg, Tpl.param)
+
     end
     --]]
+
     isOk, res = RunApply(Tpl, Cfg)
     --logShow({ isOk, res }, "apply", 2)
     if not isOk then
       far.Message(res, "Error using "..unit.DefCustom.name, nil, "wl")
+
       return
     end
+
     if type(res) ~= 'string' then return false end
 
     kind = Tpl.as or "macro"
+
   end -- if
   --logShow({ kind, Tpl, res }, "Apply", "d1 t")
 
   local RunTpl
   if     Tpl.macro or kind == "macro" then -- Macro-template
     RunTpl = RunMacro
+
   elseif Tpl.plain or kind == "plain" then -- Plain template
     RunTpl = RunPlain
+
   end
 
   if RunTpl then
     if not Tpl.add then -- Замена
       EditorSetPos(nil, 0, CurCfg.Frag:len() - DelLen + 1)
       --logShow({ res, CurCfg.Frag:len(), DelLen }, "RunTpl")
+
       if not DelText(nil, DelLen) then return end
+
     end
 
     --logShow(res, "RunTpl")
     return RunTpl(res)
+
   end
 
   return false -- Шаблон не применён
+
 end -- ApplyTemplate
 
 end -- do
@@ -637,9 +710,11 @@ function TMain:ProcessTemplates () --> (bool | nil)
   while isOk == false and k <= #CfgTpl do
     Cfg.Template, k = CfgTpl[k], k + 1
     isOk = self:ApplyTemplate()
+
   end --
 
   return isOk
+
 end -- ProcessTemplates
 
 ---------------------------------------- ---- Run
@@ -676,6 +751,7 @@ function TMain:Run () --> (bool | nil)
 
   -- Обработка найденных шаблонов
   return self:ProcessTemplates()
+
 end -- Run
 
 ---------------------------------------- main
@@ -695,15 +771,18 @@ function unit.Execute (Data) --> (bool | nil)
   if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
+
 end ---- Execute
 
 -- Сброс шаблонов для перезагрузки из файлов.
 function unit.Update ()
   for k in pairs(unit.KitSuit) do
     unit.KitSuit[k] = false
+
   end
 
   far.Message("Templates will be reloaded!", "Update text templates")
+
 end ---- Update
 
 --------------------------------------------------------------------------------

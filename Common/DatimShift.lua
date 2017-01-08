@@ -64,6 +64,7 @@ local DefCustom = {
 
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', file = unit.FileName, },
+
 } --- DefCustom
 
 ---------------------------------------- ---- Config
@@ -110,12 +111,15 @@ local function Configure (ArgData)
     CfgData = CfgData,
     ArgData = ArgData,
     --DefCfgData = DefCfgData,
+
   } ---
 
   locale.customize(Config.Custom)
   --logShow(Config.Custom, "Custom")
 --]]
+
   return Config
+
 end -- Configure
 
 ---------------------------------------- Dialog
@@ -130,6 +134,7 @@ local DIF = dlgUt.DlgItemFlag
 
 -- Диалог.
 local function TimeDlg (Config) --> (dialog)
+
   local DBox = Config.DBox
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
 
@@ -222,26 +227,32 @@ local function TimeDlg (Config) --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
+
 end -- TimeDlg
 
 local ConfigGuid = win.Uuid("") -- TODO: Задать GUID
 
 -- Настройка.
 function unit.TimeShiftDlg (Data)
+
   local Config = Configure(Data)
   local HelpTopic = Config.Custom.help.tlink
+
   -- Локализация:
   LocData = locale.getData(Config.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
+
   -- Конфигурация:
   local isSmall = Config.Custom.isSmall
   if isSmall == nil then isSmall = true end
+
   -- Подготовка:
   Config.DBox = {
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
     Width = 0, Height = 0,
+
   } --
   local DBox = Config.DBox
   --DBox.Width  = 2 + 36*2 -- Edge + 2 columns
@@ -249,6 +260,7 @@ function unit.TimeShiftDlg (Data)
   --DBox.Height = 2 + 2 + 5*2 + -- group empty lines + group item lines
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
+
   end
 
   -- Настройка:
@@ -257,6 +269,7 @@ function unit.TimeShiftDlg (Data)
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
   if D.btnOk and iDlg == D.btnOk.id then
     return true -- TODO: time class or string
+
   end
 end ---- TimeShiftDlg
 

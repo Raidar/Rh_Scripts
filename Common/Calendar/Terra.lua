@@ -22,10 +22,12 @@ local Custom = {
   name = "Terra",
   path = "Rh_Scripts.Common.Calendar.",
   locale = { kind = 'require' },
+
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 --logShow(L, "L", "wM")
 
@@ -111,6 +113,7 @@ local Data = {
     --format = "m-d",
     Kind = "prof",
     Note = L.InterAccountantsDay, },
+
 } --- Data
 
 return Data

@@ -48,8 +48,8 @@ local function SVKeyValue (s) --> (string)
   if not s or s == "" then return s end
 
   --return s:upper()
-  return SKEY_SymNames[s] or s:len() == 1 and s:upper() or s
-
+  return SKEY_SymNames[s] or
+         s:len() == 1 and s:upper() or s
 end --
 unit.SVKeyValue = SVKeyValue
 
@@ -117,6 +117,7 @@ end
 
 -- Получение функции для комбинации.
 local function GetKeyFunc (m) --> (func|nil)
+
   m = m or ""
   if m == "" then return unit.SVKeyValue end
   if m:sub(-1, -1) == '+' then m = m:sub(1, -2) end
@@ -134,9 +135,11 @@ do
 -- Make menu head.
 -- Формирование пункта-заголовка меню.
 function unit.MakeHeadItem (s) --> (table)
+
   local t = {
     Label = true,
     text = type(s) ~= 'table' and s or s[1],
+
   } ---
 
   return t
@@ -156,6 +159,7 @@ end ---- MakeItemText
 -- Make handle key for item.
 -- Формирование клавиши обработки для пункта.
 local function MakeItemKey (item, Keys, key, char)
+
   local keys = Keys[key]
   if not keys then return end
 
@@ -176,6 +180,7 @@ unit.MakeItemKey = MakeItemKey
 -- Make menu item.
 -- Формирование пункта меню.
 function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
+
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
 
@@ -250,6 +255,7 @@ local MakeHeadItem = unit.MakeHeadItem
                        KeyOrder должен быть стандартного вида.
 --]]
 function unit.MakeItems (Properties, Data, Keys) --> (table)
+
   -- Настройка параметров:
   local tp = type(Data)
   if tp ~= 'string' and tp ~= 'table' then
@@ -434,6 +440,7 @@ end ---- MakeItems
   Value (string) - новый текст пункта-метки.
 --]]
 function unit.SetLabelItemsText (Items, Text, Value) --|> Items
+
   assert(type(Items) == 'table')
 
   Text  = Text or " "
@@ -459,6 +466,7 @@ end ---- SetLabelItemsText
   Value   (string) - новое значение поля пункта.
 --]]
 function unit.SetKeyItemsField (Items, Pattern, Field, Value) --|> Items
+
   assert(type(Items) == 'table')
 
   Pattern = Pattern or "Space$"
@@ -512,6 +520,7 @@ local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 local InsText = farUt.InsertText
 
 function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
+
   Config = Config or {}
 
   local self = {
@@ -568,14 +577,17 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
     AKey     = true,
     Enter    = true,
     DblClick = true,
+
   } --- mChooseKinds
 
   local function StopDrag (Flag)
     if Flag then
       self.History:save()
+
     end
 
     return -- unused result
+
   end -- StopDrag
 
   local function ChooseItem (Kind, Index)

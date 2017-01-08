@@ -60,6 +60,7 @@ local DefCustom = {
   path = unit.ScriptPath,
 
   locale = { kind = 'load', },
+
 } --- DefCustom
 
 ---------------------------------------- ---- Config
@@ -83,6 +84,7 @@ local CfgDataOrder = {
   "Separator", -- Separator --
   -- MakeResident function lines:
   "rAutoActions", "rTruncAction",
+
 } --- CfgDataOrder
 local CfgDataSepPos = tables.find(CfgDataOrder, "Separator", ipairs)
 
@@ -350,11 +352,13 @@ local DefCfgData = {
     FilePath = "TruncAction",
     EndComment = " -- Truncate Action",
   },
+
 } --- DefCfgData
 
 ---------------------------------------- ---- Types
 -- Fill DlgTypes table.
 local function MakeDlgTypes (cData, aData)
+
   local DlgTypes = {}
   local t, n, v, w, wc, Area
   --logShow(aData, "aData")
@@ -399,6 +403,7 @@ local function MakeDlgTypes (cData, aData)
   end
 
   return DlgTypes
+
 end -- MakeDlgTypes
 
 ---------------------------------------- Configure
@@ -421,8 +426,10 @@ local function Configure (ArgData)
       CfgData[k].config = CfgData[k].config or {}
       setmetatable(CfgData[k].config, { __index = v.config })
       --logShow({ CfgData[k].config, v.config }, "config")
+
     end
     setmetatable(CfgData[k], { __index = v })
+
   end -- for
   --logShow(CfgData, "CfgData", 2)
 
@@ -434,12 +441,14 @@ local function Configure (ArgData)
     CfgData = CfgData,
     ArgData = ArgData,
     --DefCfgData = DefCfgData,
+
   } ---
 
   locale.customize(Config.Custom)
   --logShow(Config.Custom, "Custom")
 
   return Config
+
 end -- Configure
 
 ---------------------------------------- Locale
@@ -455,6 +464,7 @@ local DIF = dlgUt.DlgItemFlag
 local LoadDlgItem, SaveDlgItem = dlgUt.LoadDlgItem, dlgUt.SaveDlgItem
 
 local function ConfigForm (Config) --> (dialog)
+
   local DBox = Config.DBox
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
   local I, J = isSmall and 0 or 3, isSmall and 0 or 1
@@ -511,18 +521,27 @@ local function ConfigForm (Config) --> (dialog)
 
     --D["txta"..n]  = {DI.Text,     A,    J, I0-1,  0, 0, 0, 0, 0, Area}
     if v.separator then
-    D["txts"..n]  = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:label"Separator"}
+      D["txts"..n]  = {DI.Text,    I0,    J, IH-2,  0, 0, 0, 0, 0, L:label"Separator"}
+
     elseif Area ~= "c" then
-    D["edtk"..n]  = {DI.Edit,    I0,    J, IH-2,  0, 0, 0, 0, 0, ""}
+      D["edtk"..n]  = {DI.Edit,    I0,    J, IH-2,  0, 0, 0, 0, 0, ""}
+
     end
-    D["txti"..n]  = {DI.Text,    IH,    J, I1-1,  0, 0, 0, 0, 0, L:config(v.Name)}
+
+    do
+      D["txti"..n]  = {DI.Text,    IH,    J, I1-1,  0, 0, 0, 0, 0, L:config(v.Name)}
+    end
+
     if Area ~= "c" then
-    D["chki"..n]  = {DI.Check,   I1,    J, IL-1,  0, 0, 0, 0, 0, ""}
-    D["edti"..n]  = {DI.Edit,    IL,    J, I2-1,  0, 0, 0, 0, 0, ""}
+      D["chki"..n]  = {DI.Check,   I1,    J, IL-1,  0, 0, 0, 0, 0, ""}
+      D["edti"..n]  = {DI.Edit,    IL,    J, I2-1,  0, 0, 0, 0, 0, ""}
+
     end
+
     if Area:find("c") and v.config then
-    D["chkc"..n]  = {DI.Check,   I2,    J, IC-1,  0, 0, 0, 0, 0, ""}
-    D["edtc"..n]  = {DI.Edit,    IC,    J, I3-1,  0, 0, 0, 0, 0, ""}
+      D["chkc"..n]  = {DI.Check,   I2,    J, IC-1,  0, 0, 0, 0, 0, ""}
+      D["edtc"..n]  = {DI.Edit,    IC,    J, I3-1,  0, 0, 0, 0, 0, ""}
+
     end
   end -- for
 
@@ -540,6 +559,7 @@ local function ConfigForm (Config) --> (dialog)
     D["txtr"..n]  = {DI.Text,    IH,    J, I1-1,  0, 0, 0, 0, 0, L:config("Res_"..v.Name)}
     D["chkr"..n]  = {DI.Check,   I1,    J, IL-1,  0, 0, 0, 0, 0, ""}
     D["txtrd"..n] = {DI.Text,  IL+1,    J, I3-1,  0, 0, 0, 0, 0, L:config("Res_Desc_"..v.Name)}
+
   end -- for
 
   -- Кнопки управления:
@@ -549,12 +569,15 @@ local function ConfigForm (Config) --> (dialog)
   --D.edtumFileName = {DI.Edit,    IC,  H-1, I3-1,  0, 0, 0, 0, 0, ""}
 
   return D
+
 end -- ConfigForm
 
 -- Загрузка данных в элементы диалога.
 local function LoadDlgData (cData, aData, D, DlgTypes)
+
   --logShow(aData, "dData")
   --logShow(cData, "cData", 2)
+
   LoadDlgItem(DlgTypes.umFileName, cData.um, D)
 
   for k = 1, CfgDataSepPos - 1 do
@@ -565,30 +588,38 @@ local function LoadDlgData (cData, aData, D, DlgTypes)
     if Area ~= "c" then
       if not v.separator then
         LoadDlgItem(t.HotKey,  v, D)
+
       end
 
       LoadDlgItem(t.enabled, v, D)
       LoadDlgItem(t.Title,   v, D)
+
     end
 
     v = v.config
     if Area:find("c") and v then
       t = t.config
+
       LoadDlgItem(t.enabled, v, D)
       LoadDlgItem(t.Title,   v, D)
+
     end
   end
 
   for k = CfgDataSepPos + 1, #CfgDataOrder do
     local n = CfgDataOrder[k]
     local v, t = cData[n], DlgTypes[n]
+
     LoadDlgItem(t.enabled, v, D)
+
   end
 end -- LoadDlgData
 
 -- Сохранение данных из элементов диалога.
 local function SaveDlgData (cData, aData, D, DlgTypes)
+
   --logShow(aData, "aData")
+
   SaveDlgItem(DlgTypes.umFileName, cData.um, D)
 
   for k = 1, CfgDataSepPos - 1 do
@@ -599,24 +630,30 @@ local function SaveDlgData (cData, aData, D, DlgTypes)
     if Area ~= "c" then
       if not v.separator then
         SaveDlgItem(t.HotKey,  v, D)
+
       end
 
       SaveDlgItem(t.enabled, v, D)
       SaveDlgItem(t.Title,   v, D)
+
     end
 
     v = v.config
     if Area:find("c") and v then
       t = t.config
+
       SaveDlgItem(t.enabled, v, D)
       SaveDlgItem(t.Title,   v, D)
+
     end
   end
 
   for k = CfgDataSepPos + 1, #CfgDataOrder do
     local n = CfgDataOrder[k]
     local v, t = cData[n], DlgTypes[n]
+
     SaveDlgItem(t.enabled, v, D)
+
   end
 end -- SaveDlgData
 
@@ -626,17 +663,21 @@ local numbers = require 'context.utils.useNumbers'
 
 -- Настройка конфигурации.
 function unit.ConfigDlg (Data)
+
   -- Конфигурация:
   local Config = Configure(Data)
   local HelpTopic = Config.Custom.HelpTopic
+
   -- Локализация:
   LocData = locale.getData(Config.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not LocData then return end
   L = locale.make(Config.Custom, LocData)
+
   -- Конфигурация:
   local isSmall = Config.Custom.isSmall
   if isSmall == nil then isSmall = true end
+
   -- Подготовка:
   Config.DBox = {
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
@@ -646,6 +687,7 @@ function unit.ConfigDlg (Data)
     lblDesc = 20,   -- x1
     chkItem = 3,    -- x2
     edtName = 16,   -- x2
+
   } --
   local DBox = Config.DBox
   DBox.FixWidth  = 2 +                  -- Edge
@@ -664,12 +706,16 @@ function unit.ConfigDlg (Data)
       if dName > 4 then dName = 4 end
       DBox.edtHKey = DBox.edtHKey + dName
       DBox.edtName = DBox.edtName + dName
+
     end
     local dDesc = (dWidth - dName * 3)
     if dDesc > 5 then dDesc = 5 end
     DBox.lblDesc = DBox.lblDesc + dDesc
+
     --logShow({ dWidth, dName, dDesc, DBox })
+
   end
+
   --DBox.Width = DBox.FixWidth
   DBox.Width  = 2 +
                 2 +
@@ -689,15 +735,19 @@ function unit.ConfigDlg (Data)
   --              1 +
   --              2*2 +
   --              #CfgDataOrder - 1
+
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
+
   end
   --logShow(DBox, "DBox", 1)
+
   -- Настройка:
   local D = ConfigForm(Config)
   local cData, aData = Config.CfgData, Config.ArgData
   local DlgTypes = MakeDlgTypes(cData, aData)
   --logShow(DlgTypes, "DlgTypes", 2)
+
   LoadDlgData(cData, aData, D, DlgTypes)
   local iDlg = dlgUt.Dialog(ConfigGuid, -1, -1,
                             DBox.Width, DBox.Height, HelpTopic, D, DBox.Flags)
@@ -709,15 +759,21 @@ function unit.ConfigDlg (Data)
     Config.History:save()
     local isOk, Result = unit.CreateFile(cData) -- Создание _usermenu.lua
     --logShow({ isOk, Result }, "isOk", 1)
+
     local MsgTitle = L:t"FileCreate"
     if isOk then
       farMsg(Result.."\n"..L:t"RequireReloadFAR", MsgTitle)
+
     elseif isOk == false then
       farMsg(Result, MsgTitle, nil, 'w')
+
     else
       farMsg(Result, MsgTitle)
+
     end -- if
+
     return true
+
   end
 
 end ---- ConfigDlg
@@ -740,7 +796,9 @@ local farError = function (Msg) return far.Message(Msg, CErrorTitle, nil, 'e') e
 
 if rawget(_G, 'context') == nil then
   farError(SInstallError:format"LuaFAR context is required!")
+
   return false
+
 end
 
 ----------------------------------------
@@ -789,27 +847,36 @@ AddToMenu("c", "&Rh_Scripts package", nil, ScriptsPath.."Common\\rhsConfig")
 ---------------------------------------- Main make
 -- Quote string.
 local function q (s) --> (string)
+
   return (s and s ~= " ") and ('%q'):format(s) or "nil"
+
 end --
 
 -- Name parameter.
 local function p (s) --> (string)
+
   return (s and s ~= " ") and ('"%s"'):format(s) or ''
+
 end --
 
 -- Fix wrong fields args.
 -- Exclude trailing nil args.
 local function FixLine (s) --> (string)
+
   local n
   s = s:gsub('%.%.,', ',')
   --s = s:gsub('%.%.\"\",', ',')
   repeat
     s, n = s:gsub("%, nil%)$", "%)", 1)
+
   until n == 0
+
   return s
+
 end -- FixLine
 
 local function GenerateFile (f, Data)
+
   f:write(_UM.Start)
   --logShow(Data, "Data")
 
@@ -830,6 +897,7 @@ local function GenerateFile (f, Data)
       if v.Comment and (v.enabled or
                         (Area:find("c") and w and w.enabled)) then
         f:write(v.Comment, '\n')
+
       end
 
       if Area ~= "c" and v.enabled then
@@ -838,6 +906,7 @@ local function GenerateFile (f, Data)
                                          v.BasePath, p(v.FilePath),
                                          q(v.Param1), q(v.Param2) )
         f:write(FixLine(s), '\n')
+
       end
 
       --logShow({ Area, w, w and w.enabled }, n, 2)
@@ -849,6 +918,7 @@ local function GenerateFile (f, Data)
                                          p(w.FilePath or v.FilePath),
                                          q(w.Param1), q(w.Param2) )
         f:write(FixLine(s), '\n')
+
       end
     end
   end -- for
@@ -863,6 +933,7 @@ local function GenerateFile (f, Data)
                                       v.BasePath, p(v.FilePath),
                                       q(v.CmdParam) )
       f:write(FixLine(s), '\n')
+
     end
   end -- for
 
@@ -874,14 +945,17 @@ local function GenerateFile (f, Data)
       f:write(_UM.MakeResItem:format(v.BasePath, p(v.FilePath)))
       if v.EndComment then f:write(v.EndComment) end
       f:write('\n')
+
     end
   end
 
   f:write(_UM.End)
+
 end ---- GenerateFile
 
 -- Создание файла в соответствии с пользовательскими настройками.
 function unit.CreateFile (Data)
+
   local um = Data.um
   local umFullName = unit.WorkerPath..um.FilePath..um.FileName
 
@@ -891,6 +965,7 @@ function unit.CreateFile (Data)
     if farMsg(L:t"FileExistsOverwrite",
               L:t"FileCreate", ";OkCancel") ~= 1 then
       return nil, L:t"FileCreatingCancel"
+
     end
   end
 
@@ -900,7 +975,9 @@ function unit.CreateFile (Data)
   --local isOk = true, GenerateFile(f, Data)
   local isOk = pcall(GenerateFile, f, Data)
   f:close()
+
   return isOk, L:t(isOk and "FileCreatingSuccess" or "FileNewContentError")
+
 end ---- CreateFile
 
 --------------------------------------------------------------------------------

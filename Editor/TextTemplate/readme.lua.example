@@ -2024,6 +2024,7 @@ local Data = {
   { find = "[ё`][9%(][TtЕе][0%)]", plain = "™" },
 
   --[[END]]--
+
 } --- Data
 
 return Data

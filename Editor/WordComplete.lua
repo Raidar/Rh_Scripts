@@ -93,6 +93,7 @@ unit.DefCustom = {
 
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', },
+
 } -- DefCustom
 
 ----------------------------------------
@@ -102,6 +103,7 @@ unit.DefOptions = {
   BaseDir  = "Rh_Scripts.Editor",
   WorkDir  = unit.ScriptName,
   FileName = "kit_config",
+
 } -- DefOptions
 
 ---------------------------------------- ---- Config
@@ -152,6 +154,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
   UndueOut = false,   -- Отмена завершения при неверных клавишах.
   LoneAuto = false,   -- Автодополнение при одном слове в списке.
   TailOnly = false,   -- Добавление только ненабранной части слова.
+
 } -- DefCfgData
 
 ----------------------------------------
@@ -202,6 +205,7 @@ unit.AutoCfgData = { -- Конфигурация для авто-режима:
     SuitName = unit.ScriptAutoName,
   }, --
   --]]
+
 } -- AutoCfgData
 
 ----------------------------------------
@@ -253,6 +257,7 @@ unit.CodeCfgData = { -- Конфигурация для кодо-режима:
     --SuitName = unit.ScriptCodeName,
   }, --
   --]]
+
 } -- CodeCfgData
 
 ---------------------------------------- ---- Types
@@ -297,6 +302,7 @@ unit.DlgTypes = { -- Типы элементов диалога:
   UndueOut = "chk",
   LoneAuto = "chk",
   TailOnly = "chk",
+
 } -- DlgTypes
 
 ---------------------------------------- ---- Popup
@@ -316,11 +322,13 @@ unit.CompleteKeys = { -- Клавиши завершения слова:
   { BreakKey = "ShiftTab",      Action = A_Insert,  },
   { BreakKey = "ShiftEnter",    Action = A_Insert,  },
   { BreakKey = "ShiftNumEnter", Action = A_Insert,  },
+
 } --- CompleteKeys
 
 unit.LocalUseKeys = { -- Клавиши локального использования:
   { BreakKey = "CtrlEnter",       Action = A_Replace, Effect = E_Shared, },
   { BreakKey = "CtrlShiftEnter",  Action = A_Insert,  Effect = E_Shared, },
+
 } --- LocalUseKeys
 
 ---------------------------------------- Main class
@@ -328,6 +336,7 @@ local TMain = {
   Guid       = win.Uuid("64b26458-1e8b-4844-9585-becfb1ce8de3"),
   ConfigGuid = win.Uuid("642eb0fd-d297-4855-bd87-dcecfc55bcc4"),
   PopupGuid  = false,
+
 }
 local MMain = { __index = TMain }
 
@@ -337,8 +346,10 @@ local function CreateMain (ArgData)
 
   if ArgData == "AutoCfgData" then
     ArgData = unit.AutoCfgData
+
   elseif ArgData == "CodeCfgData" then
     ArgData = unit.CodeCfgData
+
   end
 
   local self = {
@@ -369,6 +380,7 @@ local function CreateMain (ArgData)
     ItemPos   = false,    -- Позиция выбранного пункта меню
     Action    = false,    -- Выбранное действие
     Effect    = false,    -- Выбранный эффект
+
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -391,6 +403,7 @@ local function CreateMain (ArgData)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -403,6 +416,7 @@ do
   local ListItems = dlgUt.ListItems
 
 function TMain:ConfigForm () --> (dialog)
+
   local DBox = self.DBox
   local isAuto = self.Custom.isAuto
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
@@ -425,79 +439,99 @@ function TMain:ConfigForm () --> (dialog)
 
   local L = self.L
   local D = dialog.NewDialog() -- Форма окна:
-                    -- 1          2     3    4   5  6  7  8  9  10
-                    -- Type      X1    Y1   X2  Y2  L  H  M  F  Data
-  D._             = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0,
-                     L:caption(isAuto and "DlgAuto" or "Dialog")}
+                      -- 1          2     3    4   5  6  7  8  9  10
+                      -- Type      X1    Y1   X2  Y2  L  H  M  F  Data
+  D._               = {DI.DBox,     I,    J, W+2,  H, 0, 0, 0, 0,
+                       L:caption(isAuto and "DlgAuto" or "Dialog")}
   -- Свойства набранного слова:
-  D.sep           = {DI.Text,     0,   J1,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"TypedWord"}
-  D.txtCharEnum   = {DI.Text,     A, J1+1, M-T,  0, 0, 0, 0, 0, L:config"CharEnum"}
-  D.edtCharEnum   = {DI.Edit,   M-T, J1+1,   M,  0, 0, 0, 0, 0, ""}
-  if isAuto then
-  D.txtCharsMin   = {DI.Text, B+S+1, J1+1, W-1,  0, 0, 0, 0, 0, L:config"CharsMin"}
-  D.edtCharsMin   = {DI.Edit,     B, J1+1, B+S,  0, 0, 0, 0, 0, ""}
-  end
-  D.chkUseMagic   = {DI.Check,    A, J1+2,   M,  0, 0, 0, 0, 0, L:config"UseMagic"}
-  D.chkUsePoint   = {DI.Check,    A, J1+3,   M,  0, 0, 0, 0, 0, L:config"UsePoint"}
-  D.chkUseInside  = {DI.Check,    B, J1+3,   W,  0, 0, 0, 0, 0, L:config"UseInside"}
-  D.chkUseOutside = {DI.Check,    B, J1+2,   W,  0, 0, 0, 0, 0, L:config"UseOutside"}
+  D.sep             = {DI.Text,     0,   J1,   0,  0, 0, 0, 0,
+                       DIF.SeparLine, L:fmtsep"TypedWord"}
+  D.txtCharEnum     = {DI.Text,     A, J1+1, M-T,  0, 0, 0, 0, 0, L:config"CharEnum"}
+  D.edtCharEnum     = {DI.Edit,   M-T, J1+1,   M,  0, 0, 0, 0, 0, ""}
+                    
+  if isAuto then    
+    D.txtCharsMin   = {DI.Text, B+S+1, J1+1, W-1,  0, 0, 0, 0, 0, L:config"CharsMin"}
+    D.edtCharsMin   = {DI.Edit,     B, J1+1, B+S,  0, 0, 0, 0, 0, ""}
+                    
+  end               
+                    
+  D.chkUseMagic     = {DI.Check,    A, J1+2,   M,  0, 0, 0, 0, 0, L:config"UseMagic"}
+  D.chkUsePoint     = {DI.Check,    A, J1+3,   M,  0, 0, 0, 0, 0, L:config"UsePoint"}
+  D.chkUseInside    = {DI.Check,    B, J1+3,   W,  0, 0, 0, 0, 0, L:config"UseInside"}
+  D.chkUseOutside   = {DI.Check,    B, J1+2,   W,  0, 0, 0, 0, 0, L:config"UseOutside"}
   -- Свойства отбора слов:
-  D.sep           = {DI.Text,     0,   J2,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsFind"}
-  D.txtFindKind   = {DI.Text,     A, J2+1,   Q,  0, 0, 0, 0, 0, L:config"FindKind"}
-  D.cbxFindKind   = {DI.Combo,  Q+1, J2+1,   M,  0,
-                     ListItems(self, "FindKind", L), 0, 0, DIF.ComboList, ""}
-  D.txtFindsMax   = {DI.Text,     B, J2+1, W-S,  0, 0, 0, 0, 0, L:config"FindsMax"}
-  D.edtFindsMax   = {DI.Edit,   W-S, J2+1, W-1,  0, 0, 0, 0, 0, ""}
-  D.txtMinLength  = {DI.Text, B+S+1, J2+2, W-1,  0, 0, 0, 0, 0, L:config"MinLength"}
-  D.edtMinLength  = {DI.Edit,     B, J2+2, B+S,  0, 0, 0, 0, 0, ""}
-  --D.txtMinLength  = {DI.Text,     B, J2+2, W-S,  0, 0, 0, 0, 0, L:config"MinLength"}
-  --D.edtMinLength  = {DI.Edit,   W-S, J2+2, W-1,  0, 0, 0, 0, 0, ""}
-  D.chkPartFind   = {DI.Check,    B, J2+3,   W,  0, 0, 0, 0, 0, L:config"PartFind"}
-  D.chkMatchCase  = {DI.Check,    B, J2+4,   W,  0, 0, 0, 0, 0, L:config"MatchCase"}
-  D.txtLinesView  = {DI.Text,     A, J2+2,   M,  0, 0, 0, 0, 0, L:config"LinesView"}
-  D.txtLinesUp    = {DI.Text,   A+1, J2+3, M-G,  0, 0, 0, 0, 0, L:config"LinesUp"}
-  D.edtLinesUp    = {DI.Edit,   M-G, J2+3,   M,  0, 0, 0, 0, 0, ""}
-  D.txtLinesDown  = {DI.Text,   A+1, J2+4, M-G,  0, 0, 0, 0, 0, L:config"LinesDown"}
-  D.edtLinesDown  = {DI.Edit,   M-G, J2+4,   M,  0, 0, 0, 0, 0, ""}
+  D.sep             = {DI.Text,     0,   J2,   0,  0, 0, 0, 0,
+                       DIF.SeparLine, L:fmtsep"WordsFind"}
+  D.txtFindKind     = {DI.Text,     A, J2+1,   Q,  0, 0, 0, 0, 0, L:config"FindKind"}
+  D.cbxFindKind     = {DI.Combo,  Q+1, J2+1,   M,  0,
+                       ListItems(self, "FindKind", L), 0, 0, DIF.ComboList, ""}
+  D.txtFindsMax     = {DI.Text,     B, J2+1, W-S,  0, 0, 0, 0, 0, L:config"FindsMax"}
+  D.edtFindsMax     = {DI.Edit,   W-S, J2+1, W-1,  0, 0, 0, 0, 0, ""}
+  D.txtMinLength    = {DI.Text, B+S+1, J2+2, W-1,  0, 0, 0, 0, 0, L:config"MinLength"}
+  D.edtMinLength    = {DI.Edit,     B, J2+2, B+S,  0, 0, 0, 0, 0, ""}
+  --D.txtMinLength    = {DI.Text,     B, J2+2, W-S,  0, 0, 0, 0, 0, L:config"MinLength"}
+  --D.edtMinLength    = {DI.Edit,   W-S, J2+2, W-1,  0, 0, 0, 0, 0, ""}
+  D.chkPartFind     = {DI.Check,    B, J2+3,   W,  0, 0, 0, 0, 0, L:config"PartFind"}
+  D.chkMatchCase    = {DI.Check,    B, J2+4,   W,  0, 0, 0, 0, 0, L:config"MatchCase"}
+  D.txtLinesView    = {DI.Text,     A, J2+2,   M,  0, 0, 0, 0, 0, L:config"LinesView"}
+  D.txtLinesUp      = {DI.Text,   A+1, J2+3, M-G,  0, 0, 0, 0, 0, L:config"LinesUp"}
+  D.edtLinesUp      = {DI.Edit,   M-G, J2+3,   M,  0, 0, 0, 0, 0, ""}
+  D.txtLinesDown    = {DI.Text,   A+1, J2+4, M-G,  0, 0, 0, 0, 0, L:config"LinesDown"}
+  D.edtLinesDown    = {DI.Edit,   M-G, J2+4,   M,  0, 0, 0, 0, 0, ""}
   -- Свойства сортировки:
-  D.sep           = {DI.Text,     0,   J3,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsSort"}
-  D.txtSortKind   = {DI.Text,     A, J3+1,   Q,  0, 0, 0, 0, 0, L:config"SortKind"}
-  D.cbxSortKind   = {DI.Combo,  Q+1, J3+1,   M,  0,
-                     ListItems(self, "SortKind", L), 0, 0, DIF.ComboList, ""}
-  D.txtSortsMin   = {DI.Text,     B, J3+1, W-S,  0, 0, 0, 0, 0, L:config"SortsMin"}
-  D.edtSortsMin   = {DI.Edit,   W-S, J3+1, W-1,  0, 0, 0, 0, 0, ""}
+  D.sep             = {DI.Text,     0,   J3,   0,  0, 0, 0, 0,
+                       DIF.SeparLine, L:fmtsep"WordsSort"}
+  D.txtSortKind     = {DI.Text,     A, J3+1,   Q,  0, 0, 0, 0, 0, L:config"SortKind"}
+  D.cbxSortKind     = {DI.Combo,  Q+1, J3+1,   M,  0,
+                       ListItems(self, "SortKind", L), 0, 0, DIF.ComboList, ""}
+  D.txtSortsMin     = {DI.Text,     B, J3+1, W-S,  0, 0, 0, 0, 0, L:config"SortsMin"}
+  D.edtSortsMin     = {DI.Edit,   W-S, J3+1, W-1,  0, 0, 0, 0, 0, ""}
   -- Свойства списка слов:
-  D.sep           = {DI.Text,     0,   J4,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"WordsList"}
+  D.sep             = {DI.Text,     0,   J4,   0,  0, 0, 0, 0,
+                       DIF.SeparLine, L:fmtsep"WordsList"}
+
   if not isAuto then
-  D.txtListsMax   = {DI.Text,     B, J4+1, W-S,  0, 0, 0, 0, 0, L:config"ListsMax"}
-  D.edtListsMax   = {DI.Edit,   W-S, J4+1, W-1,  0, 0, 0, 0, 0, ""}
+    D.txtListsMax   = {DI.Text,     B, J4+1, W-S,  0, 0, 0, 0, 0, L:config"ListsMax"}
+    D.edtListsMax   = {DI.Edit,   W-S, J4+1, W-1,  0, 0, 0, 0, 0, ""}
   end
-  D.chkSlabMark   = {DI.Check,    A, J4+1,   M,  0, 0, 0, 0, 0, L:config"SlabMark"}
+
+  D.chkSlabMark     = {DI.Check,    A, J4+1,   M,  0, 0, 0, 0, 0, L:config"SlabMark"}
+
   if not isAuto then
-  D.chkHotChars   = {DI.Check,    A, J4+2,   M,  0, 0, 0, 0, 0, L:config"HotChars"}
-  D.chkActionAlt  = {DI.Check,    A, J4+3,   M,  0, 0, 0, 0, 0, L:config"ActionAlt"}
+    D.chkHotChars   = {DI.Check,    A, J4+2,   M,  0, 0, 0, 0, 0, L:config"HotChars"}
+    D.chkActionAlt  = {DI.Check,    A, J4+3,   M,  0, 0, 0, 0, 0, L:config"ActionAlt"}
   end
+
   if not isAuto then
-  D.chkEmptyList  = {DI.Check,    B, J4+2,   W,  0, 0, 0, 0, 0, L:config"EmptyList"}
-  D.chkEmptyStart = {DI.Check,    B, J4+3,   W,  0, 0, 0, 0, 0, L:config"EmptyStart"}
+    D.chkEmptyList  = {DI.Check,    B, J4+2,   W,  0, 0, 0, 0, 0, L:config"EmptyList"}
+    D.chkEmptyStart = {DI.Check,    B, J4+3,   W,  0, 0, 0, 0, 0, L:config"EmptyStart"}
   end
+
   -- Свойства завершения слова:
-  D.sep           = {DI.Text,     0,   J5,   0,  0, 0, 0, 0, DIF.SeparLine, L:fmtsep"TypedCmpl"}
-  D.txtTrailers   = {DI.Text,     A, J5+1, M-T,  0, 0, 0, 0, 0, L:config"Trailers"}
-  D.edtTrailers   = {DI.Edit,   M-T, J5+1,   M,  0, 0, 0, 0, 0, ""}
+  D.sep             = {DI.Text,     0,   J5,   0,  0, 0, 0, 0,
+                       DIF.SeparLine, L:fmtsep"TypedCmpl"}
+  D.txtTrailers     = {DI.Text,     A, J5+1, M-T,  0, 0, 0, 0, 0, L:config"Trailers"}
+  D.edtTrailers     = {DI.Edit,   M-T, J5+1,   M,  0, 0, 0, 0, 0, ""}
+
   if isAuto then
-  D.chkUndueOut   = {DI.Check,    B, J5+1,   W,  0, 0, 0, 0, 0, L:config"UndueOut"}
+    D.chkUndueOut   = {DI.Check,    B, J5+1,   W,  0, 0, 0, 0, 0, L:config"UndueOut"}
+
   else
-  D.chkLoneAuto   = {DI.Check,    A, J5+2,   M,  0, 0, 0, 0, 0, L:config"LoneAuto"}
-  D.chkTailOnly   = {DI.Check,    B, J5+2,   W,  0, 0, 0, 0, 0, L:config"TailOnly"}
+    D.chkLoneAuto   = {DI.Check,    A, J5+2,   M,  0, 0, 0, 0, 0, L:config"LoneAuto"}
+    D.chkTailOnly   = {DI.Check,    B, J5+2,   W,  0, 0, 0, 0, 0, L:config"TailOnly"}
+
   end
+
   -- Кнопки управления:
-  D.sep           = {DI.Text,     0,  H-2,   0,  0, 0, 0, 0, DIF.SeparLine, ""}
-  D.chkEnabled    = {DI.Check,    A,  H-1,   M,  0, 0, 0, 0, 0, L:config"Enabled"}
-  D.btnOk         = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
-  D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
+  D.sep             = {DI.Text,     0,  H-2,   0,  0, 0, 0, 0, DIF.SeparLine, ""}
+  D.chkEnabled      = {DI.Check,    A,  H-1,   M,  0, 0, 0, 0, 0, L:config"Enabled"}
+  D.btnOk           = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0,
+                       DIF.DefButton, L:defbtn"Ok"}
+  D.btnCancel       = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0,
+                       DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
+
 end -- ConfigForm
 
 function TMain:ConfigBox ()
@@ -517,6 +551,7 @@ function TMain:ConfigBox ()
     Width     = 0,
     Height    = 0,
     Flags     = isSmall and F.FDLG_SMALLDIALOG or nil,
+
   } -- DBox
   self.DBox = DBox
 
@@ -526,9 +561,11 @@ function TMain:ConfigBox ()
                 DBox.cSlab + DBox.cFind + DBox.cSort + DBox.cList + DBox.cCmpl
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
+
   end
 
   return DBox
+
 end ---- ConfigBox
 
 function unit.ConfigDlg (Data)
@@ -554,6 +591,7 @@ function unit.ConfigDlg (Data)
     _Main.History:save()
 
     return true
+
   end
 end ---- ConfigDlg
 
@@ -606,6 +644,7 @@ function TMain:MakeKit ()
   -- на свой метод вывода списка подходящих слов.
 
   return true
+
 end -- MakeKit
 
 end -- do
@@ -615,6 +654,7 @@ do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
+
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not self.LocData then return end
@@ -622,6 +662,7 @@ function TMain:Localize ()
   self.L = locale.make(self.Custom, self.LocData)
 
   return self.L
+
 end ---- Localize
 
 end -- do
@@ -666,6 +707,7 @@ function TMain:MakeProps ()
     }, --
 
     BorderAngle = Cfg.AngleColor or nil,
+
   } -- RM.Colors
 
   RM.MenuEdge = 0 --1
@@ -683,6 +725,7 @@ function TMain:MakeProps ()
       PosX = max2(CurPos.X - (Info.CurPos  - Info.LeftPos), 0),
       PosY = max2(CurPos.Y - (Info.CurLine - Info.TopScreenLine), 0),
       --PosY = CurPos.Y > Info.CurLine - Info.TopScreenLine and 1 or 0,
+
     } -- Popup
 
   end -- do
@@ -696,6 +739,7 @@ function TMain:MakeProps ()
   -- Свойства меню:
   if Cfg.HotChars then
     Props.Flags = delFlag(Props.Flags, F.FMENU_SHOWAMPERSAND)
+
   end
 end -- MakeProps
 
@@ -708,11 +752,13 @@ function TMain:Prepare ()
   self:MakeProps()
 
   return self:MakeKit()
+
 end -- Prepare
 
 ---------------------------------------- ---- List
 -- Поиск слов в шаблоне.
 function TMain:SearchSuitWords () --> (table)
+
   --[[
   local Kits = unit.KitSuit[self.Options.SuitName]
   if not Kits then return end
@@ -725,6 +771,7 @@ function TMain:SearchSuitWords () --> (table)
 
   return t
   --]]
+
 end -- SearchSuitWords
 
 -- Поиск слов в тексте.
@@ -754,19 +801,24 @@ function TMain:SearchTextWords () --> (table)
     Base = BasePat,
     Start = StartPat,
     Match = MatchPat,
+
   } --
   --logShow(self.Pattern, "SearchWords Patterns")
 
   -- Поиск слов в строке.
   local function MatchLineWords (s, Line) --> (number)
+
     local k = 0 -- Число найденных слов в строке
 
     -- Отбор найденного слова.
     local function MakeWord (w)
+
       if w:len() < MinLen then return end
+
       local v = Stat[w] -- Статистика по слову
       if v then
         v.Count = v.Count + 1
+
       elseif w ~= Word then
         --logShow({ k, w, v }, "New Word")
         k = k + 1
@@ -774,18 +826,22 @@ function TMain:SearchTextWords () --> (table)
         -- Информация для frequency-сортировки:
         -- число повторений, номер строки + место по порядку:
         Stat[w] = { Count = 1, Line = Line, Slot = k, }
+
       end
     end -- MakeWord
 
     if Cfg.PartFind then
       for w in s:gmatch(BasePat) do MakeWord(w) end
+
     else
       local v = s:match(StartPat)
       if v then MakeWord(v) end
       for w in s:gmatch(MatchPat) do MakeWord(w) end
+
     end
 
     return k
+
   end -- function MatchLineWords
 
   -- Поиск слов в текущей строке.
@@ -798,54 +854,68 @@ function TMain:SearchTextWords () --> (table)
     -- Поиск поочерёдно сверху / снизу.
     local LineU, LineD = Link.Line, Link.Line
     local LinesUp, LinesDown = Cfg.LinesUp, Cfg.LinesDown
+
     for k = 1, max2(LinesUp, LinesDown) do
       LineU = LineU - 1
       if LineU >= 0 and k <= LinesUp then
         wCtr = wCtr + MatchLineWords(GetLine(LineU), -k)
         if wCtr >= wMax then return t end
+
       end
+
       LineD = LineD + 1
       if LineD < MaxLine and k <= LinesDown then
         wCtr = wCtr + MatchLineWords(GetLine(LineD),  k)
         if wCtr >= wMax then return t end
+
       end
     end
 
   else -- Other kinds
     -- Поиск слов в строках выше.
     local Line = Link.Line
-    Link.Up = #t+1
+    Link.Up = #t + 1
     for k = 1, Cfg.LinesUp do
       Line = Line - 1
       if Line < 0 then break end
+
       wCtr = wCtr + MatchLineWords(GetLine(Line), -k)
       if Limited and wCtr >= wMax then return t end
       if Trimmed and wCtr >= wMid then break end
+
     end
     --logShow(t, "SearchWords")
 
     Limited = Limited or Trimmed
     -- Поиск слов в строках ниже.
     Line = Link.Line
-    Link.Down = #t+1
+    Link.Down = #t + 1
     for k = 1, Cfg.LinesDown do
       Line = Line + 1
       if Line >= MaxLine then break end
+
       wCtr = wCtr + MatchLineWords(GetLine(Line),  k)
       if Limited and wCtr >= wMax then return t end
+
     end
+
     --logShow(t, "SearchWords")
+
   end -- if FindKind
 
   return t
+
 end -- SearchTextWords
 
 -- Поиск слов, подходящих к текущему.
 function TMain:SearchWords () --> (table)
+
   if self.Options.useSuit then
     return self:SearchSuitWords()
+
   else
     return self:SearchTextWords()
+
   end
 end -- SearchWords
 
@@ -870,10 +940,12 @@ do
     t_sort(t, StatCmp)
 
     return t
+
   end -- SortByFreq
 
   -- Сортировка таблицы строк: по близости.
   local function SortByNear (t) --> (table)
+
     local tLen  = #t
     local tUp   = min2(t.Link.Up,   tLen)
     local tDown = min2(t.Link.Down, tLen)
@@ -881,38 +953,48 @@ do
 
     local n = t.n
     local u = { n = n }
-    for k = 1, tUp - 1 do u[#u+1] = t[k] end
+    for k = 1, tUp - 1 do u[#u + 1] = t[k] end
     if #u > n then return u end
 
     local uLen = tDown - tUp
     local dLen = tLen - tDown + 1
     local Count = min2(uLen, dLen)
     for k = 0, Count - 1 do
-       u[#u+1] = t[tUp+k]
-       u[#u+1] = t[tDown+k]
+       u[#u + 1] = t[tUp   + k]
+       u[#u + 1] = t[tDown + k]
        if #u > n then return u end
+
     end
     if uLen == dLen then return u end
 
     if uLen > dLen then
-      for k = tUp + Count, tDown - 1 do u[#u+1] = t[k] end
+      for k = tUp + Count, tDown - 1 do u[#u + 1] = t[k] end
+
     else -- dLen < uLen
-      for k = tDown + Count, tLen do u[#u+1] = t[k] end
+      for k = tDown + Count, tLen do u[#u + 1] = t[k] end
+
     end
 
     return u
+
   end -- SortByNear
 
   -- Сортировка таблицы строк: посимвольная.
   local function SortByChar (t) --> (table)
+
     -- Сравнение слов посимвольно без учёта регистра:
     local function CharCmp (w1, w2) --> (bool)
+
       --logShow({ w1, w2 }, "CharCmp")
+
       return CompareString(w1, w2, nil, "S") < 0
+
     end --
+
     t_sort(t, CharCmp)
 
     return t
+
   end -- SortByChar
 
 -- Сортировка таблицы строк.
@@ -941,11 +1023,14 @@ function TMain:SortWords () --> (table)
     --u = {} -- Список слов:
     u = { n = t.n } -- Список слов:
     for k = 1, t.n do u[k] = t[k] end
+
   else
     u = t
+
   end
 
   return SortByChar(u) -- Посимвольно (по алфавиту)
+
 end -- SortWords
 
 end -- do
@@ -965,14 +1050,17 @@ function TMain:SharedPart () --> (string)
   local t = self.Words
   local s = t[1]
   if NoCase then s = s:lower() end
+
   for k = 2, t.n do
     local w = t[k]
     if NoCase then w = w:lower() end
     s = (s..'\n'..w):match(SharedPat)
     if not s then return "" end
+
   end
 
   return s
+
 end -- SharedPart
 
 end -- do
@@ -994,14 +1082,17 @@ function TMain:MakePopupItem (Index) --> (table)
   local Text = Word
   if self.CfgData.HotChars and Index <= HotCharsLen then
     Text = ItemTextFmt:format(s_sub(HotCharsStr, Index, Index), Word)
+
   end
 
   local Item = {
     text = Text,
     Word = Word,
+
   } ---
 
   return Item, Text
+
 end -- MakePopupItem
 
 end -- do
@@ -1031,13 +1122,17 @@ function TMain:MakePopupMenu () --> (table)
     local Text
     Items[#Items+1], Text = self:MakePopupItem(k)
     Width = max2(Width, Text:len())
+
   end
   self.Items = Items
+
   if Cfg.HotChars then Width = Width - 1 end
 
   -- Определение области маркировки.
   local function MakeSlabMark ()
+
     --logShow(self.Pattern, "Patterns")
+
     local SlabPat = self.Pattern.Slab
     local SlabLen = self.Current.Slab:len()
 
@@ -1046,7 +1141,9 @@ function TMain:MakePopupMenu () --> (table)
              { ItemHotLen + 1, ItemHotLen + SlabLen }
     else                    -- text == Word:
       return Cfg.UseMagic and { SlabPat } or { 1, SlabLen }
+
     end
+
   end --
 
   -- Задание параметров меню RectMenu.
@@ -1068,33 +1165,42 @@ function TMain:MakePopupMenu () --> (table)
     x = Info.CurPos  - Info.LeftPos       + Popup.PosX,
     y = Info.CurLine - Info.TopScreenLine + Popup.PosY,
     angle = "",
+
   } ---
   --logShow({ RM.MenuEdge, Width, Height, Pos, Info }, "Position")
+
   if Pos.y <= Height then
     Pos.y = Pos.y + 1
     Pos.angle = "T"
+
   else
     Pos.y = Pos.y - Height
     Pos.angle = "B"
+
   end
+
   -- Warning: "<" & "+1" instead of "<=" because editor may have scroll bar.
   if Pos.x + Width + 1 < Info.WindowSizeX then
     --Pos.x = Pos.x 
     Pos.angle = Pos.angle.."L"
+
   else
     Pos.x = Pos.x - Width - 1
     Pos.angle = Pos.angle.."R"
+
   end
   RM.Position = Pos
 
   local Colors = RM.Colors
   if Colors.BorderAngle then
     Colors.Borders = { [Pos.angle] = Colors.BorderAngle, }
+
   end
   --logShow(RM.Position, "RectMenu Position")
   --logShow(Items, "Items")
 
   return true
+
 end -- MakePopupMenu
 
 end -- do
@@ -1166,13 +1272,16 @@ function TMain:MakeWordsList () --> (table)
   --if Word then logShow(CurCfg) end
 
   return self:MakePopupMenu()
+
 end -- MakeWordsList
 
 end -- do
 
 ---------------------------------------- Main control
 local function InsText (text)
+
   return EditorInsText(nil, text)
+
 end --
 
 ---------------------------------------- ---- Action
@@ -1185,7 +1294,9 @@ function TMain:CompletionText ()
   end
 
   return Complete
+
 end ---- CompletionText
+
 do
   -- Удаление Count символов:
   local EC_Actions = macUt.Actions.editor.cycle
@@ -1205,18 +1316,22 @@ function TMain:ApplyWordAction () --> (bool | nil)
 
   if self.Action == A_Replace then -- Удаление конца
     if not DelText(nil, Word:len() - SLen) then return end
+
   end
 
   if self.CfgData.TailOnly then -- Только добавление остатка:
     if not InsText(Complete:sub(SLen + 1, -1)) then return end
+
   else -- Замена слова выбранным:
     if not BackText(nil, SLen) then return end
     if not InsText(Complete) then return end
+
   end
 
   editor.Redraw()
 
   return true
+
 end -- ApplyWordAction
 
 end -- do
@@ -1224,9 +1339,12 @@ end -- do
 ---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
+
   return usercall(nil, unit.RunMenu,
                   self.Props, self.Items, self.Menu.CompleteKeys)
+
   --return unit.RunMenu(self.Props, self.Items, self.Menu.CompleteKeys)
+
 end ----
 
 do
@@ -1245,6 +1363,7 @@ do
     Add       = '+',
     Subtract  = '-',
     Divide    = '/',
+
   } --- SpecKeyChars
 
   -- Названия действий клавиш.
@@ -1262,6 +1381,7 @@ do
     Num6      = "right",
     Num8      = "up",
     Num2      = "down",
+
   } --- KeyActionNames
 
   local KeyActions = macUt.Actions.editor.plain
@@ -1279,6 +1399,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиши.
   local function KeyPress (Input, ItemPos)
+
     local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
 
@@ -1289,15 +1410,20 @@ function TMain:AssignEvents () --> (bool | nil)
     --logShow({ VKey, VMod, SKey }, "Input", 1, "xv2")
 
     local function MakeUpdate () -- Обновление!
+
       Popup.PressKey = false
       farUt.RedrawAll()
+
       -- Формирование нового списка-меню слов.
       self:MakeWordsList()
       --logShow(self.Words, "MakeUpdate")
       --logShow(self.Items, "MakeUpdate")
       if not self.Items then return nil, CloseFlag end
+
       --logShow(ItemPos, hex(FKey))
+
       return { self.Props, self.Items, Menu.CompleteKeys }, CompleteFlags
+
     end -- MakeUpdate
 
     -- Учёт нажатия клавиш локального использования.
@@ -1313,13 +1439,16 @@ function TMain:AssignEvents () --> (bool | nil)
       if self:ApplyWordAction() == nil then return end
 
       return MakeUpdate()
+
     end -- if Index
 
     --logShow(Input, "Info on Key Press: before")
     if not (VMod == 0 or IsModShift(VMod)) and
        not (Cfg.ActionAlt and IsModAlt(VMod)) then
       --logShow(Input, "Info on Key Press: inner")
+
       return nil, Cfg.UndueOut and CancelFlag or nil
+
     end
     --logShow(Input, "Info on Key Press: after")
 
@@ -1329,10 +1458,13 @@ function TMain:AssignEvents () --> (bool | nil)
     if Name then
       if not KeyActions[Name](EditorGetInfo()) then return end
       --logShow(Name, Input.KeyName)
+
       return MakeUpdate()
+
     end
     if IsModAlt(VMod) then
       return nil, Cfg.UndueOut and CancelFlag or nil
+
     end
 
     --logShow(Input, "Info on Key Press: Spec")
@@ -1340,7 +1472,9 @@ function TMain:AssignEvents () --> (bool | nil)
     local SpecKeyChar = SpecKeyChars[SKey]
     if not SpecKeyChar and not isVKeyChar(VKey) then
       --logShow({ Input, Cfg.UndueOut, CancelFlag }, "Key is not Char")
+
       return nil, Cfg.UndueOut and CancelFlag or nil
+
     end
 
     --logShow(Input, "Info on Key Press: Char")
@@ -1351,19 +1485,24 @@ function TMain:AssignEvents () --> (bool | nil)
             (LuaCards:find(Char, 1, true) or
              Cfg.UsePoint and Char == '.') ) then
       --logShow(Char, Cfg.Trailers)
+
       if ItemPos then
         self.ActItem, self.ItemPos = self.Items[ItemPos], ItemPos
         self.Effect, self.Action = false, A_Replace
         if self:ApplyWordAction() == nil then return end
+
       end
+
       if not InsText(Char) then return end
       return nil, CancelFlag
+
     end
 
     if not InsText(Char) then return end
     if Cfg.OnCharPress then Cfg.OnCharPress(Input, Char) end
 
     return MakeUpdate()
+
   end -- KeyPress
 
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
@@ -1371,6 +1510,7 @@ function TMain:AssignEvents () --> (bool | nil)
   -- Назначение обработчика:
   local RM = self.Props.RectMenu
   RM.OnKeyPress = KeyPress
+
 end -- AssignEvents
 
 end --
@@ -1402,14 +1542,19 @@ function TMain:ShowLoop () --> (bool | nil)
     if self.Items and #self.Items == 1 and Cfg.LoneAuto then
       self.ActItem, self.ItemPos = self.Items[1], 1
       --logShow({ self.ItemPos, self.ActItem }, "Lone AutoCompletion")
+
     else
       self.ActItem, self.ItemPos = self:ShowMenu()
       if not self.Items or not self.ActItem then
         -- TODO: Реализовать поддержку макросов на клавишах!
         if Popup.PressKey then EditorProcKey(nil, Popup.PressKey) end
+
         return false -- Отмена по Esc
+
       end
+
       editor.Select(nil, F.BTYPE_NONE) -- Снятие выделения
+
     end
 
     -- Выполнение выбранного действия --
@@ -1424,10 +1569,12 @@ function TMain:ShowLoop () --> (bool | nil)
       --logShow({ Action, Pos, Items }, "Making Action")
       self.ActItem = self.Items[self.ItemPos]
       if self:ApplyWordAction() == nil then return end
+
     end
   until not self.Effect
 
   return true
+
 end -- ShowLoop
 
 end -- do
@@ -1440,6 +1587,7 @@ function TMain:Run () --> (bool | nil)
   --editor.Select({ BlockType = "BTYPE_NONE" }) -- Снятие выделения
 
   return self:ShowLoop()
+
 end -- Run
 
 ---------------------------------------- main
@@ -1458,6 +1606,7 @@ function unit.Execute (Data) --> (bool | nil)
   if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
+
 end ---- Execute
 
 --------------------------------------------------------------------------------

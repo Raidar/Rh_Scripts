@@ -93,6 +93,7 @@ function ProcessEditorInput (rec) --> (bool)
       local SelInfo
       if band(CState, SHIFT) ~= 0 then
         SelInfo = EditorGetSel()
+
       end
       --]]
       --logShow({ CState, Cmod, Info }, "State", "d2 xv4")
@@ -137,14 +138,15 @@ function ProcessEditorInput (rec) --> (bool)
                     )
         --logShow(Info, "ProcessEditorInput")
         --far.AdvControl(F.ACTL_REDRAWALL)
-      end
 
+      end
     else -- End of line
       --[[
       local Info = EditorGetInfo()
       local SelInfo
       if band(CState, SHIFT) ~= 0 then
         SelInfo = EditorGetSel()
+
       end
       --]]
 
@@ -172,11 +174,13 @@ function ProcessEditorInput (rec) --> (bool)
         --logShow({ CState, Info, SelInfo }, "State", "w d2")
 
         EditorSetSel(nil, SelInfo)
+
       end
       --]]
     end
   end -- if
 
   return false
+
 end ---- ProcessEditorInput
 --------------------------------------------------------------------------------

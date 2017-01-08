@@ -69,46 +69,58 @@ local SpaceTruncPat, EmptyTruncPat, TruncSub = "%s+$", "^%s-$", ""
 -- Truncate spaces in specified line.
 -- Усечение пробелов в заданной линии.
 function unit.TruncateSpaces (n) --> (number)
+
   --n = n or -1
   local s, q = EditorGetLine(nil, n, 3)
   s, q = s:gsub(SpaceTruncPat, TruncSub)
   --logShow(s, q, "w d2")
   if q > 0 then EditorSetLine(nil, n, s) end
+
   return q
+
 end ---- TruncateSpaces
 local TruncateSpaces = unit.TruncateSpaces
 
 -- Update cursor position for line end.
 -- Обновление позиции курсора для конца линии.
 function unit.UpdateLineEnd ()
+
   local Info = EditorGetInfo()
   local p = Info.CurPos
   local l = (EditorGetLine(nil, 0, 3) or ""):len()
+
   EditorSetPos(nil, 0, p > l and l + 1 or p)
+
 end ----
 local UpdateLineEnd = unit.UpdateLineEnd
 
 -- Truncate spaces in current line.
 -- Усечение пробелов в текущей линии.
 function unit.TruncateLine () --> (number)
+
   local q = TruncateSpaces(0)
   -- Commented as workaround for FAR3:
   if q == 0 then return 0 end
   UpdateLineEnd()
+
   return q
+
 end ----
 --local TruncateLine = unit.TruncateLine
 
 -- Truncate spaces in all text lines.
 -- Усечение пробелов во всех строках текста.
 function unit.TruncateText () --> (number)
+
   local Info, q = EditorGetInfo(), 0
   for k = Info.TotalLines, 1, -1 do
     q = q + TruncateSpaces(k)
+
   end
   EditorSetPos(nil, Info)
 
   return q
+
 end ----
 local TruncateText = unit.TruncateText
 
@@ -119,7 +131,8 @@ local TruncateText = unit.TruncateText
   keep (number) - a number of empty lines to preserve.
 --]]
 function unit.TruncateFile (keep) --> (number)
-  local keep = keep or 1
+
+  keep = keep or 1
   local Info = EditorGetInfo()
   local l = Info.TotalLines
   EditorSetPos(nil, l)
@@ -131,9 +144,13 @@ function unit.TruncateFile (keep) --> (number)
     if s and not s:find(EmptyTruncPat) then
       EditorSetPos(nil, Info)
       return -q
+
     end
+
     q = q + 1
-  end
+
+  end -- for
+
   --logShow({ l, keep, -q }, "TruncateFile")
 
   -- Отсечение пустых линий:
@@ -143,16 +160,21 @@ function unit.TruncateFile (keep) --> (number)
     if s and s:find(EmptyTruncPat) then
       EditorDelLine()
       q = q + 1
+
     else
       break
+
     end
-  end
+  end -- for
+
   --logShow({ l, keep, q }, "TruncateFile")
 
   --logShow(Info, "TruncateFile")
 
   EditorSetPos(nil, Info)
+
   return q
+
 end ----
 local TruncateFile = unit.TruncateFile
 
@@ -162,11 +184,13 @@ local TruncateFile = unit.TruncateFile
   -- @params: @see Truncate.File.
 --]]
 function unit.TruncateFileText (keep)
+
   TruncateFile(keep)
   TruncateText()
   UpdateLineEnd()
 
   return far.AdvControl(F.ACTL_REDRAWALL)
+
 end ---- TruncateFileText
 
 ---------------------------------------- main
@@ -179,7 +203,9 @@ local Param1, Param2 = args[1], args[2]
 if type(Param1) == 'string' then
   local f = unit[Param1]
   if f then return f(Param2) else return unit end
+
 else
   return unit
+
 end
 --------------------------------------------------------------------------------

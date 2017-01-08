@@ -84,11 +84,13 @@ unit.DefCustom = {
     --file = unit.FileName,
     --path = unit.FilePath,
   }, --
+
 } -- DefCustom
 
 ----------------------------------------
 unit.DefOptions = {
   BaseDir  = "Rh_Scripts.Common."..unit.ScriptName..".",
+
 } -- DefOptions
 
 --[[
@@ -113,6 +115,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 local TMain = {
   Guid       = win.Uuid("1b26647b-44b0-4ac6-984d-45cba59568d0"),
   ConfigGuid = win.Uuid("1b537bfd-e907-4836-beff-5ac000823a5b"),
+
 }
 local MMain = { __index = TMain }
 
@@ -163,6 +166,7 @@ local function CreateMain (ArgData)
     ItemPos   = false,    -- Позиция выбранного пункта меню
     --Action    = false,    -- Выбранное действие
     --Effect    = false,    -- Выбранный эффект
+
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -185,6 +189,7 @@ local function CreateMain (ArgData)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -214,6 +219,7 @@ function TMain:InitData ()
   self.WeekCols = Cfg_DT.MonthDays.WeekMax
 
   return true
+
 end ---- InitData
 
   local prequire = farUt.prequire
@@ -229,10 +235,12 @@ function TMain:InitFetes ()
   --logShow(self.Fetes, "Fetes", "w d3")
 
   return true
+
 end ---- InitFetes
 
 -- Инициализация даты/времени.
 function TMain:InitDateTime ()
+
   local CfgData = self.CfgData
   local Cfg_DT = self.Cfg_DT
   --logShow(CfgData, "CfgData")
@@ -245,6 +253,7 @@ function TMain:InitDateTime ()
   --logShow(self.Date, "Default Date", "w d1")
 
   return true
+
 end ---- InitDateTime
 
 end -- do
@@ -261,9 +270,11 @@ function TMain:Localize ()
   self.Locale = locale.make(self.Custom, self.LocData)
 
   return self.Locale
+
 end ---- Localize
 
 function TMain:MakeLocLen () --> (bool)
+
   local wL = self.Loc_DT
   if not wL then return end
 
@@ -279,6 +290,7 @@ function TMain:MakeLocLen () --> (bool)
     end
 
     WeekDay.MaxLen = MaxLen
+
   end
 
   do -- Названия месяцев года
@@ -291,9 +303,11 @@ function TMain:MakeLocLen () --> (bool)
     end
 
     YearMonth.MaxLen = MaxLen
+
   end
 
   return true
+
 end ---- MakeLocLen
 
 function TMain:MakeFetes ()
@@ -304,6 +318,7 @@ function TMain:MakeFetes ()
   --local Custom = self.Custom
 
   return true
+
 end ---- MakeFetes
 
 function TMain:MakeColors ()
@@ -318,12 +333,14 @@ function TMain:MakeColors ()
     --TitleFG     = basics.black,
     --StatusBarFG = basics.black,
     --ScrollBarFG = basics.black,
+
   } --- Basis
 
   local menUt = require "Rh_Scripts.Utils.Menu"
   self.Colors = menUt.FormColors(Basis)
 
   return true
+
 end ---- MakeColors
 
   local max, ceil = math.max, math.ceil
@@ -395,15 +412,18 @@ function TMain:MakeProps ()
     IsStatusBar = true,
 
     --IsDebugDraw = true,
+
   } --- RM
   Props.RectMenu = RM
 
   return true
+
 end ---- MakeProps
 
 local Msgs = {
   NoLocale      = "No localization",
   NoWorldLocale = 'No localization for world "%s"',
+
 } ---
 
 -- Подготовка.
@@ -417,10 +437,13 @@ function TMain:Prepare ()
 
   if not self:Localize() then
     self.Error = Msgs.NoLocale
+
     return
   end
+
   if not self:MakeLocLen() then
     self.Error = Msgs.NoWorldLocale:format(self.World or "Unknown")
+
     return
   end
 
@@ -429,12 +452,14 @@ function TMain:Prepare ()
   self:MakeColors()
 
   return self:MakeProps()
+
 end ---- Prepare
 
 end -- do
 ---------------------------------------- ---- Menu
 do
   local spaces = strings.spaces
+
   -- Центрирование выводимого текста. -- TEMP: До реализации в RectMenu!
   local function CenterText (Text, Max) --> (string)
 
@@ -445,6 +470,7 @@ do
     local sp = spaces[divf(Max - Len, 2)]
 
     return sp..Text
+
   end -- CenterText
 
 -- Заполнение информационной части.
@@ -517,12 +543,14 @@ function TMain:FillInfoPart () --> (bool)
     Dec_Date  = L.Dec_Date,   --"-",
     Inc_Date  = L.Inc_Date,   --"+",
     --]]
+
   } --- ItemDatas
   self.ItemDatas = ItemDatas
 
   --[[
   local ItemHints = {
     World     = Formats.Type:format(wL[Cfg_DT.Type]),
+
   } --- ItemHints
   --]]
 
@@ -532,6 +560,7 @@ function TMain:FillInfoPart () --> (bool)
     NextYear  = "inc_y",
     PrevMonth = "dec_m",
     NextMonth = "inc_m",
+
   } --- ItemActions
 
   -- (see KeyPress code.)
@@ -539,6 +568,7 @@ function TMain:FillInfoPart () --> (bool)
     Date      = "Divide",
     Dec_Date  = "Subtract",
     Inc_Date  = "Add",
+
   } --- ItemActionKeys
 
   local t = self.Items
@@ -552,10 +582,13 @@ function TMain:FillInfoPart () --> (bool)
       if item then
         if    pos < 0 or pos > RowCount * 3 then
           item.text = v
+
         elseif pos < RowCount or pos > RowCount * 2 then
-          item.text = CenterText(v, KnobMax)
+          item.text = CenterText(v, KnobMax)    -- Кнопки
+
         else
-          item.text = CenterText(v, TextMax)
+          item.text = CenterText(v, TextMax)    -- Даты
+
         end
 
         local value = ItemActions[k]
@@ -563,6 +596,7 @@ function TMain:FillInfoPart () --> (bool)
           --item.knobed = true
           --logShow(item, k)
           item.Action = value
+
         end
 
         value = ItemActionKeys[k]
@@ -570,23 +604,27 @@ function TMain:FillInfoPart () --> (bool)
           --item.knobed = true
           --logShow(item, k)
           item.ActionKey = value
+
         end
 
         --[[
         local hint = ItemHints[k]
         if hint then t[pos].Hint = hint end
         --]]
+
       end
     end
-  end --
+  end -- for
 
   local Separators = ItemNames.Separators
   for k = 1, #Separators do
     local v = Separators[k]
     t[v].separator = true
+
   end
 
   return true
+
 end ---- FillInfoPart
 
 -- Заполнение основной части.
@@ -616,6 +654,7 @@ function TMain:FillMainPart () --> (bool)
   if StartWeekDay < divf(DayPerWeek, 2) then
     StartWeekShift = 1
     StartWeekDay = StartWeekDay + DayPerWeek
+
   end
   --t[RowCount * 3 - 1].text = ("%1d"):format(StartWeekDay) -- DEBUG
 
@@ -665,16 +704,18 @@ function TMain:FillMainPart () --> (bool)
           if p > 0 then
             p = p + 1
             --Prev.d = p
+
           end
 
           State = -1
-        end
 
+        end
       elseif d >= MonthDays then
         if d == MonthDays then
           d = d + 1
           --Next.StartWeekNumber = j == DayPerWeek and i + 1 or i
           --Next.StartWeekNumDay = j == DayPerWeek and 1 or j + 1
+
         end
 
         p = false
@@ -682,6 +723,7 @@ function TMain:FillMainPart () --> (bool)
         --Next.d = q
 
         State = 1
+
       end
 
       local Text = ""
@@ -692,16 +734,18 @@ function TMain:FillMainPart () --> (bool)
 
         if not SelIndex and d == Date.d then
           SelIndex = k + 1
+
         end
 
         if d == MonthDays then
           Real.LastWeekNumber  = i
           Real.LastWeekNumDay  = j
-        end
 
+        end
       else
         local day = p and p <= 0 and 0 or p or q
         Text = day > 0 and MonthDayFmt:format(day) or ""
+
       end
 
       k = k + 1
@@ -711,6 +755,7 @@ function TMain:FillMainPart () --> (bool)
       u.grayed = (State ~= 0)
       u.RectMenu = {
         TextMark = Cfg_DT.RestWeekDays[j % DayPerWeek],
+
       } --
       u.Data = {
         r = j,
@@ -722,6 +767,7 @@ function TMain:FillMainPart () --> (bool)
         d = (State == 0 and d or
              p and p <= 0 and 0 or p or q),
       } --
+
     end -- for
 
     -- Вненедельные дни:
@@ -735,6 +781,7 @@ function TMain:FillMainPart () --> (bool)
         local State = 0
         if i == Prev.LastWeekNumber then
           State = -1
+
         end
 
         local b = Curr:getWeekMonthDays()
@@ -744,6 +791,7 @@ function TMain:FillMainPart () --> (bool)
           b = b + 1
           if not SelIndex and State == 0 and b == Date.d then
             SelIndex = k + 1
+
           end
 
           k = k + 1
@@ -754,6 +802,7 @@ function TMain:FillMainPart () --> (bool)
           u.grayed = (State ~= 0)
           u.RectMenu = {
             TextMark = Cfg_DT.RestWeekDays[-j],
+
           } --
           u.Data = {
             r = DayPerWeek + j,
@@ -763,12 +812,16 @@ function TMain:FillMainPart () --> (bool)
             [ 0] = Real,
             [ 1] = Next,
             d = b,
+
           } --
+
         end -- for
 
         k = k + OutPerWeek - Outs -- Пропуск остальных пунктов
+
       else
         k = k + OutPerWeek -- Просто пропуск вненедельных пунктов
+
       end
     end
 
@@ -784,6 +837,7 @@ function TMain:FillMainPart () --> (bool)
     for j = 1, self.InfoRows - self.WeekRows do
       k = k + 1
       --t[k].Label = true
+
     end
     --]]
   end -- for
@@ -791,6 +845,7 @@ function TMain:FillMainPart () --> (bool)
   self.Props.SelectIndex = SelIndex
 
   return true
+
 end ---- FillMainPart
 
 -- Заполнение пояснительной части.
@@ -821,6 +876,7 @@ function TMain:FillNotePart () --> (bool)
     u.text = WeekDayShort[w % DayPerWeek] or WeekDayFmt:format(w)
     u.RectMenu = {
       TextMark = Cfg_DT.RestWeekDays[w % DayPerWeek],
+
     } --
   end
 
@@ -831,6 +887,7 @@ function TMain:FillNotePart () --> (bool)
     u.text = WeekDayShort[-w] or WeekDayFmt:format(-w)
     u.RectMenu = {
       --TextMark = true,
+
     } --
   end
 
@@ -838,6 +895,7 @@ function TMain:FillNotePart () --> (bool)
   t[k].separator = true
 
   return true
+
 end ---- FillNotePart
 
 -- Формирование меню.
@@ -865,6 +923,7 @@ function TMain:MakeMenu () --> (table)
                 or
                 j <= RowMin or j >= RowMax,
       } --
+
     end
   end --
 
@@ -873,6 +932,7 @@ function TMain:MakeMenu () --> (table)
   self:FillNotePart() -- Пояснение
 
   return true
+
 end -- MakeMenu
 
 -- Формирование календаря.
@@ -881,6 +941,7 @@ function TMain:Make () --> (table)
   self.Items = false -- Сброс меню (!)
 
   return self:MakeMenu()
+
 end -- Make
 
 end -- do
@@ -902,6 +963,7 @@ function TMain:LimitDate (Date) --> (Date)
   end
 
   return Date
+
 end ---- LimitDate
 do
 --[[
@@ -910,6 +972,7 @@ do
 function TMain:DateToStr (Date, Format) --> (Date)
   local y = Date:getNegYear()
   return (Format or FmtDate):format(y, Date.m, Date.d)
+
 end ---- DateToStr
 --]]
 
@@ -930,6 +993,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
   if StrDate == "" then return end
   if StrDate:sub(-1, -1) == "-" then
     StrDate = StrDate:sub(1, -2) or ""
+
   end
 
   local _, Count = StrDate:gsub("-", "")
@@ -951,14 +1015,13 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
       --Date:put(Date.y, m, 1)
       IsNeg = false
 
-    else 
+    else
       local y, m = StrDate:match(DateFmtYM)
       if (y or m) and OnlyMatch then return true end
       y, m = tonumber(y) or 1, tonumber(m) or 1
       Date:put(y, m, 1)
 
     end
-
   elseif Count == 2 then
     if StrDate:sub(1, 2) == "--" then
       local d = StrDate:match(DateFmtD)
@@ -976,7 +1039,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
       Date:put(Date.y, m, d)
       IsNeg = false
 
-    else 
+    else
       local y, m, d = StrDate:match(DateFmtYMD)
       if (y or m or d) and OnlyMatch then return true end
       y, m, d = tonumber(y) or 1, tonumber(m) or 1, tonumber(d) or 1
@@ -984,7 +1047,6 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
       Date:put(y, m, d)
 
     end
-
   else
     IsNeg = false
 
@@ -996,6 +1058,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
 
   --logShow(Date, StrDate, "w d1")
   return Date:fixMonth():fixDay()
+
 end ---- StrToDate
 
 function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
@@ -1008,15 +1071,18 @@ function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
     IsNeg = StrDate:sub(1, 1) == "-"
     if IsNeg then
       StrDate = StrDate:sub(2, -1) or ""
+
     end
   end
   --logShow(Default, StrDate)
 
   return self:StrToDate(StrDate, IsNeg and '-' or '+', Default, OnlyMatch)
+
 end ---- PasteToDate
 
 function TMain:MatchYear (StrDate) --> (Date)
   return StrDate:match(DateFmtY)
+
 end ---- MatchYear
 
 end -- do
@@ -1024,15 +1090,18 @@ end -- do
 
 function TMain:ParseDateInput ()
   return self:StrToDate(self.Input, self.Sign, self.Date)
+
 end ---- ParseDateInput
 
 function TMain:StartDateInput (Date, Sign)
+
   local L = self.LocData
 
   self.Input = ""
   self.Sign = Sign == '-' and Sign or ""
   self.Props.Bottom = L.InputDate
   self.IsDateInput = true
+
 end ---- StartDateInput
 
 function TMain:StopDateInput (Date)
@@ -1040,9 +1109,11 @@ function TMain:StopDateInput (Date)
   self.Props.Bottom = ""
 
   return self:ParseDateInput() or Date
+
 end ---- StopDateInput
 
 function TMain:EditDateInput (SKey)
+
   local Input = self.Input
   local IsCheckYear = false
 
@@ -1077,18 +1148,21 @@ function TMain:EditDateInput (SKey)
       if l > 6 then
         y = y:sub(1, 6)
         Input = y..Input:sub(l + 1, -1)
+
       end
     end
   end
 
   self.Input = Input
   self.Props.Bottom = self.Sign..Input
+
 end ---- EditDateInput
 
 do
   local tonumber = tonumber
 
 function TMain:ParseShiftInput ()
+
   local Date = self.Date:copy()
 
   local Input = self.Input or ""
@@ -1096,29 +1170,36 @@ function TMain:ParseShiftInput ()
   --logShow(Shift, Input)
 
   return Shift and Date:shd(Shift) --or false
+
 end ---- ParseShiftInput
 
 function TMain:StartShiftInput (Date, Shift)
+
   --local L = self.LocData
 
   self.Input = Shift
   self.Props.Bottom = Shift
   self.IsShiftInput = true
+
 end ---- StartShiftInput
 
 function TMain:StopShiftInput (Date)
+
   self.IsShiftInput = false
   self.Props.Bottom = ""
 
   return self:ParseShiftInput() or Date
+
 end ---- StopShiftInput
 
 function TMain:EditShiftInput (SKey)
+
   local SignKeys = {
     ["-"]       = "-",
     ["="]       = "+",
     ["Shift-"]  = "-",
     ["Shift="]  = "+",
+
   } --- SignKeys
 
   local Input = self.Input
@@ -1132,6 +1213,7 @@ function TMain:EditShiftInput (SKey)
       if s and s ~= "" then
         if s:sub(1, 1) ~= "-" then
           s = "+"..s
+
         end
 
         Input = s
@@ -1159,12 +1241,14 @@ function TMain:EditShiftInput (SKey)
 
     if SKey ~= "" then
       Input = Input..SKey
+
     end
 
   end
 
   self.Input = Input
   self.Props.Bottom = Input
+
 end ---- EditShiftInput
 
 end -- do
@@ -1179,6 +1263,7 @@ do
     AltRight    = "inc_m",
     AltUp       = "dec_y",
     AltDown     = "inc_y",
+
   } -- DateActions
 
   local DateInputActions = {
@@ -1197,6 +1282,7 @@ do
     ["BS"] = true,
     ["Subtract"] = true,
     ["CtrlV"] = true,
+
   } --- DateInputActions
 
   local ShiftInputActions = {
@@ -1219,21 +1305,26 @@ do
     --["Add"]      = true,
     --["Subtract"] = true,
     ["CtrlV"] = true,
+
   } --- ShiftInputActions
 
 function TMain:AssignEvents () --> (bool | nil)
 
   local function MakeUpdate () -- Обновление!
+
     farUt.RedrawAll()
     self:Make()
     --logShow(self.Items, "MakeUpdate")
     if not self.Items then return nil, CloseFlag end
+
     --logShow(ItemPos, hex(FKey))
     return { self.Props, self.Items, self.Keys }, CompleteFlags
+
   end -- MakeUpdate
 
   -- Обработчик нажатия клавиш.
   local function KeyPress (Input, ItemPos)
+
     local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --logShow(SKey, "SKey")
@@ -1255,15 +1346,18 @@ function TMain:AssignEvents () --> (bool | nil)
       local s, t
       if self.IsDateInput or self.IsShiftInput then
         s = self.Input
+
       else
         s = self.ItemDatas.Date
         t = self.ItemDatas.Time
         if t and t ~= "" and SKey == "CtrlShiftC" then
           s = s.." "..t
+
         end
       end
       if type(s) == 'string' and s ~= "" then
         far.CopyToClipboard(s)
+
       end
 
       isUpdate = false
@@ -1286,11 +1380,13 @@ function TMain:AssignEvents () --> (bool | nil)
     elseif SKey == "Divide" or SKey == "ShiftDivide" then
       if self.IsDateInput then
         Date = self:StopDateInput(Date)
+
       elseif not self.IsShiftInput then
         local Sign = SKey == "ShiftDivide" and '-' or '+'
         self:StartDateInput(Date, Sign)
       else
         isUpdate = false
+
       end
 
     elseif SKey == "Add" or SKey == "Subtract" then
@@ -1304,28 +1400,32 @@ function TMain:AssignEvents () --> (bool | nil)
       else
         if SKey == "Subtract" then
           self:EditDateInput(SKey)
+
         else
           isUpdate = false
-        end
 
+        end
       end
 
     elseif self.IsDateInput then
       if DateInputActions[SKey] then
         self:EditDateInput(SKey)
+
       else
         isUpdate = false
-      end
 
+      end
     elseif self.IsShiftInput then
       if ShiftInputActions[SKey] then
         self:EditShiftInput(SKey)
+
       else
         isUpdate = false
-      end
 
+      end
     else
       isUpdate = false
+
     end
 
     self.Time = false
@@ -1335,13 +1435,16 @@ function TMain:AssignEvents () --> (bool | nil)
       --logShow(Date)
       self.Date = self:LimitDate(Date)
       return MakeUpdate()
+
     end
 
     return false --> Default
+
   end -- KeyPress
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
+
     --if self.IsDateInput then return end
 
     local AKey, VMod = AKey, VMod
@@ -1364,108 +1467,133 @@ function TMain:AssignEvents () --> (bool | nil)
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
         return MakeUpdate()
+
       elseif AKey == "Left"  and Data.c == 1 then
         --Date:shd(-Cfg_DT.DayPerWeek)
         if State == 0 then Date:shd(-Cfg_DT.DayPerWeek) end
+
       elseif AKey == "Right" and Data.c == self.WeekCols then
         --Date:shd(Cfg_DT.DayPerWeek)
         if State == 0 then Date:shd(Cfg_DT.DayPerWeek) end
+
       elseif AKey == "Up"    and
              ( Data.r == 1 or isOuts and
                (Date.d == 1 or Data.r >= Cfg_DT.DayPerWeek) ) then
          Date:dec_d()
+
       elseif AKey == "Down"  and
              (Data.r >= Cfg_DT.DayPerWeek or
               isOuts and Date.d == Date:getWeekMonthDays()) then
         --logShow({ Date, Date:inc_d() }, AKey)
          --logShow(Date:inc_d(), AKey)
          Date:inc_d()
+
       else
         isUpdate = false
+
       end
 
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
         return MakeUpdate()
+
       elseif AKey == "PgUp" then
         Date.y = (divf(Date.y, 10) - 1) * 10 + 1
         Date.m = 1
         Date.d = 1
+
       elseif AKey == "PgDn" then
         Date.y = (divf(Date.y, 10) + 1) * 10
         Date.m = Date:getYearMonths()
         Date.d = Date:getWeekMonthDays()
+
       elseif AKey == "Home" then
         Date.y = (divf(Date.y, 100) - 1) * 100 + 1
         Date.m = 1
         Date.d = 1
+
       elseif AKey == "End" then
         Date.y = (divf(Date.y, 100) + 1) * 100
         Date.m = Date:getYearMonths()
         Date.d = Date:getWeekMonthDays()
+
       else
         isUpdate = false
-      end
 
+      end
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
         return MakeUpdate()
+
       elseif AKey == "PgUp" then
         Date.d = 1
+
       elseif AKey == "PgDn" then
         Date.d = Date:getWeekMonthDays()
+
       elseif AKey == "Home" then
         if Date.m == 1 and Date.d == 1 then
           Date.y = Date.y - 1
+
         end
         Date.m = 1
         Date.d = 1
+
       elseif AKey == "End" then
         if Date.m == Date:getYearMonths() and
            Date.d == Date:getWeekMonthDays() then
           Date.y = Date.y + 1
+
         end
         Date.m = Date:getYearMonths()
         Date.d = Date:getWeekMonthDays()
+
       else
         isUpdate = false
-      end
 
+      end
     elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         if Date.y == 1 and Date.m == 1 and Date.d == 1 then
           Date.y = 1
           Date.m = Date:getYearMonths()
           Date.d = Date:getWeekMonthDays()
+
         else
           Date.y = 1
           Date.m = 1
           Date.d = 1
+
         end
       elseif AKey == "PgUp" then
         Date.y = (divf(Date.y, 1000) - 1) * 1000 + 1
         Date.m = 1
         Date.d = 1
+
       elseif AKey == "PgDn" then
         Date.y = (divf(Date.y, 1000) + 1) * 1000
         Date.m = Date:getYearMonths()
         Date.d = Date:getWeekMonthDays()
+
       elseif AKey == "Home" then
         Date.y = self.YearMin
         Date.m = 1
         Date.d = 1
+
       elseif AKey == "End" then
         Date.y = self.YearMax
         Date.m = Date:getYearMonths()
         Date.d = Date:getWeekMonthDays()
+
       else
         isUpdate = false
-      end
 
+      end
     else
       isUpdate = false
+
     end
 
     self.Time = false
@@ -1473,9 +1601,11 @@ function TMain:AssignEvents () --> (bool | nil)
     if isUpdate then
       self.Date = self:LimitDate(Date)
       return MakeUpdate()
+
     end
 
     return false --> Default
+
   end -- NavKeyPress
 
   -- Обработчик нажатия клавиши мыши.
@@ -1499,10 +1629,13 @@ function TMain:AssignEvents () --> (bool | nil)
     local isUpdate = true
     if type(Item.Action) == 'string' then
       Date[Item.Action](Date)
+
     elseif type(Item.ActionKey) == 'string' then
       return KeyPress({ Name = Item.ActionKey }, ItemPos)
+
     else
       isUpdate = false
+
     end
 
     self.Time = false
@@ -1512,13 +1645,16 @@ function TMain:AssignEvents () --> (bool | nil)
       --logShow(Date)
       self.Date = self:LimitDate(Date)
       return MakeUpdate()
+
     end
 
     return false --> Default
+
   end -- MouseClick
 
   -- Обработчик выделения пункта.
   local function SelectItem (Kind, ItemPos)
+
     local Data = self.Items[ItemPos].Data
     --logShow(Data, ItemPos, "w d2")
     if not Data then return end
@@ -1528,10 +1664,12 @@ function TMain:AssignEvents () --> (bool | nil)
     self.Date.d = Data.d
 
     return self:FillInfoPart()
+
   end -- SelectItem
 
   -- Обработчик выбора пункта.
   local function ChooseItem (Kind, ItemPos)
+
     local Data = self.Items[ItemPos].Data
     if not Data then return end
 
@@ -1541,19 +1679,24 @@ function TMain:AssignEvents () --> (bool | nil)
 
       if self.IsDateInput then
         Date = self:StopDateInput(Date)
+
       elseif self.IsShiftInput then
         Date = self:StopShiftInput(Date)
+
       else
         isUpdate = false
+
       end
 
       if isUpdate then
         self.Date = self:LimitDate(Date)
         return MakeUpdate()
+
       end
     end
 
     return nil, CloseFlag
+
   end -- ChooseItem
 
   -- Назначение обработчиков:
@@ -1563,6 +1706,7 @@ function TMain:AssignEvents () --> (bool | nil)
   RM.OnMouseClick   = MouseClick
   RM.OnSelectItem   = SelectItem
   RM.OnChooseItem   = ChooseItem
+
 end -- AssignEvents
 
 end --
@@ -1571,6 +1715,7 @@ end --
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
   return usercall(nil, unit.RunMenu, self.Props, self.Items, self.Keys)
+
 end ---- ShowMenu
 
 -- Вывод календаря.
@@ -1586,6 +1731,7 @@ function TMain:Show () --> (bool | nil)
   self.ActItem, self.ItemPos = self:ShowMenu()
 
   return true
+
 end -- Show
 
 ---------------------------------------- ---- Run
@@ -1594,6 +1740,7 @@ function TMain:Run () --> (bool | nil)
   self:AssignEvents()
 
   return self:Show()
+
 end -- Run
 
 ---------------------------------------- main
@@ -1614,6 +1761,7 @@ function unit.Execute (Data) --> (bool | nil)
   if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
+
 end ---- Execute
 
 --------------------------------------------------------------------------------

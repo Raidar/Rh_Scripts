@@ -45,9 +45,11 @@ local KeywordsKey = {
   J = 'Index',
   R = 'Result',
   V = 'Value',
+
 } --- KeywordsKey
 
 local function KeywordKey (Cfg)
+
   local s = Cfg.Template.Result
   local sn = s:match("`(%w-)$")
 
@@ -55,6 +57,7 @@ local function KeywordKey (Cfg)
   if s then return s end
 
   return false
+
 end -- KeywordKey
 
 ---------------------------------------- Keywords Add
@@ -93,9 +96,11 @@ local KeywordsAdd = {
   Y = 'finally',
   W = 'when',
   Z = 'then',
+
 } --- KeywordsAdd
 
 local function KeywordAdd (Cfg)
+
   local s = Cfg.Template.Result
   local sn = s:match("``(%w-)$")
 
@@ -103,6 +108,7 @@ local function KeywordAdd (Cfg)
   if s then return s end
 
   return false
+
 end -- KeywordAdd
 
 ---------------------------------------- Keywords @
@@ -140,9 +146,11 @@ local KeywordsAt = {
   D = 'description',
   --F = '',
   N = 'name',
+
 } --- KeywordsAt
 
 local function KeywordAt (Cfg)
+
   local s = Cfg.Template.Result
   local sn = s:match("@`(%w-)$")
 
@@ -150,6 +158,7 @@ local function KeywordAt (Cfg)
   if s then return '@'..s end
 
   return false
+
 end -- KeywordAt
 
 --------------------------------------------------------------------------------
@@ -166,6 +175,9 @@ local Data = {
   { find = "`%w",   apply = KeywordKey, as = "plain" },
   { find = "``%w",  apply = KeywordAdd, as = "plain" },
   { find = "@`%w",  apply = KeywordAt,  as = "plain" },
+
+  --[[END]]--
+
 } --- Data
 
 return Data

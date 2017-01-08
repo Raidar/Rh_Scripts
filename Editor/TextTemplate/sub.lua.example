@@ -34,6 +34,9 @@ local Data = {
   { find = "ё([Вв])сд", plain = '%1 самом деле' },
   { find = "ё([Ии])п",  plain = '%1 правда' },
   { find = "ё([Ии])вс", plain = '%1 в самом деле' },
+
+  --[[END]]--
+
 } --- Data
 
 return Data

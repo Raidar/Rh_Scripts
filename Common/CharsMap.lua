@@ -27,6 +27,7 @@ local useprofiler = false
 if useprofiler then
   require "profiler" -- Lua Profiler
   profiler.start("CharsMap.log")
+
 end
 
 ----------------------------------------
@@ -91,6 +92,7 @@ unit.DefCustom = {
   locale  = {
     kind    = 'load',
   }, --
+
 } -- DefCustom
 
 ----------------------------------------
@@ -102,6 +104,7 @@ unit.DefOptions = {
 local L, e1, e2 = locale.localize(unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 logShow(L, "L", "wM")
@@ -312,6 +315,7 @@ function TMain:MakeColors ()
     TitleFG     = basics.black,
     --StatusBarFG = basics.black,
     ScrollBarFG = basics.black,
+
   } --- Basis
 
   local menUt = require "Rh_Scripts.Utils.Menu"
@@ -949,6 +953,7 @@ function TBlocks:MakeProps () --| (Blocks_Props)
     --Colors = self.Colors,
 
     --IsStatusBar = true,
+
   } -- RM
   Props.RectMenu = RM
 
@@ -981,6 +986,7 @@ function TBlocks:MakeItems () --| (Blocks_Items)
       Label = true,
       --RectMenu = self.RectItem,
     },
+
   } ---
 
   self.Count = CharsData.BlocksCount
@@ -992,11 +998,13 @@ function TBlocks:MakeItems () --| (Blocks_Items)
                                   uCP(b.last, true)),
       Label = true,
       --RectMenu = self.RectItem,
+
     }
 
     t[#t + 1] = {
       text = b.name,
       Char = b.first,
+
     }
 
   end
@@ -1179,6 +1187,7 @@ function TMain:CountChars ()
   --logShow(Input, "CountChars")
 
   return uCodeCount(Input)
+
 end ---- CountChars
 
 function TMain:StartCharInput (Data)
@@ -1630,22 +1639,29 @@ function TMain:AssignEvents () --> (bool | nil)
       --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
+
       elseif AKey == "Left"  and Data.c == 1 then
         self.Char = Data.Char - 1
+
       elseif AKey == "Right" and Data.c == self.CharCols then
         self.Char = Data.Char + 1
+
       elseif AKey == "Up"    and Data.r == 1 then
         self.Char = Data.Char - self.CharCols
+
       elseif AKey == "Down"  and Data.r == self.CharRows then
         self.Char = Data.Char + self.CharCols
+
       elseif AKey == "PgUp" or
              (AKey == "Home" and
               Data.r == 1 and Data.c == 1) then
         self.Char = Data.Char - self.CharCount
+
       elseif AKey == "PgDn" or
              (AKey == "End" and
               Data.r == self.CharRows and Data.c == self.CharCols) then
         self.Char = Data.Char + self.CharCount
+
       else
         isUpdate = false
 
@@ -1653,10 +1669,13 @@ function TMain:AssignEvents () --> (bool | nil)
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
+
       elseif AKey == "Home" then
         self.Char = self.CharMin
+
       elseif AKey == "End" then
         self.Char = self.CharMax
+
       else
         isUpdate = false
 
@@ -1664,20 +1683,27 @@ function TMain:AssignEvents () --> (bool | nil)
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
+
       elseif AKey == "Left" then
         self.Char = Data.Char - self.CharCount
+
       elseif AKey == "Right" then
         self.Char = Data.Char + self.CharCount
+
       elseif AKey == "Up" then
         self.Char = Data.Char - self.CharPass
+
       elseif AKey == "Down" then
         self.Char = Data.Char + self.CharPass
+
       elseif AKey == "PgUp" then
         local Base = divf(Data.Char, self.CharPass) * self.CharPass
         self.Char = Base + (Data.Char - self.CharBase) - self.CharPass
+
       elseif AKey == "PgDn" then
         local Base = divf(Data.Char, self.CharPass) * self.CharPass
         self.Char = Base + (Data.Char - self.CharBase) + self.CharPass
+
       else
         isUpdate = false
 
@@ -1762,8 +1788,10 @@ function TMain:AssignEvents () --> (bool | nil)
       local isUpdate = true
       if     self.IsCodeInput then
         self:StopCodeInput(Data)
+
       elseif self.IsCharInput then
         self:GotoCharInput(Data)
+
       else
         isUpdate = false
 

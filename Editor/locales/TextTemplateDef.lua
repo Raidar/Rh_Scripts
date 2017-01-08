@@ -7,6 +7,8 @@ local Data = {
   btn_Close  = "Close",
   btn_Cancel = "Cancel",
 
+  ----------------------------------------
+
   -- Settings dialogs titles.
   cap_Dialog  = "Text Templates: Settings",
   cap_DlgAuto = "Auto Templates: Settings",
@@ -24,6 +26,8 @@ local Data = {
   cfg_UsePoint = "Use dot &qua magic char",     -- q --
   cfg_UseInside  = "Use &inside of words",      -- i --
   cfg_UseOutside = "Use &outside of words",     -- o --
+
+  ----------------------------------------
 } --- Data
 
 return Data

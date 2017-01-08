@@ -33,6 +33,7 @@ local Data = {
   -- Сделать заглавной первую букву в предложении.
   -- (CharEnum = '.', UseInside = true!)
   { find = "[%.%!%?] %l", apply = upperRes, regex = true },
+
 } --- Data
 
 return Data
