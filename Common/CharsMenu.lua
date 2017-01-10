@@ -491,12 +491,14 @@ do
   --local DefFixedRows = { HeadRows = 1 }
   --local DefFixedCols = { HeadCols = 1 }
   local DefFixedBoth = {
+
     HeadRows = 1,
     HeadCols = 1,
 
   } --- DefFixedBoth
 
   local DefUMenu = {
+
     TextNamedKeys = false,
     UseMenuTexter = false,
 
@@ -565,6 +567,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   self.Items = Config.LazyMake and MakeItems or mItems
 
   local Properties = {
+
     Id = Guid,
     Bottom = Config.Bottom,
 
@@ -574,6 +577,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   self.Props = Properties
 
   local mChooseKinds = {
+
     AKey     = true,
     Enter    = true,
     DblClick = true,
@@ -581,6 +585,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   } --- mChooseKinds
 
   local function StopDrag (Flag)
+
     if Flag then
       self.History:save()
 
@@ -594,6 +599,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
 
     --logShow({ Index = Index, SelIndex = SelIndex }, Kind)
     --logShow({ Index = Index, Items = mItems }, Kind, "a60 h60 ak1 hk5")
+
     if not mChooseKinds[Kind or ""] then
       return nil, CloseFlag
 
@@ -605,7 +611,6 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
 
     end
 
-    --if not InsText(nil, ActItem.Plain) then return true end
     if not InsText(self.InsArea, ActItem.Plain, {}) then
       return nil, CloseFlag
 

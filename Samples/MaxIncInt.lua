@@ -19,12 +19,17 @@ local step2 = 1e5
 
 for k = 0, math.huge, step1 do
   if k == k + 1 then N = k; break; end
+
 end
+
 for k = N - step1, math.huge, step2 do
   if k == k + 1 then N = k; break; end
+
 end
+
 for k = N - step2, math.huge, 1 do
   if k == k + 1 then N = k - 1; break; end
+
 end
 
 local format = string.format

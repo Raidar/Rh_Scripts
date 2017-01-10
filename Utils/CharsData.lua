@@ -34,6 +34,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 ---------------------------------------- ---- Config
 
 unit.DefCfgData = { -- Конфигурация по умолчанию:
+
   PluginWorkPath    = utils.PluginWorkPath,
   PluginDataPath    = utils.PluginDataPath,
   FilePath          = "scripts\\Rh_Scripts\\data\\",
@@ -42,6 +43,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
   DataFile          = "CharsData.lua",
   DataPath          = "Rh_Scripts.data.CharsData",
+
 } -- DefCfgData
 
 ---------------------------------------- Main class
@@ -51,12 +53,15 @@ do --- Преобразование в читаемый формат
 
   local lower = unicode.utf8.lower
   local function _EasyName (head, tail) --> (string)
+
     return head..lower(tail)
+
   end --
 
   local supper = string.upper
 
 function unit.EasyName (s, cp) --> (string)
+
   return s:gsub("(%w)(%w+)", _EasyName):
            gsub("([%dA-F][%da-f][%da-f][%da-f])",
                 function (s)
@@ -75,8 +80,6 @@ end --
   (bool|nil) - result of data parsing.
 --]]
 function unit:ParseNames (FileName) --> (bool | nil)
-
-  local FileName = FileName
 
   local f = io_open(FileName, 'r')
   if f == nil then return end
@@ -103,7 +106,9 @@ function unit:ParseNames (FileName) --> (bool | nil)
       --logShow(s, "File unused line")
       s = f:read('*l')
       --sn = sn + 1
+
     end
+
     if s == nil then break end -- Конец файла
     --if sn > 40 then break end -- DEBUG only
     --logShow(s, "File used line")
@@ -124,7 +129,8 @@ function unit:ParseNames (FileName) --> (bool | nil)
 
       limit = cp
       count = count + 1
-    end
+
+    end -- if
 
     self.Data.NamesCount = count
     self.Data.NamesStart = 0x0
@@ -137,16 +143,19 @@ function unit:ParseNames (FileName) --> (bool | nil)
       data = t[limit]
       if not data.alias then data.alias = {} end
       data.alias[#data.alias+1] = name
+
     end --
     --]]
 
     s = f:read('*l')
     --sn = sn + 1
+
   until s == nil
 
   f:close()
 
   return true
+
 end ---- ParseNames
 
 -- Load and parse Blocks.txt.
@@ -158,8 +167,6 @@ end ---- ParseNames
   (bool|nil) - result of data parsing.
 --]]
 function unit:ParseBlocks (FileName) --> (bool | nil)
-
-  local FileName = FileName
 
   local f = io_open(FileName, 'r')
   if f == nil then return end
@@ -182,7 +189,9 @@ function unit:ParseBlocks (FileName) --> (bool | nil)
       --logShow(s, "File unused line")
       s = f:read('*l')
       --sn = sn + 1
+
     end
+
     if s == nil then break end -- Конец файла
     --if sn > 40 then break end -- DEBUG only
     --logShow(s, "File used line")
@@ -205,16 +214,20 @@ function unit:ParseBlocks (FileName) --> (bool | nil)
         --code2 = code2,
         name = name,
       } ---
-    end
+
+    end -- if
+
     self.Data.BlocksCount = k
 
     s = f:read('*l')
     --sn = sn + 1
+
   until s == nil
 
   f:close()
 
   return true
+
 end ---- ParseBlocks
 ---------------------------------------- Load / Save
 do  
@@ -229,10 +242,13 @@ do
   (bool|nil) - result of data loading.
 --]]
 function unit:LoadData (FilePath) --> (bool | nil)
+
   local Data = farUt.prequire(FilePath)
   if Data then
     self.Data = Data
+
     return true
+
   end
 end ---- LoadData
 
@@ -251,6 +267,7 @@ function unit:SaveData (FileName) --> (bool | nil)
   local serial = require 'context.utils.useSerial'
 
   local kind = {
+
     --localret = true,
     --tnaming = true,
     astable = true,
@@ -259,9 +276,11 @@ function unit:SaveData (FileName) --> (bool | nil)
     lining = "all",
 
     serialize = serial.prettyize,
+
   } ---
 
   return datas.save(FileName, "Data", self.Data, kind)
+
 end ---- SaveData
 
 end --
@@ -278,13 +297,17 @@ function unit:Execute (Data) --> (bool | nil)
   -- Загрузка данных
   if self:LoadData(CfgData.DataPath) then
     return true
+
   end
 
   -- Данные по символам
   self.Data = {
+
     Names   = {}, --< NamesList
+
     Blocks  = {}, --< Blocks
   } --
+
   local FileName
 
   -- Разбор имён
@@ -303,13 +326,16 @@ function unit:Execute (Data) --> (bool | nil)
                      CfgData.FilePath, CfgData.DataFile)
 
   return self:SaveData(FileName)
+
 end -- Execute
 
 end --
 
 ---------------------------------------- run
 if not unit.Data then
+
   unit:Execute()
+
 end
 
 --logShow(unit.Data.Names, "Char Names", "d1")

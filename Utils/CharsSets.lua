@@ -25,6 +25,7 @@ local unit = {}
 --]]
 -- See: interf.[ch]pp (BoxSymbols & BOX_DEF_SYMBOLS enum).
 local BoxDrawings = {
+
   --  UCS-16  code  -- Unicode Standard
   --   UTF-8  char  -- short description
   -- Arc (rounded)
@@ -195,11 +196,13 @@ unit.BoxDrawings = BoxDrawings
 --]]
 -- See: interf.[ch]pp (BoxSymbols & BOX_DEF_SYMBOLS enum).
 local BlockElements = {
+
   Full   = "█", -- Full Block				-- DB -- BS_X_DB
   Half_D = "▄", -- Lower Half Block			-- DC -- BS_X_DC
   Half_L = "▌", -- Left  Half Block			-- DD -- BS_X_DD
   Half_R = "▐", -- Right Half Block			-- DE -- BS_X_DE
   Half_U = "▀", -- Upper Half Block			-- DF -- BS_X_DF
+
 } --- BlockElements
 unit.BlockElements = BlockElements
 
@@ -219,6 +222,7 @@ unit.BlockElements = BlockElements
   U/D/L/R - up/down/left/right.
 --]]
 local GeometricShapes = {
+
   Black = {
     Square  = "■", -- Black Square
     SquareS = "▪", -- Black Small Square
@@ -245,7 +249,9 @@ local GeometricShapes = {
     Romb    = "◆", -- Black Diamond
     RombN   = "◈", -- White Diamond Containing Black Small Diamond
     --Lozenge = "◊", -- (Black) Lozenge -- NONE
+
   }, -- Black
+
   White = {
     -- Squares:
     Square  = "□", -- White Square
@@ -289,7 +295,9 @@ local GeometricShapes = {
     Pagram  = "▱", -- White Parallelogram
     Romb    = "◇", -- White Diamond
     Lozenge = "◊", -- (White) Lozenge
+
   }, -- White
+
 } --- GeometricShapes
 unit.GeometricShapes = GeometricShapes
 
@@ -299,6 +307,7 @@ do
 -- Names for box kinds.
 -- Названия для видов рамок.
 unit.BoxKindNames = {
+
   S = "Single",
   D = "Double",
   H = "DoubleH",
@@ -307,6 +316,7 @@ unit.BoxKindNames = {
   L = "Light",
   Y = "Heavy",
   B = "Block",
+
 } --- BoxKindNames
 
   local BlackShapes = GeometricShapes.Black
@@ -314,6 +324,7 @@ unit.BoxKindNames = {
 -- Characters for varied box kinds.
 -- Символы для различных видов рамок.
 local BoxChars = {
+
   Single = { -- Обычная рамка:
     H  = BoxDrawings.H1,
     V  = BoxDrawings.V1,
@@ -327,6 +338,7 @@ local BoxChars = {
     BL = BoxDrawings.U1R1,
     BR = BoxDrawings.U1L1,
   }, -- Single
+
   Double = { -- Двойная рамка:
     H  = BoxDrawings.H2,
     V  = BoxDrawings.V2,
@@ -340,6 +352,7 @@ local BoxChars = {
     BL = BoxDrawings.U2R2,
     BR = BoxDrawings.U2L2,
   }, -- Double
+
   DoubleV = { -- Дв. верт. рамка:
     H  = BoxDrawings.H1,
     V  = BoxDrawings.V2,
@@ -353,6 +366,7 @@ local BoxChars = {
     BL = BoxDrawings.U2R1,
     BR = BoxDrawings.U2L1,
   }, -- DoubleV
+
   DoubleH = { -- Дв. гориз. рамка:
     H  = BoxDrawings.H2,
     V  = BoxDrawings.V1,
@@ -366,6 +380,7 @@ local BoxChars = {
     BL = BoxDrawings.U1R2,
     BR = BoxDrawings.U1L2,
   }, -- DoubleH
+
   Rounded = { -- Закруглённая рамка:
     H  = BoxDrawings.H1,
     V  = BoxDrawings.V1,
@@ -379,7 +394,9 @@ local BoxChars = {
     BL = BoxDrawings.ArcUR,
     BR = BoxDrawings.ArcUL,
   }, -- Rounded
+
   Light = 0, -- Тонкая рамка
+
   Heavy = { -- Толстая рамка:
     H  = BoxDrawings.HY,
     V  = BoxDrawings.VY,
@@ -393,6 +410,7 @@ local BoxChars = {
     BL = BoxDrawings.UYRY,
     BR = BoxDrawings.UYLY,
   }, -- Double
+
   Block = { -- Блоковая рамка:
     H  = BlockElements.Full,
     V  = BlockElements.Full,
@@ -412,7 +430,9 @@ local BoxChars = {
     HB = BlockElements.Half_D,
     VL = BlockElements.Half_L,
     VR = BlockElements.Half_R,
+
   }, -- Double
+
 } --- BoxChars
 unit.BoxChars = BoxChars
 BoxChars.Light = BoxChars.Single
@@ -422,7 +442,9 @@ end -- do
 -- Get character for box.
 -- Получение символа рамки.
 function unit.BoxSymbols (name)
+
   return BoxDrawings[name] or BlockElements[name]
+
 end ----
 
 --------------------------------------------------------------------------------

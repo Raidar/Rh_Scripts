@@ -38,18 +38,23 @@ local TMenu = {}
 local MMenu = { __index = TMenu }
 
 local function CreateMenu (Properties, Items, BreakKeys) --> (object)
-  local Properties = Properties or {}
+
+  Properties = Properties or {}
   local Options = Properties.Input or {}
+
   local self = {
+
     Props     = Properties,
     Items     = Items,
     BKeys     = BreakKeys,
 
     Count     = #Items,
     Options   = Options,
+
   } --- self
 
   return setmetatable(self, MMenu)
+
 end -- CreateMenu
 
 ---------------------------------------- Menu making
@@ -69,9 +74,11 @@ function unit.Menu (Properties, Items, BreakKeys, ShowMenu)
 
   if ShowMenu == nil then
     return ShowMenu(Properties, Items, BreakKeys)
+
   end
 
   return Items
+
 end -- Menu
 
 --------------------------------------------------------------------------------

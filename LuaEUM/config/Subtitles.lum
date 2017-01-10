@@ -47,11 +47,14 @@ end -- do
 ---------------------------------------- Separator
 local mSeparator = {
   separator = true,
+
 } ---
 
 ---------------------------------------- Current clause
 local mCurrentClause = {
+
   text = L.CurrentClause,
+
   Items = {
     { text = L.itm_CurClauseAll,
       Function = subs.CurClauseAll, },
@@ -60,12 +63,16 @@ local mCurrentClause = {
     { text = L.itm_CurClauseGap,
       Function = subs.CurClauseGap, },
     --mSeparator,
-  } ---
+
+  }, -- Items
+
 } --- mCurrentClause
 
 ---------------------------------------- Items/Menu
 local mSubtitles = {
+
   text = L.Subtitles,
+
   Items = {
     mCurrentClause,
     mSeparator,
@@ -73,19 +80,24 @@ local mSubtitles = {
       Function = subs.SubtitleType, },
     { text = L.itm_CurClauseData,
       Function = subs.CurClauseData, },
-  } -- Items
+
+  }, -- Items
+
 } --- mSubtitles
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.Subtitles,
     Items = { mSubtitles, },
+
   },
 
   ["Subtitles"] = mSubtitles,
   ["Subtitles.CurrentClause"] = mCurrentClause,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

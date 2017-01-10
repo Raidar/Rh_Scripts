@@ -6,19 +6,24 @@
   -- Шаблоны для 'plain'.
 --]]
 --------------------------------------------------------------------------------
+-- [[
 -- Make Result upper.
-local function upperRes (Cfg) --> (string)
+local function upperRes (Cfg)
   return Cfg.Template.Result:upper()
 end --
-
+--]]
 ---------------------------------------- Data
 local Data = {
+  --[[DO]]--
+
   -- Controls:
   CharEnum = "%S",
   CharsMin = 3,
   UseInside = false,
-  -- Templates:
+
   --regex = "lua";
+
+  --[[Templates]]-- Шаблоны:
 
   -- Special signs -- Спец. знаки:
   { find = "(c)",  plain = '©', regex = false },

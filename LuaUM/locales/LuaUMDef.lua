@@ -2,6 +2,7 @@
 
 --------------------------------------------------------------------------------
 local Data = {
+
   -- Message titles.
   Error = "Error",
   Warning = "Warning",
@@ -81,6 +82,7 @@ local Data = {
   cfg_KeysAlignText = "Key combo name right &alignment",    -- a
   cfg_ShowErrorMsgs = "Show windows with &error message",   -- e
   cfg_ReturnToUMenu = "&Return to menu after action run",   -- r
+
 } --- Data
 
 return Data

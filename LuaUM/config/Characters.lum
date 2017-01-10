@@ -35,6 +35,7 @@ Rh_Scripts[unit.ScriptPath] = unit.ScriptData
 
 ---------------------------------------- Custom
 local DefCustom = {
+
   label   = "Chars",
   name    = "lum",
   path    = unit.ScriptPath..".",
@@ -44,6 +45,7 @@ local DefCustom = {
     name    = unit.ScriptName,
     path    = unit.HistoryPath,
   },
+
   locale  = {
     kind    = 'require',
   },
@@ -62,6 +64,7 @@ end
 -- Группы наборов.
 -- Пока содержит только локализованное название группы.
 unit.KitGroups = {
+
   Chars = true,
   Maths = true,
   Punct = true,
@@ -72,6 +75,7 @@ unit.KitGroups = {
 
 -- Данные о наборах.
 unit.KitsData = {
+
   CharacterMap  = { Group = "All",   Hot = "*", text = 0, Title = 0, },
   Chars_Greeks  = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
   Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
@@ -88,7 +92,7 @@ unit.KitsData = {
 do
   local pairs = pairs
   local gL = unit.KitGroups
-  
+
   local textFmt = "&%s - %s"  -- m/b utf-8 string
   local titleFmt = "%s: %s"   -- m/b utf-8 string
 
@@ -102,6 +106,7 @@ end --
 
 -- Localize text & Title in KitsData.
 for k, v in pairs(KitsData) do
+
   local text = L["Chs"..k] or k
   v.text  = textFmt:format(v.Hot, text)
 
@@ -115,19 +120,24 @@ end -- do
 ----------------------------------------
 do
   local DefConfig = {
+
     Name  = "",
     text  = "",
     Title = "",
 
     Props = {
+
       Bottom = L.EscToQuit,
+
     }, -- Props
 
     CfgData = {
+
       UMenu = {
         BottomHotKeys = false,
         ReturnToUMenu = true,
       }, --
+
     }, -- CfgData
 
   } --- DefConfig
@@ -204,9 +214,11 @@ local Chars = {}
 
 do
   local U = unicode.utf8.char
+
   Chars.BS = U(0x0008)
   Chars.LF = U(0x000A)
   Chars.CR = U(0x000D)
+
 end -- do
 
 ---------------------------------------- CharacterMap
@@ -260,6 +272,7 @@ function unit.CharacterMap ()
   end
 
   local Props = {
+
     Order = Order,
     KeyOrder = KeyOrder,
     Serial = true,
@@ -267,17 +280,22 @@ function unit.CharacterMap ()
     Heading = "Both",
 
     RectMenu = {
+
       LineMax = 1,
       TextMax = { [0] = 1; 4, },
 
       --TextMark = true,
 
       MaxHeight = 2 + 1 + CharRows + 2 + 0,
-    },
+
+    }, -- RectMenu
 
     RectItem = {
+
       TextMark = true,
-    },
+
+    }, -- RectItem
+
   } --- Props
 
   local Cfg = unit.MakeKindConfig(Name, false)
@@ -286,7 +304,9 @@ function unit.CharacterMap ()
   do
     local colors = require 'context.utils.useColors'
     local basics = colors.BaseColors
+
     local Basis = {
+
       StandardFG  = basics.navy,
       --MarkedFG    = basics.red,
       MarkedFG    = basics.black,
@@ -305,6 +325,7 @@ function unit.CharacterMap ()
 
   --[[
   local function MakeMenu ()
+
     Menu = unit.MakeKindMenu(Cfg, Props, Datas, "None")
     unit.ScriptData[Name] = Menu
 
@@ -333,21 +354,23 @@ function unit.Chars_Greeks ()
   if Menu then return Menu.UpdateInsArea() end
 
   local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
-  local Datas = -- Char + Shift                                  
+  local Datas = -- Char + Shift
                 [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./,1234567890-= ]]..
                 [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?°!@#$%^&*()_+]]..Chars.BS..
-                -- Ctrl + Shift                                  
+                -- Ctrl + Shift
                 [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./́        []±≈]]..Chars.CR..
                 [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>?        {}∓≉ ]]..
-                -- Alt + Shift                                   
+                -- Alt + Shift
                 [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\1234567890−≡ ]]..
                 [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?|!@#$%^&*()≂≢ ]]..
                 -- Ctrl+Alt + Shift
                 [[                              ʼ  …―          ≍≣ ]]..
                 [[                              ˮ  &‾| #$% &*  ≭≠ ]]
+
   local Props = {
-    Order = Order,
-    Serial = true,                                   
+
+    Order   = Order,
+    Serial  = true,
     --Heading = "Order",
     Heading = "Both",
 
@@ -375,7 +398,7 @@ function unit.Chars_Cyrils ()
   local Datas = -- Char + Shift
                 [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,1234567890-= ]]..
                 [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,°!@#$%^&*()_+]]..Chars.BS..
-                -- Ctrl + Shift                                      
+                -- Ctrl + Shift
                 [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ́        []±≈]]..Chars.CR..
                 [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ        {}∓≉ ]]..
                 -- Alt + Shift
@@ -384,9 +407,11 @@ function unit.Chars_Cyrils ()
                 -- Ctrl+Alt + Shift
                 [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ʼѭѩ…―          ≍≣ ]]..
                 [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$ˮѬѨ&‾| #$% &*  ≭≠ ]]
+
   local Props = {
-    Order = Order,
-    Serial = true,
+
+    Order   = Order,
+    Serial  = true,
     --Heading = "Order",
     Heading = "Both",
 
@@ -398,7 +423,7 @@ function unit.Chars_Cyrils ()
   --unit.CompactMenu(Menu)
   Menu.Props.RectMenu.CompactText = true
   unit.ScriptData[Name] = Menu
-  
+
   return Menu
 
 end ---- Chars_Cyrils
@@ -415,24 +440,27 @@ function unit.MathsSymbols ()
   local Datas = -- Char + Shift
                 [[abcdefghijklmnopqrstuvwxyz1234567890-=`[];',./\ ]]..
                 [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
-                -- Ctrl + Shift                         
+                -- Ctrl + Shift
                 [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮        ≺≻⋜⋝±≈∼  ×∕<>/́]]..Chars.CR..
                 [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ      ⊀⊁  ∓≉≁⟦⟧⋆ ≮≯\§ ]]..
-                -- Alt + Shift                        
+                -- Alt + Shift
                 [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃    ≲≳≾≿≼≽−≡≃（）⋅ ≤≥/\ ]]..
                 [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅    ≴≵  ⋠⋡≂≢≄［］∗ ≰≱?| ]]..
-                -- Ctrl + Alt + Shift             
+                -- Ctrl + Alt + Shift
                 [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇    ⋦⋧⋨⋩⋞⋟≍≣∽｛｝∘∣  …― ]]..
                 [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉          ≭≠⋍＜＞∙∤≪≫&‾ ]]
+
   local Props = {
-    Order = Order,
-    Serial = true,
+
+    Order   = Order,
+    Serial  = true,
     Heading = "Both",
 
   } ---
 
   local SVKeyFuncs = CharsMenu.SVKeyFuncs
   local Keys = {
+
     Kind = "AccelKey";
     CharsMenu.SVKeyValue,   SVKeyFuncs.S,
     SVKeyFuncs.C,           SVKeyFuncs.CS,
@@ -463,21 +491,24 @@ function unit.MathsScripts ()
   local Datas = -- Char + Shift
                 [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
                 [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
-                -- Ctrl + Shift                
+                -- Ctrl + Shift
                 [[1234567890+−=()abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
                 [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
                 -- Alt + Shift
                 [[ ⅔¾⅘⅚ ⅞                                  /\ ]]..
                 [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
+
   local Props = {
-    Order = Order,
-    Serial = true,
+
+    Order   = Order,
+    Serial  = true,
     Heading = "Both",
 
   } ---
 
   local SVKeyFuncs = CharsMenu.SVKeyFuncs
   local Keys = {
+
     Kind = "AccelKey";
     CharsMenu.SVKeyValue,   SVKeyFuncs.S,
     SVKeyFuncs.C,           SVKeyFuncs.CS,
@@ -514,9 +545,11 @@ function unit.Techs_Arrows ()
                 "ᴬᴵᴶᴷᴸᴹᴺᴾᴿ ᵀᵁⱽ  "--..
                 -- Alt + Shift
                 --"               "
+
   local Props = {
-    Order = Order,
-    Serial = true,
+
+    Order   = Order,
+    Serial  = true,
     Heading = "Both",
 
   } ---
@@ -568,6 +601,7 @@ function unit.PunctSymbols ()
 --]=]
 
   local Props = {
+
     Order = Order,
     Serial = true,
     Heading = "Both",
@@ -590,6 +624,7 @@ function unit.Punct_Spaces ()
   if Menu then return Menu.UpdateInsArea() end
 
   local Order = {
+
     { '     " "', ' ', }, { ' "-"/Num-', '-', 'Subtract', },
     { '     "`"', '`', }, { ' "="/Num+', '=', 'Add',      },
     --{ '     " "', ' ', 'Multiply', }, { ' "-"/Num-', '-', 'Subtract', },
@@ -603,6 +638,7 @@ function unit.Punct_Spaces ()
   -- Spaces: '            ​'
   -- Dashes: '‑­—–‒‐‧'
   local Datas = {
+
     { ' ', 'Thin space ', }, { '­', 'Soft hyphen', },
     { ' ', 'Figure spc ', }, { '‒', 'Figure dash', },
     { ' ', 'Em/3 space ', }, { ' ', ' Math space', },
@@ -610,11 +646,11 @@ function unit.Punct_Spaces ()
     { ' ', ' En  space ', }, { '–', '  En dash  ', },
     { ' ', 'Punct.space', }, { '−', '   Minus   ', },
     { ' ', 'Em/4 space ', }, { ' ', '           ', },
-                                     
+
     { ' ', ' Em  space ', }, { '—', '  Em dash  ', },
     { ' ', 'Hair space ', }, { '‐', '  Hyphen   ', },
     { ' ', 'Em/6 space ', }, { ' ', '           ', },
-                                     
+
     { ' ', 'N-b. space ', }, { '‑', 'N-b. hyphen', },
     { ' ', 'Narrow nbsp', }, { '‧', 'Hyphen. pt.', },
     { ' ', '           ', }, { '​', 'Zero w. sp.', },
@@ -627,8 +663,9 @@ function unit.Punct_Spaces ()
   } --- Datas
 
   local Props = {
-    Order = Order,
-    Serial = true,
+
+    Order   = Order,
+    Serial  = true,
     Heading = "Both",
     --___ = true, -- DEBUG
 
@@ -680,6 +717,7 @@ function unit.MakeMenu ()
 
       --{ separator = true, },
       --unit.CharacterMap,
+
     }, -- Items
 
   } ----
@@ -688,14 +726,17 @@ end ---- MakeMenu
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.CharacterKits,
 
     Items = { unit.MakeMenu },
+
   },
 
   ["Characters"] = unit.MakeMenu,
-} ---
+
+} --- Data
 
 --logShow(Data, "Characters.lum")
 

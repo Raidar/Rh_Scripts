@@ -58,6 +58,7 @@ local TplKit = { -- Информация о шаблонах:
     -- функции преобразования:
     parse = false,  -- разбор строки со временем в класс-время
     spell = false,  -- сбор строки со временем из класса-времени
+
   }, -- sub_default
 
   sub_assa  = {
@@ -72,6 +73,7 @@ local TplKit = { -- Информация о шаблонах:
 
     parse = false,
     spell = false,
+
   }, -- sub_assa
 
   sub_srt   = {
@@ -86,6 +88,7 @@ local TplKit = { -- Информация о шаблонах:
 
     parse = false,
     spell = false,
+
   }, -- sub_srt
 
 } --- TplKit
@@ -95,6 +98,7 @@ do
   -- Автоформирование шаблонов времени без захватов.
   for _, v in pairs(TplKit) do
     v.timepat = v.timecap:gsub("[%(%)]", "")
+
   end
 
   local s2n = tonumber
@@ -116,10 +120,15 @@ do
 
   sub.parse = function (s) --> (time)
     local h, n, s, cz = s:match(sub.timecap)
+
     return newTime(s2n(h), s2n(n), s2n(s), (s2n(cz) or 0) * 10)
+
   end
+
   sub.spell = function (time) --> (string)
+
     return format(sub.timefmt, time.h, time.n, time.s, time:cz())
+
   end
 
     -- SRT
@@ -132,11 +141,17 @@ do
   --sub.linecap = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
 
   sub.parse = function (s) --> (time)
+
     local h, n, s, z = s:match(sub.timecap)
+
     return newTime(s2n(h), s2n(n), s2n(s), s2n(z))
+
   end
+
   sub.spell = function (time) --> (string)
+
     return format(sub.timefmt, time.h, time.n, time.s, time.z)
+
   end
 
 end -- do
@@ -144,24 +159,31 @@ end -- do
 --[[
 -- Получение информации о шаблонах.
 function unit.getKitInfo (tp) --> (table | nil)
+
   return TplKit[tp]
+
 end ----
 --]]
 
 ---------------------------------------- parse & store
 -- Разбор времени.
 function unit.parseTime (tp, s) --> (time | nil)
+
   return TplKit[tp].parse(s)
+
 end ----
 
 -- Заполнение времени.
 function unit.spellTime (tp, time) --> (string)
+
   return TplKit[tp].spell(time)
+
 end ----
 
 -- Разбор линии.
 function unit.parseLine (tp, s) --> (data | nil)
-  local tp = tp or "sub_assa"
+
+  tp = tp or "sub_assa"
 
   -- Разбор линии на части.
   local t = { s:match(TplKit[tp].linecap) }
@@ -176,10 +198,12 @@ function unit.parseLine (tp, s) --> (data | nil)
   t.stop  = unit.parseTime(tp, t[info.stop])
 
   return t
+
 end ---- parseLine
 
 -- Заполнение линии.
 function unit.spellLine (data) --> (string)
+
   -- Заполнение времён.
   local tp = data.type
   local info = TplKit[tp]
@@ -190,6 +214,7 @@ function unit.spellLine (data) --> (string)
   local s = format(TplKit[tp].linefmt, unpack(t))
 
   return s
+
 end ---- spellLine
 
 ---------------------------------------- make
@@ -198,8 +223,10 @@ local configType = context.detect.use.configType
 
 -- Получение поддерживаемого типа файла субтитров.
 function unit.getFileType () --> (string)
+
   local ctype = ctxdata.editors.current.type -- current editor file type
   return configType(ctype, TplKit) -- existing config type for ctype
+
 end ----
 
 do
@@ -207,8 +234,9 @@ do
 
 -- Получение данных по линии файла (по умолчанию).
 local function DefGetLineData (tp, line, shift) --> (data)
-  local line = (line or 1) + (shift and 0 or -1)
-  local shift = shift or 1
+
+  line = (line or 1) + (shift and 0 or -1)
+  shift = shift or 1
   local data
 
   repeat
@@ -220,28 +248,37 @@ local function DefGetLineData (tp, line, shift) --> (data)
 
     --logShow({ line, shift, s })
     data = unit.parseLine(tp, s)
+
   until data
 
   if data then
     data.line = line
 
     return data
+
   end
 end -- DefGetLineData
 
 -- Функции получения данных по линии:
 local GetLineData = {
+
   sub_assa  = function (line, shift) --> (data)
+
     return DefGetLineData("sub_assa", line, shift)
+
   end,
 
   sub_srt   = function (line, shift) --> (data)
+
     return DefGetLineData("sub_srt", line, shift)
+
   end,
+
 } --- GetLineData
 
 -- Получение данных по линии файла.
 function unit.getLineData (tp, line, shift) --> (number)
+
   local Info = editor.GetInfo()
   if not Info then return end
 
@@ -250,29 +287,35 @@ function unit.getLineData (tp, line, shift) --> (number)
   editor.SetPosition(nil, Info) -- Restore cursor pos!
 
   return data
+
 end ----
 
 end -- do
 
 -- Получение длины отрезка времени на линии файла.
 function unit.getClauseLen (tp) --> (number | nil)
+
   local data = unit.getLineData(tp)
   if not data then return end
 
   return data.stop:dif(data.start)
+
 end ----
 
 -- Получение длины паузы перед отрезком времени на линии файла.
 function unit.getClauseGap (tp) --> (number | nil)
+
   local curr = unit.getLineData(tp)
   if not curr then return end
 
   local prev = unit.getLineData(tp, curr.line, -1)
   if not prev or curr.line == prev.line then
     return curr.start:to_z()
+
   end
 
   return curr.start:dif(prev.stop)
+
 end ----
 
 --------------------------------------------------------------------------------

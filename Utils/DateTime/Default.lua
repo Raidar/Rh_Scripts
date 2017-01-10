@@ -34,6 +34,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -42,19 +43,23 @@ unit.DefCustom = {
   help   = { topic = unit.ScriptName, },
   locale = {
     kind = 'load',
+
   }, --
+
 } -- DefCustom
 
 --[[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 --logShow(L, "L", "wM")
 --]]
 ---------------------------------------- Config class
 local TConfig = {
+
   World         = "Default",        -- Мир
   Type          = "Type.Default",   -- Тип календаря
 
@@ -106,6 +111,7 @@ local TConfig = {
   RestWeekDays = {
     [0] = true,
     [6] = true,
+
   }, -- RestWeekDays
 
   -- Months' days count.
@@ -120,7 +126,9 @@ local TConfig = {
 
     Min = 28,
     Max = 28,
-    WeekMin = 4 + 2,             WeekMax = 4 + 2,
+    WeekMin = 4 + 2,
+    WeekMax = 4 + 2,
+
   }, -- MonthDays
 
   -- Year' days count by months.
@@ -132,6 +140,7 @@ local TConfig = {
     280, 308, 336,
     364,
     [0] = 0,
+
   }, -- YearDays
 
   -- Week days for last days of previous months
@@ -143,12 +152,14 @@ local TConfig = {
     0, 0, 0,
     0, 0, 0,
     0, 0, 0,
+
   }, -- WeekDays
 
   -- Outweek days with "outweekday" number.
   -- Вненедельные дни с номерами дней "вненедели".
   WeekOuts = {
     --{ m = 12, d = 32, od = 1, },
+
   }, -- WeekOuts
 
   -- Formats to output.
@@ -170,11 +181,13 @@ local TConfig = {
     MonthDay    = "%02d",
     MonthWeek   = "%1d",
     WeekDay     = "<%1d>",
+
   }, -- Formats
 
   --LocData = L,
 
   --filled = nil,   -- Признак заполненности
+
 } ---
 unit.TConfig = TConfig
 
@@ -190,6 +203,7 @@ function unit.newConfig (Config) --|> Config
   if Config and getmetatable(self) == MConfig then return self end
 
   return setmetatable(self, MConfig)
+
 end ---- newConfig
 
 end -- do
@@ -200,6 +214,7 @@ end -- do
 function TConfig:isZeroYear (y) --> (bool)
 
   return self.ZeroYear
+
 end ----
 
 ---------------------------------------- ---- ---- Leap
@@ -213,6 +228,7 @@ end ----
 function TConfig:isLeapYear (y) --> (bool)
 
   return false
+
 end ----
 
 -- Count extra days of leap year.
@@ -225,6 +241,7 @@ end ----
 function TConfig:getLeapDays (y) --> (bool)
 
   return self:isLeapYear(y) and 1 or 0
+
 end ----
 
 ---------------------------------------- ---- ---- Count
@@ -236,7 +253,9 @@ end ----
   result (number) - month count in year.
 --]]
 function TConfig:getYearMonths (y) --> (number)
+
   return self.MonthPerYear
+
 end ---- getYearMonths
 
 -- Count weeks in year.
@@ -250,6 +269,7 @@ function TConfig:getYearWeeks (y) --> (number)
 
   return self:getYearWeek(self:getYearLastDay(y)) -
          self:getYearWeek(y + 1, 1, 1)
+
 end ---- getYearWeeks
 
 -- Count days in year.
@@ -262,6 +282,7 @@ end ---- getYearWeeks
 function TConfig:getYearDays (y) --> (number)
 
   return self.BaseYear + self:getLeapDays(y)
+
 end ---- getYearDays
 
 -- Count days in month.
@@ -275,6 +296,7 @@ end ---- getYearDays
 function TConfig:getMonthDays (y, m) --> (number)
 
   return self.MonthDays[m]
+
 end ---- getMonthDays
 
 -- Get week day for last day of prior month.
@@ -288,6 +310,7 @@ end ---- getMonthDays
 function TConfig:getWeekDays (y, m) --> (number)
 
   return self.WeekDays[m]
+
 end ---- getWeekDays
 
 -- Count days in month for weekdays.
@@ -301,6 +324,7 @@ end ---- getWeekDays
 function TConfig:getWeekMonthDays (y, m) --> (number)
 
   return self.MonthDays[m]
+
 end ---- getWeekMonthDays
 
 -- Count days in month for weekouts.
@@ -314,6 +338,7 @@ end ---- getWeekMonthDays
 function TConfig:getWeekMonthOuts (y, m) --> (number)
 
   return 0
+
 end ---- getWeekMonthOuts
 
 ---------------------------------------- ---- ---- get+div
@@ -329,7 +354,9 @@ end ---- getWeekMonthOuts
 function TConfig:getYearLastDay (y) --> (number)
 
   local m = self:getYearMonths(y)
+
   return y, m, self:getMonthDays(y, m)
+
 end ---- getYearLastDay
 
 -- Get day number in year.
@@ -344,6 +371,7 @@ end ---- getYearLastDay
 function TConfig:getYearDay (y, m, d) --> (number)
 
   return d + self.YearDays[m - 1]
+
 end ---- getYearDay
 
 -- Divide day number in year into date.
@@ -361,6 +389,7 @@ function TConfig:divYearDay (y, r) --> (m, d)
 
   if r == 0 then
     return LastMonth, self:getMonthDays(y, LastMonth)
+
   end
 
   if r < 0 then r = -r end
@@ -369,10 +398,12 @@ function TConfig:divYearDay (y, r) --> (m, d)
   for m = LastMonth - 1, 0, -1 do
     if r > YearDays[m] then
       return m + 1, r - YearDays[m]
+
     end
   end
 
   return LastMonth, self:getMonthDays(y, LastMonth)
+
 end ---- divYearDay
 
 -- Get week number in year.
@@ -396,6 +427,7 @@ function TConfig:getYearWeek (y, m, d, f) --> (number)
               DayPerWeek + YearStartDay - 1 -
               (YearStartDay > YearStartShift and DayPerWeek or 0),
               DayPerWeek)
+
 end ---- getYearWeek
 
 -- Get week number in month.
@@ -410,6 +442,7 @@ end ---- getYearWeek
 function TConfig:getMonthWeek (y, m, d) --> (number)
 
   return self:getYearWeek(y, m, d, 1) - self:getYearWeek(y, m, 1, 1) + 1
+
 end ---- getMonthWeek
 
 -- Get day number of the week.
@@ -428,6 +461,7 @@ end ---- getMonthWeek
 function TConfig:getWeekDay (y, m, d) --> (number)
 
   return (self:getWeekDays(y, m) + d) % self.DayPerWeek
+
 end ---- getWeekDay
 
 -- Get day number of the week in 1..DayPerWeek range.
@@ -443,6 +477,7 @@ function TConfig:getWeekNumDay (y, m, d) --> (number)
 
   local wday = self:getWeekDay(y, m, d)
   return wday == 0 and self.DayPerWeek or wday
+
 end ---- getWeekNumDay
 
 -- Get day from month week day.
@@ -466,15 +501,20 @@ function TConfig:getMonthWeekDay (y, m, mw, wd) --> (number)
     local Day = self:getWeekMonthDays(y, m)       -- LastDay
     local WeekDay = self:getWeekNumDay(y, m, Day) -- LastWeekDay
     local Shift = WeekDay >= wd and 1 or 0
+
     return Day + DayPerWeek * (mw + Shift) + (wd - WeekDay)
+
   else
     local Day = 1                                 -- StartDay
     local WeekDay = self:getWeekNumDay(y, m, Day) -- StartWeekDay
     local Shift = WeekDay <= wd and 1 or 0
+
     return Day + DayPerWeek * (mw - Shift) + (wd - WeekDay)
+
   end
 
   return 0
+
 end ---- getMonthWeekDay
 
 -- Get day number of the common era.
@@ -489,6 +529,7 @@ end ---- getMonthWeekDay
 function TConfig:getEraDay (y, m, d) --> (number)
 
   return (y - 1) * self.BaseYear + self:getYearDay(y, m, d)
+
 end ---- getEraDay
 
 -- Divide day number of the common era into date.
@@ -505,6 +546,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
   local e, i = e, 1
   if e <= 0 then
     e, i = -e, -1
+
   end
   --local E = e -- for log only
 
@@ -513,8 +555,10 @@ function TConfig:divEraDay (e) --> (y, m, d)
   if e <= BaseYear then
     if i > 0 then
       return 1, self:divYearDay(1, e)                   -- н.э.
+
     else
       return 0, self:divYearDay(0, BaseYear + 1 - e)    -- до н.э.
+
     end
   end
 
@@ -527,15 +571,19 @@ function TConfig:divEraDay (e) --> (y, m, d)
   local yd = self:getYearDays(y)
   if e > yd then
     y, e = y + 1, e - yd
+
   end
 
   --logShow({ E, e, y, self:isLeapYear(y), }, "divEraDay", "w d2")
 
   if i > 0 then
     return y, self:divYearDay(y, e)
+
   else
     y = y - 1
+
     return -y, self:divYearDay(y, BaseYear + 1 - e)
+
   end
 end ---- divEraDay
 
@@ -550,6 +598,7 @@ end ---- divEraDay
 function TConfig:getEraMonth (y, m) --> (number)
 
   return (y - 1) * self.MonthPerYear + m
+
 end ---- getEraMonth
 
 -- Divide month number of the common era.
@@ -568,6 +617,7 @@ function TConfig:divEraMonth (r) --> (y, m)
   if m ~= 0 then return y + 1, m end
 
   return y, MonthPerYear
+
 end ---- divEraMonth
 
 ---------------------------------------- ---- ---- Check
@@ -584,6 +634,7 @@ function TConfig:isDate (y, m, d) --> (y, m, d)
 
   return (m > 0) and (m <= self.MonthPerYear) and
          (d > 0) and (d <= self:getMonthDays(y, m))
+
 end ---- isDate
 
 -- Fix year for year ±1.
@@ -591,6 +642,7 @@ end ---- isDate
 function TConfig:fixYear (date, shift) --> (date)
 
   return date
+
 end ---- fixYear
 
 -- Fix month day for year ±1.
@@ -599,15 +651,18 @@ function TConfig:fixYearMonthDay (date) --> (date)
 
   if date.d < 1 then
     date.d = 1
+
   else
     local MonthDays = self:getMonthDays(date.y, date.m)
 
     if date.d > MonthDays then
       date.d = MonthDays
+
     end
   end
 
   return date
+
 end ---- fixYearMonthDay
 
 -- Fix year and month for month ±1.
@@ -627,9 +682,11 @@ function TConfig:fixYearMonth (date) --> (date)
     date.y = date.y + 1
 
     self:fixYear(date, 1)
+
   end
 
   return self:fixYearMonthDay(date)
+
 end ---- fixYearMonth
 
 -- Fix month day for day ±1.
@@ -645,9 +702,11 @@ function TConfig:fixMonthDay (date) --> (date)
   elseif date.d == self:getMonthDays(date.y, date.m) + 1 then
     date.d = 1
     date.m = date.m + 1
+
   end
 
   return self:fixYearMonth(date)
+
 end ---- fixMonthDay
 
 ---------------------------------------- ---- Time
@@ -665,6 +724,7 @@ end ---- fixMonthDay
 function TConfig:getDaySec (h, n, s) --> (number)
 
   return s + (n + h * self.MinPerHour) * self.SecPerMin
+
 end ---- getDaySec
 
 ---------------------------------------- ---- ---- Check
@@ -684,6 +744,7 @@ function TConfig:isTime (h, n, s, z) --> (y, m, d)
          (n >= 0) and (n <= self.MinPerHour) and
          (s >= 0) and (s <= self.SecPerHour) and
          (not z or (z >= 0) and (z <= self.MSecPerSec))
+
 end ---- isTime
 
 --------------------------------------------------------------------------------

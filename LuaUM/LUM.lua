@@ -44,6 +44,7 @@ local unit = {}
 
 -- Формат сообщения об ошибке:
 local KindErrors = {
+
   LuaMacro = "LuaMacro_Error",
   Plain    = "PlainText_Error",
   Macro    = "MacroText_Error",
@@ -61,6 +62,7 @@ local bndUt = require "Rh_Scripts.Utils.Binding"
 
 -- "Охват" по умолчанию.
 local DefScope = {
+
   FileName = "",
   FirstLine = false,
   ForceLine = false,

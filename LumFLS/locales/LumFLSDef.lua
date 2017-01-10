@@ -2,8 +2,10 @@
 
 --------------------------------------------------------------------------------
 local Data = {
+
   -- Messsage titles.
   UMenuName  = "LumFLS",
+
 } -- Data
 
 return Data

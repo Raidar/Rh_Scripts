@@ -38,6 +38,7 @@ unit.DefCustom = {
   name = "TortoiseSVN",
   path = "scripts\\Rh_Scripts\\LuaPUM\\config\\",
   locale = { kind = 'load', },
+
 } -- DefCustom
 
 ---------------------------------------- ---- Config
@@ -61,12 +62,14 @@ unit.DefCfgData = {
 
   -- Дополнительные параметры:
   onClose = "/closeonend:0",
+
 } -- DefCfgData
 
 ---------------------------------------- Main class
 local TMain = {
   --Guid       = win.Uuid(""),
   --ConfigGuid = win.Uuid(""),
+
 }
 local MMain = { __index = TMain }
 
@@ -89,6 +92,7 @@ local function CreateMain (ArgData)
 
     IsWorkingCopyItem   = false,
     IsSubversionedItem  = false,
+
   } --- self
 
   self.ArgData.Custom = self.ArgData.Custom or {} -- MAYBE: addNewData with deep?!
@@ -109,6 +113,7 @@ local function CreateMain (ArgData)
   --logShow(self.Custom, "Custom")
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -120,6 +125,7 @@ do
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
+
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not self.LocData then return end
@@ -127,6 +133,7 @@ function TMain:Localize ()
   self.L = locale.make(self.Custom, self.LocData)
 
   return self.L
+
 end ---- Localize
 
 -- Make information about panel item.
@@ -151,6 +158,7 @@ function TMain:MakePanelItemInfo ()
 
   --logShow(self, "SVN")
   return true
+
 end ---- MakePanelItemInfo
 
 function TMain:MakeProps ()
@@ -176,10 +184,12 @@ function TMain:MakeProps ()
     UncheckedChar = " ",
 
     IsStatusBar = true,
+
   } -- RectMenu
   Props.RectMenu = RM
 
   return true
+
 end ---- MakeProps
 
 -- Подготовка.
@@ -191,11 +201,13 @@ function TMain:Prepare ()
   self:MakePanelItemInfo()
 
   return self:MakeProps()
+
 end ---- Prepare
 
 end -- do
 ---------------------------------------- ---- Status
 local isStatus = {
+
   Text      = '^%s-SubWCRev%s-%:%s*(.*)',
   NotExist  = "does not exist",
   IsNotaWC  = "is not a working copy",
@@ -203,12 +215,14 @@ local isStatus = {
   NoCommit  = "Last committed at revision 0",
   NoUpdate  = "Updated to revision 0",
   IsModifs  = "Local modifications found",
-} ---
+
+} --- isStatus
 
 do
 -- Check for working copy.
 -- Проверка на наличие рабочей копии.
 function TMain:isWorkingCopy () --> (bool)
+
   local Status = self.Status
   --assert(type(Status) == 'string')
 
@@ -221,6 +235,7 @@ end ---- isWorkingCopy
 -- Check for subversion present.
 -- Проверка на наличие версионирования.
 function TMain:isSubversioned () --> (bool)
+
   local Status = self.Status
   --assert(type(Status) == 'string')
 
@@ -238,6 +253,7 @@ function TMain:ParseStatus ()
   if Status == "" then
     local L = self.LocData
     utils.warning(L.eError, L.eStatusFailed)
+
     return
   end
 
@@ -245,21 +261,25 @@ function TMain:ParseStatus ()
   self.IsWorkingCopyItem = not not self:isWorkingCopy() -- true/false
   if self.IsWorkingCopyItem then
     self.IsSubversionedItem = not not self:isSubversioned()
+
   end
 
   --logShow("'"..unit.Item.Status.."'", "SVN Status")
   --logShow(unit.Item, "SVN")
   return true
+
 end ---- ParseStatus
 
 end -- do
 ---------------------------------------- ---- Execute
 do
   local Formats = { -- SVN
+
     Run    = '"%s%s" /command:%s %s %s',
     --Run    = '""%s%s /command:%s %s %s""',
     Path   = '/path:"%s"',
     Status = '""%s%s" "%s""',
+
   } --- Formats
 
   local runUt = require "Rh_Scripts.Utils.Actions"
@@ -268,34 +288,43 @@ do
 -- Get status for panel item.
 -- Получение статуса для элемента панели.
 function TMain:getStatus () --> (bool)
+
   local Path = self.Path
   if not Path or Path == "" then return end
 
   local CfgData = self.CfgData
   self.Status = Formats.Status:format(CfgData.Path, CfgData.Status, Path)
   --logShow({ Path = ItemPath, Status = Status, }, "Item + Status")
+
   return exec(self.Status)
-  --return exec(self.Status.." "..context.utils.PluginWorkPath..unit.DefCustom.path.."SubWCRevData.txt")
+
+  --return exec(self.Status.." "..
+  --            context.utils.PluginWorkPath..
+  --            unit.DefCustom.path.."SubWCRevData.txt")
+
 end ---- getStatus
 
 -- Make parameters.
 -- Формирование параметров.
 function TMain:MakeParams (Args, Command) --> (string | nil)
+
   -- Анализ общих параметров.
   local t = {}
-  t[#t+1] = self.CfgData.onClose or ""
+  t[#t + 1] = self.CfgData.onClose or ""
 
   -- Анализ параметров операции.
   local u = Args
-  for k = 1, #u do t[#t+1] = u[k] end
+  for k = 1, #u do t[#t + 1] = u[k] end
 
   -- Анализ параметров команды.
   u = self.CfgData[Command]
   if type(u) == 'table' then
-    for _, v in pairs(u) do t[#t+1] = v end
+    for _, v in pairs(u) do t[#t + 1] = v end
+
   end
 
   return table.concat(t, ' ')
+
 end ---- MakeParams
 
   local runCmdLine = runUt.Run.CmdLine
@@ -303,6 +332,7 @@ end ---- MakeParams
 -- Run SVN operation.
 -- Выполнение операции SVN.
 function unit.Run (Args, Cfg) --> (bool)
+
   local self = Args.self
   -- Анализ основных параметров.
   local CfgData = self.CfgData
@@ -310,6 +340,7 @@ function unit.Run (Args, Cfg) --> (bool)
   local Path = ""
   if not Args.nopath then
     Path = Formats.Path:format(self.Path)
+
   end
 
   -- Анализ дополнительных параметров.
@@ -321,12 +352,16 @@ function unit.Run (Args, Cfg) --> (bool)
 
   if CfgData.ShowCmd or CfgData[Cmd] and CfgData[Cmd].ShowCmd then
     utils.message("Command: "..Cmd, "Command line:\n"..self.CmdLine, "l")
+
   end
+
   if CfgData.RunNone or CfgData[Cmd] and CfgData[Cmd].RunNone then
     return
+
   end
 
   return runCmdLine(self.CmdLine)
+
 end ---- Run
 
 -- Show SVN status.
@@ -336,6 +371,7 @@ function unit.ShowStatus (self)
   local Status = self.Status
   utils.message(self.LocData.wSVN_status,
                 Status:match(isStatus.Text) or Status, "l")
+
 end -- ShowStatus
 
 end -- do
@@ -344,6 +380,7 @@ end -- do
 ---------------------------------------- ---- Items
 -- Операции пунктов меню.
 unit.AllOperations = {
+
   { command = "checkout",       checked = "↵", },
   { command = "update",         checked = "↶", },
   { command = "commit",         checked = "↗", },
@@ -385,10 +422,12 @@ unit.AllOperations = {
   { command = "settings",       checked = "⚗", },
   { command = "help",           checked = "?", },
   { command = "about",          checked = "☧", },
+
 } --- AllOperations
 
 -- Состав меню в зависимости от элемента.
 unit.Kinds = {
+
   --browse    = true,
   settings  = true,
   help      = true,
@@ -524,35 +563,41 @@ function TMain:MakeItems (Operations, Kinds) --> (Items)
           Kinds[IsWorkingCopy][self.isDir][name]) or
          (IsWorkingCopy and
           Kinds[IsWorkingCopy][self.isDir][self.IsSubversionedItem][name]) then
-        t[#t+1] = {
+        t[#t + 1] = {
           text = L["tSVN_"..name] or name,
           Hint = L["hSVN_"..name] or name,
           checked   = IsIconChars and v.checked,
           Function  = unit.Run,
           Arguments = v,
+
         } ---
+
       end
     end
   end -- for
 
   -- Дополнительные пункты меню.
   if CfgData.MenuView ~= "far.Menu" and CfgData.ItemWidth then
-    t[#t+1] = { -- Special line
+    t[#t + 1] = { -- Special line
       text = ("─"):rep(CfgData.ItemWidth),
       disable = true,
       checked = "─",
+
     } --
+
   end
 
-  t[#t+1] = { -- SVN Status
+  t[#t + 1] = { -- SVN Status
     text = L.tSVN_status,
     Hint = L.hSVN_status,
     Function = unit.ShowStatus,
     Arguments = self,
     checked = "♌",
+
   } --
 
   return t
+
 end ---- MakeItems
 
 ---------------------------------------- ---- Menu
@@ -570,13 +615,16 @@ function TMain:GetMenuBottom ()
   if MenuWidth < Path:len() then
     if self.IsMoreCols then
       Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+\\[^\\]+)$")
+
     else
       Lost, View = Path:match("^(.*)(\\[^\\]+\\[^\\]+)$")
+
     end
   end
   --logShow({ Path, Lost, View, }, "Parse Path")
 
   return View and View ~= Path and ".."..View or Path
+
 end ---- GetMenuBottom
 
 -- Make menu.
@@ -590,10 +638,12 @@ function TMain:MakeMenu () --> (Menu)
   local mItems --= unit.MakeItems(AllOperations, Kinds)
 
   local function MakeItems ()
+
     if not self:ParseStatus() then return end
     mItems = self:MakeItems(unit.AllOperations, unit.Kinds)
 
     return mItems
+
   end -- MakeItems
 
   --local ColRowsMax = 20
@@ -604,6 +654,7 @@ function TMain:MakeMenu () --> (Menu)
   mProps.RectMenu.Cols = self.IsMoreCols and 2 or 1
 
   return { -- Tortoise SVN
+
     text  = L.tSVN,
     Title = L.TortoiseSVN,
     Area = "panels",
@@ -623,7 +674,9 @@ function TMain:MakeMenu () --> (Menu)
 
     --Items = mItems,
     Items = MakeItems,
+
   } ----
+
 end ---- MakeMenu
 
 end -- do
@@ -646,6 +699,7 @@ function unit.Execute ()
     --_Main:Localize()
     --local L = _Main.LocData
     --utils.warning(L.eError, L.ePathNotFound)
+
     return
   end
 
@@ -655,13 +709,16 @@ function unit.Execute ()
 
   local function MakeMenu ()
     return _Main:MakeMenu()
+
   end -- MakeMenu
 
   return {
     text = _Main.LocData.tSVN,
 
     Items = { MakeMenu },
+
   }
+
 end ---- Execute
 
 ---------------------------------------- Data
@@ -669,10 +726,12 @@ local Menu, SError = unit.Execute()
 --logShow(Menu, SError or "")
 
 local Data = {
+
   Menu = Menu,
 
   ["TortoiseSVN"] = Menu and Menu.Items[1],
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

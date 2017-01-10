@@ -35,16 +35,19 @@ local DefCustom = {
   locale = { kind = 'load', },
   --path = "Rh_Scripts.LuaPUM.config.",
   --locale = { kind = 'require', },
+
 } --- DefCustom
 
 ---------------------------------------- ---- Locale
 local L, e1, e2 = locale.localize(DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- ---- Config
 local DefCfgData = {
+
   -- Основные параметры:
   Path    = "",
   --Repo    = "SVN",
@@ -67,24 +70,30 @@ local DefCfgData = {
 
   --isWorkingCopy  = Svn.isWorkingCopy,
   --isSubversioned = Svn.isSubversioned,
+
 } --- DefCfgData
 
 ---------------------------------------- Internal
 local function FillCmdLine (Command)
+
   return panel.SetCmdLine(-1, Command)
+
 end --
 
 local runLuaMacro = runUt.Run.LuaMacro
 
 local function FillCmdLineWithBack (Command)
+
   if panel.SetCmdLine(-1, Command) then
     return runLuaMacro("Keys'Left'")
+
   end
 end --
 
 ---------------------------------------- Separator
 local mSeparator = {
   separator = true,
+
 } ---
 
 ---------------------------------------- Items
@@ -93,6 +102,7 @@ local dLogGraphFormat =
   '%C(white)%s%Creset%C(yellow bold)%d%Creset [%C(white bold)%an%Creset]'
 
 local mItems = {
+
   { text = "Git GUI",
     CmdLine = "git gui citool",
     Hint = "Show GUI", },
@@ -105,7 +115,9 @@ local mItems = {
   { text = "P&ush to origin…",
     Function = FillCmdLine,
     Arguments = "git push origin master", },
+
   mSeparator,
+
   { text = "&Add to index…",
     Function = FillCmdLine,
     Arguments = "git add ", },
@@ -115,7 +127,9 @@ local mItems = {
   { text = "Commit… onl&y",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit -m ""', },
+
   mSeparator,
+
   { text = "&Diff w/previous",
     CmdLine = "edit:<git diff HEAD", },
   { text = "Diff w&/commited",
@@ -140,6 +154,7 @@ local mItems = {
         UncheckedChar = " ",
         MinWidth = 29, -- Hint:len()
       }, -- RectMenu
+
     }, -- Props
 
     CfgData = {
@@ -147,9 +162,11 @@ local mItems = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
       },
+
     }, -- CfgData
 
     Items = {
+
       { text = "Log last &2 commits",
         Hint = "View last 2 commits in editor",
         CmdLine = "edit:<git log -2", },
@@ -166,13 +183,16 @@ local mItems = {
         Hint = "Press q to quit from log view",
         CmdLine = 'git log --graph --abbrev-commit --pretty=format:"'..
                   dLogGraphFormat..'" -- ', },
+
     }, -- Items
-  },
+
+  }, -- Extended log
 
   { text = "&Find changes",
     CmdLine = "edit:<git show", },
   { text = "Log &graph",
     CmdLine = "gitk", },
+
   mSeparator,
 
   { text = "&Reset / revert",
@@ -189,6 +209,7 @@ local mItems = {
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
       }, -- RectMenu
+
     }, -- Props
 
     CfgData = {
@@ -196,9 +217,11 @@ local mItems = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
       },
+
     }, -- CfgData
 
     Items = {
+
       { text = "&Fix / amend…",
         Hint = "Amend: fix last commit",
         Function = FillCmdLineWithBack,
@@ -241,13 +264,17 @@ local mItems = {
         Hint = "Checkout to master",
         Function = FillCmdLine,
         Arguments = "git checkout master", },
+
     }, -- Items
-  },
+
+  }, -- Reset / revert
 
   { text = "&Pull from origin…",
     Function = FillCmdLine,
     Arguments = "git pull origin master", },
+
   mSeparator,
+
   { text = "Delete…",
     Function = FillCmdLine,
     Arguments = "git rm ", },
@@ -260,8 +287,8 @@ local mItems = {
   { text = "Move/re&name…",
     Function = FillCmdLine,
     Arguments = "git mv ", },
-  mSeparator,
 
+  mSeparator,
 
   { text = "&Tag",
 
@@ -277,6 +304,7 @@ local mItems = {
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
       }, -- RectMenu
+
     }, -- Props
 
     CfgData = {
@@ -284,9 +312,11 @@ local mItems = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
       },
+
     }, -- CfgData
 
     Items = {
+
       { text = "&Tag…",
         Function = FillCmdLine,
         Arguments = "git tag ", },
@@ -312,8 +342,10 @@ local mItems = {
       { text = "&Remote delete tag…",
         Function = FillCmdLine,
         Arguments = "git push origin :refs/tags/", },
+
     }, -- Items
-  },
+
+  }, -- Tag
 
   { text = "Branches     &6",
     CmdLine = "git branch -a", },
@@ -326,7 +358,9 @@ local mItems = {
   { text = "Merge fetched…",
     Function = FillCmdLineWithBack,
     Arguments = 'git merge origin/master -m ""', },
+
   mSeparator,
+
   { text = "Rebase…",
     Function = FillCmdLine,
     Arguments = "git rebase -i ", },
@@ -339,7 +373,9 @@ local mItems = {
   { text = "Merge commit to…",
     Function = FillCmdLine,
     Arguments = "git cherry-pick ", },
+
   mSeparator,
+
   { text = "Init git here",
     CmdLine = "git init", },
   { text = "&Blame…",
@@ -351,7 +387,9 @@ local mItems = {
   { text = "Remote add…",
     Function = FillCmdLine,
     Arguments = "git remote add ", },
+
   mSeparator,
+
   { text = "&Help",
     Function = FillCmdLine,
     Arguments = "git help ", },
@@ -362,15 +400,19 @@ local mItems = {
   { text = "About        &?",
     CmdLine = "git --version", },
     --CmdLine = "git gui version", },
+
   mSeparator,
+
   { text = "Status       &1",
     CmdLine = "git status", },
   { text = "Status view  &2",
     CmdLine = "edit:<git status", },
+
 } --- mItems
 
 ---------------------------------------- Menu
 local mGitCommands = { -- Git commands
+
   text = "&G - Git menu",
 
   Area = "panels",
@@ -391,6 +433,7 @@ local mGitCommands = { -- Git commands
       UncheckedChar = " ",
 
       IsStatusBar = true,
+
     }, -- RectMenu
 
   }, -- Props
@@ -405,17 +448,21 @@ local mGitCommands = { -- Git commands
   }, -- CfgData
 
   Items = mItems,
+
 } --- mGitCommands
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = "&G - Git menu",
     Items = { mGitCommands, },
+
   },
 
   ["GitCommands"] = mGitCommands,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

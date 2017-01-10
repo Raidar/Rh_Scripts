@@ -48,28 +48,37 @@ unit.uCP = uCP2s
 unit.CharCodeNameFmt = "U+%s — %s" -- utf-8 string
 
 local function uCodeName (u) --< uCode --> Name
+
   local c = CharsNames[u]
   if not c then
     return unit.CharCodeNameFmt:format(uCP2s(u, true), "")
+
   end
+
   local s = c.fullname
   if not s then
     s = unit.CharCodeNameFmt:format(uCP2s(u, true), c.name or "")
     c.fullname = s
+
   end
+
   return s
+
 end -- uCodeName
 unit.uCodeName = uCodeName
 
   local u_byte = strings.u8byte
 
 function unit.uCharCodeName (c) --< uChar --> Name
+
   return uCodeName(u_byte(c))
+
 end ---- uCharCodeName
 
   local CharsBlocks = CharsData and CharsData.Blocks or Null
 
 local function uCodeBlock (u) --< uCode --> (uBlock index, uBlock)
+
   local Blocks = CharsBlocks
 
   local l, r = 1, #Blocks
@@ -80,18 +89,23 @@ local function uCodeBlock (u) --< uCode --> (uBlock index, uBlock)
 
     if     u > b.last then
       l = m + 1
+
     elseif u < b.first then
       r = m - 1
+
     else
       return m, b
+
     end
-  end
+  end -- while
+
 end ---- uCodeBlock
 unit.uCodeBlock = uCodeBlock
 
 unit.CharBlockNameFmt = "U+%s..U+%s — %s" -- utf-8 string
 
 local function uBlockName (u) --< uCode --> Name
+
   local _, b = uCodeBlock(u)
   if not b then return end
 
@@ -101,13 +115,18 @@ local function uBlockName (u) --< uCode --> Name
                                      uCP2s(b.last, true),
                                      b.name or "")
     b.fullname = s
+
   end
+
   return s
+
 end ---- uBlockName
 unit.uBlockName = uBlockName
 
 function unit.uCharBlockName (c) --< uChar --> Name
+
   return uBlockName(u_byte(c))
+
 end ---- uCharBlockName
 
 --end -- do
@@ -118,6 +137,7 @@ end ---- uCharBlockName
   local NamesLimit = unit.Data.NamesLimit
 
 function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
+
   for k = base or NamesStart, NamesLimit do
   --for k = base or 0x0000, (base or 0x0000) + 3 do
     local c = CharsNames[k]
@@ -126,12 +146,15 @@ function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
       --logShow({ pattern, base, c }, s and s:lower():match(pattern))
       if s and s:lower():match(pattern) then
         return k
+
       end
     end
   end -- for
+
 end ---- uFindCode
 
 function unit.uCodeCount (pattern) --< (Name) --> (uCode Count)
+
   local Result = 0
 
   -- Fast algo
@@ -140,6 +163,7 @@ function unit.uCodeCount (pattern) --< (Name) --> (uCode Count)
     --logShow({ pattern, base, c }, s and s:lower():match(pattern))
     if s and s:lower():match(pattern) then
       Result = Result + 1
+
     end
   end -- for
 
@@ -151,11 +175,13 @@ function unit.uCodeCount (pattern) --< (Name) --> (uCode Count)
     --logShow({ pattern, base, c }, s and s:lower():match(pattern))
     if s and s:lower():match(pattern) then
       Result = Result + 1
+
     end
   end -- for
   --]]
 
   return Result
+
 end ---- uCodeCount
 
 end -- do

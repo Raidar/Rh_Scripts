@@ -1,5 +1,10 @@
--- LUM
+--[[ LuaUM ]]--
 
+----------------------------------------
+--[[ description:
+  -- Common scripts.
+  -- Общие скрипты.
+--]]
 --------------------------------------------------------------------------------
 
 ----------------------------------------
@@ -28,28 +33,38 @@ end
 ---------------------------------------- Separator
 local mSeparator = {
   separator = true,
+
 } ---
 
----------------------------------------- Quick info
+---------------------------------------- Quick Information
 local mQuickInfo = {
+
   text = L.OthQuickInfo,
+
   Items = {
     -- LuaFAR version --
-    { text = L.OthQInfoVers,
+    { text = L.OthQInfoVersions,
       Script = "LumScripts.lua",
       Function = "LuaFarVersion",
       Relative = "default", },
-    -- FAR Config --
-    { text = L.OthQInfoFarCfg,
-      Script = "LumScripts.lua",
-      Function = "farConfigData",
-      Relative = "default", },
     -- Global variables --
-    { text = L.OthQInfoGlobal,
+    { text = L.OthQInfoGlobalVars,
       Script = "LumScripts.lua",
       Function = "GlobalVarsData",
       Relative = "default", },
-  } --
+    -- package content --
+    { text = L.OthQInfoPackageUnit,
+      Script = "LumScripts.lua",
+      Function = "packageContent",
+      Relative = "default", },
+    -- Windows environment values --
+    { text = L.OthQInfoEnvironVars,
+      Script = "LumScripts.lua",
+      Function = "WinEnvironVars",
+      Relative = "default", },
+
+  }, -- Items
+
 } --- mQuickInfo
 
 ---------------------------------------- LuaFAR context
@@ -96,13 +111,52 @@ local mLFcontext = {
       Script = "LumContext.lua",
       Function = "testType",
       Relative = "default", },
-  } -- Items
+  }, --
 } --- mLFcontext
 
+--[[
+---------------------------------------- Scripts checking
+local mFuncScripts = {
+  text = "Calls of &functions",
+  Items = {
+    -- Global environment --
+    { text = "&Global environment",
+      Script = "LumScripts.lua",
+      Function = "GlobalEnvironment",
+      Relative = "default", },
+    -- Function environment --
+    { text = "&Function environment",
+      Script = "LumScripts.lua",
+      Function = "FunctionEnvironment",
+      Relative = "default", },
+    mSeparator,
+    -- Default arguments of function --
+    { text = "&Default args of func",
+      Script = "LumScripts.lua",
+      Function = 'DefaultArguments(34, "abc", true)',
+      Relative = "default", },
+    -- Arguments of function --
+    { text = "&Arguments of function",
+      Script = "LumScripts.lua",
+      Function = 'FunctionArguments',
+      --Arguments = "34",
+      Arguments = '34, "abc", true',
+      Relative = "default", },
+    { text = "&In-func-name arguments",
+      Script = "LumScripts.lua",
+      Function = 'FunctionArguments(34, "abc", true)',
+      Relative = "default", },
+    { text = "&Table function call",
+      Script = "LumScripts.lua",
+      Function = 'Var.SubFunction',
+      Relative = "default", },
+  }, --
+} --- mFuncScripts
+--]]
 ---------------------------------------- Hello, world!
 local mHelloWorld = {
   text = L.OthHelloWorld,
-  --AccelKey = "w",
+  --AccelKey = "W",
   Items = {
     -- "Hello" message --
     { text = L.OthHelloWorldMsg,
@@ -114,17 +168,65 @@ local mHelloWorld = {
       Script = "LumScripts.lua",
       Function = "HelloWorldText",
       Relative = "default", },
-  } ---
+  }, --
 } --- mHelloWorld
 
----------------------------------------- ---- Items/Menu
-local mScripts = {
+local mDeferredHello = {
+  text = L.OthHelloWorld,
+  --AccelKey = "W",
+  --[[ -- Items as one function
+  Items = function ()
+    return {
+      --Items = {
+        -- "Hello" message --
+        { text = L.OthHelloWorldMsg,
+          Script = "LumScripts.lua",
+          Function = "HelloWorldMsg",
+          Relative = "default", },
+        -- "Hello" text insert --
+        { text = L.OthHelloWorldText,
+          Script = "LumScripts.lua",
+          Function = "HelloWorldText",
+          Relative = "default", },
+      --}, --
+    } ----
+  end, --
+  --]]
+  --[[ -- Items as array of functions
+  Items = {
+    function ()
+      return { text = L.OthHelloWorldMsg,
+               Script = "LumScripts.lua",
+               Function = "HelloWorldMsg",
+               Relative = "default", }
+    end,
+
+    function ()
+      return { text = L.OthHelloWorldText,
+               Script = "LumScripts.lua",
+               Function = "HelloWorldText",
+               Relative = "default", }
+    end,
+  }, --
+  --]]
+} --- mDeferredHello
+
+---------------------------------------- Items/Menu
+local mScripts = { -- Other scripts
   text = L.OtherScripts,
   Items = {
-    mQuickInfo,  -- Information
-    mLFcontext,  -- LuaFAR context
+    mQuickInfo,     -- Quick Information
+    mLFcontext,     -- LuaFAR context
+    --mFuncScripts,   -- Environment and functions call
     mSeparator,
-    mHelloWorld, -- Hello, world!
+    mHelloWorld,    -- Hello, world! sample
+    --[[
+    -- Own LUM display --
+    { text = "Show O&wn LUM menu",
+      Script = "Rh_Scripts\\OwnLUM\\OwnLUM.lua",
+      Area = "editor",
+      Relative = "scripts", },
+    --]]
   } ---
 } --- mScripts
 
@@ -132,8 +234,12 @@ local mScripts = {
 local Data = {
   Menu = {
     text = L.OtherScripts,
-    Items = { mScripts },
+    Items = { mScripts, },
+    --Items = { mScripts, mDeferredHello, },
+    --Items = { mSeparator, mScripts, },
   },
+
+  ["UScripts"] = mScripts,
 } ---
 
 return Data

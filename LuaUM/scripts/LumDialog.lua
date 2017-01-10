@@ -20,8 +20,10 @@ local LumDlg = (require "Rh_Scripts.LuaUM.LumCfg").ConfigDlg
 
 ---------------------------------------- main
 function LUM_Dlger (Args, Cfg)
+
   --logShow(Args, "Args")
   local Kind = Args[1]
   LumDlg(Cfg.Config, Kind)
+
 end
 --------------------------------------------------------------------------------

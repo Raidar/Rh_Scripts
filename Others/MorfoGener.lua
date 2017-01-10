@@ -51,6 +51,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Others\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -58,9 +59,11 @@ unit.DefCustom = {
 
   help   = { topic = unit.ScriptName, },
   locale = { kind = 'load', },
+
 } --- DefCustom
 
 unit.DefOptions = {
+
   KitName  = "LangData",
   --BaseDir  = nil,
   WorkDir  = "",
@@ -70,11 +73,14 @@ unit.DefOptions = {
 
   ResultName = "Result",
   FileExt = "lud",
+
 } ---
 
 ---------------------------------------- ---- Config
 unit.DefCfgData = { -- Конфигурация по умолчанию:
+
   Enabled = true,
+
 } --- DefCfgData
 
 ---------------------------------------- ---- Types
@@ -85,12 +91,14 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 local TMain = {
   --Guid       = win.Uuid(""),
   --ConfigGuid = win.Uuid(""),
+
 }
 local MMain = { __index = TMain }
 
 local FullNameFmt = "%s%s.%s"
 
 local function CreateMain (ArgData) --> (object)
+
   local self = {
     ArgData   = addNewData(ArgData, unit.DefCfgData),
 
@@ -134,6 +142,7 @@ local function CreateMain (ArgData) --> (object)
   --logShow(self.Options, "Options")
 
   return setmetatable(self, MMain)
+
 end -- CreateMain
 
 ---------------------------------------- Dialog
@@ -146,6 +155,7 @@ do
   --local ListItems = dlgUt.ListItems
 
 function TMain:ConfigForm () --> (dialog)
+
   local DBox = self.DBox
   local isSmall = DBox.Flags and isFlag(DBox.Flags, F.FDLG_SMALLDIALOG)
 
@@ -170,6 +180,7 @@ function TMain:ConfigForm () --> (dialog)
   D.btnCancel     = {DI.Button,   0,  H-1,   0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Cancel"}
 
   return D
+
 end -- ConfigForm
 
 function TMain:ConfigBox ()
@@ -192,9 +203,11 @@ function TMain:ConfigBox ()
                 0--DBox.cSlab + DBox.cFind + DBox.cSort + DBox.cList + DBox.cCmpl
   if not isSmall then
     DBox.Width, DBox.Height = DBox.Width + 4*2, DBox.Height + 1*2
+
   end
 
   return DBox
+
 end ---- ConfigBox
 
 function unit.ConfigDlg (Data)
@@ -220,7 +233,9 @@ function unit.ConfigDlg (Data)
     _Main.History:save()
 
     return true
+
   end
+
 end ---- ConfigDlg
 
 end -- do
@@ -228,9 +243,11 @@ end -- do
 
 ---------------------------------------- ---- Prepare
 do
+
 -- Localize data.
 -- Локализация данных.
 function TMain:Localize ()
+
   self.LocData = locale.getData(self.Custom)
   -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
   if not self.LocData then return end
@@ -238,12 +255,15 @@ function TMain:Localize ()
   self.L = locale.make(self.Custom, self.LocData)
 
   return self.L
+
 end ---- Localize
 
 end -- do
 
 local Msgs = {
+
   NoLocale      = "No localization",
+
 } ---
 
 -- Подготовка.
@@ -252,10 +272,12 @@ function TMain:Prepare ()
 
   if not self:Localize() then
     --self.Error = Msgs.NoLocale
+
     return
   end
 
   return
+
 end -- Prepare
 
 ---------------------------------------- ---- Work
@@ -264,12 +286,14 @@ do
 
 -- Формирование данных в подтаблицах таблицы Language.
 function TMain:FillSubDataPos (Kind) --| Abeco
+
   local a = self.Language.Abeco
   local aKind = a[Kind]
   --local aKind, aLiter = a[Kind], a.Liter
   if type(aKind) ~= 'table' or
      type(aKind[1]) ~= 'string' then
     return
+
   end
 
   -- Store positions of letters:
@@ -277,28 +301,35 @@ function TMain:FillSubDataPos (Kind) --| Abeco
   for k = 1, #aKind do
     local v = aKind[k]
     aKind[v] = k
+
     local len = v:len()
     if len > Len then Len = len end
+
   end
+
   aKind[0] = Len
+
 end ---- FillSubDataPos
 
 local sformat = string.format
 
 -- Формирование строк из подтаблиц таблицы Language.
 function TMain:FillSubDataStr (Kind) --| Abeco
+
   local a = self.Language.Abeco
   local aOrder = a.Order
   local aKind = a[Kind]
   if type(aKind) ~= 'table' or
      type(aKind[1]) ~= 'string' then
     return
+
   end
 
   local oKind = aOrder[Kind]
   if not oKind then
     oKind = { Liter = true, YeuPat = true, NeuPat = true, }
     aOrder[Kind] = oKind
+
   end
 
   local Len = aKind[0]
@@ -309,6 +340,7 @@ function TMain:FillSubDataStr (Kind) --| Abeco
     -- Patterns with letters:
     oKind.YeuPat = sformat("[%s]", oKind.Literi)
     oKind.NeuPat = sformat("[^%s]", oKind.Literi)
+
   else
     -- MAYBE:
     --[[
@@ -316,6 +348,7 @@ function TMain:FillSubDataStr (Kind) --| Abeco
     if bKind then
       --logShow(bKind, Kind)
       --logShow({ bKind, aOrder[bKind.kombo], aOrder.Vokon, }, Kind)
+
     end
     --]]
   end
@@ -325,6 +358,7 @@ end -- do
 
 -- Заполнение монофтонгов заданного вида.
 function TMain:FillMonoSet (Kind) --| Abeco
+
   local a = self.Language.Abeco
   local aOrder = a.Order
   local aKind = a[Kind]
@@ -335,18 +369,22 @@ function TMain:FillMonoSet (Kind) --| Abeco
     local q = a[iKind]
     for j = 1, #q do
       aKind[#aKind + 1] = q[j]
+
     end
 
     self:FillSubDataPos(iKind)
     self:FillSubDataStr(iKind)
+
   end
 
   self:FillSubDataPos(Kind)
   self:FillSubDataStr(Kind)
+
 end -- FillMonoSet
 
 -- Формирование сочетаний с диграфными.
 function TMain:FillBinoSets () --| Abeco
+
   local a = self.Language.Abeco
   local aOrder = a.Order
 
@@ -359,20 +397,24 @@ function TMain:FillBinoSets () --| Abeco
       local q = a[b.kombo]
       for k = 1, #q do
         aKind[#aKind + 1] = q[k]..l
+
       end
     else--if f == "L" then
       local q = a[b.kombo]
       for k = 1, #q do
         aKind[#aKind + 1] = l..q[k]
+
       end
     end
 
     self:FillSubDataPos(n)
     self:FillSubDataStr(n)
+
   end --
 end -- FillBinoSets
 
 function TMain:FillTrinoSets() --| Abeco
+
   local a = self.Language.Abeco
   local aOrder = a.Order
 
@@ -385,15 +427,18 @@ function TMain:FillTrinoSets() --| Abeco
     local q = a[b.kombo]
     for k = 1, #q do
       aKind[#aKind + 1] = l..q[k]..r
+
     end
 
     self:FillSubDataPos(n)
     self:FillSubDataStr(n)
+
   end --
 end -- FillTrinoSets
 
 -- Заполнение букв.
 function TMain:FillLiterSet (Kind) --| Abeco
+
   local a = self.Language.Abeco
   local aOrder = a.Order
   local aKind = a[Kind]
@@ -404,11 +449,13 @@ function TMain:FillLiterSet (Kind) --| Abeco
     local q = a[iKind]
     for j = 1, #q do
       aKind[#aKind + 1] = q[j]
+
     end
   end
 
   --self:FillSubDataPos(Kind)
   self:FillSubDataStr(Kind)
+
 end -- FillLiterSet
 
 -- Заполнение Language с учётом имеющихся в нём данных.
@@ -423,17 +470,20 @@ function TMain:FillData () --| Abeco
 
     self:FillMonoSet("Vokon")
     self:FillMonoSet("Liter")
+
   end -- do
 
   do -- Формирование мультифтонгов
     self:FillBinoSets()     -- Формирование дифтонгов
     -- TODO:
     --self:FillTrinoSets()    -- Формирование трифтонгов
+
   end -- do
 
   do -- Заполнение букв
     self:FillLiterSet("Vokali")
     self:FillLiterSet("Konali")
+
   end -- do
 
 end ---- FillData
@@ -446,6 +496,7 @@ function TMain:Generate ()
   --local m = D.Morfo
   --local F = D.Formo
   -- TODO
+
 end ---- Generate
 
 -- Формирование данных.
@@ -454,11 +505,13 @@ function TMain:Make () --> (table)
   self:FillData()
 
   return self:Generate()
+
 end -- Make
 
 ---------------------------------------- ---- Load/Save
 -- Загрузка.
 function TMain:Load ()
+
   local Options = self.Options
 
   self.Language.Abeco = datas.load(Options.AbecoFile, nil, 'change')
@@ -466,18 +519,23 @@ function TMain:Load ()
   --- TEMP: Exclude Morfo
   self.Language.Morfo = datas.load(Options.MorfoFile, nil, 'change')
   --logShow(self.Language.Morfo, "Morfo")
+
 end ---- Load
 
 -- Сохранение.
 function TMain:Save ()
+
   local Options = self.Options
 
   local sortkind = {
+
     pairs = pairs, -- TEST: array + hash fields
     --pairs = allpairs, -- TEST: all fields including from metas
+
   } ---
 
   local kind = {
+
     --localret = true,
     --tnaming = true,
     astable = true,
@@ -512,10 +570,12 @@ function TMain:Save ()
     TabToStr = serial.TabToText,
     --]]
     serialize = serial.prettyize,
+
   } ---
 
   --logShow(self.Language, "Language", "d2")
   return datas.save(Options.ResultFile, "Data", self.Language, kind)
+
 end ---- Save
 
 ---------------------------------------- ---- Run
@@ -532,6 +592,7 @@ function TMain:Run () --> (bool | nil)
   --logShow(_Lang.Language, "w")
 
   return
+
 end -- Run
 
 ---------------------------------------- main
@@ -553,6 +614,7 @@ function unit.Execute (Data) --> (bool | nil)
   if _Main.Error then return nil, _Main.Error end
 
   return _Main:Run()
+
 end ---- Execute
 
 --------------------------------------------------------------------------------

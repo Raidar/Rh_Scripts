@@ -37,13 +37,17 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 ---------------------------------------- Locale
 local Custom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
   locale = { kind = 'load', },
-} ---
+
+} --- Custom
+
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Configure
@@ -51,14 +55,16 @@ end
 
 ---------------------------------------- Data
 local TekstChangeSets = {
+
   SignFixer = true,
   SignTyper = true,
   SignMaths = true,
+
 } -- TekstChangeSets
 unit.TekstChangeSets = TekstChangeSets
 
 TekstChangeSets.SignFixer = {
-  -- DO
+  -- [[DO]]
 
   -- Текст:
   ["'"]     = '`',   --["''"]   = 'ʻ', -- DEPRECATED
@@ -67,11 +73,12 @@ TekstChangeSets.SignFixer = {
   ['!..']   = '!…',  ['?..']  = '?…',
   ['..!']   = '…!',  ['..?']  = '…?',
 
-  -- END
+  -- [[END]]
+
 } -- SignFixer
 
 TekstChangeSets.SignTyper = {
-  -- DO
+  -- [[DO]]
 
   -- Математика:
   ['<>']    = '≠', ['=/']   = '≠', ['==']   = '≡', ['==/']  = '≢',
@@ -140,11 +147,12 @@ TekstChangeSets.SignTyper = {
   ["_I'"] = 'Ί', ["_O'"] = 'Ό', ["_U'"] = 'Ύ', ["_W'"] = 'Ώ',
   ['_I:'] = 'Ϊ', ['_Ϋ:'] = 'Ϋ',
 
-  -- END
+  -- [[END]]
+
 } -- SignTyper
 
 TekstChangeSets.SignMaths = {
-  -- DO
+  -- [[DO]]
 
   -- Буквы:
   ['|N'] = 'ℕ', ['|Z'] = 'ℤ', ['|C'] = 'ℂ',
@@ -287,12 +295,14 @@ TekstChangeSets.SignMaths = {
   ["_I'"] = 'Ί', ["_O'"] = 'Ό', ["_U'"] = 'Ύ', ["_W'"] = 'Ώ',
   ['_I:'] = 'Ϊ', ['_Ϋ:'] = 'Ϋ',
 
-  -- END
+  -- [[END]]
+
 } -- SignMaths
 
 -- TekstChangeSets
 ----------------------------------------
 local LiterChangeSets = {
+
   CharRusLatin  = true,
   CharLatinRus  = true,
 
@@ -304,12 +314,13 @@ local LiterChangeSets = {
 
   GrafRusLatin  = true,
   GrafLatinRus  = true,
+
 } -- LiterChangeSets
 unit.LiterChangeSets = LiterChangeSets
 
 ---------------------------------------- Latin
 LiterChangeSets.CharLatinRus = {
-  -- DO
+  -- [[DO]]
 
   ["A"] = 'А',
   ["B"] = 'Б',
@@ -345,11 +356,12 @@ LiterChangeSets.CharLatinRus = {
   ["YO"] = 'Ё', ["Yo"] = 'Ё',
   ["YU"] = 'Ю', ["Yu"] = 'Ю',
 
-  -- END
+  -- [[END]]
+
 } -- CharLatinRus
 
 LiterChangeSets.CharRusLatin = {
-  -- DO
+  -- [[DO]]
 
   ["А"] = 'A',
   ["Б"] = 'B',
@@ -385,12 +397,13 @@ LiterChangeSets.CharRusLatin = {
   ["Ю"] = 'Yu',
   ["Я"] = 'Ya',
 
-  -- END
+  -- [[END]]
+
 } -- CharRusLatin
 
 ---------------------------------------- Greek
 LiterChangeSets.CharLatGreek = {
-  -- DO
+  -- [[DO]]
 
   ["A"] = 'Α',
   ["B"] = 'Β',
@@ -421,11 +434,12 @@ LiterChangeSets.CharLatGreek = {
 
   ["v"] = 'ϖ',
 
-  -- END
+  -- [[END]]
+
 } -- CharLatGreek
 
 LiterChangeSets.CharGreekLat = {
-  -- DO
+  -- [[DO]]
 
   ["Α"] = 'A',
   ["Β"] = 'B',
@@ -456,12 +470,13 @@ LiterChangeSets.CharGreekLat = {
 
   ["ϖ"] = 'v',
 
-  -- END
+  -- [[END]]
+
 } -- CharGreekLat
 
 ---------------------------------------- Explo
 LiterChangeSets.CharExploRus = {
-  -- DO
+  -- [[DO]]
 
   ["A"] = 'А',
   ["B"] = 'Б',
@@ -504,11 +519,12 @@ LiterChangeSets.CharExploRus = {
   ["IJ"] = 'И', ["Ij"] = 'И',
   ["XJ"] = 'Щ', ["Xj"] = 'Щ',
 
-  -- END
+  -- [[END]]
+
 } -- CharExploRus
 
 LiterChangeSets.CharRusExplo = {
-  -- DO
+  -- [[DO]]
 
   ["А"] = 'A',
   ["Б"] = 'B',
@@ -546,12 +562,13 @@ LiterChangeSets.CharRusExplo = {
   ["Ю"] = 'Yu',
   ["Я"] = 'Ya',
 
-  -- END
+  -- [[END]]
+
 } -- CharRusExplo
 
 ---------------------------------------- Graf
 LiterChangeSets.GrafLatinRus = {
-  -- DO
+  -- [[DO]]
 
   ["1"] = 'Т',  ["2"] = '2',
   ["3"] = 'З',  ["4"] = 'Ч',
@@ -585,11 +602,12 @@ LiterChangeSets.GrafLatinRus = {
   ["Y"] = 'У',  ["y"] = 'у',
   ["Z"] = '2',  ["z"] = '2',
 
-  -- END
+  -- [[END]]
+
 } -- GrafLatinRus
 
 LiterChangeSets.GrafRusLatin = {
-  -- DO
+  -- [[DO]]
 
   ["1"] = 'I',  ["2"] = 'Z',
   ["3"] = '3',  ["4"] = '4',
@@ -630,17 +648,19 @@ LiterChangeSets.GrafRusLatin = {
   ["Ю"] = 'IO', ["ю"] = 'io',
   ["Я"] = 'R',  ["я"] = 'R',
 
-  -- END
+  -- [[END]]
+
 } -- GrafRusLatin
 
 -- LiterChangeSets
 ----------------------------------------
 local CharChangeSets = {
+
   -- Tekst:
   SignFixer = true,
   SignTyper = true,
   SignMaths = true,
-  -- 
+  --
   SignSuper = true,
   SignSuber = true,
   SignRefer = true,
@@ -662,10 +682,12 @@ local CharChangeSets = {
   -- -- --
   Tekst = TekstChangeSets,
   Liter = LiterChangeSets,
+
 } --- CharChangeSets
 unit.CharChangeSets = CharChangeSets
 
 CharChangeSets.SignSuper = {
+
   a     = 'ᵃ', b     = 'ᵇ', c     = 'ᶜ',
   d     = 'ᵈ', e     = 'ᵉ',
   h     = 'ʰ',
@@ -686,9 +708,11 @@ CharChangeSets.SignSuper = {
   ['₁'] = '¹', ['₂'] = '²', ['₃'] = '³', ['₄'] = '⁴', ['₅'] = '⁵',
   ['₆'] = '⁶', ['₇'] = '⁷', ['₈'] = '⁸', ['₉'] = '⁹', ['₀'] = '⁰',
   ['₊'] = '⁺', ['₋'] = '⁻', ['₌'] = '⁼', ['₍'] = '⁽', ['₎'] = '⁾',
+
 } -- SignSuper
 
 CharChangeSets.SignSuber = {
+
   a     = 'ₐ', --b     = '', c     = '',
   e     = 'ₑ',
   h     = 'ₕ',
@@ -709,13 +733,16 @@ CharChangeSets.SignSuber = {
   ['¹'] = '₁', ['²'] = '₂', ['³'] = '₃', ['⁴'] = '₄', ['⁵'] = '₅',
   ['⁶'] = '₆', ['⁷'] = '₇', ['⁸'] = '₈', ['⁹'] = '₉', ['⁰'] = '₀',
   ['⁺'] = '₊', ['⁻'] = '₋', ['⁼'] = '₌', ['⁽'] = '₍', ['⁾'] = '₎',
+
 } -- SignSuber
 
 CharChangeSets.SignRefer = {
+
   ['1'] = '¹', ['2'] = '²', ['3'] = '³', ['4'] = '⁴', ['5'] = '⁵',
   ['6'] = '⁶', ['7'] = '⁷', ['8'] = '⁸', ['9'] = '⁹', ['0'] = '⁰',
   ['+'] = '⁺', ['-'] = '⁻', ['='] = '⁼', ['('] = '⁽', [')'] = '⁾',
   ['@'] = '˚', ['^'] = '†', ['#'] = '‡', --['<'] = 'ʿ', ['>'] = 'ʾ',
+
 } -- SignRefer
 
 -- CharChangeSets
@@ -725,6 +752,7 @@ do
 -- Extending set for specifed kind by character forms.
 -- Расширение набора указанного вида с учётом формы символов.
 local function WidenChangeSets (Base, Kind)
+
   local t = {}
   local u = CharChangeSets[Base][Kind]
 
@@ -733,18 +761,21 @@ local function WidenChangeSets (Base, Kind)
     local l = k:lower()
     if not t[l] then
       t[l] = v:lower()
+
     end
   end -- for
 
   CharChangeSets[Base][Kind] = t
+
 end -- WidenChangeSets
 unit.WidenChangeSets = WidenChangeSets
-  
+
   local makeplain = strings.makeplain
 
 -- Grouping set for specifed kind by key length.
 -- Группировка набора указанного вида по длине ключа.
 local function GroupChangeSets (Base, Kind)
+
   local t = {}
   CharChangeSets[Kind] = t
   local u = CharChangeSets[Base][Kind]
@@ -759,10 +790,12 @@ local function GroupChangeSets (Base, Kind)
       if t[len] == nil then t[len] = {} end
 
       t[len][makeplain(k)] = v
+
     end
   end -- for
 
   t[0] = max
+
 end -- GroupChangeSets
 unit.GroupChangeSets = GroupChangeSets
 
@@ -795,13 +828,16 @@ end -- do
 local Actions = {
 
   default = function (Table) --> (function)
+
     local Table = Table
+
     return function (block) --> (block)
              return farBlock.SubLines(block, ".",
                                       function (s)
                                         return Table[s] or s
                                       end)
            end
+
   end, -- default
 
   -- Tekst:
@@ -815,7 +851,7 @@ local Actions = {
 
   CharLatGreek  = false,
   CharGreekLat  = false,
-  
+
   CharExploRus  = false,
   CharRusExplo  = false,
 
@@ -828,8 +864,10 @@ unit.Actions = Actions
 
 do
   local function VarLenAction (Table) --> (function)
-    local Table = Table
+
+    --local Table = Table
     --logShow(Table)
+
     return function (block) --> (block)
              local block = block
              --logShow(block)
@@ -840,17 +878,22 @@ do
                  --logShow(block)
                  for k, v in pairs(t) do
                    block = farBlock.SubLines(block, k, v)
+
                  end
                end
              end
+
              --logShow(block)
              return block
+
            end -- function
+
   end -- VarLenAction
 
   for k, v in pairs(Actions) do
     if v == false then
       Actions[k] = VarLenAction
+
     end
   end
 end -- do
@@ -861,23 +904,31 @@ local function Execute (Name) --> (function)
   if type(Table) ~= 'table' then return end
 
   local function _Change ()
+
     local DoChange = (Actions[Name] or Actions.default)(Table)
+
     return farSelect.Process(false, DoChange)
+
   end ---- _Change
 
   return _Change
+
 end -- Execute
 unit.Execute = Execute
 
 ---------------------------------------- Menu
 local Menus = {
+
   ChangeSign = true,
   ChangeChar = true,
+
 } --- Menus
 unit.Menus = Menus
 
 Menus.ChangeSign = {
+
   text = L.ChangeSign,
+
   Items = {
     { text = L.SignFixer,
       Function = Execute"SignFixer", },
@@ -892,13 +943,16 @@ Menus.ChangeSign = {
       Function = Execute"SignSuber", },
     { text = L.SignRefer,
       Function = Execute"SignRefer", },
-  } ---
+
+  }, -- Items
+
 } --- ChangeSign
 
 --Menus.ChangeChar = nil
 
 Menus.ChangeChar = {
   text = L.ChangeChar,
+
   Items = {
     { text = L.CharChar,
       separator = true, },
@@ -920,7 +974,9 @@ Menus.ChangeChar = {
       Function = Execute"GrafLatinRus", },
     { text = L.GrafRusLatin,
       Function = Execute"GrafRusLatin", },
-  } ---
+
+  }, -- Items
+
 } --- ChangeChar
 
 --------------------------------------------------------------------------------

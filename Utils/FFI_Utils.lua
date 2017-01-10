@@ -40,15 +40,20 @@ local unit = {}
 
 -- Преобразование строки в WChar.
 function unit.StringToWChar (s)
-  local s = win.Utf8ToUtf16(s)
+
+  s = win.Utf8ToUtf16(s)
   local result = ffi.new("wchar_t[?]", #s / 2 + 1)
   ffi.copy(result, s)
+
   return result
+
 end -- StringToWChar
 
 -- Преобразование WChar в строку.
 function unit.WCharToString (s)
+
   return win.Utf16ToUtf8( ffi.string(s, 2 * C.lstrlenW(s)) )
+
 end -- WCharToString
 
 --------------------------------------------------------------------------------

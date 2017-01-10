@@ -8,8 +8,8 @@
 --------------------------------------------------------------------------------
 local Data = {
 
---text = true,
-  --plain
+text = true,
+  plain = true,
     --(default)
       --txt --= true,
       --(rare)
@@ -17,13 +17,14 @@ local Data = {
       --message
       --(others)
         --filedesc --= true,
-        --readme --= true,
+        readme = true,
   --rich
     --config
       --ini --= true,
         --ini_cfg --= true,
       --(lua)
         --cfg_lua --= true,
+        dat_lua = "source",
       --(far)
         --lng_far --= true,
       --cfg_sys --= true,
@@ -37,7 +38,7 @@ local Data = {
         --airbrush --= true,
       --(rare)
       --(subtitles)
-        --sub --= true,
+        sub = true,
       --(network)
         --css --= true,
     --markup
@@ -65,7 +66,7 @@ local Data = {
           --clr_ent --= true,
           --clr5cat --= true,
 
-  --source = true,
+  source = true,
     --main
       --(freqs)
         --asm --= true,
@@ -81,7 +82,7 @@ local Data = {
         --ml --= true,
         --prolog --= true,
       --dbl
-        --sql --= true,
+        sql = true,
         --(rare)
       --dotnet
       --codscript

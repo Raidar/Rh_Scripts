@@ -26,6 +26,7 @@ local u8char = strings.u8char
 local unit = {}
 
 function unit.DfmUtf8ToAnsi (s) --> (string)
+
   local Len = s:len()
 
   local t = {}
@@ -38,27 +39,35 @@ function unit.DfmUtf8ToAnsi (s) --> (string)
       local p = k + 1
       while s:sub(p, p):match("%d") and p <= Len do
         p = p + 1
+
       end
+
       local d = tonumber(s:sub(k + 1, p - 1))
       if d then
         t[#t + 1] = u8char(d)
+
       end
+
       k = p
 
     elseif c == "'" then
       local p = k + 1
       while s:sub(p, p):match("[^%']") and p <= Len do
         p = p + 1
+
       end
       t[#t + 1] = s:sub(k + 1, p - 1)
+
       k = p + 1
 
     else
       k = k + 1
+
     end
   end
 
   return tconcat(t)
+
 end -- DfmUtf8ToAnsi
 
 do
@@ -66,13 +75,16 @@ do
   local DfmUtf8ToAnsi = unit.DfmUtf8ToAnsi
 
 function unit.Show ()
+
   local Utf8Text = far.PasteFromClipboard()
   --far.Message(Utf8Text, "Utf8-text")
 
   return farMsg(DfmUtf8ToAnsi(Utf8Text), "Ansi-text")
+
 end ---- Show
 
 end -- do
+
 --------------------------------------------------------------------------------
 return unit
 --------------------------------------------------------------------------------

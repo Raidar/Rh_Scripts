@@ -20,14 +20,17 @@ local Custom = {
   name = "lum",
   path = "Rh_Scripts.LuaEUM.config.",
   locale = { kind = 'require', },
+
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- ----
 local mInsert = {
+
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
   MenuView = "RectMenu",
@@ -39,6 +42,7 @@ local mInsert = {
 
       IsStatusBar = true,
     },
+
   }, -- Props
 
   CfgData = {
@@ -46,6 +50,7 @@ local mInsert = {
       TextNamedKeys = false,
       UseMenuTexter = false,
     },
+
   }, -- CfgData
 
   Items = {
@@ -63,18 +68,23 @@ local mInsert = {
     { text = "B",
       Plain = "B",
       AccelStr = "S+B", },
-  } -- Items
+
+  }, -- Items
+
 } --- mInsert
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.TemplateInsert,
     Items = { mInsert, },
+
   }, --
 
   ["Insert"] = mInsert,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

@@ -22,47 +22,58 @@ local Custom = {
   locale = { kind = 'require', },
   --path = "scripts\\Rh_Scripts\\LuaUM\\config\\",
   --locale = { kind = 'load', },
+
 } ---
 
 ---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- ----
 local mLuaFarMacros = {
+
   text = L.LuaFarMacros,
 
   CfgData = {
     UMenu = {
       ReturnToUMenu = false,
     },
-  },
+
+  }, -- CfgData
 
   Items = {
+
     -- Load --
     { text = L.LuaFarMacros_Load,
       Script = "FarMacros.lua",
       Function = "LoadLuaFarMacros",
       Relative = "default", },
+
     -- Save --
     { text = L.LuaFarMacros_Save,
       Script = "FarMacros.lua",
       Function = "SaveLuaFarMacros",
       Relative = "default", },
-  } ---
+
+  }, -- Items
+
 } --- mLuaFarMacros
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.LuaFarMacros,
     Items = { mLuaFarMacros },
+
   },
 
   ["LuaFarMacros"] = mLuaFarMacros,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

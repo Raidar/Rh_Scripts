@@ -49,6 +49,7 @@ local GetDlgItem = far.GetDlgItem
 ---------------------------------------- Dialog
 -- Названия полей элементов диалога и их номера. -- from far2.dialog
 local DlgItem = {
+
   Type = 1, X1 = 2, Y1 = 3, X2 = 4, Y2 = 5,
   Selected = 6, ListItems = 6,
   VBuf = 6,
@@ -57,6 +58,7 @@ local DlgItem = {
   Data = 10, --Ptr = 10,
   MaxLen = 11,
   UserData = 12,
+
 } -- DlgItem
 unit.DlgItem = DlgItem
 
@@ -66,6 +68,7 @@ local diData      = DlgItem.Data
 
 -- Типы элементов диалога:
 unit.DlgItemType = {
+
   DBox      = "DI_DOUBLEBOX",   -- двойная рамка
   SBox      = "DI_SINGLEBOX",   -- одиночная рамка
 
@@ -85,12 +88,15 @@ unit.DlgItemType = {
   Button    = "DI_BUTTON",      -- кнопка
 
   User      = "DI_USERCONTROL", -- пользовательский элемент
+
 } -- DlgItemType
 
 -- Флаги элементов диалога:
 unit.DlgItemFlag = {
+
   -- Common:
-  Focus         = F.DIF_FOCUS,              -- Элемент с фокусом (по умолчанию) -- FAR3 - вместо поля Focus
+  Focus         = F.DIF_FOCUS,              -- Элемент с фокусом (по умолчанию)
+                                            -- -- FAR3 - вместо поля Focus
   Disable       = F.DIF_DISABLE,            -- Недоступный элемент
   Hidden        = F.DIF_HIDDEN,             -- Скрытый элемент
   ReadOnly      = F.DIF_READONLY,           -- Только для чтения
@@ -150,30 +156,36 @@ unit.DlgItemFlag = {
   ComboList     = newFlags(F.DIF_DROPDOWNLIST, F.DIF_LISTWRAPMODE),
   DlgButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS),
   DefButton     = newFlags(F.DIF_CENTERGROUP, F.DIF_NOBRACKETS, F.DIF_DEFAULTBUTTON),
+
 } -- DlgItemFlag
 
 ---------------------------------------- Datas
 
 -- Формирование списка элементов из списка значений.
 function unit.ListItems (Config, Kind, L) --> (table)
+
   local List = Config.DlgTypes[Kind]
   local Prefix, L = List.Prefix, L or Config.Custom.Locale
   local t = {}
   for k = 1, #List do
     t[#t+1] = { Text = L:config(Prefix..List[k]) }
+
   end
   --logShow(t, "ListItems")
 
   return t
+
 end ---- ListItems
 
 -- Загрузка данных в элемент диалога.
 local function LoadDlgItem (Info, Data, Dlg) --| Item
+
   local Type = Info.Type or "edt"
   local k, List = Info.Field --, nil
 
   if type(Type) == 'table' then
     List, Type = Type, Type.Type
+
   end
 
   local Name = Type..(Info.Name or k)
@@ -185,14 +197,18 @@ local function LoadDlgItem (Info, Data, Dlg) --| Item
   if not List then
     if Type == "edt" then
       u[diData] = Data[k]
+
     elseif Type == "chk" then
       u[diSelected] = Data[k] and 1 or 0
+
     end
   else
     if Type == "edt" then
       if List.Format == "number" then u[diData] = tostring(Data[k]) end
+
     else -- "lbx" or "cbx"
       u[diListItems].SelectIndex = tfind(List, Data[k], ipairs)
+
     end
   end
 end ---- LoadDlgItem
@@ -202,11 +218,13 @@ local torange = numbers.torange -- Приведение к диапазону
 
 -- Сохранение данных из элемента диалога.
 local function SaveDlgItem (Info, Data, Dlg) --| Item
+
   local Type = Info.Type or "edt"
   local k, List = Info.Field --, nil
 
   if type(Type) == 'table' then
     List, Type = Type, Type.Type
+
   end
 
   local Name = Type..(Info.Name or k)
@@ -219,8 +237,10 @@ local function SaveDlgItem (Info, Data, Dlg) --| Item
   if not List then
     if Type == "edt" then
       d = u[diData]
+
     elseif Type == "chk" then
       d = u[diSelected] ~= 0
+
     end
   else
     if Type == "edt" then
@@ -229,46 +249,62 @@ local function SaveDlgItem (Info, Data, Dlg) --| Item
         d = tonumber(u) or List.Default or Data[k]
         u = List.Range
         if u then d = torange(d, u.min, u.max) end
+
       end
     else -- "lbx" | "cbx"
       u = u[diListItems]
       --logShow(Value, "diListItems")
       d = u and List[u.SelectIndex] or ""
+
     end
   end
   --logShow({ k, Type, Name, d, v }, "SaveDlgItem", 2)
   --logShow({ k, Info.Default, d, Data }, "SaveDlgItem", 2)
   --if Info.SpaceAsNil then logShow({ Info, Name, d, v }, "SaveDlgItem", 2) end
-  --[[
-  if d == ' ' and Info.SpaceAsNil then Data[k] = nil
-  elseif d ~= "" and
-         d ~= Info.Default then Data[k] = d else Data[k] = nil end
-  --]]
 
-  if d ~= "" and d ~= Info.Default then
+  --[[
+  if d == ' ' and Info.SpaceAsNil then
+    Data[k] = nil
+  elseif d ~= "" and
+         d ~= Info.Default then
     Data[k] = d
   else
     Data[k] = nil
   end
+  --]]
+
+  if d ~= "" and d ~= Info.Default then
+    Data[k] = d
+
+  else
+    Data[k] = nil
+
+  end
+
   --logShow({ k, Info.Default, d, Data }, "SaveDlgItem", 2)
+
 end ----
 unit.SaveDlgItem = SaveDlgItem
 
 -- Загрузка данных в элементы диалога.
 function unit.LoadDlgData (Data, ArgData, Dlg, Types) --| Data
+
   local t = { Field = 0, Type = 0 }
   for k, _ in pairs(ArgData) do
     t.Field, t.Type = k, Types[k]
     LoadDlgItem(t, Data, Dlg)
+
   end
 end ---- LoadDlgData
 
 -- Сохранение данных из элементов диалога.
 function unit.SaveDlgData (Data, ArgData, Dlg, Types) --| Data
+
   local t = { Field = 0, Default = 0, Type = 0 }
   for k, v in pairs(ArgData) do
     t.Field, t.Default, t.Type = k, v, Types[k]
     SaveDlgItem(t, Data, Dlg)
+
   end
 end ---- SaveDlgData
 
@@ -282,26 +318,35 @@ end ---- SaveDlgData
   Hi_Hi (number) - зарезервирован.
 --]]
 function unit.ItemColor (Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
+
   --logShow({ Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }, "ItemColor", "d3 x2")
+
   return { Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi, }
+
 end ---- ItemColor
 
 -- Change item+box draw color.
 -- Изменение цвета отрисовки элемента+рамки.
 function unit.ChangeColor (Color, Lo_Lo, Lo_Hi, Hi_Lo, Hi_Hi) --> (table)
+
   return { Lo_Lo or Color[1], Lo_Hi or Color[2],
            Hi_Lo or Color[3], Hi_Hi or Color[4], }
+
 end ---- ChangeColor
 
 -- Get draw color for item text.
 -- Получение цвета отрисовки для текста элемента.
 function unit.GetTextColor (Color) --> (table)
+
   return Color[1]
+
 end ---- GetTextColor
 
 -- Получение "прямоугольника" окна.
 function unit.DialogRect (hDlg) --> (table)
+
   local DlgRect = SendDlgMessage(hDlg, F.DM_GETDLGRECT, 0)
+
   return {
     x = DlgRect.Left,
     y = DlgRect.Top,
@@ -310,25 +355,33 @@ function unit.DialogRect (hDlg) --> (table)
     xw = DlgRect.Right,
     yh = DlgRect.Bottom,
   } ----
+
 end ---- DialogRect
 
 ---------------------------------------- from service.c
 -- Обновление элементов диалога.
 function unit.UpdateItems (hDlg, Items) --| (Items)
+
   for k, u in ipairs(Items) do
     local w = GetDlgItem(hDlg, k)
     if type(u[diListItems]) == 'table' then
       local Pos = far.SendDlgMessage(hDlg, F.DM_LISTGETCURPOS, k, 0)
       u[diListItems].SelectIndex = (Pos or Null).SelectPos
+
     else
       u[diListItems] = w[diListItems]
+
     end
+
     u[diData] = w[diData]
+
   end
 end ---- UpdateItems
 
 -- Стандартный диалог с возможным обновлением элементов после выполнения.
-function unit.Dialog (Guid, X1, Y1, X2, Y2, HelpTopic, Items, Flags, DlgProc, view)
+function unit.Dialog (Guid, X1, Y1, X2, Y2,
+                      HelpTopic, Items, Flags, DlgProc, view)
+
   local Guid = Guid or win.Uuid()
   local hDlg = far.DialogInit(Guid, X1, Y1, X2, Y2,
                               HelpTopic, Items, Flags, DlgProc)
@@ -339,6 +392,7 @@ function unit.Dialog (Guid, X1, Y1, X2, Y2, HelpTopic, Items, Flags, DlgProc, vi
   far.DialogFree(hDlg)
 
   return iDlg
+
 end ---- Dialog
 
 --------------------------------------------------------------------------------

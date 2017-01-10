@@ -34,15 +34,19 @@ local Custom = {
   name = "lum",
   path = "Rh_Scripts.LuaEUM.config.",
   locale = { kind = 'require' },
+
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Internal
 local Clear = {
+
   DeleteAllSpaces = false,
+
 } ---
 
 -- Delete all spaces in selected block.
@@ -50,11 +54,14 @@ local Clear = {
 function Clear.DeleteAllSpaces ()
 
   local function DeleteAllSpaces (block) --> (block)
+
     return farBlock.SubLines(block, "[ ]+", "")
     --return farBlock.SubText(block, "%s+", "") -- DEBUG only
+
   end --
 
   return farSelect.Process(false, DeleteAllSpaces)
+
 end ---- DeleteAllSpaces
 
 -- Squeeze space chars in selected block.
@@ -63,9 +70,11 @@ function Clear.SqueezeSpaceChars ()
 
   local function DeleteAllSpaces (block) --> (block)
     return farBlock.SubLines(block, "(%s)%s+", "%1")
+
   end --
 
   return farSelect.Process(false, DeleteAllSpaces)
+
 end ---- SqueezeSpaceChars
 
   local BlockTypes = farSelect.Types
@@ -73,27 +82,33 @@ end ---- SqueezeSpaceChars
 -- Delete all (empty or spaced only) lines in selected block.
 -- Удаление всех (пустых или с только пробелами) строк в выделенном блоке.
 function Clear.DeleteAllEmptys ()
+
   local Info = farEdit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
   if SelType ~= "stream" then return end
 
   local function DeleteAllEmptys (block) --> (block)
+
     local t = farBlock.DelLines(block, "^[ ]-$", false)
     if not t then return end
     if block[#block] == "" and t[#t] ~= "" then
       t[#t+1] = ""
       t.Count = #t
+
     end
 
     return t
+
   end --
 
   return farSelect.Process(false, DeleteAllEmptys)
+
 end ---- DeleteAllEmptys
 
 -- Squeeze (empty or with space chars only) lines in selected block.
 -- Сжатие (пустых или с только пробельными символовами) в выделенном блоке.
 function Clear.SqueezeEmptyLines ()
+
   local Info = farEdit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
   if SelType ~= "stream" then return end
@@ -104,13 +119,16 @@ function Clear.SqueezeEmptyLines ()
     if not t then return end
 
     return farBlock.SubText(t, "(\n\n)\n+", "%1")
+
   end --
 
   return farSelect.Process(false, SqueezeEmptyLines)
+
 end ---- SqueezeEmptyLines
 
 ---------------------------------------- Clear
 local mClear = {
+
   text = L.LuaClearText,
   Area = "editor",
 
@@ -123,7 +141,9 @@ local mClear = {
       Function = Clear.SqueezeEmptyLines, },
     { text = L.LuaClearDeleteAllEmptys,
       Function = Clear.DeleteAllEmptys, },
-  } ---
+
+  }, --
+
 } --- mClear
 
 ---------------------------------------- Truncate
@@ -133,12 +153,16 @@ local DoTrunc = {}
 for k, f in pairs(Trunc) do
   DoTrunc[k] = function ()
     f()
+
     return RedrawAll()
+
   end
 end --
 
 local mTruncate = {
+
   text = L.LuaTruncateVoid,
+
   Items = {
     { text = L.LuaTruncCurLine,
       Function = DoTrunc.TruncateLine, },
@@ -148,7 +172,9 @@ local mTruncate = {
       Function = DoTrunc.TruncateFile, },
     { text = L.LuaTruncFileText,
       Function = Trunc.TruncateFileText, },
-  } ---
+
+  }, --
+
 } --- mTruncate
 
 ---------------------------------------- Transcript
@@ -157,22 +183,29 @@ local mTranscript = Transcript.Menus
 
 ---------------------------------------- Items/Menu
 local mScripts = {
+
   text = L.LuaScripts,
   --Title = L.LuaScripting,
+
   Items = {
     mClear,         -- Чистка текста
     mTruncate,      -- Усечение текста
     mTranscript.ChangeSign,    -- Изменение символов
     mTranscript.ChangeChar,    -- Транскрибирование
-  } -- Items
+
+  }, -- Items
+
 } --- mScripts
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
+
     text = L.LuaScripts,
     Items = { mScripts },
     --Items = { Sep, Scripts },
+
   },
 
   ["EScripts"] = mScripts,
@@ -180,7 +213,8 @@ local Data = {
   ["EScripts.Truncate"] = mTruncate,
   ["EScripts.Transcript.ChangeSign"] = mTranscript.ChangeSign,
   ["EScripts.Transcript.ChangeChar"] = mTranscript.ChangeChar,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

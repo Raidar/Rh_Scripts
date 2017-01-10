@@ -34,6 +34,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -42,19 +43,23 @@ unit.DefCustom = {
   help   = { topic = unit.ScriptName, },
   locale = {
     kind = 'load',
+
   }, --
+
 } -- DefCustom
 
 -- [[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 --logShow(L, "L", "wM")
 --]]
 ---------------------------------------- Config class
 local TConfig = {
+
   World         = "Pern",
   Type          = "Type.Pernese",
 
@@ -104,6 +109,7 @@ local TConfig = {
 
   RestWeekDays = {
     [0] = true,
+
   }, -- RestWeekDays
 
   MonthDays = {
@@ -117,6 +123,7 @@ local TConfig = {
     Max = 33,
     WeekMin = 5 + 1,
     WeekMax = 5 + 1,
+
   }, -- MonthDays 
 
   YearDays = {
@@ -125,6 +132,7 @@ local TConfig = {
     210, 240, 270,
     300, 330, 362,
     [0] = 0,
+
   }, -- YearDays
 
   --WeekDays = false,
@@ -133,11 +141,13 @@ local TConfig = {
     6, 1, 3,
     5, 0, 2,
     4, 6, 1,
+
   }, -- WeekDays
 
   WeekOuts = {
     --{ m = 12, d = 31 } = 8,
     --{ m = 12, d = 32 } = 9,
+
   }, -- WeekOuts
 
   Formats = {
@@ -158,11 +168,13 @@ local TConfig = {
     MonthWeek   = "%1d",
     WeekDay     = "<%1d>",
     DayWeek     = "%02d",
+
   }, -- Formats
   
   LocData = L,
 
   --filled = nil,   -- Признак заполненности
+
 } ---
 unit.TConfig = TConfig
 
@@ -179,6 +191,7 @@ function unit.newConfig (Config) --|> Config
   if Config and getmetatable(self) == MConfig then return self end
 
   return setmetatable(self, MConfig)
+
 end ---- newConfig
 
 end -- do
@@ -190,6 +203,7 @@ end -- do
 function TConfig:isLeapYear (y) --> (bool)
 
   return y % 6 == 0
+
 end ----
 
 ---------------------------------------- ---- ---- Count
@@ -198,14 +212,17 @@ function TConfig:getMonthDays (y, m) --> (number)
 
   if m ~= 12 then
     return self.MonthDays[m]
+
   else
     return self.MonthDays[m] + self:getLeapDays(y)
+
   end
 end ---- getMonthDays
 
 function TConfig:getWeekMonthDays (y, m) --> (number)
 
   return self:getMonthDays(y, m)
+
 end ---- getWeekMonthDays
 
 ---------------------------------------- ---- ---- get+div
@@ -217,6 +234,7 @@ function TConfig:getWeekDay (y, m, d) --> (number)
   --return (3 * r + 5 * s + self:getYearDay(y, m, d)) % self.DayPerWeek
   return (3 * r + 5 * s +
           self:getWeekDays(y, m) + d) % self.DayPerWeek
+
 end ---- getWeekDay
 
 function TConfig:getEraDay (y, m, d) --> (number)
@@ -226,6 +244,7 @@ function TConfig:getEraDay (y, m, d) --> (number)
 
   return 2173 * r + 362 * s +
          self:getYearDay(y, m, d)
+
 end ---- getEraDay
 
 function TConfig:divEraDay (e) --> (y, m, d)
@@ -233,6 +252,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
   local e, i = e, 1
   if e <= 0 then
     e, i = -e, -1
+
   end
   --local E = e -- for log only
 
@@ -242,8 +262,10 @@ function TConfig:divEraDay (e) --> (y, m, d)
   if e <= BaseYear then
     if i > 0 then
       return 1, self:divYearDay(1, e)                 -- После высадки
+
     else
       return 0, self:divYearDay(0, BaseYear + 1 - e)  -- До высадки
+
     end
   end
 
@@ -259,6 +281,7 @@ function TConfig:divEraDay (e) --> (y, m, d)
   local yd = self:getYearDays(y)
   if e > yd then
     y, e = y + 1, e - yd
+
   end
 
   --[[
@@ -269,9 +292,12 @@ function TConfig:divEraDay (e) --> (y, m, d)
 
   if i > 0 then
     return y, self:divYearDay(y, e)
+
   else
     y = y - 1
+
     return -y, self:divYearDay(y, BaseYear + 1 - e)
+
   end
 end ---- divEraDay
 

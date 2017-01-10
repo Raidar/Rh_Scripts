@@ -23,6 +23,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
 local function LuaUserMenu (args)
+
   -- 1. Определение "охвата" меню.
     -- Базовое меню для главного меню.
   local BaseName = args[1]
@@ -34,6 +35,7 @@ local function LuaUserMenu (args)
     Scope.FileType = "none" --getFileType()
     -- Функция вставки шаблона для редактора.
     Scope.InsertText = farUt.FarInsertText.dialog
+
   end -- if
 
   -- 2. Вызов пользовательского меню.
@@ -41,7 +43,9 @@ local function LuaUserMenu (args)
   local LUM = farUt.urequire "Rh_Scripts.LuaUM.LUM"
   local Config = require "Rh_Scripts.LuaDUM.LuaDUMer"
   Config.Scope = Scope
+
   return LUM(Config)
+
 end ---- LuaUserMenu
 
 --return LuaUserMenu(...)

@@ -56,6 +56,7 @@ local unit = {}
 -- Позиция элементов строки данных line
 -- и её табличного представления items.
 unit.udpos = {
+
   cp_string  = -1, -- * * -- Code Point string      -- строковое значение
   codepoint  =  1, -- N N -- Code Point (default)   -- № символа в Unicode
   charname   =  2, -- S N -- Name (<reserved>)
@@ -81,10 +82,12 @@ unit.udpos = {
   toupper    = 13, -- S N -- Simple_Uppercase_Mapping (=)
   tolower    = 14, -- S N -- Simple_Lowercase_Mapping (=)
   totitle    = 15, -- S N -- Simple_Titlecase_Mapping (=)
+
 } --
 
 -- Параметры форматирования:
 unit.format = {
+
   -- Вывод результата:
   indexshift = -1,     -- Сдвиг индекса
   lineindent = "    ", -- Отступ в строке
@@ -92,6 +95,7 @@ unit.format = {
   maxlinelen = 70,     -- Максимальная длина строки
   maxlintlen = 65,     -- Максимальная длина строки для случая int
   newlinestr = "\n",   -- Переход на новую строку
+
 } --
 
 --[[
@@ -99,7 +103,9 @@ unit.format = {
 -- 16-ричное строковое представление числа.
 -- Default width for: Ox12345
 local function hex (number, width) --> (string)
+
   return ("%#0"..tostring(width or 7).."x"):format(number or 0)
+
 end
 --]]
 
@@ -160,6 +166,7 @@ unit.UnassignedGlist = { 1, 0, 0, 0 } -- Соответствующая ей г�
   Должен соответствовать перечислению в заголовочном файле.
 --]]
 unit.categories = {
+
   'Cn',
   'Lu', 'Ll', 'Lt', 'Lm', 'Lo',
   'Mn', 'Me', 'Mc',
@@ -168,11 +175,13 @@ unit.categories = {
   'Cc', 'Cf', 'Co', 'Cs',
   'Pc', 'Pd', 'Ps', 'Pe', 'Pi', 'Pf', 'Po',
   'Sm', 'Sc', 'Sk', 'So',
+
 } --
 
 do
   local cats = unit.categories
   for k = 1, #cats do cats[cats[k]] = k end
+
 end -- do
 
 --[[
@@ -204,6 +213,7 @@ do
   local cats = unit.categories
 
 function unit.getValue (items, index)
+
   local udpos = unit.udpos
 
   local category = items[udpos.category]
@@ -214,10 +224,12 @@ function unit.getValue (items, index)
     --error(("Unexpected character category: %d(%s)"):
     --format(index, category or ""))
     catIndex = 1
+
   else
   --]]
   if category == 'Lt' then
     unit.TitleCount = unit.TitleCount + 1
+
   end
   --end
 
@@ -229,13 +241,17 @@ function unit.getValue (items, index)
   ToTitle = ToTitle and index - ToTitle or 0
 
   local Result = {
+
     catIndex,
     tostring(ToUpper),
     tostring(ToLower),
     tostring(ToTitle),
+
   } ---
+
   return t_concat(Result, ','),
          { catIndex, ToUpper, ToLower, ToTitle }
+
 end ---- getValue
 
 end -- do
@@ -249,6 +265,7 @@ end -- do
   (number) - индекс строки в groups.
 --]]
 function unit.getGroup (value, list)
+
   local groups = unit.groups
   local index = groups[value]
 
@@ -261,11 +278,13 @@ function unit.getGroup (value, list)
     --[[ -- DEBUG only
     if index < 0xF then
       far.Show(index, value, unpack(list))
+
     end
     --]]
   end
 
   return index
+
 end ---- getGroup
 
 -- Поэлементное сравнение таблиц.
@@ -277,15 +296,18 @@ end ---- getGroup
   -- @return:
   res (bool) - результат сравнения.
 --]]
-local min = math.min
+  local min = math.min
+
 local function cmpTable (t, u, n)
   for k = 1, n or min(#t, #u) do
     if t[k] ~= u[k] then
       return false
+
     end
   end
 
   return true
+
 end -- cmpTable
 
 -- Добавление/Получение страницы по информации.
@@ -296,6 +318,7 @@ end -- cmpTable
   (number) - индекс инфрмации в pages.
 --]]
 function unit.addPage (info)
+
   local pMap  = unit.pMap
   local pages = unit.pages
   local index = -1
@@ -304,6 +327,7 @@ function unit.addPage (info)
   for k = 1, #pages do
     if cmpTable(pages[k], info) then
       index = k
+
       break
     end
   end
@@ -311,14 +335,18 @@ function unit.addPage (info)
   if index == -1 then
     index = #pages + 1
     pages[index] = info
+
   end
 
   pMap[#pMap + 1] = index
+
   return index
+
 end ---- addPage
 
 -- Очистка.
 function unit.clearParse ()
+
   unit.pMap   = {}
   unit.pages  = {}
   unit.groups = { unit.UnassignedGroup; [unit.UnassignedGroup] = 1 }
@@ -327,6 +355,7 @@ function unit.clearParse ()
   unit.twosh = bshl(1, unit.shift) -- 2^shift
   -- Маска для отбора символов на странице.
   unit.mask  = unit.twosh - 1      -- 2^shift - 1
+
 end ---- clearParse
 
 -- Преобразование строки с числом в число.
@@ -337,8 +366,10 @@ end ---- clearParse
   (number) - полученное число.
 --]]
 local function toNumber (s) --> (number|string)
+
   if s and s:find("^%x%x%x%x") then
     return tonumber(s, 16)
+
   end
 end --
 
@@ -350,6 +381,7 @@ end --
   (table) - таблица из элементов строки.
 --]]
 function unit.splitLine (line)
+
   local udpos = unit.udpos
 
   -- Поэлементный разбор строки.
@@ -365,6 +397,7 @@ function unit.splitLine (line)
   items[udpos.totitle]   = toNumber(items[udpos.totitle])
 
   return items
+
 end ---- splitLine
 
 do
@@ -376,6 +409,7 @@ do
   data (string) - содержимое файла данных.
 --]]
 function unit.buildTables (data)
+
   unit.clearParse()
 
   local udpos = unit.udpos
@@ -416,15 +450,18 @@ function unit.buildTables (data)
     -- Enter all unassigned characters up to the current character.
     -- Ввод всех неназначенных символов выше текущего символа.
     if index > cpgap and not items[udpos.charname]:find("Last>$") then
-       while cpgap < index do
-         info[#info + 1] = 1
-         -- Учёт перехода на следующую страницу.
-         if band(cpgap, mask) == mask then
-            addPage(info)
-            info = {}
-         end
-         cpgap = cpgap + 1
-       end
+      while cpgap < index do
+        info[#info + 1] = 1
+        -- Учёт перехода на следующую страницу.
+        if band(cpgap, mask) == mask then
+          addPage(info)
+          info = {}
+
+        end
+
+        cpgap = cpgap + 1
+
+      end -- while
     end
 
     -- Enter all assigned characters up to the current character
@@ -434,11 +471,14 @@ function unit.buildTables (data)
       info[#info + 1] = gIndex
       -- Учёт перехода на следующую страницу.
       if band(k, mask) == mask then
-         addPage(info)
-         info = {}
+        addPage(info)
+        info = {}
+
       end
+
       k = k + 1
-    end
+
+    end -- while
 
     cpgap = index + 1
 
@@ -455,13 +495,16 @@ function unit.buildTables (data)
     --if index >= 0x20000 then addPage(info); break end -- NO
     --if index >= 0xE0000 then addPage(info); break end -- NO
     --if index >= 0xF0000 then addPage(info); break end -- NO
+
   end
+
   --[[ -- DEBUG only
   --far.Show(unpack(unit.pMap))
   --for k = 1, #unit.pages do far.Show(k, unpack(unit.pages[k])) end
   --far.Show(unpack(unit.groups))
   --for k = 1, #unit.pages do far.Show(k, unpack(unit.glists[k])) end
   --]]
+
 end ---- buildTables
 
 end -- do
@@ -474,16 +517,19 @@ end -- do
   (string) - содержимое файла.
 --]]
 function unit.loadData (filename) --> (string|nil)
+
   local f = io_open(filename, 'r')
   if f == nil then return end
   local data = f:read('*a')
-
   f:close()
+
   return data
+
 end ---- loadData
 
 -- Формирование pageMap.
 function unit.make_pageMap ()
+
   local fmt = unit.format
   local indexshift = fmt.indexshift
   local lineindent = fmt.lineindent
@@ -508,6 +554,7 @@ function unit.make_pageMap ()
     if k ~= last then
       len = len + seplen
       t[#t + 1] = valuesepar
+
     end
 
     -- Переход на новую строку.
@@ -515,14 +562,18 @@ function unit.make_pageMap ()
       len = indlen
       t[#t + 1] = fmt.newlinestr
       t[#t + 1] = lineindent
+
     end
-  end
+
+  end -- for
 
   return t_concat(t)
+
 end ---- make_pageMap
 
 -- Формирование groupMap.
 function unit.make_groupMap ()
+
   local fmt = unit.format
   local indexshift = fmt.indexshift
   local lineindent = fmt.lineindent
@@ -551,6 +602,7 @@ function unit.make_groupMap ()
        if i ~= last_i or j ~= last_j then
          len = len + seplen
          t[#t + 1] = valuesepar
+
        end
 
        -- [[
@@ -559,18 +611,23 @@ function unit.make_groupMap ()
          len = indlen
          t[#t + 1] = fmt.newlinestr
          t[#t + 1] = lineindent
+
        end
        --]]
-    end
+
+    end -- for
+
     --[[ -- DEBUG only
     -- Переход на новую строку.
     len = indlen
     t[#t + 1] = fmt.newlinestr
     t[#t + 1] = lineindent
     --]]
-  end
+
+  end -- for
 
   return t_concat(t)
+
 end ---- make_groupMap
 
 -- Формирование частей элемента groups.
@@ -582,23 +639,30 @@ end ---- make_groupMap
   (number) - значение Delta.
 --]]
 function unit.make_gitempart (list)
+
   local _, ToUpper, ToLower, ToTitle = unpack(list)
 
   if ToTitle ~= 0 then
     if ToTitle == ToUpper then
       return 4, ToUpper -- 100 -- subtract delta for title or upper
+
     elseif ToUpper ~= 0 then
       return 5, ToUpper -- 101 -- subtract delta for upper, subtract 1 for title
+
     else
       return 3, ToLower -- 011 -- add delta for lower, add 1 for title
+
     end
   else
     if ToUpper ~= 0 then
       return 6, ToUpper -- 110 -- subtract delta for upper, add delta for lower
+
     elseif ToLower ~= 0 then
       return 2, ToLower -- 010 -- add delta for lower
+
     else
       return 0, 0       -- 000 -- noop
+
     end
   end
 end ---- make_gitempart
@@ -620,18 +684,22 @@ do
   (number) - значение Case Delta Type.
 --]]
 function unit.make_gitem (list)
+
   local Type = list[1] + indexshift
   local Case, Delta = make_gitempart(list)
+
   return bor(bshl(Delta, deltashift),
              bshl(Case, caseshift),
              --bshl(Type, typeshift),
              Type) -- no shift for type
+
 end ---- make_gitem
 
 end -- do
 
 -- Формирование groups.
 function unit.make_groups ()
+
   local fmt = unit.format
   local lineindent = fmt.lineindent
   local valuesepar = fmt.valuesepar
@@ -664,11 +732,14 @@ function unit.make_groups ()
       len = indlen
       t[#t + 1] = fmt.newlinestr
       t[#t + 1] = lineindent
+
     end
     --]]
-  end
+
+  end -- for
 
   return t_concat(t)
+
 end ---- make_groups
 
 -- Сохранение результата.
@@ -678,6 +749,7 @@ end ---- make_groups
   text      (table) - общий текст файла-результата.
 --]]
 function unit.saveResult (filename, text)
+
   local f = io_open(filename, 'w')
   if f == nil then return end
 
@@ -701,7 +773,9 @@ function unit.saveResult (filename, text)
   f:write(text.finis)
 
   f:close()
+
   return true
+
 end ---- saveResult
 
 do
@@ -716,6 +790,7 @@ do
   local CodeName = "slnudata.c"
 
 function unit.main ()
+
   -- Загрузка данных.
   local FileName = format("%s%s%s", BasePath, DataPath, DataName)
   local data = unit.loadData(FileName)
@@ -746,6 +821,7 @@ function unit.main ()
   unit.saveResult(FileName, unit.text.c)
 
   return
+
 end ----
 
 end -- do
@@ -940,6 +1016,7 @@ _c.finis = [=[
 ]=] --
 
 text.c = _c
+
 --------------------------------------------------------------------------------
 --return unit
 unit.main()

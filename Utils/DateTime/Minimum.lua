@@ -36,6 +36,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -44,13 +45,16 @@ unit.DefCustom = {
   help   = { topic = unit.FileName, },
   locale = {
     kind = 'load',
+
   }, --
+
 } -- DefCustom
 
 -- [[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 --logShow(L, "L", "wM")
@@ -64,8 +68,10 @@ TConfig.Type = "Type.Minimum"
 TConfig.OutPerWeek = 1
 
 TConfig.WeekOuts = {
+
   { m =  2, d = 29, od = 1, },
   { m = 12, d = 31, od = 1, },
+
 } -- WeekOuts
 
 TConfig.LocData = L
@@ -85,6 +91,7 @@ function unit.newConfig (Config) --|> Config
   if Config and getmetatable(self) == MConfig then return self end
 
   return setmetatable(self, MConfig)
+
 end ---- newConfig
 
 end -- do
@@ -98,14 +105,17 @@ end -- do
 function TConfig:getWeekDays (y, m) --> (number)
 
   return self.WeekDays[m]
+
 end ---- getWeekDays
 
 function TConfig:getWeekMonthDays (y, m) --> (number)
 
   if m ~= self.MonthPerYear then
     return self.MonthDays[m]
+
   else
     return self.MonthDays[m] - 1
+
   end
 end ---- getWeekMonthDays
 
@@ -113,8 +123,10 @@ function TConfig:getWeekMonthOuts (y, m) --> (number)
 
   if m == 2 then
     return self:getLeapDays(y)
+
   else
     return m ~= self.MonthPerYear and 0 or 1
+
   end
 end ---- getWeekMonthOuts
 
@@ -124,6 +136,7 @@ end ---- getWeekMonthOuts
 function TConfig:getWeekDay (y, m, d) --> (number)
 
   return (self:getWeekDays(y, m) + d) % self.DayPerWeek
+
 end ---- getWeekDay
 
 ---------------------------------------- ---- ---- Check

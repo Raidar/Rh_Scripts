@@ -26,10 +26,12 @@ local Custom = {
   name = "lum",
   path = "Rh_Scripts.LuaEUM.config.",
   locale = { kind = 'require' },
+
 } ---
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Internal
@@ -46,10 +48,12 @@ local function QuoteText (left, right) --> (macro)
   if farUt.EditorSelType() == "none" then
     -- Выделенного блока нет: курсор внутри "кавычек":
     return format("%s@Here%s@Back", left, right)
+
   end
 
   -- Выделенный блок есть: блок внутри кавычек, курсор вне кавычек:
   return format("@Cut%s@Paste%s", left, right)
+
 end -- QuoteText
 
 -- Insert paired tag considering selected block.
@@ -65,12 +69,14 @@ local function PairTag (tag, block) --> (macro)
     -- Выделенного блока нет: курсор внутри тега:
     local block = block and "@Enter@Enter@Up" or "" -- блочный элемент
     return format("<%s>@Here</%s>@Back%s", tag, tag, block)
+
   end
 
   -- Выделенный блок есть: блок внутри тега, курсор вне тега:
   --local count = tag:len() + 3
   local block = block and "@Enter" or "" -- блочный элемент
   return format("@Cut<%s>%s@Paste%s</%s>", tag, block, block, tag)
+
 end -- PairTag
 
 -- Insert single tag with parameter considering selected block.
@@ -138,6 +144,7 @@ local l_stars = ('*'):rep(line_lim)
 
 ---------------------------------------- ----
 local mInsert = {
+
   text  = L.TplInsItem,
   Title = L.TemplateInsert,
   MenuView = "RectMenu",
@@ -149,6 +156,7 @@ local mInsert = {
 
       IsStatusBar = true,
     },
+
   }, -- Props
 
   CfgData = {
@@ -156,6 +164,7 @@ local mInsert = {
       TextNamedKeys = false,
       UseMenuTexter = false,
     },
+
   }, -- CfgData
 
   Items = {
@@ -457,18 +466,23 @@ local mInsert = {
       Macro = PairTag("test", true),
       AccelStr = "Z" },
     --]]
-  } -- Items
+
+  }, -- Items
+
 } --- mInsert
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.TemplateInsert,
     Items = { mInsert },
+
   },
 
   ["Insert"] = mInsert,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

@@ -57,6 +57,7 @@ local DIF_HelpText     = F.DIF_SHOWAMPERSAND + F.DIF_CENTERGROUP
 
 -- Форма окна диалога нажатия клавиши.
 function unit.DlgForm ()
+
   local W, H = 48 - 4, 10 - 2 -- Width, Height
   local I, M = 3, bshr(W, 1) -- Indent, Width/2
   local Q = bshr(M, 1) -- Width/4
@@ -92,10 +93,12 @@ function unit.DlgForm ()
   --D.help   = {DI_Text,    0, H-1, 0, 0, 0, 0, 0, DIF_HelpText, "Press 'Enter' or 'Escape' key to exit!"}
 
   return D
+
 end -- unit.DlgForm
 
 ----------------------------------------
 local VKCS_Name = {
+
   RIGHT_ALT_PRESSED  = "RA",
   LEFT_ALT_PRESSED   = "LA",
   RIGHT_CTRL_PRESSED = "RC",
@@ -105,6 +108,7 @@ local VKCS_Name = {
   SCROLLLOCK_ON = "Scr",
   CAPSLOCK_ON   = "Cap",
   ENHANCED_KEY  = "Enh",
+
 } --- VKCS_Name
 
 local VKeys   = keyUt.VKEY_Keys
@@ -112,37 +116,48 @@ local VState  = keyUt.VKEY_State
 local VScans  = keyUt.VKEY_ScanCodes
 
 local function VK_KeyToName (Key) --> (string)
-  local Key = Key or 0
+
+  Key = Key or 0
   if (Key >= 0x30 and Key <= 0x39) or
      (Key >= 0x41 and Key <= 0x5A) then
     return string.char(Key)
+
   end
 
   return tfind(VKeys, Key)
+
 end -- VK_StateToName
 
 local function VK_StateToName (State) --> (string)
-  local State, t = State or 0, {}
+
+  State = State or 0
+
+  local t = {}
   for k, v in pairs(VKCS_Name) do
     if band(State, VState[k]) ~= 0 then
-      t[#t+1] = v
+      t[#t + 1] = v
+
     end
   end
 
   return tconcat(t, "+")
+
 end -- VK_StateToName
 
 ---------------------------------------- main
 local SendMsg = far.SendDlgMessage
 
 local function SendText (hDlg, Param1, Param2)
+
   return SendMsg(hDlg, F.DM_SETTEXT, Param1, Param2)
+
 end --
 
 local Guid = win.Uuid("a05f1ebc-02aa-4450-9ef8-e12e6da4ba00")
 
 -- Показ нажатой клавиши в диалоге.
 function unit.Dialog ()
+
   local D = unit.DlgForm()
 
   --logShow(D, "Dlg", "d2 n")
@@ -150,10 +165,12 @@ function unit.Dialog ()
   -- Закрытие диалога.
   local function DlgClose (hDlg)
     SendMsg(hDlg, F.DM_CLOSE, -1, 0)
+
   end
 
   -- Обработчик событий диалога.
   local function DlgProc (hDlg, msg, param1, param2)
+
     if msg == F.DN_CONTROLINPUT then
       local Input = param2
       --logShow{ Input = Input }
@@ -162,6 +179,7 @@ function unit.Dialog ()
       if EventType ~= F.KEY_EVENT and
          EventType ~= F.FARMACRO_KEY_EVENT then
         return
+
       end
 
       local StrKey = far.InputRecordToName(Input) or ""
@@ -171,6 +189,7 @@ function unit.Dialog ()
       if StrKey == "Esc" then
       --if StrKey == "Enter" or StrKey == "Esc" then
         DlgClose(hDlg); return true
+
       end
       --logShow{ "FarKey", hex(FarKey) }
 
@@ -188,6 +207,7 @@ function unit.Dialog ()
       if type(mChar) == 'number' then
         mChar = ("").char(mChar)
         --mChar = unicode.utf8.char(mChar)
+
       end
       SendText(hDlg, D.KChar.id, '"'..(mChar or "")..'"')
 
@@ -200,16 +220,20 @@ function unit.Dialog ()
       if mChar ~= "" then
         --logShow{ "mChar", tostring(mChar)}
         asChar = tostring(mChar:find("[%w_]") and "true" or "false")
+
       end
       SendText(hDlg, D.AlNum.id, asChar)
 
       return true
+
     --elseif msg == F.DN_DRAWDLGITEM then return false
+
     end
     --return false
   end -- DlgProc
 
-  return far.Dialog(Guid, -1, -1, D._[4]+4, D._[5]+2, nil, D, 0, DlgProc)
+  return far.Dialog(Guid, -1, -1, D._[4] + 4, D._[5] + 2, nil, D, 0, DlgProc)
+
 end -- Dialog
 
 --------------------------------------------------------------------------------

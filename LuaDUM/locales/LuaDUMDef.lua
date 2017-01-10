@@ -3,8 +3,10 @@
 
 --------------------------------------------------------------------------------
 local Data = {
+
   -- Messsage titles.
   UMenuName  = "LuaDUM",
+
 } --- Data
 
 return Data

@@ -28,7 +28,9 @@ myObj.s = "text"
 myObj.value = 64
 
 function myObj:setvalue (v)
+
   self.value = v
+
 end
 
 logShow(myObj, "myObj", 0)

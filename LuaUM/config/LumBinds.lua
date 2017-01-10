@@ -48,7 +48,7 @@ local Data = {
   Default = { Caption = L.MainMenu,
               Menu = "U_NoMenu", },
 
-} ---
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

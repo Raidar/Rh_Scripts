@@ -55,21 +55,28 @@ do
     MatchCase  (bool) - Учёт регистра символов.
 --]]
 function unit.CharControl (cfg) --> (object)
-  local cfg = cfg or {}
+
+  cfg = cfg or {}
+
   local CharEnum = cfg.CharEnum or const.DefCharEnum
+
   local self = {
+
     cfg       = cfg,
     CharEnum  = CharEnum,
     CharsSet  = ".",
     SeparSet  = "",
+
   } --- self
 
   if CharEnum ~= "." then
     self.CharsSet = format(const.CharSetPat, CharEnum) -- Множество символов
     self.SeparSet = format(const.NoneSetPat, CharEnum) -- Множество разделителей
+
   end
 
   return setmetatable(self, MCharControl)
+
 end ---- CharControl
 
 end -- do
@@ -77,6 +84,7 @@ end -- do
 -- Check character for character of set.
 -- Проверка символа на символ из множества.
 function TCharControl:isSetChar (Char) --> (bool)
+
   return Char and Char:find(self.CharsSet) or
          self.cfg.UseMagic and Char:find(const.CardsSet) or
          self.cfg.UsePoint and Char == '.' -- dot
@@ -85,6 +93,7 @@ end ---- isSetChar
 -- Get word at specified position (and word part leftward of it).
 -- Получение слова в указанной позиции (и части слова слева от него).
 function TCharControl:atPosWord (s, pos) --> (string), (string)
+
   if pos > s:len() + 1 then return "", "" end
 
   --logShow({ s, L, pos, P }, "atPosWord", "#")
@@ -92,11 +101,13 @@ function TCharControl:atPosWord (s, pos) --> (string), (string)
   self.Tail = s:sub(pos):match('^'..self.CharsSet..'+') or ""
 
   return self.Slab..self.Tail, self.Slab
+
 end ---- atPosWord
 
 -- Check word by parameters.
 -- Проверка слова на параметры.
 function TCharControl:isWordUse (Word, Slab) --> (bool | nil)
+
   local cfg = self.cfg
   --Word, Slab = Word or self.Word, Slab or self.Slab
   --logShow({ Word, Slab, Word:len(), Slab:len(),
@@ -107,9 +118,11 @@ function TCharControl:isWordUse (Word, Slab) --> (bool | nil)
 
   if cfg.CharsMin and cfg.CharsMin > 0 and Slab:len() < cfg.CharsMin then
     return
+
   end
 
   return true
+
 end ---- isWordUse
 
   local tconcat = table.concat
@@ -117,6 +130,7 @@ end ---- isWordUse
 -- Get pattern from string.
 -- Получение шаблона из строки.
 function TCharControl:asPattern (s) --> (string)
+
   local t, cfg = {}, self.cfg
   --local t = tables.create(s:len())
 
@@ -125,18 +139,23 @@ function TCharControl:asPattern (s) --> (string)
     if c:find('%a') then -- Учёт регистра символов:
       t[#t+1] = cfg.MatchCase and c or
                 ("[%s%s]"):format(c:upper(), c:lower())
+
     elseif c == '.' then -- Учёт '.' как "магического":
       t[#t+1] = (cfg.UseMagic and cfg.UsePoint) and self.CharsSet or '%.'
+
     elseif cfg.UseMagic and LuaCards:find(c, 1, true) then
                          -- Учёт "магических" модификаторов:
       t[#t+1] = cfg.UsePoint and c or self.CharsSet..c
+
     else
       t[#t+1] = c:find('[%p&]') and ("%%%s"):format(c) or c
       --t[#t+1] = c:find('[%p^$&]') and ("%%%s"):format(c) or c
+
     end -- if
   end
 
   return tconcat(t)
+
 end ---- asPattern
 
 ---------------------------------------- CharCounter
@@ -163,11 +182,14 @@ do
     SeqMax   (number) - максимальная (@default = 1).
 --]]
 function unit.CharCounter (cfg) --> (object)
-  local cfg = cfg or {}
+
+  cfg = cfg or {}
+
   cfg.UseAlone = cfg.UseAlone == nil and true
   local CharEnum = cfg.CharEnum or "."
 
   local self = {
+
     cfg       = cfg,
     CharEnum  = CharEnum,
     CharsSet  = '.',
@@ -182,12 +204,14 @@ function unit.CharCounter (cfg) --> (object)
       --Chars = cfg.Chars or {},
       Magic = cfg.Magic or {},
       Specs = cfg.Specs or {},
+
     }, -- Count
 
   } --- self
 
   if CharEnum ~= '.' then
     self.CharsSet = format(const.CharSetPat, CharEnum) -- Множество символов
+
   end
 
   -- Подготовка счётчиков:
@@ -197,10 +221,12 @@ function unit.CharCounter (cfg) --> (object)
     for k = 1, #LuaClassList do
       local v = LuaClassList[k]
       Magic[v] = Magic[v] or 0
+
     end
   end
 
   return setmetatable(self, MCharCounter)
+
 end ---- CharCounter
 
 end -- do
@@ -208,6 +234,7 @@ end -- do
 -- Count for next character c.
 -- Подсчёт для очередного символа c.
 function TCharCounter:Char (c) --> (bool | nil)
+
   if c == nil then return end
   local cfg, Count = self.cfg, self.Count
 
@@ -216,6 +243,7 @@ function TCharCounter:Char (c) --> (bool | nil)
   Count.Total = Count.Total + 1
   if cfg.UseOnes then
     Count.Ones[c] = (Count.Ones[c] or 0) + 1
+
   end
 
   if cfg.UseMagic then
@@ -226,6 +254,7 @@ function TCharCounter:Char (c) --> (bool | nil)
       local v = LuaClassList[k]
       if c:match(v) then
         Count_Magic[v] = Count_Magic[v] + 1
+
       end
     end
   end
@@ -239,6 +268,7 @@ function TCharCounter:Char (c) --> (bool | nil)
   -- Анализ последовательности:
   if cfg.UseSeqs then
     Count.Seqs[Seq] = (Count.Seqs[Seq] or 0) + 1
+
   end
 
   if cfg.SpecEnum then
@@ -249,11 +279,13 @@ function TCharCounter:Char (c) --> (bool | nil)
       local v = SpecEnum[k]
       if Seq:match(v) then
         Count_Specs[v] = (Count_Specs[v] or 0) + 1
+
       end
     end
   end
 
   return true
+
 end ---- Char
 
 --------------------------------------------------------------------------------

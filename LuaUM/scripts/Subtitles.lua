@@ -32,13 +32,19 @@ local unit = {}
 local debugs
 
 local function doShow (...)
+
   debugs = debugs or require "context.utils.useDebugs"
+
   return debugs.Show(...)
+
 end -- doShow
 
 local function datShow (...)
+
   debugs = debugs or require "context.utils.useDebugs"
+
   return debugs.ShowData(...)
+
 end -- datShow
 
 ---------------------------------------- Datim
@@ -55,15 +61,18 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\LuaUM\\scripts\\"
 
 ---------------------------------------- ---- Custom
 local DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
   locale = { kind = 'load', },
-} ---
+
+} --- DefCustom
 
 ---------------------------------------- ---- Locale
 local L, e1, e2 = locale.localize(DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 unit.Locale = L
@@ -74,6 +83,7 @@ unit.Locale = L
 ---------------------------------------- Show
 -- Показ типа файла субтитров.
 function unit.SubtitleType () --| (window)
+
   local SubType = SubsDatim.getFileType()
   local SubDesc = ""
   if SubType then SubDesc = types[SubType].desc or "" end
@@ -85,37 +95,45 @@ end ----
 
 -- Показ данных по линии файла.
 function unit.CurClauseData () --| (window)
+
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
   local data = SubsDatim.getLineData(tp)
 
   return doShow(data, L.cap_CurClauseData)
+
 end ----
 
 -- Показ данных по разнице как времени.
 function unit.getClauseShowData (dif, lines) --> (table, table)
-  local dif = dif or 0
+
+  dif = dif or 0
   local time = newTime():from_z(dif)
 
-  local lines = lines == nil and 4 or lines
+  lines = lines == nil and 4 or lines
 
   local show = {
     L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
     lines >= 1 and L.TimeLenDataFmt:format(time:data()) or nil,
     lines >= 2 and L.TimeLenMsecFmt:format(n2s(dif)) or nil,
     lines >= 2 and L.TimeLenTextFmt:format(time:data()) or nil,
+
   } ---
+
   local kind = {
     ShowLineNumber = false,
     --ChosenToClip   = true,
+
   } ---
 
   return show, kind 
+
 end ---- getClauseShowData
 
 -- Показ длины отрезка времени на линии файла.
 function unit.CurClauseLen (lines) --| (window)
+
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
@@ -124,10 +142,12 @@ function unit.CurClauseLen (lines) --| (window)
   local show, kind = unit.getClauseShowData(dif, lines)
 
   return datShow(show, L.cap_CurClauseLen, kind)
+
 end ---- CurClauseLen
 
 -- Показ длины паузы перед отрезком времени на линии файла.
 function unit.CurClauseGap (lines) --| (window)
+
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
@@ -136,13 +156,14 @@ function unit.CurClauseGap (lines) --| (window)
   local show, kind = unit.getClauseShowData(dif, lines)
 
   return datShow(show, L.cap_CurClauseLen, kind)
+
 end ---- CurClauseGap
 
 --local unpack = unpack
 
 function unit.ShowClauseAll (title, ...)
-  local args = {...}
 
+  local args = {...}
   local items = {}
 
   for a = 1, #args do
@@ -151,24 +172,29 @@ function unit.ShowClauseAll (title, ...)
     if type(t) == 'table' then
       for k = 1, #t do
         items[#items + 1] = { text = t[k], }
+
       end
     else
       items[#items + 1] = { text = t, separator = true, }
+
     end
   end -- for
 
   local props = {
     Title = title,
     Flags = 'FMENU_SHOWAMPERSAND',
+
   } ---
 
   debugs = debugs or require "context.utils.useDebugs"
 
   return far.Menu(props, items, debugs.BKeys)
+
 end -- ShowClauseAll
 
 -- Показ длины отрезка времени на линии файла и паузы перед ним.
 function unit.CurClauseAll () --| (window)
+
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
@@ -191,6 +217,7 @@ function unit.CurClauseAll () --| (window)
 
   return datShow(show, L.cap_CurClauseAll, kind)
   --]]
+
 end ---- CurClauseAll
 
 --------------------------------------------------------------------------------

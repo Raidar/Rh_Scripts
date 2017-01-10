@@ -20,22 +20,27 @@ local Custom = {
   name = "lum",
   path = "Rh_Scripts.LuaUM.config.",
   locale = { kind = 'require', },
+
 } ---
 
 ---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Separator
 local mSeparator = {
   separator = true,
+
 } ---
 
 ---------------------------------------- Quick Information
 local mQuickInfo = {
+
   text = L.OthQuickInfo,
+
   Items = {
     -- LuaFAR version --
     { text = L.OthQInfoVersions,
@@ -57,12 +62,16 @@ local mQuickInfo = {
       Script = "LumScripts.lua",
       Function = "WinEnvironVars",
       Relative = "default", },
-  }, --
+
+  }, -- Items
+
 } --- mQuickInfo
 
 ---------------------------------------- LuaFAR context
 local mLFcontext = {
+
   text = L.OthLFcontext,
+
   Items = {
     -- detect type --
     { text = L.OthLFcDetectType,
@@ -104,13 +113,17 @@ local mLFcontext = {
       Script = "LumContext.lua",
       Function = "testType",
       Relative = "default", },
-  }, --
+
+  }, -- Items
+
 } --- mLFcontext
 
 --[[
 ---------------------------------------- Scripts checking
 local mFuncScripts = {
+
   text = "Calls of &functions",
+
   Items = {
     -- Global environment --
     { text = "&Global environment",
@@ -143,13 +156,17 @@ local mFuncScripts = {
       Script = "LumScripts.lua",
       Function = 'Var.SubFunction',
       Relative = "default", },
-  }, --
+
+  }, -- Items
+
 } --- mFuncScripts
 --]]
 ---------------------------------------- Hello, world!
 local mHelloWorld = {
+
   text = L.OthHelloWorld,
   --AccelKey = "W",
+
   Items = {
     -- "Hello" message --
     { text = L.OthHelloWorldMsg,
@@ -161,12 +178,16 @@ local mHelloWorld = {
       Script = "LumScripts.lua",
       Function = "HelloWorldText",
       Relative = "default", },
-  }, --
+
+  }, -- Items
+
 } --- mHelloWorld
 
 local mDeferredHello = {
+
   text = L.OthHelloWorld,
   --AccelKey = "W",
+
   --[[ -- Items as one function
   Items = function ()
     return {
@@ -183,10 +204,13 @@ local mDeferredHello = {
           Relative = "default", },
       --}, --
     } ----
-  end, --
+
+  end, -- Items
   --]]
+
   --[[ -- Items as array of functions
   Items = {
+
     function ()
       return { text = L.OthHelloWorldMsg,
                Script = "LumScripts.lua",
@@ -200,13 +224,17 @@ local mDeferredHello = {
                Function = "HelloWorldText",
                Relative = "default", }
     end,
-  }, --
+
+  }, -- Items
   --]]
+
 } --- mDeferredHello
 
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts
+
   text = L.OtherScripts,
+
   Items = {
     mQuickInfo,     -- Quick Information
     mLFcontext,     -- LuaFAR context
@@ -220,20 +248,25 @@ local mScripts = { -- Other scripts
       Area = "editor",
       Relative = "scripts", },
     --]]
-  } ---
+
+  }, -- Items
+
 } --- mScripts
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.OtherScripts,
     Items = { mScripts, },
     --Items = { mScripts, mDeferredHello, },
     --Items = { mSeparator, mScripts, },
+
   },
 
   ["UScripts"] = mScripts,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

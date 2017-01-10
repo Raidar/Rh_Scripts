@@ -45,11 +45,13 @@ local Nameless = datas.Nameless -- Name for section/key without name
 local SpaceTrim = "^%s*(.-)%s*$" -- Паттерн исключения пробелов
 
 local Msgs = {
+
   FileCannotOpen    = "Cannot open file:\n",
   FileNameNotFound  = "File name not found",
   FileDataNotFound  = "File data not found",
   --ContinuationError = "Continuation error:\n",
   ContErrorFileLine = "\nError file line: ",
+
 } --- Msgs
 
 ---------------------------------------- Merge
@@ -62,8 +64,10 @@ local Msgs = {
     MergeKind -- тип слияния: добавление в конец массива / слияние полей.
 --]]
 local function MergeField (Field, Merged, Props) --> (Field | nil, error)
+
   if not Field then return Merged end
   if not Merged then return Field end
+
   local IlkSep = Props.IlkSep
   local MergeKind = Props.MergeKind or "array"
   local typeF, typeM = type(Field), type(Merged)
@@ -73,6 +77,7 @@ local function MergeField (Field, Merged, Props) --> (Field | nil, error)
   --if typeF == "string" and typeM == "string" and MergeKind == "string" then
   if typeF == 'string' and typeM == 'string' then
     return (Merged == "" or not IlkSep) and Field or Field..IlkSep..Merged
+
   end
 
   -- Соединение таблиц / как таблиц
@@ -81,15 +86,22 @@ local function MergeField (Field, Merged, Props) --> (Field | nil, error)
 
   if MergeKind == "array" then
     for _, v in ipairs(Merged) do
-      Field[#Field+1] = v end -- Добавление в конец
+      Field[#Field + 1] = v -- Добавление в конец
+      
+    end
 
   else -- MergeKind == "record"
     for n, v in pairs(Merged) do -- Слияние полей:
-      Field[n] = MergeField(Field[n], v, Props) end
-  end
+      Field[n] = MergeField(Field[n], v, Props)
+
+    end
+
+  end -- if
+
   --logShow(Field, "AddIniData")
 
   return Field
+
 end ---- MergeField
 unit.MergeField = MergeField
 
@@ -101,6 +113,7 @@ unit.MergeField = MergeField
   Props  -- свойства формирования таблицы.
 --]]
 local function MergeTable (Table, Merged, Props) --> (Table | nil, error)
+
   if not Table then return Merged end
   if not Merged then return Table end
 
@@ -112,15 +125,20 @@ local function MergeTable (Table, Merged, Props) --> (Table | nil, error)
         --for k, v in pairs(Campo) do
         for k, v in pairs(d) do
           Field[k] = MergeField(Field[k], v, Props)
+
         end
+
       else
         Table[s] = { Field, d }
+
       end
 
     else
       Table[s] = d
+
     end
-  end
+  end -- for
+
   --logShow(Table, "AddIniData")
 
   return Table
@@ -190,13 +208,17 @@ local function ParseString (Str, Info, Props) --> (true | nil, error)
     -- Формирование раздела в таблице.
     Sec = Line:sub(PosB+1, PosE-1) -- Очистка от конца
     if not Table[Sec] then Table[Sec] = {} end -- Раздел
-    Info.Sec = Sec; return true
+    Info.Sec = Sec
+    
+    return true
+
   end -- if PosB
 
   --[[ Работа с ключом и значением ]]
   if Info.ContFlag then -- Продолжение:
     Value = Value:sub(1, -3)..'\n'..Line
     Info.ContFlag = false
+
   else -- Новый ключ со значением:
     -- Проверка на ключ -- Разбор Key = Data.
     Key, Value = Line:match("([^=]*)%=(.*)")
@@ -207,22 +229,29 @@ local function ParseString (Str, Info, Props) --> (true | nil, error)
     -- Ключ и значение по умолчанию.
     if not Key or Key == "" then Key = Nameless end
     if not Value or Value == "" then Value = "" end
+
   end -- if ContFlag
 
   if Value:find(" \\$") then -- ("[^\\]\\$")
     Info.ContFlag = true -- Есть продолжение
     Info.Key, Info.Value = Key, Value
+
   else
     if not Sec then
       Sec = Nameless -- Раздел по умолчанию:
       if not Table[Sec] then Table[Sec] = {} end
+
     end
+
     TblSec = Table[Sec] -- Формирование ключа в таблице:
     TblSec[Key] = MergeField(TblSec[Key], Value, Props)
+
   end -- if Value:find
 
   Info.Sec = Sec
+
   return true
+
 end ---- ParseString
 
 -- Чтение данных из ini-файла напрямую в таблицу.
@@ -234,21 +263,27 @@ end ---- ParseString
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
+
   if not Name then return nil, Msgs.FileNameNotFound end
 
-  local Props = Props or {}
+  Props = Props or {}
   if not Props._CP_ then
     Props._CP_ = farUt.CheckFileCP(Name) -- Примерная кодировка файла
-    if Props._CP_ == nil then return nil, Msgs.FileCannotOpen..Name end
+    if Props._CP_ == nil then
+      return nil, Msgs.FileCannotOpen..Name
+
+    end
   end
   --logShow(Props._CP_, Name)
 
   local f = io_open(Name, 'r')
   local Info = {
+
     Table = Table or {},    -- Таблица
     LineCtr = 1,            -- Номер текущей строки
     ContFlag = false,       -- Признак продолжения строки
     Sec = nil, Key = nil, Value = nil, -- Начальные значения
+
   } --- Info
 
   local isOk, SError
@@ -257,6 +292,7 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
     isOk, SError = ParseString(s, Info, Props)
     --logShow(Info.Table, s)
     if not isOk then break end
+
   end
 
   f:close()
@@ -268,9 +304,11 @@ function unit.GetStrIniData (Name, Table, Props) --> (Table | nil, error)
                 Msgs.ContErrorFileLine..tostring(Info.LineCtr)
   end
   --]]
+
   --logShow(Info.Table, "Info.Table")
 
   return Info.Table
+
 end ---- GetStrIniData
 
 -- Разбор строки-буфера данных в таблицу.
@@ -282,6 +320,7 @@ end ---- GetStrIniData
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
+
   if not Str then return nil end
   --[[
   local SecCtr = numbers.b2n(Str:find("^%s*[^\n]-%[")) + -- Раздел в 1-й строке
@@ -290,10 +329,12 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
   --]]
 
   local Info = {
+
     Table = Table or {},    -- Таблица
     LineCtr = 1,            -- Номер текущей строки
     ContFlag = false,       -- Признак продолжения строки
     Sec = nil, Key = nil, Value = nil, -- Начальные значения
+
   } --- Info
 
   local isOk, SError
@@ -302,6 +343,7 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
     isOk, SError = ParseString(s, Info, Props)
     --logShow(Info.Table, s)
     if not isOk then break end
+
   end
 
   if not isOk then return nil, SError end
@@ -312,9 +354,11 @@ local function ParseBuffer (Str, Table, Props) --> (Table | nil, error)
                 Msgs.ContErrorFileLine..tostring(Info.LineCtr)
   end
   --]]
+
   --logShow(Info.Table, "Info.Table")
 
   return Info.Table
+
 end ---- ParseBuffer
 
 -- Чтение данных из ini-файла через буфер в таблицу.
@@ -326,6 +370,7 @@ end ---- ParseBuffer
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 function unit.GetBufIniData (Name, Table, Props) --> (Table | nil, error)
+
   if not Name then return nil, Msgs.FileNameNotFound end
 
   -- Работа с файлом:
@@ -338,11 +383,14 @@ function unit.GetBufIniData (Name, Table, Props) --> (Table | nil, error)
   Props = Props or {}
   if not Props._CP_ then
     Props._CP_ = farUt.CheckLineCP(Str) -- Примерная кодировка файла
+
   end
+
   --logShow(Props._CP_, Name)
   --logShow(Str, Name)
 
   return ParseBuffer(Str, Table, Props)
+
 end ---- GetBufIniData
 
 ----------------------------------------
@@ -378,7 +426,9 @@ unit.GetIniData = unit.GetBufIniData
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 function unit.GetLuaData (Name, Table, Props) --> (Table | nil, error)
+
   --logShow({ Name, Table, Props }, "GetLuaData", 2)
+
   if not Name then return nil, Msgs.FileNameNotFound end
 
   -- Загрузка файла:
@@ -392,12 +442,14 @@ function unit.GetLuaData (Name, Table, Props) --> (Table | nil, error)
   if not t then return nil, Msgs.FileDataNotFound end
 
   return MergeTable(Table, t, Props)
+
 end ---- GetLuaData
 
 ---------------------------------------- Check
 -- Check file for Lua-script.
 -- Проверка файла на скрипт Lua.
 local function isLuaFile (Name) --> (bool)
+
   local f = io_open(Name)
   if not f then return nil, Msgs.FileCannotOpen end
 
@@ -405,6 +457,7 @@ local function isLuaFile (Name) --> (bool)
   f:close()
 
   return line:find("local", 1, true) == 1 or line:find("--", 1, true) == 1
+
 end -- isLuaFile
 
 -- Чтение данных из ini/lua-файла в таблицу.
@@ -416,14 +469,18 @@ end -- isLuaFile
     IlkSep -- разделитель значений одноимённых ключей.
 --]]
 function unit.GetFileData (Name, Table, Props) --> (table | nil, error)
+
   if not Name then return nil, Msgs.FileNameNotFound end
 
   if Name:match("%.lua$") or
      Name:match("%.lua%.example$") or
      isLuaFile(Name) then
+
     return unit.GetLuaData(Name, Table, Props)
+
   else
     return unit.GetIniData(Name, Table, Props)
+
   end
 end ---- GetFileData
 

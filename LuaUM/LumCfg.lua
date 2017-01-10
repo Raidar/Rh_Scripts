@@ -50,21 +50,27 @@ unit.HelpTopic = "<"..unit.WorkerPath..unit.ScriptPath..">Contents"
 
 ---------------------------------------- ---- Custom
 local DefCustom = {
+
   help   = { tlink = unit.HelpTopic, },
+
   locale = { kind = 'load', },
+
 } --- DefCustom
 
 ---------------------------------------- ---- Config
 -- Поля истории конфигурации.
 local HistoryFields = {
+
   Basic = true,
   Files = true,
   UMenu = true,
   --Custom = false,
+
 } --- HistoryFields
 
 -- Конфигурация по умолчанию.
 local DefCfgData = {
+
   Basic = { -- Основные параметры:
     LuaUMName = "LuaUM",            -- Краткое имя, общее для доп. файлов утилиты.
     LuaUMPath = unit.ScriptPath,    -- Относит. путь к текущей утилите.
@@ -73,13 +79,17 @@ local DefCfgData = {
     BindsFile = "LumBinds.lua",     -- Название файла привязок к меню (по умолчанию).
     UMenuFile = "U_NoMenu.lum",     -- Название файла с меню LUM (по умолчанию).
     CfgUMPath = unit.ScriptPath.."config\\",  -- Путь к основным файлам (по умолчанию).
+
   }, -- Basic
+
   Files = { -- Пути (относительно плагина) и названия файлов:
     FilesPath = unit.ScriptPath.."config\\",  -- Путь к основным файлам.
     MenusFile = "LumBinds.lui",               -- Название файла привязок.
     MenusPath = unit.ScriptPath.."config\\",  -- Путь к файлам с меню.
     LuaScPath = unit.ScriptPath.."scripts\\", -- Путь к Lua-скриптам.
+
   }, -- Files
+
   UMenu = { -- Параметры отображения пользовательского меню:
     MenuTitleBind = true, -- Имя типа привязки в заголовке главного меню.
     CompoundTitle = true, -- Составной заголовок меню (с заголовком надменю).
@@ -93,23 +103,29 @@ local DefCfgData = {
     UseMenuTexter = true, -- Использование формирователя текста MenuTexter
                           -- для формирования текста и заголовков меню.
   }, -- UMenu
+
 } --- DefCfgData
 
 ---------------------------------------- ---- Types
 -- Типы элементов диалогов:
 local DlgTypes = {
+
   Basic = {
     DefUMPath = "edt",
     BindsFile = "edt",
     UMenuFile = "edt",
     LuaUMPath = "edt",
+
   }, -- Basic
+
   Files = {
     FilesPath = "edt",
     MenusFile = "edt",
     MenusPath = "edt",
     LuaScPath = "edt",
+
   }, -- Files
+
   UMenu = {
     MenuTitleBind = "chk",
     CompoundTitle = "chk",
@@ -120,7 +136,9 @@ local DlgTypes = {
     KeysAlignText = "chk",
     ShowErrorMsgs = "chk",
     ReturnToUMenu = "chk",
+
   }, -- UMenu
+
 } --- DlgTypes
 
 ---------------------------------------- Configure
@@ -138,6 +156,7 @@ local addNewData = tables.extend
     ArgData - Данные таблицы со значениями по умолчанию.
 --]]
 function unit.Configure (ArgData, isDefData) --> (table)
+
   assert(type(ArgData) == 'table')
   --logShow(ArgData, "ArgData", 2)
   --logShow(getmetatable(ArgData), "ArgData meta", 2)
@@ -149,6 +168,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
   ArgData.Custom = {
     name = DefB.LuaUMName,
     path = DefB.LuaUMPath,
+
   }
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
@@ -163,10 +183,13 @@ function unit.Configure (ArgData, isDefData) --> (table)
     if DefData then -- Глобальная => По умолчанию:
       --setmetatable(v, { __index = DefData[k] }) -- Don't work
       addNewData(v, DefData[k])
+
     end
+
     -- По умолчанию => Текущая таблица:
     setmetatable(CfgData[k], { __index = v })
     --addNewData(CfgData[k], ArgData[k])
+
   end
   --logShow(ArgData, "ArgData")
 
@@ -180,6 +203,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
     --DefData = DefData,
 
     __index = DefConfig,
+
   } ---
 
   locale.customize(Config.Custom) -- Инфо локализации
@@ -187,6 +211,7 @@ function unit.Configure (ArgData, isDefData) --> (table)
 
   --return Config
   return DefConfig and setmetatable(Config, Config) or Config
+
 end ---- Configure
 
 -- Конфигурация LUM по умолчанию: Объявление + Определение
@@ -196,6 +221,7 @@ unit.DefConfig = unit.DefConfig or
 -- LUM по умолчанию.
 function unit.GetDefConfig ()
   return unit.DefConfig
+
 end ----
 
 ---------------------------------------- Locale
@@ -205,11 +231,13 @@ local L -- Класс сообщений локализации
 -- Форматы сообщений:
 local CfgLocFmt = {
   caption = "%s : %s",
+
 } --- CfgLocFmt
 
 -- Специальные функции локализации:
 local function CfgCapLoc (Index) -- Заголовок окна
   return CfgLocFmt.caption:format(L:t"UMenuName", L:caption(Index))
+
 end
 
 ---------------------------------------- Dialog
@@ -230,6 +258,7 @@ local Dlg = {}
 local CfgKinds = { "Basic", "Files", "UMenu" }
 
 function Dlg.Basic (Config, Derived) --> (dialog)
+
   local I, H, W = 3, 11, 58 -- Indent, Height, Width
   local M = bshr(W, 1) -- Medium -- Width/2
   local Q = bshr(M, 1) -- Quarta -- Width/4
@@ -252,17 +281,25 @@ function Dlg.Basic (Config, Derived) --> (dialog)
   D.txtBindsFile     = {DI.Text,  I+2,  7, M-1,  0, 0, 0, 0, 0, L:config"BindsFile"}
   D.edtBindsFile     = {DI.Edit,  I+2,  8, M-1,  0, 0, 0, 0, DIF.ReadOnly, ""}
   D.sep              = {DI.Text,    0,  H-2, 0,  0, 0, 0, 0, DIF.SeparLine, ""}
-  --D.btnOk            = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
-  D.btnCancel        = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Close"}
+
+  --D.btnOk            = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+  --                      DIF.DefButton, L:defbtn"Ok"}
+  D.btnCancel        = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:fmtbtn"Close"}
+
   if not Derived then
-  D.btnFiles         = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"Files"}
-  D.btnUMenu         = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"UMenu"}
+    D.btnFiles       = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"Files"}
+    D.btnUMenu       = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"UMenu"}
   end
 
   return D
+
 end ---- Basic
 
 function Dlg.Files (Config, Derived) --> (dialog)
+
   local I, H, W = 3, 12, 50 -- Indent, Height, Width
   local M = bshr(W, 1) -- Medium -- Width/2
 
@@ -279,17 +316,25 @@ function Dlg.Files (Config, Derived) --> (dialog)
   D.txtLuaScPath     = {DI.Text,  I+2,  8, W-2,  0, 0, 0, 0, 0, L:config"LuaScPath"}
   D.edtLuaScPath     = {DI.Edit,  I+2,  9, W-2,  0, 0, 0, 0, 0, ""}
   D.sep              = {DI.Text,    0,  H-2, 0,  0, 0, 0, 0, DIF.SeparLine, ""}
-  D.btnOk            = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
-  D.btnCancel        = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Close"}
+
+  D.btnOk            = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DefButton, L:defbtn"Ok"}
+  D.btnCancel        = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:fmtbtn"Close"}
+
   if not Derived then
-  D.btnBasic         = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"Basic"}
-  D.btnUMenu         = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"UMenu"}
+    D.btnBasic       = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"Basic"}
+    D.btnUMenu       = {DI.Button,  0,  H-1, 0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"UMenu"}
   end
 
   return D
+
 end ---- Files
 
 function Dlg.UMenu (Config, Derived) --> (dialog)
+
   local I, J, H, W = 3, 3, 16, 52 -- Indent, Addend, Height, Width
 
   local D = dlg_NewDialog() -- Форма окна
@@ -309,27 +354,37 @@ function Dlg.UMenu (Config, Derived) --> (dialog)
   D.chkShowErrorMsgs = {DI.Check, I+J, 12, W-2,  0, 0, 0, 0, 0, L:config"ShowErrorMsgs"}
   D.chkReturnToUMenu = {DI.Check, I+J, 13, W-2,  0, 0, 0, 0, DIF.Disable, L:config"ReturnToUMenu"}
   D.sep              = {DI.Text,    0, H-2,  0,  0, 0, 0, 0, DIF.SeparLine, ""}
-  D.btnOk            = {DI.Button,  0, H-1,  0,  0, 0, 0, 0, DIF.DefButton, L:defbtn"Ok"}
-  D.btnCancel        = {DI.Button,  0, H-1,  0,  0, 0, 0, 0, DIF.DlgButton, L:fmtbtn"Close"}
+
+  D.btnOk            = {DI.Button,  0, H-1,  0,  0, 0, 0, 0,
+                        DIF.DefButton, L:defbtn"Ok"}
+  D.btnCancel        = {DI.Button,  0, H-1,  0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:fmtbtn"Close"}
+
   if not Derived then
-  D.btnBasic         = {DI.Button,  0, H-1,  0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"Basic"}
-  D.btnFiles         = {DI.Button,  0, H-1,  0,  0, 0, 0, 0, DIF.DlgButton, L:dlgbtn"Files"}
+    D.btnBasic       = {DI.Button,  0, H-1,  0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"Basic"}
+    D.btnFiles       = {DI.Button,  0, H-1,  0,  0, 0, 0, 0,
+                        DIF.DlgButton, L:dlgbtn"Files"}
   end
 
   return D
+
 end ---- UMenu
 
 do
 
 local Guid = {
+
   Basic = win.Uuid("06af58b5-0837-487c-891d-697a5d8c08ba"),
   Files = win.Uuid("07a36f6c-1a94-4ce1-9aad-d7908df447e5"),
   UMenu = win.Uuid("082f7e38-b5f6-46c9-a1bb-2d8919872172"),
   -- ?? = win.Uuid("0ae6f8d0-ba43-4e70-a13f-8abb7d8c49f0"),
+
 } ---
 
 -- Элементы с цветом COL_ROnly
 local ROnly_Items = {
+
   -- Basic:
   txtLuaUMPath = true,
   --edtLuaUMPath = true,
@@ -343,10 +398,12 @@ local ROnly_Items = {
   --edtUMenuFile = true,
   txtBindsFile = true,
   --edtBindsFile = true,
+
   -- UMenu:
   sepMenuCaptions = true,
   sepMenuItemText = true,
   sepMenuAddition = true,
+
 } ---
 
   local setFG = colors.setFG
@@ -354,6 +411,7 @@ local ROnly_Items = {
 
 -- Настройка конфигурации.
 local function ConfigDlg (Config, Kind, Derived)
+
   local cData = Config.CfgData[Kind]
   local aData = Config.ArgData[Kind]
   local Types = Config.DlgTypes[Kind]
@@ -365,22 +423,29 @@ local function ConfigDlg (Config, Kind, Derived)
     -- TODO: Нужно выдавать ошибку об отсутствии файла сообщений!!!
     -- if not LocData then return nil, e1, e2 end -- CHECK!! also in LUM.lua
     L = locale.make(Config.Custom, LocData)
+
   end -- if
+
   local D = Dlg[Kind](Config, Derived)
 
   local ROnly_Color = IndexColor(farColors.COL_DIALOGDISABLED)
 
   -- Установка цветов элементов.
   local function DlgGetItemColor (hDlg, ID, Color) --> (Color)
+
     -- Цвет элемента
     local Item = D[ID+1]
     if Item == nil then return end
+
     -- [[
     if ROnly_Items[Item.name] then
       local TextColor = setFG(dlgUt.GetTextColor(Color), ROnly_Color)
+
       return dlgUt.ChangeColor(Color, TextColor)
+
     end
     --]]
+
     --[[
     far.Show(hDlg, ID,
              hex8(Color),
@@ -388,16 +453,20 @@ local function ConfigDlg (Config, Kind, Derived)
              hex8(dlgUt.ChangeColor(Color, ROnly_Color)) or "none",
              Item.id, Item.name, unpack(Item))
     --]]
+
   end --
 
   -- Ссылки на обработчики событий:
   local Procs = {
     [F.DN_CTLCOLORDLGITEM] = DlgGetItemColor,
+
   } --- Procs
 
   -- Обработчик событий диалога.
   local function DlgProc (hDlg, msg, param1, param2)
+
     return Procs[msg] and Procs[msg](hDlg, param1, param2) or nil
+
   end --
 
   repeat -- Изменение конфигурации LUM.
@@ -418,12 +487,16 @@ local function ConfigDlg (Config, Kind, Derived)
         local v = D["btn"..k]
         if v and iDlg == v.id then
           ConfigDlg(Config, k, true)
+
           break
         end
-      end
+      end -- for
+
     end
 
-  until Derived or not Derived and iDlg <= D.btnCancel.id
+  until Derived or
+        not Derived and iDlg <= D.btnCancel.id
+
 end ---- ConfigDlg
 unit.ConfigDlg = ConfigDlg
 

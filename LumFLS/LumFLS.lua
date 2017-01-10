@@ -24,6 +24,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
 local function flsUserMenu (args)
+
   -- 1. Определение "охвата" меню.
     -- Базовое меню для главного меню.
   local BaseName = args[1]
@@ -33,6 +34,7 @@ local function flsUserMenu (args)
     -- Получение информации о текущем файле.
     Scope.FileName = farUt.GetAreaItemName()
     Scope.FileType = getFileType()
+
   --end
 
   --logShow(Scope, "Scope")
@@ -47,6 +49,7 @@ local function flsUserMenu (args)
   Config.Scope = Scope
 
   return LUM(Config)
+
 end -- flsUserMenu
 
 --return flsUserMenu(...)

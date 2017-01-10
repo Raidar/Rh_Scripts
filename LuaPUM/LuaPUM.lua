@@ -23,6 +23,7 @@ local farUt = require "Rh_Scripts.Utils.Utils"
 
 --------------------------------------------------------------------------------
 local function LuaUserMenu (args)
+
   -- 1. Определение "охвата" меню.
     -- Базовое меню для главного меню.
   local BaseName = args[1]
@@ -44,6 +45,7 @@ local function LuaUserMenu (args)
     Scope.FileType = getFileType()
     -- Функция вставки шаблона для панелей
     Scope.InsertText = farUt.FarInsertText.panels
+
   end
 
   -- 2. Вызов пользовательского меню.
@@ -53,6 +55,7 @@ local function LuaUserMenu (args)
   Config.Scope = Scope
 
   return LUM(Config)
+
 end -- LuaUserMenu
 
 --return LuaUserMenu(...)

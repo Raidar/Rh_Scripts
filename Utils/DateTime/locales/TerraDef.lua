@@ -12,6 +12,7 @@ local Data = {
   ----------------------------------------
   WeekDay = {
     n = 3,
+
     [0] = {
       [0] = "Sunday",
       "Monday",     "Tuesday",  "Wednesday",
@@ -19,6 +20,7 @@ local Data = {
       [-1] = "Extra.1",
       [-2] = "Extra.2",
     },
+
     --[[
     [1] = {
       [0] = "7",
@@ -28,6 +30,7 @@ local Data = {
       [-2] = "-2",
     },
     --]]
+
     [2] = {
       [0] = "Su",
       "Mo", "Tu", "We",
@@ -35,6 +38,7 @@ local Data = {
       [-1] = "X1",
       [-2] = "X2",
     },
+
     [3] = {
       [0] = "Sun",
       "Mon", "Tue", "Wed",
@@ -47,12 +51,14 @@ local Data = {
   ----------------------------------------
   YearMonth = {
     n = 3,
+
     [0] = {
       "January",    "February",     "March",
       "April",      "May",          "June",
       "July",       "August",       "September",
       "October",    "November",     "December",
     },
+
     --[[
     [1] = {
       "1", "2", "3",
@@ -62,12 +68,14 @@ local Data = {
       --"@", "#", "§",
     },
     --]]
+
     [2] = {
       "Ja", "Fe", "Ma",
       "Ap", "My", "Jn",
       "Jy", "Au", "Se",
       "Oc", "Nv", "De",
     },
+
     [3] = {
       "Jan", "Feb", "Mar",
       "Apr", "May", "Jun",

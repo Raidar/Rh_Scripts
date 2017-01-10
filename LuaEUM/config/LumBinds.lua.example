@@ -78,7 +78,7 @@ local Data = {
         lua     = { Menu = "J_Lua", },
           lua_lum = { Menu = "J_Lua;Characters", },
 
-} ---
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

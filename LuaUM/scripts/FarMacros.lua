@@ -18,9 +18,12 @@ local far = far
 -- Загрузка макросов.
 function LoadLuaFarMacros ()
   return far.MacroLoadAll()
+
 end ----
+
 -- Сохранение макросов.
 function SaveLuaFarMacros ()
   return far.MacroSaveAll()
+
 end ----
 --------------------------------------------------------------------------------

@@ -36,6 +36,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -44,13 +45,16 @@ unit.DefCustom = {
   help   = { topic = unit.FileName, },
   locale = {
     kind = 'load',
+
   }, --
+
 } -- DefCustom
 
 -- [[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 --logShow(L, "L", "wM")
@@ -63,6 +67,7 @@ local TConfig = tables.clone(cfgBase.TConfig, true)
 TConfig.Type = "Type.Hexadecimal"
 
 TConfig.Formats = {
+
   World     = "%s",
   Type      = "%s",
   Year      = "0x%03x",
@@ -80,6 +85,7 @@ TConfig.Formats = {
   MonthWeek = "%1x",
   WeekDay   = "<%1x>",
   DayWeek   = "%02x",
+
 } -- Formats
 
 TConfig.LocData = L
@@ -93,11 +99,13 @@ do
 unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
+
   local self = Config or {}
 
   if Config and getmetatable(self) == MConfig then return self end
 
   return setmetatable(self, MConfig)
+
 end ---- newConfig
 
 end -- do

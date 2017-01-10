@@ -20,12 +20,14 @@ local Custom = {
   name = "lum",
   path = "Rh_Scripts.LuaVUM.config.",
   locale = { kind = 'require', },
+
 } ---
 
 ---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Data
@@ -76,7 +78,7 @@ local Data = {
         --lua
           --lua_lum
 
-} ---
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

@@ -28,11 +28,15 @@ myClass.s = "text"
 myClass.value = 64
 
 function myClass:init (initvar)
+
   self.initvar = initvar or 8
+
 end ----
 
 function myClass:setvalue (v)
+
   self.value = v
+
 end
 
 --logShow(myClass, "myClass", 0)

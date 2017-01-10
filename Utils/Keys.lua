@@ -41,33 +41,41 @@ local unit = {}
 -- Основные модификаторы
 unit.SKEY_Base = { "CTRL", "ALT", "SHIFT" }
 unit.SKEY_Text = { -- Используемые модификаторы
+
    C =  "Ctrl",  A =  "Alt",  S =  "Shift",
   LC = "LCtrl", LA = "LAlt", LS = "LShift",
   RC = "RCtrl", RA = "RAlt", RS = "RShift",
+
 } -- SKEY_Text
 unit.SKEY_Mods = { -- Обозначения модификаторов
+
    CTRL =  "C",  ALT =  "A",  SHIFT =  "S",
   LCTRL = "LC", LALT = "LA", LSHIFT = "LS",
   RCTRL = "RC", RALT = "RA", RSHIFT = "RS",
+
 } -- SKEY_Mods
 
 ---------------------------------------- VK_ mods
 -- ControlKeyState.
 local VKCS_ = {
-  RIGHT_ALT_PRESSED  = 0x0001,
-  LEFT_ALT_PRESSED   = 0x0002,
-  RIGHT_CTRL_PRESSED = 0x0004,
-  LEFT_CTRL_PRESSED  = 0x0008,
-  SHIFT_PRESSED = 0x0010,
-  NUMLOCK_ON    = 0x0020,
-  SCROLLLOCK_ON = 0x0040,
-  CAPSLOCK_ON   = 0x0080,
-  ENHANCED_KEY  = 0x0100,
+
+  RIGHT_ALT_PRESSED   = 0x0001,
+  LEFT_ALT_PRESSED    = 0x0002,
+  RIGHT_CTRL_PRESSED  = 0x0004,
+  LEFT_CTRL_PRESSED   = 0x0008,
+  SHIFT_PRESSED       = 0x0010,
+
+  NUMLOCK_ON          = 0x0020,
+  SCROLLLOCK_ON       = 0x0040,
+  CAPSLOCK_ON         = 0x0080,
+  ENHANCED_KEY        = 0x0100,
+
 } --- VKCS_ / VKEY_State
 unit.VKEY_State = VKCS_
 
 -- ControlKeyState mods.
 local VM_ = {
+
   LCtrl  = VKCS_.LEFT_CTRL_PRESSED,
   RCtrl  = VKCS_.RIGHT_CTRL_PRESSED,
 
@@ -99,6 +107,7 @@ local VM_ = {
   --Enhanced   = 0x0100,
 
   BaseMask = 0xFF, -- Маска базовой части
+
 } -- VKC_ / VKEY_Mods
 unit.VKEY_Mods = VM_
 
@@ -107,6 +116,7 @@ VM_.CtrlAltShift = VM_.Ctrl + VM_.Alt + VM_.Shift -- Any key pressed
 ---------------------------------------- VK_ keys
 -- Коды VK_ клавиш по их названию.
 local VK_ = {
+
   -- Mouse buttons
   LBUTTON   = 0x01,
   RBUTTON   = 0x02,
@@ -267,11 +277,13 @@ local VK_ = {
   PA1       = 0xFD,
   OEM_CLEAR = 0xFE,
   -- 0xFF -- Multimedia keys using ScanCode
+
 } --- VK_ / VKEY_Keys
 unit.VKEY_Keys = VK_
 
 ---------------------------------------- VK_ scan codes
 unit.VKEY_ScanCodes = {
+
   -- Character keys
   [VK_.ESCAPE]      = 0x01, -- Esc / Escape
 
@@ -382,11 +394,13 @@ unit.VKEY_ScanCodes = {
   [VK_.NEXT]    = 0x151, -- PgDn
   [VK_.INSERT]  = 0x152, -- Insert
   [VK_.DELETE]  = 0x153, -- Delete
+
 } -- VKEY_ScanCodes
 
 ---------------------------------------- VKEY
 -- Клавиши перемещения курсора.
 unit.VKEY_ArrowNavs = {
+
   [VK_.LEFT]  = true,
   [VK_.UP]    = true,
   [VK_.RIGHT] = true,
@@ -396,10 +410,12 @@ unit.VKEY_ArrowNavs = {
   [VK_.PRIOR] = true,
   [VK_.NEXT]  = true,
   [VK_.CLEAR] = true,
+
 } -- VKEY_ArrowNavs
 
 -- Клавиши цифровой клавиатуры для перемещения курсора.
 unit.VKEY_NumpadNavs = {
+
   [VK_.NUMPAD0] = VK_.INS,
   [VK_.NUMPAD1] = VK_.END,
   [VK_.NUMPAD2] = VK_.DOWN,
@@ -410,11 +426,13 @@ unit.VKEY_NumpadNavs = {
   [VK_.NUMPAD7] = VK_.HOME,
   [VK_.NUMPAD8] = VK_.UP,
   [VK_.NUMPAD9] = VK_.PRIOR,
+
 } -- VKEY_NumpadNavs
 
 ---------------------------------------- SKEY
 -- Клавиши перемещения курсора.
 unit.SKEY_ArrowNavs = {
+
   Left  = true,
   Up    = true,
   Right = true,
@@ -424,10 +442,12 @@ unit.SKEY_ArrowNavs = {
   PgUp  = true,
   PgDn  = true,
   Clear = true,
+
 } -- SKEY_ArrowNavs
 
 -- Клавиши цифровой клавиатуры для перемещения курсора.
 unit.SKEY_NumpadNavs = {
+
   Num0 = "Ins",
   Num1 = "End",
   Num2 = "Down",
@@ -438,19 +458,23 @@ unit.SKEY_NumpadNavs = {
   Num7 = "Home",
   Num8 = "Up",
   Num9 = "PgUp",
+
 } -- SKEY_NumpadNavs
 
 -- "Клавиши" прокрутки мышью для перемещения курсора.
 unit.SKEY_MSWheelNavs = {
+
   MSWheelUp     = "Up",
   MSWheelDown   = "Down",
   MSWheelLeft   = "Left",
   MSWheelRight  = "Right",
   --MSWheelUp     = "PgUp",
   --MSWheelDown   = "PgDn",
+
 } -- SKEY_MSWheelNavs
 
 unit.SKEY_SymNames = {
+
   [' '] = "Space",
   --[[
   --['\127'] = ""
@@ -468,60 +492,79 @@ unit.SKEY_SymNames = {
   [','] = "Comma",
   ['.'] = "Dot",
   --]]
+
 } -- SKEY_SymNames
 
 -- Различие символов для клавиш с Shift.
 do
   local SKEY_SymShifts = {
+
     ['!'] = '1', ['@'] = '2', ['#'] = '3', ['$'] = '4', ['%%'] = '5',
     ['^'] = '6', ['&'] = '7', ['*'] = '8', ['('] = '9', [')']  = '0',
     ['_'] = '-', ['+'] = '=', ['~'] = '`',
     ['{'] = '[', ['}'] = ']', ['|'] = '\\',
     [':'] = ';', ['"'] = "'",
     ['<'] = ',', ['>'] = '.', ['?'] = '/',
+
   } -- SKEY_SymShifts
 
   local SKEY_SymInvers = {}
   for k, v in pairs(SKEY_SymShifts) do
     SKEY_SymInvers[v] = k
+
   end
 
   unit.SKEY_SymShifts = SKEY_SymShifts
   unit.SKEY_SymInvers = SKEY_SymInvers
+
 end -- do
 
 ---------------------------------------- Modifier
 -- Проверка модификатора в наборе.
 function unit.ismod (modset, mod) --> (bool)
+
   return band(modset, mod) ~= 0
+
 end
 
 do
 -- "Чистая" проверка.
 
 function unit.IsModCtrl (VMod) --> (bool)
+
   return VMod == VM_.LCtrl or VMod == VM_.RCtrl
+
 end --
 
 function unit.IsModAlt (VMod) --> (bool)
+
   return VMod == VM_.LAlt or VMod == VM_.RAlt
+
 end --
 
 function unit.IsModShift (VMod) --> (bool)
+
   return VMod == VM_.Shift
+
 end --
 
 function unit.IsModCtrlAlt (VMod) --> (bool)
+
   return VMod == VM_.LCtrlLAlt or VMod == VM_.LCtrlRAlt or
          VMod == VM_.RCtrlRAlt or VMod == VM_.RCtrlLAlt
+
 end --
 
 function unit.IsModAltShift (VMod) --> (bool)
+
   return VMod == VM_.LAltShift or VMod == VM_.RAltShift
+
 end --
 
 function unit.IsModCtrlShift (VMod) --> (bool)
+
   return VMod == VM_.LCtrlShift or VMod == VM_.RCtrlShift
+
 end --
 
 -- "Смешанная" проверка.
@@ -529,36 +572,49 @@ end --
   local ismod = unit.ismod
 
 function unit.LikeModCtrl (VMod) --> (bool)
+
   return ismod(VMod, VM_.LCtrl) or ismod(VMod, VM_.RCtrl)
+
 end --
 
 function unit.LikeModAlt (VMod) --> (bool)
+
   return ismod(VMod, VM_.LAlt) or ismod(VMod, VM_.RAlt)
+
 end --
 
 function unit.LikeModShift (VMod) --> (bool)
+
   return ismod(VMod, VM_.Shift)
+
 end --
 
 end -- do
 ---------------------------------------- Checking
 -- Проверка значения v в [a; b].
 local function inseg (v, a, b) --> (bool)
+
   return v >= a and v <= b
+
 end
 
 -- Проверка VK_ на цифру.
 function unit.isKeyDigit (key) --> (bool)
+
   return inseg(key, 0x30, 0x39)
+
 end
 
 -- Проверка VK_ на латинскую букву.
 function unit.isVKeyLat (key) --> (bool)
+
   return inseg(key, 0x41, 0x5A)
+
 end
 
 -- Проверка VK_ на "символьность".
 function unit.isVKeyChar (key) --> (bool)
+
   return key == 0x20 or
          inseg(key, 0x30, 0x39) or
          inseg(key, 0x41, 0x5A) or
@@ -569,6 +625,7 @@ end ----
 
 -- Проверка VK_ на "расширенность".
 function unit.isVKeyExt (key) --> (bool)
+
   return inseg(key, 0x10, 0x2F) or
          inseg(key, 0x5B, 0x87) or
          inseg(key, 0xA0, 0xA5) or
@@ -576,7 +633,9 @@ function unit.isVKeyExt (key) --> (bool)
 end ----
 
 function unit.GetModBase (VMod) --> (bool)
+
   return band(VMod, VM_.CtrlAltShift)
+
 end ----
 
 ---------------------------------------- VirKey <--> Char
@@ -589,15 +648,21 @@ do
 
 -- Разбор имени клавиши на модификаторы и собственно имя.
 function unit.ParseKeyName (KeyName) --> (mod, key)
+
   return farMatch(KeyName, "((?:R?Ctrl)?(?:R?Alt)?(?:Shift)?)(.*)", 1)
+
 end --
 
 function unit.ParseFullName (KeyName) --> (mod, c, a, s, key)
+
   return farMatch(KeyName, "((R?Ctrl)?(R?Alt)?(Shift)?)(.*)", 1)
+
 end --
 
 function unit.ParseStrKey (StrKey, KeySep) --> (mod, c, a, s, key)
+
   return farMatch(StrKey, "((R?C)?(R?A)?(S)?)\\"..(KeySep or '+').."(.*)", 1)
+
 end --
 
 end -- do
@@ -612,15 +677,18 @@ do
   KeySep  -- разделитель модификаторов и самой клавиши.
 --]]
 function unit.SKeyToName (StrKey, KeySep) --> (string)
+
   local mod, c, a, s, key = ParseStrKey(StrKey, KeySep or '+')
   --logShow({ mod, c, a, s, key }, StrKey)
   if not mod or mod == "" then return key or StrKey end
 
   local t = {
+
     "", -- c
     "", -- a
     "", -- s
     key or "",
+
   } ---
 
   if c and c ~= "" then t[1] = c == "RC" and "RCtrl" or "Ctrl" end
@@ -628,6 +696,7 @@ function unit.SKeyToName (StrKey, KeySep) --> (string)
   if s and s ~= "" then t[3] = "Shift" end
 
   return tconcat(t)
+
 end ---- SKeyToName
 
   local ParseFullName = unit.ParseFullName
@@ -639,25 +708,29 @@ end ---- SKeyToName
   KeySep  -- разделитель модификаторов и самой клавиши.
 --]]
 local function NameToSKey (KeyName, KeySep) --> (string)
-  local KeyName = KeyName
+
   if type(KeyName) == 'table' then
     local u = {}
     for k = 1, #KeyName do
       u[k] = NameToSKey(KeyName[k], KeySep)
+
     end
 
     return u
+
   end
 
   local mod, c, a, s, key = ParseFullName(KeyName)
   if not mod or mod == "" then return key or KeyName end
 
   local t = {
+
     "", -- c
     "", -- a
     "", -- s
     KeySep or '+',
     key or "",
+
   } ---
 
   if c and c ~= "" then t[1] = c == "RCtrl" and "RC" or "C" end
@@ -665,6 +738,7 @@ local function NameToSKey (KeyName, KeySep) --> (string)
   if s and s ~= "" then t[3] = "S" end
 
   return tconcat(t)
+
 end -- NameToSKey
 unit.NameToSKey = NameToSKey
 

@@ -43,6 +43,7 @@ end
 
 ---------------------------------------- Internal
 local Text = {
+
   Enquote = false,
   Dequote = false,
   Requote = false,
@@ -193,6 +194,7 @@ function unit.EnquoteItems ()
       enquote = { '«', '»', true, },
     },
     --]]
+
   } --- mQuoteMarks
 
   local t = {}
@@ -213,6 +215,7 @@ function unit.EnquoteItems ()
           Function = Text.Enquote,
           Arguments = { v.left, v.right, true, },
         } ---
+
       else
         local w = v.enquote
         u = {
@@ -222,6 +225,7 @@ function unit.EnquoteItems ()
           Function = v.Function,
           Arguments = v,
         } ---
+
       end
     else
       u = v
@@ -235,9 +239,11 @@ function unit.EnquoteItems ()
   --logShow(t, "mEnquote", "", { tnaming = false, astable = true })
 
   return t
+
 end ---- EnquoteItems
 
 local mEnquote = {
+
   text = L.LuaEnquote,
   -- [[
   MenuView = "RectMenu",
@@ -250,6 +256,7 @@ local mEnquote = {
 
       IsStatusBar = true,
     },
+
   }, -- Props
 
   CfgData = {
@@ -257,14 +264,17 @@ local mEnquote = {
       TextNamedKeys = false,
       UseMenuTexter = false,
     },
+
   }, -- CfgData
   --]]
 
   Items = unit.EnquoteItems,
+
 } --- mEnquote
 
 ---------------------------------------- Dequote
 function unit.DequoteItems ()
+
   local t = {
     { text = L.LuaDequoteSingle,
       Function = Text.Dequote,
@@ -284,39 +294,49 @@ function unit.DequoteItems ()
       Function = Text.Dequote,
       Arguments = { "--[[", "]]", false, },
     },
+
   } ---
 
   return t
+
 end ---- DequoteItems
 
 local mDequote = {
+
   text = L.LuaDequote,
 
   Items = unit.DequoteItems,
+
 } --- mDequote
 
 ---------------------------------------- Items/Menu
 local mQuoting = {
+
   text = L.LuaQuoteText,
   --Area = "editor",
 
   Items = {
     mEnquote,   -- Закавычивание
     mDequote,   -- Раскавычивание
-  } ---
+
+  }, --- Items
+
 } --- mQuoting
 
 ---------------------------------------- Data
 local Data = {
+
   Menu = {
     text = L.LuaScripts,
     Items = { mQuoting, },
+
   },
 
   ["Quoting"] = mQuoting,
   ["Quoting.Enquote"] = mEnquote,
   ["Quoting.Dequote"] = mDequote,
-} ---
+
+} --- Data
 
 return Data
 --------------------------------------------------------------------------------

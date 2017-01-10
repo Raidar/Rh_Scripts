@@ -2,6 +2,7 @@
 -- Copy this file to "%FarProfile%\scripts\Rh_Scripts\LuaPUM\config" directory.
 -- Rename it to "TortoiseSVN.cfg" and change values of Data fields.
 Data = {
+
   TortoiseSVN = {
     Path = "D:\\Tools\\tSVN\\bin\\", -- Путь к TortoiseSVN
 
@@ -21,6 +22,8 @@ Data = {
       -- Параметры команд:
       -- <имя> = { <список строк с параметрами> }
     --log = { "/merge" },
-  }, --
-} --
+
+  }, -- TortoiseSVN
+
+} -- Data
 --------------------------------------------------------------------------------

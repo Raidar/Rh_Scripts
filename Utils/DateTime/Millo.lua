@@ -34,6 +34,7 @@ unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\DateTime\\"
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -42,19 +43,23 @@ unit.DefCustom = {
   help   = { topic = unit.ScriptName, },
   locale = {
     kind = 'load',
+
   }, --
+
 } -- DefCustom
 
 -- [[
 local L, e1, e2 = locale.localize(nil, unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 --logShow(L, "L", "wM")
 --]]
 ---------------------------------------- Config class
 local TConfig = {
+
   World         = "Millo",
   Type          = "Type.Millenium",
 
@@ -102,6 +107,7 @@ local TConfig = {
   RestWeekDays = {
     [0] = true,
     [5] = true,
+
   }, -- RestWeekDays
 
   MonthDays = {
@@ -113,20 +119,25 @@ local TConfig = {
     Max = 100,
     WeekMin = 10 + 1,
     WeekMax = 10 + 1,
+
   }, -- MonthDays
 
   YearDays = {
     100,  200,  300,  400,  500,
     600,  700,  800,  900, 1000,
     [0] = 0,
+
   }, -- YearDays
 
   WeekDays = {
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
+
+  
   }, -- WeekDays
 
   WeekOuts = {
+
   }, -- WeekOuts
 
   Formats = {
@@ -147,11 +158,13 @@ local TConfig = {
     MonthWeek   = "%02d",
     WeekDay     = "<%02d>",
     DayWeek     = "%03d",
+
   }, -- Formats
 
   LocData = L,
 
   --filled = nil,   -- Признак заполненности
+
 } ---
 unit.TConfig = TConfig
 
@@ -162,11 +175,13 @@ do
 unit.MConfig = MConfig
 
 function unit.newConfig (Config) --|> Config
+
   local self = Config or {}
 
   if Config and getmetatable(self) == MConfig then return self end
 
   return setmetatable(self, MConfig)
+
 end ---- newConfig
 
 end -- do
@@ -176,7 +191,9 @@ end -- do
 ---------------------------------------- ---- ---- Leap
 
 function TConfig:isLeapYear (y) --> (bool)
+
   return false
+
 end ----
 
 ---------------------------------------- ---- ---- Count
