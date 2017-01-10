@@ -26,6 +26,7 @@ local useprofiler = false
 if useprofiler then
   require "profiler" -- Lua Profiler
   profiler.start("RectMenu.log")
+
 end
 
 ----------------------------------------
@@ -94,21 +95,27 @@ local DrawSeparItemText = RDraw.DrawSeparItemText
 -- Make cell from row and column.
 -- Формирование ячейки из строки и столбца.
 local function RC_cell (Row, Col)
+
   return { Row = Row, Col = Col, }
+
 end
 --unit.RC_cell = RC_cell
 
 -- Check equality of two cells.
 -- Проверка на равенство двух ячеек.
 local function RC_iseq (c1, c2) --> (bool)
+
   return c1 and c2 and c1.Row == c2.Row and c1.Col == c2.Col
+
 end
 --unit.RC_iseq = RC_iseq
 
 -- Make cell as copy of other cell.
 -- Формирование ячейки как копии другой ячейки.
 local function RC_copy (cell) --> (bool)
+
   return { Row = cell.Row, Col = cell.Col }
+
 end ----
 --unit.RC_copy = RC_copy
 
@@ -118,28 +125,39 @@ local inc2, divm, swap = numbers.inc2, numbers.divm, numbers.swap
 
 -- Получение двойного индекса из одиночного.
 local function i2c (Index, ByLin) --> (Major, Minor)
+
   return inc2(divm(Index - 1, ByLin))
+
 end
+
 -- Получение одиночного индекса из двойного.
 local function c2i (Major, Minor, ByLin) --> (Index)
+
   return (Major - 1) * ByLin + Minor
+
 end
 
 -- Получение двойного индекса пункта из одиночного.
 local function Idx2Cell (Index, Data) --> (Row, Col)
+
   if Data.Order == "H" then
     return      i2c(Index, Data.Cols)
+
   else
     return swap(i2c(Index, Data.Rows))
+
   end
 end -- Idx2Cell
 
 -- Получение одиночного индекса пункта из двойного.
 local function Cell2Idx (Row, Col, Data) --> (Index)
+
   if Data.Order == "H" then
     return c2i(Row, Col, Data.Cols)
+
   else
     return c2i(Col, Row, Data.Rows)
+
   end
 end -- Cell2Idx
 
@@ -148,18 +166,23 @@ end -- Cell2Idx
 
 -- Проверка на нахождение значения в пределах.
 local function inspan (n, span) --> (bool)
+
   --return inrange(n, span.Min, span.Max)
   return n >= span.Min and n <= span.Max
+
 end --
 
 -- Проверка на НЕнахождение значения в пределах.
 local function outspan (n, span) --> (bool)
+
   --return outrange(n, span.Min, span.Max)
   return n < span.Min or n > span.Max
+
 end --
 
 -- Получение значения в пределах.
 local function tospan (n, span) --> (bool)
+
   --return torange(n, span.Min, span.Max)
   return n < span.Min and span.Min or
          n > span.Max and span.Max or n
@@ -171,6 +194,7 @@ local sqrti = numbers.sqrti
 -- Count existing lines (of menu items).
 -- Количество существующих рядов (пунктов меню).
 local function MenuLinCount (Majors, Minors, Count) --> (number, number)
+
   if Count == 0 then return 0, 0 end
   local H, L, C = Majors, Minors, Count -- High, Low, Count
 
@@ -178,29 +202,37 @@ local function MenuLinCount (Majors, Minors, Count) --> (number, number)
 
   if (H and H == 0) or (L and L == 0) then
     H = sqrti(C)
+
     return H, divc(C, H)
+
   end
 
   if L and not H then
     if C > L then
       return divc(C, L), L
+
     else
       return 1, C
+
     end
   end
 
   -- if H and (not L or L) then -\/- end
   if C > H then
     return H, divc(C, H)
+
   else
     return C, 1
+
   end
 end -- MenuLinCount
 
 ---------------------------------------- ---- Visibility
 local VisibleLinCount = {
+
   Base = false,
   Pike = false,
+
 } ---
 
 -- Count visible lines from start.
@@ -214,14 +246,17 @@ local VisibleLinCount = {
   Fixes  (table) - данные о фиксированных рядах.
 --]]
 function VisibleLinCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number)
+
   if not Len[Base] then return 0, 0 end
 
-  local Base = tospan(Base, Fixes)
+  Base = tospan(Base, Fixes)
   local k, L = Base, 0
   local Count, Limit = Fixes.Max, Total + Sep - Fixes.Length
+  --logShow({ k, Total, Sep, L, Limit, Len, Base, Fixes }, "Base", 2)
   repeat
     L = L + Len[k] + Sep
     k = k + 1
+
   until k > Count or L > Limit -- end
 
   k = k - 1
@@ -239,9 +274,11 @@ function VisibleLinCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number
   if k < 1 then
     k = 1
     L = Total
+
   end
 
   return k, L
+
 end ---- VisibleLinCount.Base
 
 -- Count visible lines from end.
@@ -255,15 +292,17 @@ end ---- VisibleLinCount.Base
   Fixes  (table) - данные о фиксированных рядах.
 --]]
 function VisibleLinCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number)
+
   if not Len[Pike] then return 0, 0 end
 
-  local Pike = tospan(Pike, Fixes)
+  Pike = tospan(Pike, Fixes)
   local k, L = Pike, 0
   local Count, Limit = Fixes.Min, Total + Sep - Fixes.Length
   --logShow({ k, Total, Sep, L, Limit, Len, Pike, Fixes }, "Pike", 2)
   repeat
     L = L + Len[k] + Sep
     k = k - 1
+
   until k < Count or L > Limit -- end
 
   k = k + 1
@@ -281,25 +320,32 @@ function VisibleLinCount.Pike (Len, Sep, Total, Pike, Fixes) --> (number, number
   if k < 1 then
     k = 1
     L = Total
+
   end
 
   return k, L
+
 end ---- VisibleLinCount.Pike
 
 ---------------------------------------- Menu class
 local TMenu = {
+
   Guid = win.Uuid("2288381c-bcc7-4a75-8a09-b3fa9403795c"),
+
 }
 local MMenu = { __index = TMenu }
 
 local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
+
   local self = {
+
     Menu = {
       -- Исходные данные:
       Props     = Properties,
       Items     = Items,
       BreakKeys = BreakKeys,
       Options   = Options,
+
     }, ---
 
     -- Формируемые данные:
@@ -318,6 +364,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
       Shape = 0, Order = 0,
       Rows = 0, Cols = 0,
       Seps = 0, RowSep = 0, ColSep = 0,
+
     }, ---
 
     HKeys = 0, AKeys = 0, BKeys = 0, -- Быстрые клавиши (hot, accel, break)
@@ -344,6 +391,7 @@ local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
       EmbScrollH = 0, EmbScrollV = 0,
       BoxWidth = 0, BoxHeight = 0,
       DlgWidth = 0, DlgHeight = 0,
+
     }, -- Zone
 
     -- Форма окна:
@@ -355,28 +403,34 @@ local function CreateMenu (Properties, Items, BreakKeys, Options) --> (object)
   } --- self
 
   return setmetatable(self, MMenu)
+
 end -- CreateMenu
 
 ---------------------------------------- Class' methods
 -- Проверка на меню.
 function TMenu:isMenu (t) --> (bool | nil)
+
   if type(t) ~= 'table' then return end
 
   local mt = getmetatable(t._Menu or t)
   return mt and mt.__index == TMenu or false
+
 end ---- isMenu
 
 -- Проверка на показ меню.
 function TMenu:isShow (t) --> (bool | nil)
+
   if type(t) == 'table' then t = t._Show end
 
   return t ~= false
+
 end ---- isShow
 
 ---------------------------------------- Menu dialog
 
 -- Создание формы окна диалога с меню.
 function TMenu:DialogForm () --> (dialog)
+
   local Zone = self.Zone
 
   return { { F.DI_USERCONTROL,
@@ -386,6 +440,7 @@ function TMenu:DialogForm () --> (dialog)
              Zone.LastY + Zone.EmbScrollH,
              0, 0, 0, 0, "", }
          }
+
 end ---- DialogForm
 
 -- Отображение окна диалога меню.
@@ -403,6 +458,7 @@ function TMenu:Dialog ()
   --logShow(iDlg, "iDlg")
 
   return iDlg
+
 end ---- Dialog
 
 -- Выполнение показа меню.
@@ -416,9 +472,12 @@ function TMenu:Show (DlgProc)
   local SelIndex = self:GetSelectIndex() -- Выбранный пункт меню
   if self.ChooseKind == "BKey" or self.ChooseKind == "FKey" then
     return self.Menu.BreakKeys[self.KeyIndex], SelIndex
+
   end
+
   --logShow({ self.List[self.SelIndex], self.Menu.Items[SelIndex] }, SelIndex, 1)
   return self.Menu.Items[SelIndex], SelIndex
+
 end ---- Show
 
 ---------------------------------------- ---- Messages
@@ -427,28 +486,38 @@ local SendDlgMessage = far.SendDlgMessage
 
 -- Закрытие диалога.
 local function Close (hDlg, id)
+
   return SendDlgMessage(hDlg, F.DM_CLOSE, id or -1, 0)
+
 end --
 
 local function CloseDialog (hDlg)
+
   Close(hDlg)
+
   return true
+
 end --
 
 local function GetRect (hDlg)
+
   return SendDlgMessage(hDlg, F.DM_GETDLGRECT, 0)
+
 end --
 
 --[[
 -- Управление перерисовкой диалога.
 local function Redraw (hDlg, kind)
+
   return SendDlgMessage(hDlg, F.DM_ENABLEREDRAW, kind)
+
 end --
 --]]
 local RedrawAll = farUt.RedrawAll -- it's used instead of Redraw
 
 -- Обновление позиции окна меню.
 function TMenu:Move_Dialog (hDlg) --| Menu dialog position
+
   local Rect = self.FormRect
 
   return SendDlgMessage(hDlg, F.DM_MOVEDIALOG, 1,
@@ -457,6 +526,7 @@ end -- Move_Dialog
 
 -- Обновление размеров окна меню.
 function TMenu:Resize_Dialog (hDlg) --| Menu dialog size
+
   local Rect = self.FormRect
 
   return SendDlgMessage(hDlg, F.DM_RESIZEDIALOG, 0,
@@ -465,7 +535,9 @@ end -- Resize_Dialog
 
 -- Обновление элементов диалога-меню.
 function TMenu:Update_Dialog (hDlg) --| Menu dialog items
+
   return SetDlgItem(hDlg, 1, self.Form[1])
+
 end ----
 
 ---------------------------------------- Menu making
@@ -514,6 +586,7 @@ function TMenu:DefinePropInfo () --| Props
   if RM.MenuOnly then -- Только меню:
     RM.BoxKind = "" -- Без рамки -- без надписей:
     --RM.BoxScroll = nil -- Без прокрутки на рамке.
+
   else -- Меню в окне:
     local Titles = self.Titles -- Надписи:
     Titles.Top, Titles.Bottom = Props.Title or "Menu", Props.Bottom or ""
@@ -521,6 +594,7 @@ function TMenu:DefinePropInfo () --| Props
     -- Вид рамки (двойная - по умолчанию):
     local BoxKind = RM.BoxKind == false and "" or RM.BoxKind or "D"
     RM.BoxKind = BoxKindNames[BoxKind] or BoxKind
+
   end
 
   -- Флаги свойств меню:
@@ -533,12 +607,15 @@ function TMenu:DefinePropInfo () --| Props
   local Colors = RM.Colors
   if RM.ReuseProps then
     Colors = Colors or MenuUsualColors
+
   else
     Colors = Colors or {}
     Colors.__index = MenuUsualColors
     setmetatable(Colors, Colors)
+
   end
   self.Colors = Colors
+
   Colors.Debug = 0x74
   -- TODO: Завести поле-цвет clear!
   Colors.Form    = Colors.Standard.normal
@@ -551,6 +628,7 @@ function TMenu:DefinePropInfo () --| Props
                                    Colors.Border)
 
   --logShow(self.Colors, "self.Colors", "d2 x2")
+
 end ---- DefinePropInfo
 
 end -- do
@@ -572,13 +650,17 @@ function TMenu:DefineListInfo () --| List
     if ReuseItems then
       Item.Index = i
       Item.Shift = j
+
     else
       Item = {
         Index = i,
         Shift = j,
         __index = Item,
+
       } ---
+
       setmetatable(Item, Item) -- ^-- i = k + j + 1
+
     end
 
     if isItemPicked(Item) then
@@ -598,17 +680,22 @@ function TMenu:DefineListInfo () --| List
         -- Многострочность текста пункта:
       if RM.MultiLine == nil then
         RI.MultiLine = nil
+
       elseif RI.MultiLine == nil then
         RI.MultiLine = RM.MultiLine
+
       end
 
       if checked == nil and Item.checked then checked = true end
+
     end
   end -- for
 
   self.Data.Count, self.Data.Shift = k, j
   self.Data.checked = RM.ShowChecked ~= false and checked --or false
+
   --logShow(self.List, "self.List")
+
 end ----- DefineListInfo
 
 -- Информация о существующей части меню.
@@ -621,8 +708,10 @@ function TMenu:DefineDataInfo () --| Data
   -- Число заданных пользователем рядов пунктов
   if Data.Shape == "V" then -- Число реальных рядов пунктов
     Data.Cols, Data.Rows = MenuLinCount(RM.Cols, RM.Rows, Data.Count)
+
   else -- Data.Shape == "H"
     Data.Rows, Data.Cols = MenuLinCount(RM.Rows, RM.Cols, Data.Count)
+
   end
 
   -- Определение наличия разделителей.
@@ -638,12 +727,18 @@ function TMenu:DefineDataInfo () --| Data
     local List, k = self.List, 1 -- Учёт скрытых пунктов:
     while k < Data.Count and List[k].Index < SelIndex do
       k = k + 1
+
     end
+
     self.SelectIndex = k
+
   else
     self.SelectIndex = nil
+
   end
+
   --logShow(self.Data, "self.Data")
+
 end ---- DefineDataInfo
 
 do
@@ -655,12 +750,14 @@ do
 function TMenu:DefineKeysInfo () --| AKeys, BKeys
 
   local Data = self.Data
+
   -- Горячие буквы-клавиши пунктов меню.
   self.HKeys = SetMenuHotChars(self.List, Data.Count, self.Flags)
   -- Клавиши-акселераторы пунктов.
   self.AKeys = ParseMenuItemsKeys(self.List, Data.Count)
   -- Клавиши-прерыватели меню.
   self.BKeys = ParseMenuHandleKeys(self.Menu.BreakKeys)
+
 end ---- DefineKeysInfo
 
 end -- do
@@ -668,9 +765,11 @@ do
   -- Convert value to table with field [0].
   -- Преобразование значения в таблицу с полем [0].
   local function valtotab (v) --> (table)
+
     if type(v) == 'table' then return v end
 
     return { [0] = v or 0 }
+
   end ---- valtotab
   --local valtotab = farUt.valtotab
 
@@ -680,7 +779,9 @@ do
   -- Get displayed text of menu item.
   -- Получение отображаемого текста пункта меню.
   local function ViewItemText (Text, Hot) --> (string)
+
     if Hot then return ClearHotText(Text, Hot) else return Text end
+
   end --
 
   -- Длина и высота ячейки с учётом многих линий
@@ -717,14 +818,19 @@ function TMenu:DefineSpotInfo () --| Zone
       --far.Show(Item.text, s)
       if not Item.RectMenu.MultiLine then
         return s:len()
+
       end
+
       local tp = type(s)
       if tp == 'string' then
         return slinemax(s)
+
       elseif tp == 'table' then
         return tlinemax(s)
+
       else
         return 1
+
       end
     end -- textLen
 
@@ -734,12 +840,15 @@ function TMenu:DefineSpotInfo () --| Zone
     for k = 1, ColCount do -- Макс. длина текста:
       if not TextMax[k] then
         TextMax[k] = DefTextMax or FieldMax(List, Count, nil, textLen, k)
+
       end
     end
   end
   --logShow(TextMax, "TextMax", "w d2")
+
   if not TextMax[0] or TextMax[0] == 0 then
     TextMax[0] = farUt.t_imax(TextMax) or 0
+
   end
   --logShow(TextMax, "TextMax")
 
@@ -757,16 +866,21 @@ function TMenu:DefineSpotInfo () --| Zone
       local s = Item.text -- Высота текста:
       if not Item.RectMenu.MultiLine then
         return 1 -- Одна линия
+
       end
+
       local tp = type(s)
       --s = ViewItemText(s, Hot)
       if tp == 'string' then
         return slinecount(s)
         --return slinecount(ViewItemText(s, Hot))
+
       elseif tp == 'table' then
         return tlinemax(s)
+
       else
         return 1
+
       end
     end -- lineLat
 
@@ -775,12 +889,15 @@ function TMenu:DefineSpotInfo () --| Zone
     for k = 1, RowCount do -- Макс. высота текста:
       if not LineMax[k] then
         LineMax[k] = DefLineMax or FieldMax(List, Count, nil, lineLat, k)
+
       end
     end
   end
   --logShow(LineMax, "LineMax", "w d2")
+
   if not LineMax[0] or LineMax[0] == 0 then
     LineMax[0] = farUt.t_imax(LineMax) or 0
+
   end
   --logShow(LineMax, "LineMax")
 
@@ -791,8 +908,11 @@ function TMenu:DefineSpotInfo () --| Zone
     self.ColWidth[k] = TextMax[k] + b2n(Data.checked) +
                        (RM.CompactText and 0 or 2) -- (L+R Space)
     --self.RowHeight[k] = LineMax[k] + 0 -- (U+D Space)
+
   end
+
   --logShow({ self.TextMax, self.LineMax, self.ColWidth, self.RowHeight }, "Spot", 2)
+
 end ---- DefineSpotInfo
 
 end -- do
@@ -801,10 +921,12 @@ do
 
   -- Задание параметров фиксированных рядов меню.
   local function MakeFixedLins (Lins, Len, Sep, Count) --| Lins
-    local Lins = Lins
+
     if Lins.Head == 0 and Lins.Foot == 0 then return end
+
     if Count == 0 then
       Lins.Head, Lins.Foot = 0, 0
+
       return
     end
 
@@ -813,7 +935,9 @@ do
     Lins.Foot = torange(Lins.Foot, 0, Limit)
     if Lins.Head + Lins.Foot > Limit then
       Lins.Head, Lins.Foot = Limit - Lins.Foot, Limit - Lins.Head
+
     end
+
     Lins.Count = Lins.Head + Lins.Foot -- Общее число
     Lins.Alter = Count - Lins.Count -- Остаток от него
     if Lins.Count == 0 then return end
@@ -827,13 +951,18 @@ do
       local Length = 0
       for k = 1, Lins.Head do Length = Length + Len[k] end
       Lins.HeadLen = Length + Lins.Head * Sep
+
     end
+
     if Lins.Foot > 0 then
       local Length = 0
       for k = Lins.Sole, Count do Length = Length + Len[k] end
       Lins.FootLen = Length + (Lins.Foot - 1) * Sep
+
     end
+
     Lins.Length = Lins.HeadLen + Lins.FootLen
+
   end -- MakeFixedLins
 
 -- Информация об отображаемой части меню.
@@ -846,29 +975,37 @@ function TMenu:DefineZoneInfo () --| Zone
     local Fixed = RM.Fixed or Null -- No change!
 
     local FixedRows = {
+
       -- Информация о фиксированных строках
       Head = Fixed.HeadRows or 0, HeadLen = 0,
       Foot = Fixed.FootRows or 0, FootLen = 0,
       Count = 0, Length = 0, Alter = RowCount,
+
       -- Информация о строках с учётом фиксированности
       All = RowCount, Sole = RowCount + 1,
       Min = min2(1, RowCount), Max = RowCount,
+
     } ---
 
     local FixedCols = {
+
       -- Информация о фиксированных столбцах
       Head = Fixed.HeadCols or 0, HeadLen = 0,
       Foot = Fixed.FootCols or 0, FootLen = 0,
       Count = 0, Length = 0, Alter = ColCount,
+
       -- Информация о столбцах с учётом фиксированности
       All = ColCount, Sole = ColCount + 1,
       Min = min2(1, ColCount), Max = ColCount,
+
     } ---
 
     MakeFixedLins(FixedRows, self.RowHeight, Data.RowSep, RowCount)
     MakeFixedLins(FixedCols, self.ColWidth,  Data.ColSep, ColCount)
     self.FixedRows, self.FixedCols = FixedRows, FixedCols
+
     --logShow({ self.FixedRows, self.FixedRows }, "Fixed")
+
   --end --
 
   local MenuOnly = RM.MenuOnly
@@ -894,6 +1031,7 @@ function TMenu:DefineZoneInfo () --| Zone
     -- Размер зоны, опоясывающей меню:
     Zone.BeltWidth  = Zone.EdgeL + BoxGage + BoxGage + Zone.EdgeR
     Zone.BeltHeight = Zone.EdgeT + BoxGage + BoxGage + Zone.EdgeB
+
   end --
 
   do -- Размеры меню окна диалога.
@@ -914,16 +1052,26 @@ function TMenu:DefineZoneInfo () --| Zone
     Zone.MenuWidth  = max2(Zone.Width,  MinWidth)
     Zone.MenuHeight = max2(Zone.Height, MinHeight)
     --Zone.LastX and Zone.LastY is defined in DefineFormInfo
+
     --logShow(self.Zone, "self.Zone")
+
   end --
 
   do -- Показываемая часть пунктов меню.
 
     -- Базовый пункт - левый верхний видимый пункт меню. (by default.)
-    Zone.Base = { Row = FixedRows.Min, Col = FixedCols.Min } -- Base
+    Zone.Base = {
+
+      Row = FixedRows.Min,
+      Col = FixedCols.Min,
+
+    } -- Base
+
     Zone.Pike = { -- Предельная позиция базового пункта меню:
+
       Row = RowCount - self:VisibleRowCount(RowCount, "Pike") + Zone.Base.Row,
       Col = ColCount - self:VisibleColCount(ColCount, "Pike") + Zone.Base.Col,
+
     } --- Pike
 
     -- Уточнение выделенного пункта: -- Поиск подходящего для навигации:
@@ -934,6 +1082,7 @@ function TMenu:DefineZoneInfo () --| Zone
       local Row, Col = Idx2Cell(self.SelIndex, Data)
       Zone.Base.Row = min2(Row, Zone.Pike.Row)
       Zone.Base.Col = min2(Col, Zone.Pike.Col)
+
     end
   end --
 
@@ -946,7 +1095,9 @@ function TMenu:DefineZoneInfo () --| Zone
     if BoxScroll then -- Прокрутка вместо надписей:
       if ScrolledH then Titles.Bottom = "" end
       if ScrolledV then Titles.Right  = "" end
+
     end
+
     Zone.ScrolledH = ScrolledH
     Zone.ScrolledV = ScrolledV
     Zone.BoxScrollH = not MenuOnly and ScrolledH and
@@ -957,6 +1108,7 @@ function TMenu:DefineZoneInfo () --| Zone
     Zone.EmbScrollV = b2n(ScrolledV and not Zone.BoxScrollV)
 
     --logShow(self.Zone, "self.Zone")
+
   end --
 end ---- DefineZoneInfo
 
@@ -980,6 +1132,7 @@ function TMenu:DefineFormZone () --| (Dlg...)
     local Length = max2(Titles.Top:len(), Titles.Bottom:len())
     if Length > 0 then Length = Length + 4 end
     Length = max2(Length, Zone.MenuWidth)
+
     local Delta = Length - Zone.Width -- Избыток пустоты
     --logShow({ Titles, Titles.Top:len(), Titles.Bottom:len(),
     --          Length, Zone.Width, Delta, bshr(Delta, 1) }, "self.Zone")
@@ -987,10 +1140,14 @@ function TMenu:DefineFormZone () --| (Dlg...)
       Zone.Width  = Length
       if     sfind(MenuAlign, "L", 1, true) then
         Zone.IndentH = 0
+
       elseif sfind(MenuAlign, "R", 1, true) then
         Zone.IndentH = Delta
+
       else
-        Zone.IndentH = bshr(Delta, 1)  end -- "C" --
+        Zone.IndentH = bshr(Delta, 1)   -- "C" --
+
+      end
     end
   end --
 
@@ -998,15 +1155,20 @@ function TMenu:DefineFormZone () --| (Dlg...)
     local Length = max2(Titles.Left:len(), Titles.Right:len())
     if Length > 0 then Length = Length + 2 end -- only 2, not 4
     Length = max2(Length, Zone.MenuHeight)
+
     local Delta = Length - Zone.Height -- Избыток пустоты
     if Delta > 0 then -- Выравнивание:
       Zone.Height = Length
       if     sfind(MenuAlign, "T", 1, true) then
         Zone.IndentV = 0
+
       elseif sfind(MenuAlign, "B", 1, true) then
         Zone.IndentV = Delta
+
       else
-        Zone.IndentV = bshr(Delta, 1)  end -- "M" --
+        Zone.IndentV = bshr(Delta, 1)   -- "M" --
+
+      end
     end
   end --
 
@@ -1022,6 +1184,7 @@ function TMenu:DefineFormZone () --| (Dlg...)
   Zone.DlgHeight = Zone.BoxHeight + Zone.BeltHeight
 
   --logShow(self.Zone, "self.Zone")
+
 end ---- DefineFormZone
 
 end -- do
@@ -1052,10 +1215,12 @@ function TMenu:DefineFormRect () --| (Dlg...)
       local Data = Origin.HisData[AreaName] or Null
       --logShow(Data, AreaName, "w d3")
       x, y = Data.x, Data.y
+
     end
   end
 
   local Rect = {
+
     x = x or -1,
     y = y or -1,
     w = Zone.DlgWidth,
@@ -1065,22 +1230,27 @@ function TMenu:DefineFormRect () --| (Dlg...)
     -- Отступ = позиция зоны меню -- !?
     sx = Zone.HomeX,
     sy = Zone.HomeY,
+
   } ---
   self.FormRect = Rect
 
   if Rect.x < 0 then
     local Delta = self.Area.Width - Rect.w
     Rect.x = Delta > 0 and bshr(Delta, 1) or 0
+
   end
+
   if Rect.y < 0 then
     local Delta = self.Area.Height - Rect.h
     Rect.y = Delta > 0 and bshr(Delta, 1) or 0
+
   end
 
   Rect.xw = Rect.x + Rect.w - 1
   Rect.yh = Rect.y + Rect.h - 1
 
   --logShow(self.FormRect, "Form Rect")
+
 end ---- DefineFormRect
 
 end -- do
@@ -1096,6 +1266,7 @@ function TMenu:DefineFormInfo () --| (Dlg...)
 
   self.Form = self:DialogForm() -- Сама форма окна
   --logShow(self.Form, "Form table", "d2 ft_")
+
 end ---- DefineFormInfo
 ----------------------------------------
 
@@ -1115,6 +1286,7 @@ function TMenu:DefineAll () --| (self)
   --logShow(self, "self", "d1 _")
 
   return self:HandleEvent("OnDefineMenu", nil, self)
+
 end ---- DefineAll
 
 -- Обновление вида меню.
@@ -1126,12 +1298,29 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   local isRedraw = Flags.isRedraw
 
   --self = 0 -- TODO: Exclude all fields for right new info!?
-  self.Menu = {
-    Props     = Data[1],
-    Items     = Data[2],
-    BreakKeys = Data[3],
-    Options   = self.Menu.Options,
-  } -- Menu
+
+  if type(Data) == 'table' then
+    self.Menu = {
+
+      Props     = Data[1],
+      Items     = Data[2],
+      BreakKeys = Data[3],
+      Options   = self.Menu.Options,
+
+    } -- Menu
+
+  else
+    self.Menu = {
+
+      Props     = self.Menu.Props,
+      Items     = self.Menu.Items,
+      BreakKeys = self.Menu.BreakKeys,
+      Options   = self.Menu.Options,
+
+    } -- Menu
+
+  end
+
   self:DefineAll() -- Определение вида меню
   if Flags.isUpdate == false then return end
 
@@ -1158,6 +1347,7 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
   self:Move_Dialog(hDlg) -- Fix FAR bug!
 
   --return self:HandleEvent("OnUpdateMenu", hDlg, self, Flags, isRedraw)
+
 end ---- UpdateAll
 
 ---------------------------------------- Menu operation
@@ -1179,14 +1369,17 @@ function TMenu:isScrolled (Index) --> (bool)
   local r, c = Idx2Cell(Index, self.Data)
 
   return inspan(r, self.FixedRows) and inspan(c, self.FixedCols)
+
 end ----
 
 -- Item index for specified cell.
 -- Индекс пункта для заданной ячейки.
 function TMenu:CellIndex (Row, Col) --> (Index)
+
   local Index = Cell2Idx(Row, Col, self.Data)
 
   return Index > self.Data.Count and 0 or Index
+
 end ----
 
 -- Check index of item for scrollable cell.
@@ -1196,9 +1389,11 @@ function TMenu:isScrollIndex (Row, Col) --> (Index)
   if outspan(Row, self.FixedRows) or
      outspan(Col, self.FixedCols) then
     return false
+
   end
 
   return self:isIndex(self:CellIndex(Row, Col))
+
 end ----
 
 ---------------------------------------- ---- Visible area
@@ -1228,6 +1423,7 @@ function TMenu:VisibleZoneCount () --> (number, number, number)
   local VisCols = self:VisibleColCount(Base.Col)
 
   return VisRows * VisCols, VisRows, VisCols
+
 end ---- VisibleZoneCount
 
 ---------------------------------------- ---- Selected
@@ -1238,15 +1434,20 @@ function TMenu:GetSelectIndex () --> (number)
   -- Индекс выделенного пункта меню
   -- не обязательно совпадает с выделенным индексом!
   return self.SelIndex and self.List[self.SelIndex].Index or 0
+
 end ---- GetSelectIndex
 
 -- Define menu item as selected.
 -- Выбор пункта меню в качестве выделенного.
 function TMenu:SetSelected (SelIndex)
+
   if SelIndex and self.List[SelIndex] then
     self.SelIndex = SelIndex
+
   end
+
   --logShow(self.List, "SelIndex  = "..tostring(self.SelIndex), 1)
+
 end ----
 
 -- Find item suitable for navigation to select.
@@ -1259,6 +1460,7 @@ function TMenu:FitSelected (SelIndex) --> (number)
   while k <= self.Data.Count and
         (isItemDimmed(List[k]) or not self:isScrolled(k)) do
     k = k + 1
+
   end
 
   if k <= self.Data.Count then return k end
@@ -1267,10 +1469,13 @@ function TMenu:FitSelected (SelIndex) --> (number)
   while k > 0 and
         (isItemDimmed(List[k]) or not self:isScrolled(k)) do
     k = k - 1
+
   end
+
   --logShow({ k, self.Data.Count, { Idx2Cell(k, self.Data) } }, "FitSelected")
 
   return k > 0 and k or nil
+
 end ---- FitSelected
 
 ---------------------------------------- ---- Find / Goto
@@ -1280,38 +1485,44 @@ do
 function TMenu:FitCell (Row, Col) --> (Row, Col)
 
   -- Поиск по строке:
-  local Row = Row
+  --local Row = Row
   do
     local Fixes = self.FixedRows
     if Row < Fixes.Min then
       Row = Fixes.Min
       while not self:isScrollIndex(Row, Col) do
         Row = Row + 1
+
       end
 
     elseif Row > Fixes.Max then
       Row = Fixes.Max
       while not self:isScrollIndex(Row, Col) do
         Row = Row - 1
+
       end
+
     end -- if
   end
 
   -- Поиск по столбцу:
-  local Col = Col
+  --local Col = Col
   do
     local Fixes = self.FixedCols
     if Col < Fixes.Min then
       Col = Fixes.Min
       while not self:isScrollIndex(Row, Col) do
         Col = Col + 1
+
       end
 
     elseif Col > Fixes.Max then
       Col = Fixes.Max
       while not self:isScrollIndex(Row, Col) do
         Col = Col - 1
+
       end
+
     end -- if
   end
 
@@ -1322,7 +1533,7 @@ end ---- FitCell
 -- Определение ячейки с учётом прокрутки.
 function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
 
-  local Row, Col = Row, Col
+  --local Row, Col = Row, Col
 
   if dRow ~= 0 then -- Ячейка по строкам:
     local Cell, _
@@ -1330,8 +1541,10 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
     --logShow({ Cell, RC_cell(Row, Col) }, "dRow ~= 0")
     if outspan(Row, Fixes) then
       Cell = { Row = Row }
+
     else
       _, Cell = self:FindRowCell(Row, Col, dRow)
+
     end
     --logShow({ Cell, RC_cell(Row, Col), { Fixes.Min, Fixes.Max } }, "dRow ~= 0")
 
@@ -1340,14 +1553,18 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
       if Row > Fixes.Max or
          (Row == Fixes.Max and self:CellIndex(Row, Col) == 0) then
         Row = Fixes.Min - 1
+
       elseif Row < Fixes.Min then
         Row = Fixes.Max + 1
+
       end
     else
       if dRow > 0 then
         Row = Fixes.Min - 1
+
       elseif dRow < 0 then
         Row = Fixes.Max + 1
+
       end
     end
   end
@@ -1357,8 +1574,10 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
     local Fixes = self.FixedCols
     if outspan(Col, Fixes) then
       Cell = { Col = Col }
+
     else
       _, Cell = self:FindColCell(Row, Col, dCol)
+
     end
 
     if Cell then
@@ -1366,63 +1585,78 @@ function TMenu:WrapCell (Row, Col, dRow, dCol) --> (Cell)
       if Col > Fixes.Max or
          (Col == Fixes.Max and self:CellIndex(Row, Col) == 0) then
         Col = Fixes.Min - 1
+
       elseif Col < Fixes.Min then
         Col = Fixes.Max + 1
+
       end
     else
       if dCol > 0 then
         Col = Fixes.Min - 1
+
       elseif dCol < 0 then
         Col = Fixes.Max + 1
+
       end
     end
   end
   --logShow(RC_cell(Row, Col), "WrapCell")
 
   return self:FitCell(Row, Col)
+
 end ---- WrapCell
 
 -- Получение подходящей ячейки по строке.
 function TMenu:FindRowCell (Row, Col, dRow) --> (Index, Cell)
+
   --assert(dRow > 0)
 
   local Fixes = self.FixedRows
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Row = Row + dRow
     if outspan(Row, Fixes) then return end
+
   end
 
   return self:CellIndex(Row, Col), RC_cell(Row, Col)
+
 end ---- FindRowCell
 
 -- Получение подходящей ячейки по столбцу.
 function TMenu:FindColCell (Row, Col, dCol) --> (Index, Cell)
+
   --assert(dCol > 0)
 
   local Fixes = self.FixedCols
   while not self:isIndex(self:CellIndex(Row, Col)) do
     Col = Col + dCol
     if outspan(Col, Fixes) then return end
+
   end
 
   return self:CellIndex(Row, Col), RC_cell(Row, Col)
+
 end ---- FindColCell
 
 -- Получение подходящей ячейки.
 function TMenu:FindCell (Row, Col, dRow, dCol) --> (Index, Cell)
+
   local Index, aCell
 
   if dRow ~= 0 then
     Index, aCell = self:FindRowCell(Row, Col, dRow)
+
   end
 
   -- TODO: Скорректировать при одновременном поиске по двум направлениям.
   --if Index then Row, Col = aCell.Row, aCell.Col end -- ???
   if dCol ~= 0 then
     Index, aCell = self:FindColCell(Row, Col, dCol)
+
   end
 
   return Index, aCell
+
 end ---- FindCell
 
 -- Define new selected menu item.
@@ -1440,13 +1674,15 @@ function TMenu:GotoCell (aCell, dCell, isNew, isWrap) --> (SelIndex, Cell)
   --if not isWrap then logShow({ aCell, dCell, isNew, isWrap }, "GotoCell") end
 
   -- Выбор начального нового пункта меню.
-  local R, C = aCell.Row, aCell.Col
-  local dR, dC = dCell.Row, dCell.Col
+  local R, C    = aCell.Row, aCell.Col
+  local dR, dC  = dCell.Row, dCell.Col
 
   if isNew then
     dR, dC = -dR, -dC
+
   else
     R, C = R + dR, C + dC
+
     -- Корректировка ячейки в зависимости от шага.
     if abs(dR) > 1 or abs(dC) > 1 then
       R, C = self:FitCell(R, C) -- Допустимая ячейка
@@ -1473,8 +1709,10 @@ function TMenu:GotoCell (aCell, dCell, isNew, isWrap) --> (SelIndex, Cell)
         -- Выход без изменения, если вне области.
         if outspan(R, self.FixedRows) then return end
         if outspan(C, self.FixedCols) then return end
+
       end
-    end
+    end -- if-else
+
   end -- if isNew
 
   -- Поиск подходящего нового пункта меню.
@@ -1484,10 +1722,13 @@ function TMenu:GotoCell (aCell, dCell, isNew, isWrap) --> (SelIndex, Cell)
   --logShow(Cell, "FindCell: "..tostring(self:isIndex(Index)))
   if not self:isIndex(Index) then
     Index, Cell = self:FindCell(R, C, -dR, -dC)
+
   end
+
   --logShow(Cell, "FindCell: "..tostring(self:isIndex(Index)))
 
   return Index, Cell
+
 end ---- GotoCell
 
 -- Define base item to show selected menu item.
@@ -1501,6 +1742,7 @@ function TMenu:CellBase (aCell) --| Zone.Base
   -- Поиск подходящего базового пункта меню.
   if Cell.Row < Base.Row then
     Base.Row = Cell.Row -- Верхняя строка
+
   else                  -- Нижняя  строка:
     local Fixes = self.FixedRows
     local Lin = self:VisibleRowCount(Cell.Row, "Pike") - Fixes.Count
@@ -1508,11 +1750,13 @@ function TMenu:CellBase (aCell) --| Zone.Base
     --logShow({ Base, Pike, Cell }, "Row: "..tostring(Row))
     if Lin > Base.Row then
       Base.Row = min2(Lin, Pike.Row)
+
     end
   end
 
   if Cell.Col < Base.Col then
     Base.Col = Cell.Col -- Левый  столбец
+
   else                  -- Правый столбец:
     local Fixes = self.FixedCols
     local Lin = self:VisibleColCount(Cell.Col, "Pike") - Fixes.Count
@@ -1520,9 +1764,12 @@ function TMenu:CellBase (aCell) --| Zone.Base
     --logShow({ Base, Pike, Cell }, "Col: "..tostring(Col))
     if Lin > Base.Col then
       Base.Col = min2(Lin, Pike.Col)
+
     end
   end
+
   --logShow({ Base, Cell }, "Cells")
+
 end ---- CellBase
 
 -- Change base menu item (to show unallowable items).
@@ -1535,15 +1782,19 @@ function TMenu:MoveBase (dCell, aBase) --| Zone.Base
   local Cell = RC_copy(aBase or Base) -- TEMP: aBase is not used now!
   if dCell then
     Cell = { -- Корректировка нового базового пункта:
+
       Row = tospan(Cell.Row + dCell.Row, self.FixedRows),
       Col = tospan(Cell.Col + dCell.Col, self.FixedCols),
+
     } -- Cell
+
   end
   --logShow({ Base, Cell }, "Cells")
 
   -- Установка базового пункта меню.
   Base.Row = min2(Cell.Row, Pike.Row)
   Base.Col = min2(Cell.Col, Pike.Col)
+
 end ---- MoveBase
 
 -- Move to other cell.
@@ -1566,11 +1817,13 @@ function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   if NewIndex == false then return false end
   if NewIndex == nil then
     NewIndex, nCell = OldIndex, oCell
+
   end
   --logShow({ OldIndex, Base, oCell, nCell, dCell }, NewIndex)
 
   if RC_iseq(oCell, nCell) then
     self:MoveBase(dCell)
+
   end
   self:CellBase(nCell)
   self:SetSelected(NewIndex)
@@ -1578,6 +1831,7 @@ function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   self:SelectItem(hDlg, Kind, self:GetSelectIndex())
 
   return self:DoMenuDraw() -- Перерисовка меню
+
 end ---- MoveToCell
 
 end -- do
@@ -1594,21 +1848,39 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
   Flags = Flags or Null -- or {}
   if Flags.isCancel then
     self.SelIndex = nil
-  end
-  if hDlg and
-     (Flags.isClose or Flags.isCancel) then
-    return CloseDialog(hDlg)
+
   end
 
-  if hDlg and
-     type(Data) == 'table' and
-     Flags.isUpdateAll ~= false then
+  if hDlg then
+    if (Flags.isClose or Flags.isCancel) then
+      if type(Data) == 'table' then
+        return self:ChooseItem(hDlg, Data.Kind,
+                               Data.Index or self:GetSelectIndex()
+                              )
+      end
 
-    self:UpdateAll(hDlg, Flags, Data)
-    return true
-  end
+      return CloseDialog(hDlg)
+
+    end
+
+    if type(Data) == 'table' and
+       Flags.isUpdateAll ~= false then
+
+      self:UpdateAll(hDlg, Flags, Data)
+
+      return true
+
+    elseif Data == true and
+           Flags.isUpdateAll ~= false then
+
+      self:UpdateAll(hDlg, Flags, nil)
+   
+    end
+
+  end -- if
 
   return Data
+
 end ---- HandleEvent
 
 ---------------------------------------- Keyboard
@@ -1617,6 +1889,7 @@ local IsModCtrl, IsModAlt = keyUt.IsModCtrl, keyUt.IsModAlt
 local IsModShift, IsModAltShift = keyUt.IsModShift, keyUt.IsModAltShift
 
 local Shifts = {
+
   Z  = { Row =  0, Col =  0, },
   L  = { Row =  0, Col = -1, canWrap = true, },
   U  = { Row = -1, Col =  0, canWrap = true, },
@@ -1630,6 +1903,7 @@ local Shifts = {
   LD = { Row =  1, Col = -1, },
   RU = { Row = -1, Col =  1, },
   RD = { Row =  1, Col =  1, },
+
 } --- Shifts
 
 -- Информация о перемещении курсора по ячейкам при нажатии клавиш.
@@ -1656,8 +1930,10 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
   local Last = self.Last
   --[[
   local Last = { -- Последняя видимая ячейка:
+
     Row = Base.Row + self:VisibleRowCount(Base.Row) - rSum - 1,
     Col = Base.Col + self:VisibleColCount(Base.Col) - cSum - 1,
+
   } ---
   --]]
   --logShow({ oCell, VisRows, VisCols, Last }, "Arrow Cell Data")
@@ -1665,24 +1941,33 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
   local KeydCell = {
 
     Left = function ()
+
       return Shifts.L, oCell, { Row = oCell.Row, Col = cMin, }
+
     end,
 
     Up = function ()
+
       return Shifts.U, oCell, { Row = rMin, Col = oCell.Col, }
+
     end,
 
     Right = function ()
+
       return Shifts.R, oCell, { Row = oCell.Row, Col = cMax, }
+
     end,
 
     Down = function ()
+
       return Shifts.D, oCell, { Row = rMax, Col = oCell.Col, }
+
     end,
 
     Clear = function () return Shifts.Z, oCell, oCell end, -- Clear
 
     Home = function ()
+
       local nCell = RC_iseq(oCell, Base) and
         { Row = Base.Row -
                 self:VisibleRowCount(Base.Row, "Pike") + rSum + 1,
@@ -1690,21 +1975,27 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
                 self:VisibleColCount(Base.Col, "Pike") + cSum + 1, } or
         { Row = Base.Row, Col = Base.Col, } -- nCell
       --logShow({ oCell, nCell }, "Cells")
+
       return Shifts.H, { Row = rMin, Col = cMin, }, nCell
+
     end, -- Home
 
     End = function ()
+
       local nCell = RC_iseq(oCell, Last) and
         { Row = Last.Row +
                 self:VisibleRowCount(oCell.Row, "Base") - rSum - 1,
           Col = Last.Col +
                 self:VisibleColCount(oCell.Col, "Base") - cSum - 1, } or
         Last -- nCell
+
       return Shifts.E, { Row = rMax, Col = cMax, }, nCell
       --return Shifts.E, RC_cell(Idx2Cell(Data.Count, Data)), nCell
+
     end, -- End
 
     PgUp = function ()
+
       local dCell = ListByDef and
         (oCell.Row == rMin and Shifts.Z or
          Base.Row == oCell.Row and
@@ -1714,12 +2005,15 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
          Base.Col == oCell.Col and
          { Row = 0, Col = -self:VisibleColCount(Base.Col, "Pike") + cSum, } or
          { Row = 0, Col = Base.Col - oCell.Col,                           })
+
       return dCell, oCell, ListByDef and
              { Row = rMin, Col = oCell.Col, } or
              { Row = oCell.Row, Col = cMin, }
+
     end, -- Page Up
 
     PgDn  = function ()
+
       local dCell = ListByDef and
         (oCell.Row == rMax and Shifts.Z or
          Last.Row == oCell.Row and
@@ -1729,9 +2023,11 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
          Last.Col == oCell.Col and
          { Row = 0, Col = self:VisibleColCount(Last.Col, "Base") - cSum, } or
          { Row = 0, Col = Last.Col - oCell.Col,                          })
+
       return dCell, oCell, ListByDef and
              { Row = rMax,      Col = oCell.Col, } or
              { Row = oCell.Row, Col = cMax,      }
+
     end, -- Page Down
 
     LeftUp      = function () return Shifts.LU, oCell, oCell end,
@@ -1742,17 +2038,22 @@ function TMenu:ArrowKeyToCell (oCell, aKey) --> (cell, cell, cell)
   } --- KeydCell
 
   return KeydCell[aKey]()
+
 end ---- ArrowKeyToCell
 
 -- Проверка на используемость клавиш-стрелок.
 function TMenu:CheckArrowUse (AKey) --> (bool)
+
   if     AKey == "Left" or AKey == "Right" then
     return self.Data.Cols > 1
+
   elseif AKey == "Up"   or AKey == "Down"  then
     return self.Data.Rows > 1
+
   end
 
   return true
+
 end ---- CheckArrowUse
 
 -- Обработка клавиш курсора в меню.
@@ -1761,14 +2062,15 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
   -- Переход на новую ячейку по нажатию клавиши.
   local function KeyPressCell (OldCell) --> (table, number, table)
 
-    local self = self
     local dCell, bCell, jCell = self:ArrowKeyToCell(OldCell, AKey)
 
     if IsModCtrl(VMod) then -- CTRL:
       if not jCell then return false end
       --logShow({ jCell, dCell }, "Cells (CTRL)")
+
       return jCell, dCell, true, isWrap
       --return dCell, self:GotoCell(jCell, dCell, true, isWrap)
+
     end
 
     -- Без модификаторов:
@@ -1776,18 +2078,23 @@ function TMenu:ArrowKeyPress (hDlg, AKey, VMod, isWrap) --> (bool)
     --logShow({ bCell, dCell }, "Cells (No mods)")
 
     return bCell, dCell, dCell.isNew, isWrap
+
   end --
 
   return self:MoveToCell(hDlg, KeyPressCell, AKey)
+
 end ---- ArrowKeyPress
 
 local UnhotSKeys = {
+
   [""]      = true,
   [" "]     = true,
   ["Space"] = true,
+
 } --- UnhotSKeys
 
 local AccelSKeys = {
+
   ["Shift`"]    = "~",
   ["Shift1"]    = "!",
   ["Shift2"]    = "@",
@@ -1809,6 +2116,7 @@ local AccelSKeys = {
   ["Shift."]    = ">",
   ["Shift\\"]   = "|",
   ["Shift/"]    = "?",
+
 } --- AccelSKeys
 
 -- Обработка быстрых клавиш в меню.
@@ -1828,8 +2136,10 @@ function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
   if Index then
     self:SetSelected(Index)
     --logShow(StrKey, "Index: "..tostring(Index))
+
     return self:ChooseItem(hDlg, "AKey", Index)
-  end
+
+  end -- if
 
   -- 2. Обработка Hot Chars.
   local VMod = Input.ControlKeyState
@@ -1853,26 +2163,33 @@ function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
           SKey = VName:upper()
           if SKey and SKey ~= "" then
             Index = self.HKeys:cfind(SKey, 1, true)
+
           end
         end
       end
       --logShow(self.HKeys, "HKeys : "..tostring(SKey).." at "..tostring(Index), "d1 xv8")
+
       if Index then
         self:SetSelected(Index)
+
         return self:ChooseItem(hDlg, "HKey", Index)
+
       end
     end
-  end
+  end -- if
 
   -- 3. Обработка BreakKeys.
   Index = self.BKeys[StrKey]
   --logShow({ Index, self.BKeys }, StrKey, "d1 x8")
   if Index then
     self.KeyIndex = Index
+
     return self:ChooseItem(hDlg, "BKey", Index)
-  end
+
+  end -- if
 
   return false
+
 end ---- RapidKeyPress
 
 -- Пользовательская обработка клавиш навигации.
@@ -1891,15 +2208,20 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
      Flags.isUpdateAll ~= false then
 
     self:UpdateAll(hDlg, Flags, Data)
+
     return true
+
   end
 
   return Data, AKey, Mod
+
 end ---- UserNavKeyPress
 
 -- Пользовательская обработка клавиш.
 function TMenu:UserKeyPress (hDlg, Input, Index) --> (nil|true | Data)
+
   return self:HandleEvent("OnKeyPress", hDlg, Input, Index)
+
 end ---- UserKeyPress
 
 -- Обработчик нажатия клавиши.
@@ -1934,6 +2256,7 @@ function TMenu:DoKeyPress (hDlg, Input) --> (bool)
        (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
       --logShow({ AKey, VMod }, SelIndex, "w h8 d1")
       return self:ArrowKeyPress(hDlg, AKey, VMod, true)
+
     end
 
   end -- if SelIndex
@@ -1947,6 +2270,7 @@ function TMenu:DoKeyPress (hDlg, Input) --> (bool)
   if isOk then return isOk end
 
   return false
+
 end ---- DoKeyPress
 
 ---------------------------------------- ---- Mouse
@@ -1968,12 +2292,12 @@ local function MousePosToLin (Len, Sep, Total,
                               Fixes, Fixing) --> (number)
   if Pos >= Total then
     return #Len + 1
+
   end
 
   --logShow({ Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin", "w d2")
 
   if Fixing then
-
     local Count, Length = 0, 0
     
     -- Heads:
@@ -1984,6 +2308,7 @@ local function MousePosToLin (Len, Sep, Total,
       repeat
         L = L + Len[k] + Sep
         k = k + 1
+
       until k > Count or L > Pos
 
       k = k - 1
@@ -1991,6 +2316,7 @@ local function MousePosToLin (Len, Sep, Total,
       --logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Heads", "w d2")
 
       return k
+
     end
 
     -- Foots:
@@ -2002,13 +2328,18 @@ local function MousePosToLin (Len, Sep, Total,
       repeat
         L = L - Len[k] - Sep
         k = k - 1
+
       until k < Limit or L < Pos
 
       k = k + 1
 
-      --logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Foots", "w d2")
+      --[[
+      logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing },
+              "MousePosToLin: Foots", "w d2")
+      --]]
 
       return k
+
     end
 
   end -- Fixing
@@ -2019,15 +2350,18 @@ local function MousePosToLin (Len, Sep, Total,
   repeat
     L = L + Len[k] + Sep
     k = k + 1
+
   until k > Count or L > Pos
 
   k = k - 1
 
---[[
+  --[[
   if Fixing then
-    logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin: Items", "w d2")
+    logShow({ k, L, Count, Len, Sep, Total, Pos, Base, Fixes, Fixing },
+            "MousePosToLin: Items", "w d2")
+
   end
---]]
+  --]]
 
   return k
 end -- MousePosToLin
@@ -2037,12 +2371,16 @@ end -- MousePosToLin
 local function CheckMouseOut (Sep, Total, Pos, Fixes, Less, More) --> (string)
   if Fixes.Head > 0 and Pos <= Fixes.HeadLen then
     return Less
+
   end
+
   if Fixes.Foot > 0 and Pos >= Total + Sep - Fixes.FootLen then
     return More
+
   end
 
   return ""
+
 end -- CheckMouseOut
 --]]
 
@@ -2067,18 +2405,22 @@ function TMenu:MouseInputToCell (Input) --> (table)
                           "M"..
                           tostring(Input.ClickButton)
     self.DebugClickData = t
+
   end
 
   return t
+
 end ---- MouseInputToCell
 
 function TMenu:KnobItemClick (hDlg, Cell, Input) --> (bool)
+
   local Index = Cell.Index
   local Item = self.List[Index]
   if not Item or not Item.knobed then return false end
 
   --logShow(Item, Index, "w d1")
   return false
+
 end ---- KnobItemClick
 
 -- Обработка нажатий кнопки мыши в меню.
@@ -2097,15 +2439,16 @@ function TMenu:MouseClick (hDlg, Input) --> (bool)
   if Input.ClickCount == 2 then
     --logShow({ mCell, Input }, "DblClick", "w d2")
     return self:DefaultChooseItem(hDlg, "DblClick")
+
   end
 
   if Input.ClickButton ~= 1 then return false end
 
   -- Переход на новую ячейку по нажатию кнопки мыши.
   local function MouseClickCell (OldCell) --> (table, number, table)
-    local self = self
 
     local bCell = {
+
       Row = MousePosToLin(self.RowHeight, self.Data.RowSep,
                           self.Zone.Height, Input.y,
                           self.Zone.Base.Row, self.FixedRows),
@@ -2115,14 +2458,18 @@ function TMenu:MouseClick (hDlg, Input) --> (bool)
     } ---
 
     local dCell = {
+
       Row = sign(bCell.Row - OldCell.Row),
       Col = sign(bCell.Col - OldCell.Col),
+
     } ---
 
     return bCell, dCell, true, false
+
   end --
 
   return self:MoveToCell(hDlg, MouseClickCell, "Click")
+
 end ---- MouseClick
 
 function TMenu:MouseBorderClick (hDlg, Kind, Input)
@@ -2133,9 +2480,11 @@ function TMenu:MouseBorderClick (hDlg, Kind, Input)
   if type(Data) ~= 'table' and
      self.RectMenu.IsDebugDraw then
     self:DoMenuDraw() -- Перерисовка меню
+
   end
 
   return Data
+
 end ---- MouseBorderClick
 
 function TMenu:MouseEdgeClick (hDlg, Kind, Input)
@@ -2147,9 +2496,11 @@ function TMenu:MouseEdgeClick (hDlg, Kind, Input)
   if type(Data) ~= 'table' and
      self.RectMenu.IsDebugDraw then
     self:DoMenuDraw() -- Перерисовка меню
+
   end
 
   return Data
+
 end ---- MouseEdgeClick
 
 ---------------------------------------- ---- Scroll
@@ -2157,14 +2508,18 @@ do
 -- Convert scroll position to line number.
 -- Преобразование позиции прокрутки в номер ряда.
 local function ScrollPosToLin (ALen, Pos, Lins, Bar) --> (number)
+
   --logShow({ ALen, Lins }, Pos, 2)
+
   if ALen == 1 then return 1 end
+
   --Pos = max2(Pos - max2(bshr(Bar.Len, 1), 1), 0)
   --return min2(divr( Pos * (Lins.Alter - 1), (ALen - 1) ) +
   --            Lins.Min, Lins.Max)
 
   return min2(divr( (Pos - 1) * (Lins.Alter - 1), (ALen - 1) ) +
               Lins.Min, Lins.Max)
+
 end -- ScrollPosToLin
 
 -- Обработка горизонтальной прокрутки.
@@ -2179,22 +2534,29 @@ function TMenu:ScrollHClick (hDlg, Input)
 
   if     pos == Bar.X1 then
     return self:ArrowKeyPress(hDlg, "Left", 0, true)
+
   elseif pos == Bar.X2 then
     return self:ArrowKeyPress(hDlg, "Right", 0, true)
+
   end
   pos = pos - Bar.X1
 
   local function ScrollHCell (OldCell) --> (table, number, table)
+
     local bCell = {
+
       Row = OldCell.Row,
       Col = ScrollPosToLin(Bar.Length, pos, self.FixedCols, Bar),
+
     } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.L or Shifts.R
 
     return bCell, dCell, true, true
+
   end --
 
   return self:MoveToCell(hDlg, ScrollHCell, "ScrollH")
+
 end ---- ScrollHClick
 
 -- Обработка вертикальной прокрутки.
@@ -2209,23 +2571,30 @@ function TMenu:ScrollVClick (hDlg, Input)
 
   if     pos == Bar.Y1 then
     return self:ArrowKeyPress(hDlg, "Up", 0, true)
+
   elseif pos == Bar.Y2 then
     return self:ArrowKeyPress(hDlg, "Down", 0, true)
+
   end
   pos = pos - Bar.Y1
 
   local function ScrollVCell (OldCell) --> (table, number, table)
+
     local bCell = {
+
       Col = OldCell.Col,
       Row = ScrollPosToLin(Bar.Length, pos, self.FixedRows, Bar),
+
     } ---
     local dCell = pos < Bar.Pos + bshr(Bar.Len, 1) and Shifts.U or Shifts.D
     --logShow({ OldCell, bCell, dCell, Bar, FixRows }, pos)
 
     return bCell, dCell, true, true
+
   end --
 
   return self:MoveToCell(hDlg, ScrollVCell, "ScrollV")
+
 end ---- ScrollVClick
 
 -- Обработка "пересечения" полос прокрутки.
@@ -2237,9 +2606,11 @@ function TMenu:ScrollXClick (hDlg, Input)
   if type(Data) ~= 'table' and
      self.RectMenu.IsDebugDraw then
     self:DoMenuDraw() -- Перерисовка меню
+
   end
 
   return Data
+
 end ---- ScrollXClick
 
 end -- do
@@ -2247,15 +2618,19 @@ end -- do
 
 -- Обработка начала перемещения.
 function TMenu:StartDrag (hDlg) --> (bool)
+
   self:HandleEvent("OnStartDrag", hDlg) --| self.RectMenu.UseDrag
 
   -- Настройка запрета перемещения:
   local UseDrag = self.RectMenu.UseDrag
+
   return UseDrag == nil and true or UseDrag
+
 end ---- StartDrag
 
 -- Обработка конца перемещения.
 function TMenu:StopDrag (hDlg, Flag) --> (bool)
+
   -- Успешное перемещение
   if Flag == 0 then
     -- Настройка хранения позиции:
@@ -2266,36 +2641,44 @@ function TMenu:StopDrag (hDlg, Flag) --> (bool)
         local DlgRect = GetRect(hDlg)
         local AreaName = self.Area.Name or "common"
         Origin.HisData[AreaName] = { x = DlgRect.Left, y = DlgRect.Top, }
+
       end
     end
   end
 
   return self:HandleEvent("OnStopDrag", hDlg, Flag)
+
 end ---- StopDrag
 
 -- Пользовательская обработка выделения пункта.
 function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|bool)
+
   self.SelectKind = Kind
   --[[local OnSelectItem = self.RectMenu.OnSelectItem
 
   if OnSelectItem then
     OnSelectItem(Kind, Index)
+
   end
 
   return true]]
 
   return self:HandleEvent("OnSelectItem", hDlg, Kind, Index)
+
 end ---- SelectItem
 
 -- Пользовательская обработка выбора пункта.
 function TMenu:ChooseItem (hDlg, Kind, Index, ...) --> (nil|bool)
+
   self.ChooseKind = Kind
 
   if not self.RectMenu.OnChooseItem then
     return CloseDialog(hDlg)
+
   end
 
   return self:HandleEvent("OnChooseItem", hDlg, Kind, Index, ...)
+
 end ---- ChooseItem
 
 -- Обработка выбора пункта по умолчанию.
@@ -2308,6 +2691,7 @@ function TMenu:DefaultChooseItem (hDlg, Kind, ...) --> (bool)
   if SelIndex and self.List[SelIndex].grayed then return true end
 
   return self:ChooseItem(hDlg, Kind, self:GetSelectIndex(), ...) or false
+
 end ---- DefaultChooseItem
 
 ---------------------------------------- Menu drawing
@@ -2344,12 +2728,14 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
     } --- Options
 
     return DrawItemText(Rect, Color, Item, Options)
+
   -- [[
   else -- Пустое место под пункт меню:
     return DrawClearItemText(Rect, Rect.Colors.Form, RM.SpacingChar)
 
   end -- if
   --]]
+
 end ---- DrawMenuItem
 
 --[[
@@ -2391,10 +2777,12 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
 
   -- Область вывода текста пункта:
   local Rect = {
+
     fixed  = A_Rect.fixed,
     Colors = A_Rect.Colors,
     x = 0, y = 0,
     w = 0, h = 0,
+
   } ---
   local ClearColor = A_Rect.Colors.Form
 
@@ -2412,6 +2800,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       --logShow({ Rect, r, c }, "Draw", 1)
       self:DrawMenuItem(Rect, r, c)
       c, x = c + 1, x + w + Data.ColSep
+
     end
     --logShow({ Rect, r, c, A_Rect, A_Cell }, "Draw end by x", 1)
 
@@ -2420,9 +2809,11 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
       DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
+
     end
 
     r, y = r + 1, y + h + Data.RowSep
+
   end -- while
 
   if y < yLim then
@@ -2430,11 +2821,13 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     Rect.y, Rect.h = y, yLim - y -- Заполнение пустоты:
     --logShow(Rect, "Draw Spaces by y", 1)
     DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
+
   end -- if
   --logShow({ x, xLim }, "Values")
 
   return (y >= yLim or r > A_Cell.rMax) and r - 1 or r,
          (x >= xLim or c > A_Cell.cMax) and c - 1 or c
+
 end ---- DrawMenuPart
 
 -- Draw list of visible menu items.
@@ -2467,8 +2860,11 @@ function TMenu:DrawMenu ()
                      xMax = xMin + xInc,  yMax = yMin + yInc, }
     local A_Cell = { rMin = 1,            rMax = FixRows.Head,
                      cMin = 1,            cMax = FixCols.Head, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Top lines part:
   if FixRows.Head > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2476,8 +2872,11 @@ function TMenu:DrawMenu ()
                      xMax = xMax - xDec,  yMax = yMin + yInc, }
     local A_Cell = { rMin = 1,            rMax = FixRows.Head,
                      cMin = Base.Col,     cMax = FixCols.Max, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Top-Right angle part:
   if FixRows.Head > 0 and FixCols.Foot > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2485,8 +2884,11 @@ function TMenu:DrawMenu ()
                      xMax = xMax,         yMax = yMin + yInc, }
     local A_Cell = { rMin = 1,            rMax = FixRows.Head,
                      cMin = FixCols.Sole, cMax = FixCols.All, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Left lines part:
   if FixCols.Head > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2494,7 +2896,9 @@ function TMenu:DrawMenu ()
                      xMax = xMin + xInc,  yMax = yMax - yDec, }
     local A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
                      cMin = 1,            cMax = FixCols.Head, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
 
   -- Scrollable items part:
@@ -2504,6 +2908,7 @@ function TMenu:DrawMenu ()
   local A_Cell = { rMin = Base.Row,       rMax = FixRows.Max,
                    cMin = Base.Col,       cMax = FixCols.Max, }
   --logShow({ A_Cell, A_Rect }, "Usual cells")
+
   -- Последняя видимая из прокручиваемых ячеек:
   self.Last = RC_cell( self:DrawMenuPart(A_Cell, A_Rect) )
   --logShow(self.Last, "Last viewed cell")
@@ -2515,8 +2920,11 @@ function TMenu:DrawMenu ()
                      xMax = xMax,         yMax = yMax - yDec, }
     local A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
                      cMin = FixCols.Sole, cMax = FixCols.All, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Bottom-Left angle part:
   if FixRows.Foot > 0 and FixCols.Head > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2524,8 +2932,11 @@ function TMenu:DrawMenu ()
                      xMax = xMin + xInc,  yMax = yMax, }
     local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
                      cMin = 1,            cMax = FixCols.Head, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Bottom lines part:
   if FixRows.Foot > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2533,8 +2944,11 @@ function TMenu:DrawMenu ()
                      xMax = xMax - xDec,  yMax = yMax, }
     local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
                      cMin = Base.Col,     cMax = FixCols.Max, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
+
   -- Bottom-Right angle part:
   if FixRows.Foot > 0 and FixCols.Foot > 0 then
     local A_Rect = { fixed = true,        Colors = FixedColors,
@@ -2542,7 +2956,9 @@ function TMenu:DrawMenu ()
                      xMax = xMax,        yMax = yMax, }
     local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
                      cMin = FixCols.Sole, cMax = FixCols.All, }
+
     self:DrawMenuPart(A_Cell, A_Rect)
+
   end
 end ---- DrawMenu
 
@@ -2550,6 +2966,7 @@ end ---- DrawMenu
 local function DrawTitleLine (X, Y, TitleColor, Title, Color, Line, Show)
   if Title == "" then
     return Show(X, Y, Color, Line) -- Только линия
+
   end
 
   -- Линия с текстом:
@@ -2565,6 +2982,7 @@ local function DrawTitleLine (X, Y, TitleColor, Title, Color, Line, Show)
     Title = TextLen > Space and Title:sub(1, TextLen - Space) or ""
     if Title == "" then
       return Show(X, Y, Color, Line) -- Только линия
+
     end
   end
   Delta = bshr(Delta, 1)
@@ -2574,6 +2992,7 @@ local function DrawTitleLine (X, Y, TitleColor, Title, Color, Line, Show)
   Show(X + Delta, Y, TitleColor, (" %s "):format(Title))
   Show(X + Delta + TextLen, Y,
        Color, Line:sub(1, Width - Delta - TextLen))
+
 end -- DrawTitleLine
 
   local SymsBoxChars = uChars.BoxChars
@@ -2596,22 +3015,29 @@ function TMenu:DrawBorderLine () -- --| Border
   local Titles = self.Titles
   local LineH = BoxChars.H:rep(W)
   local LineV = BoxChars.V:rep(H)
+
   HText(X1, Y1, Colors.TL or Color, BoxChars.TL)
   DrawTitleLine(X1 + 1, Y1, Colors.Top or Color, Titles.Top,
                             Colors.Top or Color, LineH, HText)
+
   HText(X2, Y1, Colors.TR or Color, BoxChars.TR)
   DrawTitleLine(Y1 + 1, X1, Colors.Left or Color, Titles.Left,
                             Colors.Left or Color, LineV, YText)
+
   if not Zone.BoxScrollV then
     DrawTitleLine(Y1 + 1, X2, Colors.Right or Color, Titles.Right,
                               Colors.Right or Color, LineV, YText)
   end
+
   HText(X1, Y2, Colors.BL or Color, BoxChars.BL)
+
   if not Zone.BoxScrollH then
     DrawTitleLine(X1 + 1, Y2, Colors.Bottom or Color, Titles.Bottom,
                               Colors.Bottom or Color, LineH, HText)
   end
+
   HText(X2, Y2, Colors.BR or Color, BoxChars.BR)
+
 end ---- DrawBorderLine
 
 -- Информация о полосах прокрутки меню.
@@ -2621,34 +3047,41 @@ function TMenu:CalcScrollBars () --| ScrollBars
 
   -- Расчёт параметров прокруток.
   local SH = { -- Горизонтальная прокрутка:
+
     X1 = DlgRect.Left + Zone.HomeX,
     Y1 = DlgRect.Top  + Zone.LastY + 1,
     X2 = 0, Y2 = 0,
     Length = Zone.Width  - 2, -- За вычетом стрелок
     --Length = Zone.MenuWidth  - 2, -- За вычетом стрелок
+
   } --- SH
   SH.X2, SH.Y2 = SH.X1 + SH.Length + 1, SH.Y1
 
   local SV = { -- Вертикальная прокрутка:
+
     X1 = DlgRect.Left + Zone.LastX + 1,
     Y1 = DlgRect.Top  + Zone.HomeY,
     X2 = 0, Y2 = 0,
     Length = Zone.Height - 2, -- За вычетом стрелок
     --Length = Zone.MenuHeight - 2, -- За вычетом стрелок
+
   } --- SV
   SV.X2, SV.Y2 = SV.X1, SV.Y1 + SV.Length + 1
 
   self.ScrollBars = { ScrollH = SH, ScrollV = SV, }
+
 end ---- CalcScrollBars
 
 -- Расчёт параметров каретки прокрутки.
 local function ScrollCaret (ALen, Lin, Count) --> (Pos, Len, End)
+
   local Len = max2(1, divr(ALen, Count))
   local Pos = min2(divr(ALen * (Lin - 1), Count) + 1, ALen)
   --logShow({ ALen, Lin, Count, '-------', Len, Pos, Pos + Len - 1 }, "ScrollCaret")
   if Count > 1 then Len = min2(Len, ALen - Pos + 1) end
 
   return Pos, Len, Pos + Len - 1 -- Допустимые значения
+
 end -- ScrollCaret
 
 local BoxDrawings = uChars.BoxDrawings
@@ -2668,10 +3101,12 @@ local ArrowX = BlackShapes.Romb  -- Стрелки: пересечение по�
 
 -- Формирование рисунка полосы прокрутки.
 local function ScrollBar (Bar) --> (string)
+
   local Head, Tail = Bar.Pos - 1, Bar.Length - Bar.End
   return ((Head > 0) and Strap:sub(1, Head) or "")..
          Caret:sub(1, Bar.Len)..
          ((Tail > 0) and Strap:sub(1, Tail) or "")
+
 end -- ScrollBar
 
 -- Рисование полос прокрутки меню.
@@ -2699,6 +3134,7 @@ function TMenu:DrawScrollBars ()
                                             Fixes.Alter)
     -- Рисунок полосы прокрутки (+ стрелки).
     HText(Bar.X1, Bar.Y1, Color, ArrowL..ScrollBar(Bar)..ArrowR)
+
   end
 
   -- Вывод вертикальной прокрутки:
@@ -2711,10 +3147,12 @@ function TMenu:DrawScrollBars ()
     --logShow(SV, "DrawScrollBarV")
     -- Рисунок полосы прокрутки (+ стрелки).
     VText(Bar.X1, Bar.Y1, Color, ArrowU..ScrollBar(Bar)..ArrowD)
+
   end
 
   if Zone.ScrolledH and Zone.ScrolledV then -- "Пересечение":
     HText(Bars.ScrollH.X2 + 1, Bars.ScrollV.Y2 + 1, Color, ArrowX)
+
   end
 end ---- DrawScrollBars
 
@@ -2725,11 +3163,13 @@ function TMenu:DrawStatusBar ()
 
   local DlgRect = self.DlgRect
   self.StatusBar = {
+
     x = DlgRect.Left + Zone.HomeX,
     y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
     h = 1,
     --h = Zone.EdgeB,
     w = Zone.Width,
+
   }
   --logShow({ self.StatusBar, DlgRect }, "DrawStatusBar")
 
@@ -2740,6 +3180,7 @@ function TMenu:DrawStatusBar ()
   --if Hint ~= "" then logShow(self.StatusBar, Hint) end
 
   return DrawLineText(self.StatusBar, self.Colors.StatusBar, Hint)
+
 end ---- DrawStatusBar
 
 function TMenu:DrawZoneEdges ()
@@ -2755,12 +3196,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.TL then
     local Rect = {
+
       x = DlgRect.Left,
       y = DlgRect.Top,
       h = Zone.EdgeT,
       w = Zone.EdgeL,
+
     }
     --logShow(Rect, "DrawZoneEdges: TL")
+
     DrawRectText(Rect, Colors.TL or Color,
                  Texts.TL, RM.SpacingChar,
                  Item, self)
@@ -2768,12 +3212,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.Top then
     local Rect = {
+
       x = DlgRect.Left + Zone.EdgeL,
       y = DlgRect.Top,
       h = Zone.EdgeT,
       w = Zone.BoxWidth,
+
     }
     --logShow(Rect, "DrawZoneEdges: Top")
+
     DrawRectText(Rect, Colors.Top or Color,
                 Texts.Top, RM.SpacingChar,
                 Item, self)
@@ -2781,12 +3228,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.TR then
     local Rect = {
+
       x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
       y = DlgRect.Top,
       h = Zone.EdgeT,
       w = Zone.EdgeR,
+
     }
     --logShow(Rect, "DrawZoneEdges: TR")
+
     DrawRectText(Rect, Colors.TR or Color,
                  Texts.TR, RM.SpacingChar,
                  Item, self)
@@ -2794,12 +3244,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.Left then
     local Rect = {
+
       x = DlgRect.Left,
       y = DlgRect.Top + Zone.EdgeT,
       h = Zone.BoxHeight,
       w = Zone.EdgeL,
+
     }
     --logShow(Rect, "DrawZoneEdges: Left")
+
     DrawRectText(Rect, Colors.Left or Color,
                  Texts.Left, RM.SpacingChar,
                  Item, self)
@@ -2807,12 +3260,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.Right then
     local Rect = {
+
       x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
       y = DlgRect.Top + Zone.EdgeT,
       h = Zone.BoxHeight,
       w = Zone.EdgeR,
+
     }
     --logShow(Rect, "DrawZoneEdges: Right")
+
     DrawRectText(Rect, Colors.Right or Color,
                  Texts.Right, RM.SpacingChar,
                  Item, self)
@@ -2820,12 +3276,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.BL then
     local Rect = {
+
       x = DlgRect.Left,
       y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
       h = Zone.EdgeB,
       w = Zone.EdgeL,
+
     }
     --logShow(Rect, "DrawZoneEdges: BL")
+
     DrawRectText(Rect, Colors.BL or Color,
                  Texts.BL, RM.SpacingChar,
                  Item, self)
@@ -2833,12 +3292,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.Bottom then
     local Rect = {
+
       x = DlgRect.Left + Zone.EdgeL,
       y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
       h = Zone.EdgeB,
       w = Zone.BoxWidth,
+
     }
     --logShow(Rect, "DrawZoneEdges: Bottom")
+
     DrawRectText(Rect, Colors.Bottom or Color,
                  Texts.Bottom, RM.SpacingChar,
                  Item, self)
@@ -2846,12 +3308,15 @@ function TMenu:DrawZoneEdges ()
 
   if Texts.BR then
     local Rect = {
+
       x = DlgRect.Left + Zone.HomeX + Zone.BoxWidth  + Zone.BoxGage,
       y = DlgRect.Top  + Zone.HomeY + Zone.BoxHeight + Zone.BoxGage,
       h = Zone.EdgeB,
       w = Zone.EdgeR,
+
     }
     --logShow(Rect, "DrawZoneEdges: BR")
+
     DrawRectText(Rect, Colors.BR or Color,
                  Texts.BR, RM.SpacingChar,
                  Item, self)
@@ -2864,6 +3329,7 @@ function TMenu:DoUserDraw ()
   if not RunEvent then return end
 
   return RunEvent(self)
+
 end ---- DoUserDraw
 
 function TMenu:DrawDebugInfo ()
@@ -2872,6 +3338,7 @@ function TMenu:DrawDebugInfo ()
 
   local function DbgText (x, y, s)
     HText(x, y, Color, s)
+
   end --
 
   local DlgRect = self.DlgRect
@@ -2879,6 +3346,7 @@ function TMenu:DrawDebugInfo ()
 
   local function DbgDraw (x, y, s)
     HText(X + x, Y + y, Color, s)
+
   end --
 
   local Zone = self.Zone
@@ -2900,14 +3368,18 @@ function TMenu:DrawDebugInfo ()
                    Data.Row or -1,
                    Data.Col or -1,
                    Data.Index or -1)
+
       DbgText(Bar.x + 1 + 1, Bar.y, s)
+
     end
 
     DbgText(Bar.x + Bar.w - 1, Bar.y + Bar.h - 1, "⟩")
-  end
+
+  end -- if
 
   if self.DebugClickChar then
     DbgDraw(Zone.HomeX - 1, Zone.HomeY - 1, self.DebugClickChar)
+
   end
 end ---- DrawDebugInfo
 
@@ -2917,6 +3389,7 @@ function TMenu:DoMenuDraw (DlgRect)
   --logShow(DlgRect, "DoMenuDraw")
   if DlgRect then
     self.DlgRect = DlgRect
+
   end
 
   self:DrawMenu() -- Видимые пункты меню
@@ -2927,26 +3400,32 @@ function TMenu:DoMenuDraw (DlgRect)
 
   if Zone.BoxGage > 0 then
     self:DrawBorderLine() -- Рамка вокруг меню
+
   end
 
   if Zone.ScrolledH or Zone.ScrolledV then
     self:DrawScrollBars() -- Полосы прокрутки
+
   end
 
   if RM.IsStatusBar then
     self:DrawStatusBar() -- Статусная строка
+
   end
 
   if RM.IsDrawEdges then
     self:DrawZoneEdges() -- Рисование отступов
+
   end
 
   if RM.IsUserDraw then
     self:DoUserDraw() -- Пользовательское рисование
+
   end
 
   if RM.IsDebugDraw then
     self:DrawDebugInfo() -- Отладочные сведения
+
   end
 
   return true
@@ -2954,6 +3433,7 @@ end ---- DoMenuDraw
 
 ---------------------------------------- main
 local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
+
   if not Items then return end
 
   --logShow(Properties, "Properties", 2)
@@ -2983,11 +3463,16 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   -- ОБРАБОТЧИКИ УСТАНОВКИ ЦВЕТОВ:
   -- Установка цветов как у меню.
   local function DlgGetCtlColor (hDlg) --> (Color)
+
     return _Menu.Colors.Form -- Цвет окна
+
   end
+
   --[[ -- DEPRECATED !!!
   local function DlgGetBoxColor (hDlg) --> (Color)
+
     return _Menu.Colors.DlgBox -- Цвет рамки и текста на рамке
+
   end
   --]]
 
@@ -2995,10 +3480,12 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработка рисования меню:
   local function DlgItemDraw (hDlg, ProcItem, DlgItem) --> (bool)
+
     local Form = _Menu.Form
     if not Form then return end
 
     return _Menu:DoMenuDraw(GetRect(hDlg))
+
   end -- DlgItemDraw
 
 --[[ 2.2. Обработка реакции меню ]] --> AssignEvents
@@ -3008,36 +3495,45 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработка управления клавиатурой.
   local function DlgKeyInput (hDlg, ProcItem, Input) --> (bool)
-    --logShow(_Menu, "_Menu", "d1 bns")
 
+    --logShow(_Menu, "_Menu", "d1 bns")
     --logShow(Input, ProcItem, "d1 x8")
+
     local StrKey = InputRecordToName(Input) or ""
     Input.Name = StrKey
     Input.StateName, Input.KeyName = ParseKeyName(StrKey)
     if Input.KeyName == "" and Input.StrName then
       Input.KeyName = Input.StrName
+
     end
     --logShow(Input, StrKey, "d1 x8")
 
     -- 1. Обработка специальных нажатий.
     if StrKey == "F1" then -- Получение помощи:
       return farUt.ShowHelpTopic(_Menu.Props.HelpTopic)
+
     end
+
     if StrKey == "Esc" then return end -- Отмена
+
     if StrKey == "Enter" or StrKey == "NumEnter" then -- Выбор пункта:
       return _Menu:DefaultChooseItem(hDlg, "Enter")
+
     end
 
     -- 2. Обработка обычных нажатий.
     return _Menu:DoKeyPress(hDlg, Input)
+
   end -- DlgKeyInput
 
   local Mouse_ButtonNumbers = {
+
     [F.FROM_LEFT_1ST_BUTTON_PRESSED]    =  1,
     [F.FROM_LEFT_2ND_BUTTON_PRESSED]    =  2,
     [F.FROM_LEFT_3RD_BUTTON_PRESSED]    =  3,
     [F.FROM_LEFT_4TH_BUTTON_PRESSED]    =  4,
     [F.RIGHTMOST_BUTTON_PRESSED]        = -1,
+
   } --- Mouse_ButtonNumbers
 
   local Mouse_LeftBtn   = F.FROM_LEFT_1ST_BUTTON_PRESSED
@@ -3048,7 +3544,6 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработка прокрутки мышью.
   local function DlgMouseWheel (hDlg, ProcItem, Input) --> (bool)
-    local Input = Input
 
     local Delta = bshr(Input.ButtonState, 16)
     if Delta >= 0x8000 then Delta = Delta - 0x10000 end
@@ -3056,11 +3551,14 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     if     Input.EventFlags == Mouse_WheeledV then
       --logShow({ Delta, Input }, ProcItem, "d3")
       Input.StrName = Delta >= 0 and "MSWheelUp" or "MSWheelDown"
+
     elseif Input.EventFlags == Mouse_WheeledH then
       --logShow(Input, ProcItem, "d3 x1")
       Input.StrName = Delta >= 0 and "MSWheelRight" or "MSWheelLeft"
+
     else
       return false
+
     end
 
     Input.EventType = F.KEY_EVENT
@@ -3068,6 +3566,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     Input.UnicodeChar = ""
 
     return DlgKeyInput(hDlg, ProcItem, Input)
+
   end -- DlgMouseWheel
 
   -- Обработка управления мышью.
@@ -3078,7 +3577,6 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --logShow({ Mouse_DblClick, Mouse_Moved, '-',
     --          Mouse_WheeledV, Mouse_WheeledH, '-', }, ProcItem, 3)
 
-    local Input = Input
     --logShow(Input, ProcItem, 3)
     --if not Input.X then logShow(Input, ProcItem, 3) end
 
@@ -3099,17 +3597,25 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
       if Zone.ScrolledH and y == Zone.Height and
          x >= 0         and x <  Zone.Width then
         --logShow({ x, y, Zone = Zone, }, "H", 3)
+
         return _Menu:ScrollHClick(hDlg, Input)
+
       end
+
       if Zone.ScrolledV and x == Zone.Width and
          y >= 0         and y <  Zone.Height then
         --logShow({ x, y, Zone = Zone }, "V", 3)
+
         return _Menu:ScrollVClick(hDlg, Input)
+
       end
+
       if Zone.ScrolledH and y == Zone.Height and
          Zone.ScrolledV and x == Zone.Width then
         --logShow({ x, y, Zone = Zone, }, "C", 3)
+
         return _Menu:ScrollXClick(hDlg, Input) -- "Пересечение"
+
       end
 
       do -- Обработка областей вне меню.
@@ -3129,6 +3635,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
               Kind = Kind..(x == -1 and "L" or x == w and "R" or "")
 
               return _Menu:MouseBorderClick(hDlg, Kind, Input)
+
             end
           end
 
@@ -3142,20 +3649,27 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
           if y < 0 then
             r = y + Zone.EdgeT + g
             if r < 0 then return false end
+
           elseif y >= h then
             r = y - h - g
             if r >= Zone.EdgeB then return false end
+
           else
             r = y + g
+
           end
+
           if x < 0 then
             c = x + Zone.EdgeL + g
             if c < 0 then return false end
+
           elseif x >= w then
             c = x - w - g
             if c >= Zone.EdgeR then return false end
+
           else
             c = x + g
+
           end
 
           Input.r = r + 1
@@ -3163,14 +3677,17 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
           --logShow(Input, Kind, 1)
           return _Menu:MouseEdgeClick(hDlg, Kind, Input) -- Край
+
         end
       end -- do
 
       -- Обработка выбором мышью.
       return _Menu:MouseClick(hDlg, Input)
+
     end -- if
 
     return false
+
   end -- DlgMouseInput
 
   -- Обработка управления клавиатурой и мышью.
@@ -3182,27 +3699,32 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     if EventType == F.KEY_EVENT or
        EventType == F.FARMACRO_KEY_EVENT then
       return DlgKeyInput(hDlg, ProcItem, Input)
+
     end
 
     if EventType == F.MOUSE_EVENT then
       if Input.EventFlags == Mouse_WheeledV or
          Input.EventFlags == Mouse_WheeledH then
         return DlgMouseWheel(hDlg, ProcItem, Input) -- FIX
+
       end
 
       if not _Menu.RectMenu.DoMouseEvent and
          Input.ButtonState == Mouse_LeftBtn then
         return DlgMouseInput(hDlg, ProcItem, Input)
+
       end
     end
 
     return false
+
   end -- DlgCtrlInput
 
   -- Предобработка управления мышью.
   local function DlgPredInput (hDlg, ProcItem, Input) --> (bool)
-    local Input = Input
+
     --logShow(Input, ProcItem, 3)
+
     if Input.EventType ~= F.MOUSE_EVENT then return true end
 
     if Input.EventFlags == Mouse_Moved then return true end
@@ -3210,6 +3732,7 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     local Zone = _Menu.Zone
     local DlgRect = GetRect(hDlg)
     local x, y = Input.MousePositionX, Input.MousePositionY
+
     Input.X = x
     Input.Y = y
     Input.MousePositionX = x - DlgRect.Left - Zone.HomeX
@@ -3219,43 +3742,55 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
        Input.EventFlags == Mouse_WheeledH then
       --logShow(Input, ProcItem, 3)
       return not DlgMouseWheel(hDlg, ProcItem, Input)
+
     end
 
     if Input.ButtonState == Mouse_LeftBtn then
       --logShow({ Input, Zone }, ProcItem, 2)
       return not DlgMouseInput(hDlg, ProcItem, Input)
+
     end
     --logShow({ Input, Zone }, ProcItem, 2)
 
     return true
+
   end -- DlgPredInput
 
   local function DlgDragDialog (hDlg, Moment, Flag) --> (bool)
+
     if Moment == 0 then
       return _Menu:StartDrag(hDlg)
+
     else
       return _Menu:StopDrag(hDlg, Flag)
+
     end
   end -- DlgDragDialog
 
   -- Инициализация обработки.
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
+
     if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
       SendDlgMessage(hDlg, F.DM_SETMOUSEEVENTNOTIFY, 1, 0)
+
     end
 
     return true
+
   end -- DlgInit
 
   --[[
   local function DlgClose (hDlg, ProcItem, NoUse) --> (bool)
+
     -- Закрытие только при правильном выборе пункта меню:
     if NoDlgClose then NoDlgClose = false; return false else return true end
+
   end --
   --]]
 
   -- Ссылки на обработчики событий:
   local Procs = {
+
     [F.DN_INITDIALOG] = DlgInit,
     --[F.DN_CLOSE] = DlgClose,
 
@@ -3272,7 +3807,9 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
 
   -- Обработчик событий.
   local function DlgProc (hDlg, msg, param1, param2)
+
     return Procs[msg] and Procs[msg](hDlg, param1, param2) or nil
+
   end --
 
   if useprofiler then profiler.stop() end
@@ -3283,9 +3820,11 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
     --logShow(res, "Menu")
     --return res
     return _Menu:Show(DlgProc) -- Отображение окна диалога меню
+
   end
 
   return _Menu -- Возврат самого меню
+
 end -- Menu
 
 --------------------------------------------------------------------------------

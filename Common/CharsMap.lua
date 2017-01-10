@@ -149,6 +149,7 @@ local function CreateMain (ArgData)
   local self = {
     ArgData   = addNewData(ArgData, unit.DefCfgData),
     FarArea   = farUt.GetBasicAreaType(),
+    InsArea   = farUt.GetAreaType(),
 
     Custom    = false,
     Options   = false,
@@ -1106,9 +1107,17 @@ function TMain:StopCodeInput (Data)
 
   self.IsCodeInput = false
   self.Props.Bottom = ""
-  self.Char = self:FindCodeInput() or Data.Char
+  --self.Char = self:FindCodeInput() or Data.Char
 
 end ---- StopCodeInput
+
+function TMain:GotoCodeInput (Data)
+
+  self.Char = self:FindCodeInput() or Data.Char
+
+  return true
+
+end ---- GotoCodeInput
 
 function TMain:EditCodeInput (SKey)
 
@@ -1250,18 +1259,21 @@ function TMain:EditCharInput (SKey)
       Input = Input:sub(1, -2)
 
     end
+
   elseif SKey == "CtrlV" then
     local s = far.PasteFromClipboard()
     if type(s) == 'string' and s ~= "" then
       Input = s
 
     end
+
   else
     --if Input:len() < 4 then
       if SKey == "Space" then SKey = " " end
       Input = Input..SKey
 
     --end
+
   end
 
   self.Input = Input
@@ -1284,9 +1296,10 @@ do
 
 -- Вывод символа.
 function TMain:PrintChar (Data)
+
   --logShow(Data, "PrintChar")
   if type(Data.char) == 'string' then
-    return farUt.InsertText(nil, Data.char)
+    return farUt.InsertText(self.InsArea, Data.char)
 
   end
 end ---- PrintChar
@@ -1316,6 +1329,7 @@ do
   end --
 
   local CodeInputActions = {
+
     ["1"] = true,
     ["2"] = true,
     ["3"] = true,
@@ -1338,6 +1352,7 @@ do
   } --- CodeInputActions
 
   local CharInputActions = {
+
     ["BS"] = true,
     ["CtrlV"] = true,
     ["Space"] = true,
@@ -1345,6 +1360,7 @@ do
   } --- CharInputActions
 
   local UniCharInputActions = {
+
     ["^"] = true,
     ["$"] = true,
     ["("] = true,
@@ -1369,6 +1385,7 @@ do
   local tonumber = tonumber
 
   local AlterActions = {
+
     Alt1 = true,
     Alt2 = true,
     Alt3 = true,
@@ -1393,7 +1410,9 @@ do
 function TMain:AssignEvents () --> (bool | nil)
 
   local function MakeUpdate () -- Обновление!
+
     farUt.RedrawAll()
+
     self:Make()
     --logShow(self.Items, "MakeUpdate")
     if not self.Items then return nil, CloseFlag end
@@ -1405,6 +1424,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш.
   local function KeyPress (Input, ItemPos)
+
     local SKey = Input.Name --or InputRecordToName(Input)
     if SKey == "Esc" then return nil, CancelFlag end
     --if SKey == "Enter" then return end
@@ -1418,8 +1438,13 @@ function TMain:AssignEvents () --> (bool | nil)
     --   (см. макросы для вставки символов в редактор) - через config!
 
     local isUpdate = true
-    if SKey == "CtrlB" then
+    if SKey == "CtrlEnter" or
+       SKey == "CtrlNumEnter" then
+      return { Kind = "CtrlEnter", }, CloseFlag
+
+    elseif SKey == "CtrlB" then
       if not CharsBlocks then return end
+
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
         self.Char = Char
@@ -1428,6 +1453,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif SKey == "CtrlF" then
       -- WARN: Код пока частично дублируется в обоих ветках!
       if self.IsCharInput then
@@ -1454,6 +1480,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
       else
         local c = CharsNames[Data.Char]
+
         self.Input = (c and c.name or ""):lower()
         --logShow({ self.Input }, Data.char)
 
@@ -1483,6 +1510,7 @@ function TMain:AssignEvents () --> (bool | nil)
         self:FillInputCount()
 
       end
+
     elseif SKey == "CtrlC" then
       local s = Data.char
       if type(s) == 'string' and s ~= "" then
@@ -1511,6 +1539,7 @@ function TMain:AssignEvents () --> (bool | nil)
         end
 
       end
+
     elseif SKey == "CtrlShiftV" then
       -- Paste as Code Point
       local s = far.PasteFromClipboard()
@@ -1522,6 +1551,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif SKey == "Divide" then
       if self.IsCodeInput then
         self:StopCodeInput(Data)
@@ -1533,6 +1563,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif SKey == "ShiftDivide" then
       if self.IsCharInput then
         self:StopCharInput(Data)
@@ -1544,6 +1575,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif self.IsCodeInput then
       if CodeInputActions[SKey] then
         self:EditCodeInput(SKey)
@@ -1552,8 +1584,10 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif self.IsCharInput then
       --logShow(Input, SKey)
+
       local KeyChar = Input.KeyName
       local UniChar = Input.UnicodeChar
       if UniCharInputActions[UniChar or ""] then
@@ -1586,9 +1620,11 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif SKey == "CtrlAltX" then
       local s = Data.char
       --local s = u8char(Data.Char)
+
       local Char = far.XLat(s, 1, 1)
       Char = Char and Char ~= s and CharToCode(Char)
       if Char ~= 0x0000 then
@@ -1598,6 +1634,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif AlterActions[SKey] then
       self.Char = tonumber(Input.UnicodeChar.."000", 16)
       --logShow(self.Char, SKey)
@@ -1613,10 +1650,12 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
-    end -- SKey
+
+    end -- if SKey
 
     if isUpdate then
       self:LimitChar()
+
       return MakeUpdate()
 
     end
@@ -1627,6 +1666,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия клавиш навигации.
   local function NavKeyPress (AKey, VMod, ItemPos)
+
     --if self.IsCodeInput then return end
 
     local AKey, VMod = AKey, VMod
@@ -1637,6 +1677,7 @@ function TMain:AssignEvents () --> (bool | nil)
     local isUpdate = true
     if VMod == 0 then
       --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
+
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
 
@@ -1666,6 +1707,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
@@ -1680,6 +1722,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self.Char = self.DefChar
@@ -1718,6 +1761,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     if isUpdate then
       self:LimitChar()
+
       return MakeUpdate()
 
     end
@@ -1728,6 +1772,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
   -- Обработчик нажатия мыши на отступе.
   local function EdgeClick (Kind, Input, ItemPos)
+
     --logShow(Input, Kind)
 
     local Data = self.Items[ItemPos].Data
@@ -1745,6 +1790,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     else
       isUpdate = false
 
@@ -1752,6 +1798,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     if isUpdate then
       self:LimitChar()
+
       return MakeUpdate()
 
     end
@@ -1770,6 +1817,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     self.Date = Data[Data.State]
     if Data.d <= 0 then return end
+
     self.Date.d = Data.d
 
     return self:FillInfoPart()
@@ -1782,12 +1830,14 @@ function TMain:AssignEvents () --> (bool | nil)
 
     local Data = self.Items[ItemPos].Data
     if not Data then return end
+    --logShow(Data, "ChooseItem")
 
     if Kind == "Enter" then
 
       local isUpdate = true
       if     self.IsCodeInput then
         self:StopCodeInput(Data)
+        self:GotoCodeInput(Data)
 
       elseif self.IsCharInput then
         self:GotoCharInput(Data)
@@ -1799,10 +1849,22 @@ function TMain:AssignEvents () --> (bool | nil)
 
       if isUpdate then
         self:LimitChar()
+
         return MakeUpdate()
 
       end
-    end
+
+      --logShow(Data, "ChooseItem")
+      --self:PrintChar(Data)
+
+      --return true
+
+    elseif Kind == "CtrlEnter" then
+      self:PrintChar(Data)
+
+      return true, CompleteFlags
+
+    end -- if Kind
 
     self:SaveData(Data)
 
@@ -1825,6 +1887,7 @@ end --
 ---------------------------------------- ---- Action
 
 function TMain:Apply () --> (item, pos)
+
   return self:PrintChar(self.ActItem.Data)
 
 end ---- Apply
@@ -1832,6 +1895,7 @@ end ---- Apply
 ---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
+
   return usercall(nil, unit.RunMenu, self.Props, self.Items, self.Keys)
 
 end ---- ShowMenu
