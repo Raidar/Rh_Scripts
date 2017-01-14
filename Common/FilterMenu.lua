@@ -60,6 +60,7 @@ local RunMenu = require "Rh_Scripts.RectMenu.RectMenu"
 ---------------------------------------- Keys
 -- Символы спец. клавиш:
 local SpecKeyChars = {
+
   Decimal   = '.',
   Multiply  = '*',
   Add       = '+',
@@ -84,10 +85,10 @@ local ItemChecks = { -- Проверки на шаблон:
   -- Простая проверка текста на шаблон Lua.
   pattern = function (Text, Pattern, Item)
 
-    local Pattern = Pattern
     if Pattern:sub(-1, -1) == '%' and -- Exclude single escape character
        Pattern:sub(-2, -2) ~= '%' then
       Pattern = Pattern:sub(1, -2)
+
     end
 
     return Text:cfind(Pattern)
@@ -98,10 +99,10 @@ local ItemChecks = { -- Проверки на шаблон:
   -- Стандартная проверка путей, имён файлов и каталогов на шаблон.
   dos = function (Text, Pattern, Item) -- Using '*' and '?' for text checking:
 
-    local Pattern = Pattern:gsub("%*+", "*") -- Exclude extra asterisks
-                    --:gsub("[%p%-+^$&]", "%%%1")-- Escape special characters
-                    :gsub("[%p%-%+%^%$%&]", "%%%1")-- Escape special characters
-                    :gsub("%%[?*]", {["%?"]=".", ["%*"]=".-"}) -- Use wildcards
+    Pattern = Pattern:gsub("%*+", "*") -- Exclude extra asterisks
+              --:gsub("[%p%-+^$&]", "%%%1")-- Escape special characters
+              :gsub("[%p%-%+%^%$%&]", "%%%1")-- Escape special characters
+              :gsub("%%[?*]", {["%?"]=".", ["%*"]=".-"}) -- Use wildcards
 
     return Text:cfind(Pattern)
 
@@ -111,6 +112,7 @@ local ItemChecks = { -- Проверки на шаблон:
 
 ---------------------------------------- Menu class
 local TMenu = {
+
   Guid = win.Uuid("3751918c-5cd0-4b56-8d32-13898f612930"),
 
 }
@@ -128,6 +130,7 @@ local function CreateMenu (Properties, Items, BreakKeys) --> (object)
   local Options = Properties.Filter or {}
 
   local self = {
+
     Props     = Properties,
     Items     = Items,
     BKeys     = BreakKeys or {},
@@ -158,6 +161,7 @@ local function MakeCheck (CheckItem) --> (func)
     Check = ItemChecks[CheckItem] or ItemChecks.plain
 
     return function (Text, Pattern, Item) --> (pos, end | nil)
+
       if Pattern == "" then return end
 
       return Check(Text:lower(), Pattern, Item)
@@ -173,6 +177,7 @@ local function MakeCheck (CheckItem) --> (func)
   local Left, Right = Info.Left, Info.Right
   if type(Check) == 'string' then Check = ItemChecks[Check] end
   Check = Check or ItemChecks.plain
+
   local fixPos = function (p, a, b) if a then return a + p, b + p end end
 
   -- 4. Функция с применением параметров фильтрации:

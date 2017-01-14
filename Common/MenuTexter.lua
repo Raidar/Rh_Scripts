@@ -159,7 +159,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
 
   --logShow(Menu, "Menu", 1)
   --logShow(Options, "Menu Options")
-  local textMax = 0 -- Макс. длина текста пунктов меню
+  local textMax --= 0 -- Макс. длина текста пунктов меню
   local skeyMax = 0 -- Макс. длина названий клавиш пунктов меню
   local captMax = 0 -- Макс. длина надписей в меню
 
@@ -167,6 +167,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
   local textLen = function (Item, i, k)
     local textStr = Item.Captext -- Длина надписи
     if self.isHot then textStr = ClearHotText(textStr, '&') end
+
     return textStr:len()
 
   end-- function textLen
@@ -177,6 +178,7 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
   if Options.TextNamedKeys then -- Макс. длина комбинаций клавиш
     skeyMax = FieldMax(Menu, self.Count, nil, "AccelStr")
     textMax = textMax + skeyMax
+
     --logShow({ textMax, skeyMax }, "Max")
 
   end
@@ -194,7 +196,9 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
       captMax = max2(captMax, self.Props.Bottom:len())
 
     end
+
     captMax = captMax + 2 -- Учёт рамки окна на краях
+
   end
 
   local LAlign = "" -- Текст центрирования
@@ -204,12 +208,14 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
       captDif = captDif - MenuLSign:len() - MenuRSign:len()
 
     end
+
     if captDif > 0 then -- Учёт поправки:
       local captSep = divf(captDif, 2)
       LAlign = spaces[captSep] -- Центрирование
       textMax = textMax + captDif - captSep -- Поправка на надписи
 
     end
+
   else
     textMax = max2(textMax, captMax)
 

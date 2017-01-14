@@ -26,6 +26,7 @@ local useprofiler = false
 if useprofiler then
   require "profiler" -- Lua Profiler
   profiler.start("Calendar.log")
+
 end
 
 ----------------------------------------
@@ -73,6 +74,7 @@ unit.RunMenu = usercall(nil, require, "Rh_Scripts.RectMenu.RectMenu")
 
 ---------------------------------------- ---- Custom
 unit.DefCustom = {
+
   name = unit.ScriptName,
   path = unit.ScriptPath,
 
@@ -83,12 +85,14 @@ unit.DefCustom = {
     kind = 'load',
     --file = unit.FileName,
     --path = unit.FilePath,
+
   }, --
 
 } -- DefCustom
 
 ----------------------------------------
 unit.DefOptions = {
+
   BaseDir  = "Rh_Scripts.Common."..unit.ScriptName..".",
 
 } -- DefOptions
@@ -97,12 +101,14 @@ unit.DefOptions = {
 local L, e1, e2 = locale.localize(unit.DefCustom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 logShow(L, "L", "wM")
 --]]
 ---------------------------------------- ---- Config
 unit.DefCfgData = { -- Конфигурация по умолчанию:
+
 } -- DefCfgData
 
 ---------------------------------------- ---- Types
@@ -113,6 +119,7 @@ unit.DefCfgData = { -- Конфигурация по умолчанию:
 
 ---------------------------------------- Main class
 local TMain = {
+
   Guid       = win.Uuid("1b26647b-44b0-4ac6-984d-45cba59568d0"),
   ConfigGuid = win.Uuid("1b537bfd-e907-4836-beff-5ac000823a5b"),
 
@@ -122,6 +129,7 @@ local MMain = { __index = TMain }
 local function CreateMain (ArgData)
 
   local self = {
+
     ArgData   = addNewData(ArgData, unit.DefCfgData),
 
     Custom    = false,
@@ -463,7 +471,7 @@ do
   -- Центрирование выводимого текста. -- TEMP: До реализации в RectMenu!
   local function CenterText (Text, Max) --> (string)
 
-    local Text = Text or ""
+    Text = Text or ""
     local Len = Text:len()
     if Len >= Max then return Text end
 
@@ -726,7 +734,7 @@ function TMain:FillMainPart () --> (bool)
 
       end
 
-      local Text = ""
+      local Text --= ""
       if State == 0 then
         d = d + 1
         --Real.d = d
@@ -916,7 +924,7 @@ function TMain:MakeMenu () --> (table)
   local RowMin, RowMax = Fixed.HeadRows, RowCount - Fixed.FootRows + 1
   for i = 1, ColCount do
     for j = 1, RowCount do
-      t[#t+1] = {
+      t[#t + 1] = {
         text = "",
         Label = true,
         fixed = i <= ColMin or i >= ColMax
@@ -989,7 +997,7 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
 
   local Date = Default:copy()
 
-  local StrDate = StrDate or ""
+  StrDate = StrDate or ""
   if StrDate == "" then return end
   if StrDate:sub(-1, -1) == "-" then
     StrDate = StrDate:sub(1, -2) or ""
@@ -998,7 +1006,6 @@ function TMain:StrToDate (StrDate, StrSign, Default, OnlyMatch) --> (Date)
 
   local _, Count = StrDate:gsub("-", "")
   local IsNeg = StrSign == '-'
-  local OnlyMatch = OnlyMatch
 
   if Count == 0 then
     local y = StrDate:match(DateFmtY)
@@ -1063,7 +1070,7 @@ end ---- StrToDate
 
 function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
 
-  local StrDate = StrDate or ""
+  StrDate = StrDate or ""
   if StrDate == "" then return end
 
   local IsNeg = false
@@ -1081,6 +1088,7 @@ function TMain:PasteToDate (StrDate, Neged, Default, OnlyMatch) --> (Date)
 end ---- PasteToDate
 
 function TMain:MatchYear (StrDate) --> (Date)
+
   return StrDate:match(DateFmtY)
 
 end ---- MatchYear
@@ -1089,6 +1097,7 @@ end -- do
 ---------------------------------------- ---- Input
 
 function TMain:ParseDateInput ()
+
   return self:StrToDate(self.Input, self.Sign, self.Date)
 
 end ---- ParseDateInput
@@ -1105,6 +1114,7 @@ function TMain:StartDateInput (Date, Sign)
 end ---- StartDateInput
 
 function TMain:StopDateInput (Date)
+
   self.IsDateInput = false
   self.Props.Bottom = ""
 
@@ -1195,6 +1205,7 @@ end ---- StopShiftInput
 function TMain:EditShiftInput (SKey)
 
   local SignKeys = {
+
     ["-"]       = "-",
     ["="]       = "+",
     ["Shift-"]  = "-",
@@ -1259,6 +1270,7 @@ do
   local CompleteFlags = { isRedraw = false, isRedrawAll = true }
 
   local DateActions = {
+
     AltLeft     = "dec_m",
     AltRight    = "inc_m",
     AltUp       = "dec_y",
@@ -1267,6 +1279,7 @@ do
   } -- DateActions
 
   local DateInputActions = {
+
     ["1"] = true,
     ["2"] = true,
     ["3"] = true,
@@ -1286,6 +1299,7 @@ do
   } --- DateInputActions
 
   local ShiftInputActions = {
+
     ["1"] = true,
     ["2"] = true,
     ["3"] = true,
@@ -1447,7 +1461,7 @@ function TMain:AssignEvents () --> (bool | nil)
 
     --if self.IsDateInput then return end
 
-    local AKey, VMod = AKey, VMod
+    --logShow({ AKey, VMod })
 
     local Cfg_DT = self.Cfg_DT
     local Data = self.Items[ItemPos].Data
@@ -1466,6 +1480,7 @@ function TMain:AssignEvents () --> (bool | nil)
       --logShow({ AKey, VMod, Date }, ItemPos, "w d2")
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
+
         return MakeUpdate()
 
       elseif AKey == "Left"  and Data.c == 1 then
@@ -1493,9 +1508,12 @@ function TMain:AssignEvents () --> (bool | nil)
 
       end
 
+      --logShow({ AKey, VMod, isUpdate })
+
     elseif IsModCtrl(VMod) then -- CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
+
         return MakeUpdate()
 
       elseif AKey == "PgUp" then
@@ -1522,9 +1540,11 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif IsModAlt(VMod) then -- ALT
       if AKey == "Clear" or AKey == "Multiply" then
         self:InitDateTime()
+
         return MakeUpdate()
 
       elseif AKey == "PgUp" then
@@ -1554,6 +1574,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     elseif IsModCtrlAlt(VMod) then -- ALT+CTRL
       if AKey == "Clear" or AKey == "Multiply" then
         if Date.y == 1 and Date.m == 1 and Date.d == 1 then
@@ -1567,6 +1588,7 @@ function TMain:AssignEvents () --> (bool | nil)
           Date.d = 1
 
         end
+
       elseif AKey == "PgUp" then
         Date.y = (divf(Date.y, 1000) - 1) * 1000 + 1
         Date.m = 1
@@ -1591,6 +1613,7 @@ function TMain:AssignEvents () --> (bool | nil)
         isUpdate = false
 
       end
+
     else
       isUpdate = false
 
@@ -1599,7 +1622,10 @@ function TMain:AssignEvents () --> (bool | nil)
     self.Time = false
 
     if isUpdate then
+      --logShow(Date)
+
       self.Date = self:LimitDate(Date)
+
       return MakeUpdate()
 
     end
@@ -1714,6 +1740,7 @@ end --
 ---------------------------------------- ---- Show
 -- Показ меню заданного вида.
 function TMain:ShowMenu () --> (item, pos)
+
   return usercall(nil, unit.RunMenu, self.Props, self.Items, self.Keys)
 
 end ---- ShowMenu

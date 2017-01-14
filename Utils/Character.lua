@@ -137,19 +137,19 @@ function TCharControl:asPattern (s) --> (string)
   local LuaCards = const.Cards
   for c in s:gmatch('.') do
     if c:find('%a') then -- Учёт регистра символов:
-      t[#t+1] = cfg.MatchCase and c or
-                ("[%s%s]"):format(c:upper(), c:lower())
+      t[#t + 1] = cfg.MatchCase and c or
+                  ("[%s%s]"):format(c:upper(), c:lower())
 
     elseif c == '.' then -- Учёт '.' как "магического":
-      t[#t+1] = (cfg.UseMagic and cfg.UsePoint) and self.CharsSet or '%.'
+      t[#t + 1] = (cfg.UseMagic and cfg.UsePoint) and self.CharsSet or '%.'
 
     elseif cfg.UseMagic and LuaCards:find(c, 1, true) then
                          -- Учёт "магических" модификаторов:
-      t[#t+1] = cfg.UsePoint and c or self.CharsSet..c
+      t[#t + 1] = cfg.UsePoint and c or self.CharsSet..c
 
     else
-      t[#t+1] = c:find('[%p&]') and ("%%%s"):format(c) or c
-      --t[#t+1] = c:find('[%p^$&]') and ("%%%s"):format(c) or c
+      t[#t + 1] = c:find('[%p&]') and ("%%%s"):format(c) or c
+      --t[#t + 1] = c:find('[%p^$&]') and ("%%%s"):format(c) or c
 
     end -- if
   end

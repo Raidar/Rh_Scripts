@@ -88,9 +88,12 @@ unit.DefCustom = {
 
   history = {
     field   = "",
+
   },
+
   locale  = {
     kind    = 'load',
+
   }, --
 
 } -- DefCustom
@@ -111,6 +114,7 @@ logShow(L, "L", "wM")
 --]]
 ---------------------------------------- ---- Config
 unit.DefCfgData = { -- Конфигурация по умолчанию:
+
 } -- DefCfgData
 
 ---------------------------------------- ---- Types
@@ -126,15 +130,18 @@ local MColFilter = { __index = TColFilter }
 
 ---------------------------------------- Main class
 local TMain = {
+
   Guid       = win.Uuid("19500a29-1a9b-4b1b-833c-693d58669963"),
   ConfigGuid = win.Uuid("1991fe2b-e919-480e-8b0a-90b7c960d113"),
 
   Nomens     = {
     Guid       = win.Uuid("19ae6fa2-7ceb-4893-b2a7-fd8b783cc365"),
+
   }, ---
 
   Blocks     = {
     Guid       = win.Uuid("19b4271d-09c2-4671-af59-b043d1698104"),
+
   }, ---
 
 } ---
@@ -147,6 +154,7 @@ local MBlocks   = { __index = TMain.Blocks }
 local function CreateMain (ArgData)
 
   local self = {
+
     ArgData   = addNewData(ArgData, unit.DefCfgData),
     FarArea   = farUt.GetBasicAreaType(),
     InsArea   = farUt.GetAreaType(),
@@ -194,6 +202,7 @@ local function CreateMain (ArgData)
 
       ActItem   = false,    -- Выбранный пункт меню
       ItemPos   = false,    -- Позиция выбранного пункта меню
+
     }, --
 
     Blocks    = {         -- Объект: Блоки символов
@@ -206,6 +215,7 @@ local function CreateMain (ArgData)
 
       ActItem   = false,    -- Выбранный пункт меню
       ItemPos   = false,    -- Позиция выбранного пункта меню
+
     }, --
 
   } --- self
@@ -270,8 +280,6 @@ function TMain:InitData ()
 
 end ---- InitData
 
-  local divf = numbers.divf
-
 -- Инициализация символа.
 function TMain:InitChar ()
 
@@ -308,7 +316,9 @@ function TMain:MakeColors ()
 
   local colors = require 'context.utils.useColors'
   local basics = colors.BaseColors
+
   local Basis = {
+
     StandardFG  = basics.navy,
     --MarkedFG    = basics.red,
     MarkedFG    = basics.black,
@@ -348,6 +358,7 @@ function TMain:MakeProps ()
 
   -- Свойства RectMenu:
   local RM = {
+
     ReuseItems = true,
 
     Order = "H",
@@ -359,6 +370,7 @@ function TMain:MakeProps ()
       FootRows = 1,
       HeadCols = 1,
       FootCols = 1,
+
     },
 
     --MenuEdge = 2,
@@ -388,11 +400,15 @@ function TMain:MakeProps ()
 
       Texts = {
         Bottom = function (k, Rect, Item)
+
           if Item == nil then
             return
+
           end
+
           if     k == 1 then
             return Item.Hint
+
           elseif k == 3 then
             local d = Item.Data
             if type(d) == 'table' then
@@ -400,17 +416,25 @@ function TMain:MakeProps ()
               if not n then
                 n = uBlockName(d.Char or 0)
                 d.BlockName = n
+
               end
+
               return n
+
             end
-          end
+          end -- if-else
+
         end,
-      },
-    },
+
+      }, -- Texts
+
+    }, -- Edges
+
     IsDrawEdges = CharsBlocks and true,
 
     --RectItem = {
     --  TextMark = true,
+    --
     --},
 
   } --- RM
@@ -555,7 +579,7 @@ function TMain:MakeMenu () --> (table)
   -- Формирование пунктов:
   for _ = 1, ColCount do
     for _ = 1, RowCount do
-      t[#t+1] = {
+      t[#t + 1] = {
         text = "",
         Label = true,
 
@@ -624,9 +648,13 @@ function TColFilter:InitFilter ()
 end ---- InitFilter
 
   local function patfind (Text, Pattern)
-    local Pattern = Pattern
-    if Pattern:sub(-1, -1) == '%' and -- Exclude single escape character
-       Pattern:sub(-2, -2) ~= '%' then Pattern = Pattern:sub(1, -2) end
+
+    if Pattern:sub(-1, -1) == '%' and
+       Pattern:sub(-2, -2) ~= '%' then
+      -- Exclude single escape character
+      Pattern = Pattern:sub(1, -2)
+
+    end
 
     return Text:cfind(Pattern)
 
@@ -651,6 +679,7 @@ function TColFilter:MakeFilter ()
   local i = (Fixed.HeadRows or 0) * ColCount --+ FilterCol
   local e = #Items - (Fixed.FootRows or 0) * ColCount
   --logShow({ j, i, e, ColCount, FilterCol, i + FilterCol, Fixed, }, Pattern, 2)
+
   while i + FilterCol <= e do
     local v = Items[i + FilterCol]
     --if v == nil then logShow(i + FilterCol) end
@@ -684,8 +713,8 @@ function TColFilter:MakeFilter ()
     end
 
     for k = i + 1, i + ColCount do
-      local v = Items[k]
-      if v then v.dummy = dummy end
+      local w = Items[k]
+      if w then w.dummy = dummy end
 
     end
 
@@ -909,7 +938,7 @@ function TBlocks:MakeProps () --| (Blocks_Props)
   Props.DefTitle  = L.BlocksCaption
   Props.DefBottom = ""
 
-  local RangeLen = 0
+  local RangeLen --= 0
   do
     local RangeName = L.BlocksColBlockRange
     local RangeNameLen  = RangeName:len()
@@ -1668,8 +1697,6 @@ function TMain:AssignEvents () --> (bool | nil)
   local function NavKeyPress (AKey, VMod, ItemPos)
 
     --if self.IsCodeInput then return end
-
-    local AKey, VMod = AKey, VMod
 
     local Data = self.Items[ItemPos].Data
     if not Data then return end

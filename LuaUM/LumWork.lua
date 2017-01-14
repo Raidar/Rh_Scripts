@@ -48,24 +48,28 @@ function unit.GetFileName (Name, Args) --> (string | nil, error)
 
   local FullExtName = FullName..".example"
   if fexists(FullExtName) then return FullExtName end
+
   FullExtName = FullName..Args.DefExt
   if fexists(FullExtName) then return FullExtName end
 
   if Args.LuaExt ~= Args.DefExt then
-    local FullExtName = FullName..Args.LuaExt
+    FullExtName = FullName..Args.LuaExt
     if fexists(FullExtName) then return FullExtName end
 
   end
 
   if Args.DefPath ~= Args.Path then
-    local FullName = FullNameFmt:format(Args.Base, Args.DefPath, Name)
+    FullName = FullNameFmt:format(Args.Base, Args.DefPath, Name)
     if fexists(FullName) then return FullName end
 
-    local FullExtName = FullName..Args.DefExt
+    --local FullExtName = FullName..".example"
+    --if fexists(FullExtName) then return FullExtName end
+
+    FullExtName = FullName..Args.DefExt
     if fexists(FullExtName) then return FullExtName end
 
     if Args.LuaExt ~= Args.DefExt then
-      local FullExtName = FullName..Args.LuaExt
+      FullExtName = FullName..Args.LuaExt
       if fexists(FullExtName) then return FullExtName end
 
     end
@@ -202,7 +206,8 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
   if Args.Enum and Args.Enum ~= "" then
     Args.CurEnum = Args.Enum
     --logShow({ Args, Props }, "Args and Props", 2)
-    local t, MError = unit.GetFileJoinEnumData(Args, Props)
+    local t
+    t, MError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
     --logShow(Args.CurEnum, MError)
 
@@ -214,7 +219,8 @@ function unit.GetFileEnumData (Args, Props) --> (table | nil, error)
   if Args.DefEnum and Args.DefEnum ~= "" then
     Args.CurEnum = Args.DefEnum
     --logShow({ Args, Props }, "Args and Props", 2)
-    local t, SError = unit.GetFileJoinEnumData(Args, Props)
+    local t
+    t, SError = unit.GetFileJoinEnumData(Args, Props)
     if t then return t end
     --logShow(Args.CurEnum, SError)
 

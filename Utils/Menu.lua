@@ -281,13 +281,13 @@ do
 -- Установка горячей буквы в текст пункта.
 function unit.SetAutoHotChar (item, pos, hots) --> (string)
 
-  local pos, c = unit.GetAutoHotChar(item, pos, hots)
-  if not pos then return hots end -- Без горячей буквы
+  local p, c = unit.GetAutoHotChar(item, pos, hots)
+  if not p then return hots end -- Без горячей буквы
 
   -- Определение и назначение найденной подходящей буквы
-  item.text = ins(item.text, pos, '&') -- Задание
+  item.text = ins(item.text, p, '&') -- Задание
 
-  return sat(hots, pos, c) -- Обновление HotChars
+  return sat(hots, p, c) -- Обновление HotChars
 
 end ---- SetAutoHotChar
 
@@ -409,11 +409,11 @@ function unit.FieldMax (Items, Count, Seler, Field, Data) --> (number)
 
   end --
 
-  local Count = Count or #Items
-  local Seler = type(Seler) == 'function' and Seler or DefItemSeler
-  local Field = type(Field) == 'string' and FieldStrLen or
-                type(Field) == 'table'  and FieldTabLen or
-                Field or DefItemField
+  Count = Count or #Items
+  Seler = type(Seler) == 'function' and Seler or DefItemSeler
+  Field = type(Field) == 'string' and FieldStrLen or
+          type(Field) == 'table'  and FieldTabLen or
+          Field or DefItemField
   --rhlog.TblMenu({ Count, Seler, Field }, "FieldMax")
 
   -- Просмотр пунктов меню:

@@ -88,7 +88,7 @@ local L -- Класс сообщений локализации
 -- Обработка конфигурации.
 local function Configure (ArgData)
 
-  local ArgData = addNewData(ArgData, DefCfgData)
+  ArgData = addNewData(ArgData, DefCfgData)
   ArgData.Custom = ArgData.Custom or {} -- MAYBE: addNewData with deep?!
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
@@ -105,6 +105,7 @@ local function Configure (ArgData)
 
   -- Конфигурация:
   local Config = {
+
     Custom = Custom,
     History = History,
     DlgTypes = DlgTypes,
@@ -250,6 +251,7 @@ function unit.TimeShiftDlg (Data)
 
   -- Подготовка:
   Config.DBox = {
+
     Flags = isSmall and F.FDLG_SMALLDIALOG or nil,
     Width = 0, Height = 0,
 

@@ -44,10 +44,12 @@ local DefCustom = {
     field   = "",
     name    = unit.ScriptName,
     path    = unit.HistoryPath,
+
   },
 
   locale  = {
     kind    = 'require',
+
   },
 
 } --- DefCustom
@@ -150,7 +152,7 @@ do
 function unit.MakeKindConfig (Name, Default) --> (table)
 
   local Config = {}
-  local Default = Default == nil and true or Default
+  Default = Default == nil and true or Default
   if Default then Config.__index = DefConfig end
 
   Config.Name  = Name
@@ -172,8 +174,8 @@ end ---- MakeKindConfig
 -- Сформировать меню из набора символов.
 function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
 
-  local Keys = Keys or "AccelKey"
-  local Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
+  Keys = Keys or "AccelKey"
+  Cfg = type(Cfg) == 'table' and Cfg or unit.MakeKindConfig(Cfg)
 
   Cfg.DefCustom = Cfg.DefCustom or tcopy(DefCustom, false, pairs, true)
   local h = Cfg.DefCustom.history

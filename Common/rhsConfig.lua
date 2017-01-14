@@ -411,7 +411,7 @@ end -- MakeDlgTypes
 -- Обработка конфигурации.
 local function Configure (ArgData)
 
-  local ArgData = addNewData(ArgData or {}, DefCfgData)
+  ArgData = addNewData(ArgData or {}, DefCfgData)
   --logShow(ArgData, "ArgData")
   local Custom = datas.customize(ArgData.Custom, DefCustom)
 
@@ -925,8 +925,8 @@ local function GenerateFile (f, Data)
 
   f:write(_UM.Commands) -- Commands:
   for k = 1, CfgDataSepPos - 1 do
-    n = CfgDataOrder[k]
-    v = Data[n]
+    local n = CfgDataOrder[k]
+    local v = Data[n]
 
     if v.Command and v.enabled then
       local s = _UM.AddCmdItem:format(v.Command,
@@ -939,8 +939,9 @@ local function GenerateFile (f, Data)
 
   f:write(_UM.Residents) -- Residents:
   for k = CfgDataSepPos + 1, #CfgDataOrder do
-    n = CfgDataOrder[k]
-    v = Data[n]
+    local n = CfgDataOrder[k]
+    local v = Data[n]
+
     if v.enabled then
       f:write(_UM.MakeResItem:format(v.BasePath, p(v.FilePath)))
       if v.EndComment then f:write(v.EndComment) end

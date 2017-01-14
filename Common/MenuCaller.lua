@@ -25,6 +25,7 @@ local unit = {}
 
 ---------------------------------------- Internal
 local MenuScripts = { -- Скрипты с меню:
+
   SearchMenu = "far2.searchmenu",               -- "Поисковое" меню
   RectMenu   = "Rh_Scripts.RectMenu.RectMenu",  -- Прямоугольное меню
   FilterMenu = "Rh_Scripts.Common.FilterMenu",  -- Фильтрационное меню
@@ -43,6 +44,7 @@ local function CreateMenu (Properties)--, Items) --> (object)
   local Options = Properties.Caller or {}
 
   local self = {
+
     Options   = Options,
     Require   = Options.Require or require,
     Call      = Options.Call,
@@ -64,6 +66,7 @@ do
 function TMenu:DefineKind () --| (self.ShowMenu)
 
   local Script = MenuScripts[self.Kind]
+
   -- Загрузка скрипта меню или использование стандартного меню.
   self.Run = Script and self.Require(Script) or far_Menu
 

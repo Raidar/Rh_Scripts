@@ -158,7 +158,7 @@ function unit.uCodeCount (pattern) --< (Name) --> (uCode Count)
   local Result = 0
 
   -- Fast algo
-  for k, c in pairs(CharsNames) do
+  for _, c in pairs(CharsNames) do
     local s = c.name
     --logShow({ pattern, base, c }, s and s:lower():match(pattern))
     if s and s:lower():match(pattern) then

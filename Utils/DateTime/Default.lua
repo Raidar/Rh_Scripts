@@ -513,7 +513,7 @@ function TConfig:getMonthWeekDay (y, m, mw, wd) --> (number)
 
   end
 
-  return 0
+  --return 0
 
 end ---- getMonthWeekDay
 
@@ -543,7 +543,7 @@ end ---- getEraDay
 --]]
 function TConfig:divEraDay (e) --> (y, m, d)
 
-  local e, i = e, 1
+  local i = 1
   if e <= 0 then
     e, i = -e, -1
 

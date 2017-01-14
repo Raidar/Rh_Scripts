@@ -171,6 +171,7 @@ local mHelloWorld = {
   }, --
 } --- mHelloWorld
 
+--[=[
 local mDeferredHello = {
   text = L.OthHelloWorld,
   --AccelKey = "W",
@@ -210,6 +211,7 @@ local mDeferredHello = {
   }, --
   --]]
 } --- mDeferredHello
+--]=]
 
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts

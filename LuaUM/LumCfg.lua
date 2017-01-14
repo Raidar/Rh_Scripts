@@ -434,7 +434,7 @@ local function ConfigDlg (Config, Kind, Derived)
   local function DlgGetItemColor (hDlg, ID, Color) --> (Color)
 
     -- Цвет элемента
-    local Item = D[ID+1]
+    local Item = D[ID + 1]
     if Item == nil then return end
 
     -- [[

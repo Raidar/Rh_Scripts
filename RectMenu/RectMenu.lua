@@ -1299,6 +1299,8 @@ function TMenu:UpdateAll (hDlg, Flags, Data) --| (self)
 
   --self = 0 -- TODO: Exclude all fields for right new info!?
 
+  --logShow({ Flags, Data })
+
   if type(Data) == 'table' then
     self.Menu = {
 
@@ -1828,7 +1830,11 @@ function TMenu:MoveToCell (hDlg, NewIndexCell, Kind) --> (bool)
   self:CellBase(nCell)
   self:SetSelected(NewIndex)
 
+  --logShow({ Kind, self:GetSelectIndex() }, NewIndex)
+
   self:SelectItem(hDlg, Kind, self:GetSelectIndex())
+
+  --logShow({ Kind, self:GetSelectIndex() }, NewIndex)
 
   return self:DoMenuDraw() -- Перерисовка меню
 
@@ -1844,7 +1850,7 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
   if not RunEvent then return end
 
   local Data, Flags = RunEvent(...)
-  --logShow({ Data, Flags }, Event, 2)
+  --logShow({ Data, Flags, ... }, Event, 2)
   Flags = Flags or Null -- or {}
   if Flags.isCancel then
     self.SelIndex = nil
@@ -1866,18 +1872,24 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
     if type(Data) == 'table' and
        Flags.isUpdateAll ~= false then
 
+      --logShow(Data)
+
       self:UpdateAll(hDlg, Flags, Data)
 
       return true
 
-    elseif Data == true and
-           Flags.isUpdateAll ~= false then
+    end
+
+    if Data == true and
+       Flags.isUpdateAll == true then
 
       self:UpdateAll(hDlg, Flags, nil)
    
     end
 
   end -- if
+
+  --logShow(Data, Event, 2)
 
   return Data
 
@@ -2149,7 +2161,7 @@ function TMenu:RapidKeyPress (hDlg, Input) --> (bool)
     local SKey = Input.UnicodeChar:upper()
     --logShow({ Input, StrKey, self.HKeys }, "HKeys : "..tostring(SKey), "d1 xv8")
     if SKey and not UnhotSKeys[SKey] then
-      local Index = self.HKeys:cfind(SKey, 1, true)
+      Index = self.HKeys:cfind(SKey, 1, true)
       --logShow({ Index, self.HKeys }, tostring(SKey), "d1 xv8")
       if not Index then
         local VName = StrKey --Input.Name
@@ -2198,9 +2210,9 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
   local OnNavKeyPress = self.RectMenu.OnNavKeyPress
   if not OnNavKeyPress then return end
 
-  local Data, AKey, Mod, Flags =
+  local Data, Flags =
     OnNavKeyPress(AKey, VMod, self:GetSelectIndex())
-  --logShow({ AKey, Table, Flags }, "OnArrowKeyPress", "w d2")
+  --logShow({ Data, Flags }, "OnNavKeyPress", "w d3")
   Flags = Flags or Null -- or {}
 
   if hDlg and
@@ -2213,7 +2225,7 @@ function TMenu:UserNavKeyPress (hDlg, AKey, VMod) --> (nil|true | Data)
 
   end
 
-  return Data, AKey, Mod
+  return Data, Flags.AKey, Flags.VMod
 
 end ---- UserNavKeyPress
 
@@ -2251,6 +2263,7 @@ function TMenu:DoKeyPress (hDlg, Input) --> (bool)
     --logShow({ AKey, VMod, isOk, NewKey, NewMod }, SelIndex, "w h8 d1")
 
     AKey, VMod = NewKey or AKey, NewMod or VMod
+    --logShow({ AKey, VMod, keyUt.SKEY_ArrowNavs[AKey] }, SelIndex, "w h8 d1")
 
     if keyUt.SKEY_ArrowNavs[AKey] and -- Управление курсором:
        (VMod == 0 or IsModCtrl(VMod)) and self:CheckArrowUse(AKey) then
@@ -2298,7 +2311,7 @@ local function MousePosToLin (Len, Sep, Total,
   --logShow({ Len, Sep, Total, Pos, Base, Fixes, Fixing }, "MousePosToLin", "w d2")
 
   if Fixing then
-    local Count, Length = 0, 0
+    local Count, Length --= 0, 0
     
     -- Heads:
     Count  = Fixes.Head or 0
@@ -2663,6 +2676,8 @@ function TMenu:SelectItem (hDlg, Kind, Index) --> (nil|bool)
 
   return true]]
 
+  --logShow({ hDlg, Kind, Index }, "OnSelectItem")
+
   return self:HandleEvent("OnSelectItem", hDlg, Kind, Index)
 
 end ---- SelectItem
@@ -2770,7 +2785,6 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
   local Data = self.Data
   local RM = self.RectMenu
 
-  local A_Cell, A_Rect = A_Cell, A_Rect
   local xLim, yLim = A_Rect.xMax, A_Rect.yMax
   local c, x = A_Cell.cMin, A_Rect.xMin -- column & x pos
   local r, y = A_Cell.rMin, A_Rect.yMin --  row   & y pos
@@ -2852,14 +2866,15 @@ function TMenu:DrawMenu ()
   --logShow({ FixRows, FixCols }, "Fixed", 1)
 
   -- Вывод пунктов меню.
+  local A_Rect, A_Cell
 
   -- Top-Left angle part:
   if FixRows.Head > 0 and FixCols.Head > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMin,         yMin = yMin,
-                     xMax = xMin + xInc,  yMax = yMin + yInc, }
-    local A_Cell = { rMin = 1,            rMax = FixRows.Head,
-                     cMin = 1,            cMax = FixCols.Head, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMin,         yMin = yMin,
+               xMax = xMin + xInc,  yMax = yMin + yInc, }
+    A_Cell = { rMin = 1,            rMax = FixRows.Head,
+               cMin = 1,            cMax = FixCols.Head, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2867,11 +2882,11 @@ function TMenu:DrawMenu ()
 
   -- Top lines part:
   if FixRows.Head > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMin + xInc,  yMin = yMin,
-                     xMax = xMax - xDec,  yMax = yMin + yInc, }
-    local A_Cell = { rMin = 1,            rMax = FixRows.Head,
-                     cMin = Base.Col,     cMax = FixCols.Max, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMin + xInc,  yMin = yMin,
+               xMax = xMax - xDec,  yMax = yMin + yInc, }
+    A_Cell = { rMin = 1,            rMax = FixRows.Head,
+               cMin = Base.Col,     cMax = FixCols.Max, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2879,11 +2894,11 @@ function TMenu:DrawMenu ()
 
   -- Top-Right angle part:
   if FixRows.Head > 0 and FixCols.Foot > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMax - xDec,  yMin = yMin,
-                     xMax = xMax,         yMax = yMin + yInc, }
-    local A_Cell = { rMin = 1,            rMax = FixRows.Head,
-                     cMin = FixCols.Sole, cMax = FixCols.All, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMax - xDec,  yMin = yMin,
+               xMax = xMax,         yMax = yMin + yInc, }
+    A_Cell = { rMin = 1,            rMax = FixRows.Head,
+               cMin = FixCols.Sole, cMax = FixCols.All, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2891,35 +2906,37 @@ function TMenu:DrawMenu ()
 
   -- Left lines part:
   if FixCols.Head > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMin,         yMin = yMin + yInc,
-                     xMax = xMin + xInc,  yMax = yMax - yDec, }
-    local A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
-                     cMin = 1,            cMax = FixCols.Head, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMin,         yMin = yMin + yInc,
+               xMax = xMin + xInc,  yMax = yMax - yDec, }
+    A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
+               cMin = 1,            cMax = FixCols.Head, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
   end
 
   -- Scrollable items part:
-  local A_Rect = { fixed = false,         Colors = self.Colors,
-                   xMin = xMin + xInc,    yMin = yMin + yInc,
-                   xMax = xMax - xDec,    yMax = yMax - yDec, }
-  local A_Cell = { rMin = Base.Row,       rMax = FixRows.Max,
-                   cMin = Base.Col,       cMax = FixCols.Max, }
-  --logShow({ A_Cell, A_Rect }, "Usual cells")
+  do
+    A_Rect = { fixed = false,         Colors = self.Colors,
+               xMin = xMin + xInc,    yMin = yMin + yInc,
+               xMax = xMax - xDec,    yMax = yMax - yDec, }
+    A_Cell = { rMin = Base.Row,       rMax = FixRows.Max,
+               cMin = Base.Col,       cMax = FixCols.Max, }
+    --logShow({ A_Cell, A_Rect }, "Usual cells")
 
-  -- Последняя видимая из прокручиваемых ячеек:
-  self.Last = RC_cell( self:DrawMenuPart(A_Cell, A_Rect) )
-  --logShow(self.Last, "Last viewed cell")
+    -- Последняя видимая из прокручиваемых ячеек:
+    self.Last = RC_cell( self:DrawMenuPart(A_Cell, A_Rect) )
+    --logShow(self.Last, "Last viewed cell")
+  end
 
   -- Right lines part:
   if FixCols.Foot > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMax - xDec,  yMin = yMin + yInc,
-                     xMax = xMax,         yMax = yMax - yDec, }
-    local A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
-                     cMin = FixCols.Sole, cMax = FixCols.All, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMax - xDec,  yMin = yMin + yInc,
+               xMax = xMax,         yMax = yMax - yDec, }
+    A_Cell = { rMin = Base.Row,     rMax = FixRows.Max,
+               cMin = FixCols.Sole, cMax = FixCols.All, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2927,11 +2944,11 @@ function TMenu:DrawMenu ()
 
   -- Bottom-Left angle part:
   if FixRows.Foot > 0 and FixCols.Head > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMin,         yMin = yMax - yDec,
-                     xMax = xMin + xInc,  yMax = yMax, }
-    local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
-                     cMin = 1,            cMax = FixCols.Head, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMin,         yMin = yMax - yDec,
+               xMax = xMin + xInc,  yMax = yMax, }
+    A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
+               cMin = 1,            cMax = FixCols.Head, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2939,11 +2956,11 @@ function TMenu:DrawMenu ()
 
   -- Bottom lines part:
   if FixRows.Foot > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMin + xInc,  yMin = yMax - yDec,
-                     xMax = xMax - xDec,  yMax = yMax, }
-    local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
-                     cMin = Base.Col,     cMax = FixCols.Max, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMin + xInc,  yMin = yMax - yDec,
+               xMax = xMax - xDec,  yMax = yMax, }
+    A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
+               cMin = Base.Col,     cMax = FixCols.Max, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 
@@ -2951,11 +2968,11 @@ function TMenu:DrawMenu ()
 
   -- Bottom-Right angle part:
   if FixRows.Foot > 0 and FixCols.Foot > 0 then
-    local A_Rect = { fixed = true,        Colors = FixedColors,
-                     xMin = xMax - xDec, yMin = yMax - yDec,
-                     xMax = xMax,        yMax = yMax, }
-    local A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
-                     cMin = FixCols.Sole, cMax = FixCols.All, }
+    A_Rect = { fixed = true,        Colors = FixedColors,
+               xMin = xMax - xDec, yMin = yMax - yDec,
+               xMax = xMax,        yMax = yMax, }
+    A_Cell = { rMin = FixRows.Sole, rMax = FixRows.All,
+               cMin = FixCols.Sole, cMax = FixCols.All, }
 
     self:DrawMenuPart(A_Cell, A_Rect)
 

@@ -549,7 +549,8 @@ function TMain:MakeItems (Operations, Kinds) --> (Items)
 
     if v.separator then
       if #t > 0 and not t[#t].separator then
-        t[#t+1] = v
+        t[#t + 1] = v
+
       end
 
     elseif v.command then -- TEMP
@@ -574,6 +575,7 @@ function TMain:MakeItems (Operations, Kinds) --> (Items)
 
       end
     end
+
   end -- for
 
   -- Дополнительные пункты меню.
@@ -610,7 +612,8 @@ function TMain:GetMenuBottom ()
   local MenuWidth = self.CfgData.ItemWidth + 3
   if self.IsMoreCols then MenuWidth = MenuWidth * 2 end
 
-  local Path, Lost, View = self.Path
+  local Lost, View
+  local Path = self.Path
 
   if MenuWidth < Path:len() then
     if self.IsMoreCols then

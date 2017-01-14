@@ -65,8 +65,11 @@ function unit.EasyName (s, cp) --> (string)
   return s:gsub("(%w)(%w+)", _EasyName):
            gsub("([%dA-F][%da-f][%da-f][%da-f])",
                 function (s)
+
                   if supper(s) == cp then return cp end
+
                 end)
+
 end -- EasyName
 
 end --
@@ -142,7 +145,7 @@ function unit:ParseNames (FileName) --> (bool | nil)
     if name then
       data = t[limit]
       if not data.alias then data.alias = {} end
-      data.alias[#data.alias+1] = name
+      data.alias[#data.alias + 1] = name
 
     end --
     --]]

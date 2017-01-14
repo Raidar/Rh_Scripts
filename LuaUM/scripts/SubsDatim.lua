@@ -118,8 +118,8 @@ do
                        "(%,.*)")
   --sub.linecap = "^(.-%,)(.-)(%,)(.-)(%,.*)$", -- (нч,)(вр1)(,)(вр2)(,кц)
 
-  sub.parse = function (s) --> (time)
-    local h, n, s, cz = s:match(sub.timecap)
+  sub.parse = function (v) --> (time)
+    local h, n, s, cz = v:match(sub.timecap)
 
     return newTime(s2n(h), s2n(n), s2n(s), (s2n(cz) or 0) * 10)
 
@@ -140,9 +140,9 @@ do
                        "(.*)")
   --sub.linecap = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
 
-  sub.parse = function (s) --> (time)
+  sub.parse = function (v) --> (time)
 
-    local h, n, s, z = s:match(sub.timecap)
+    local h, n, s, z = v:match(sub.timecap)
 
     return newTime(s2n(h), s2n(n), s2n(s), s2n(z))
 
@@ -207,11 +207,11 @@ function unit.spellLine (data) --> (string)
   -- Заполнение времён.
   local tp = data.type
   local info = TplKit[tp]
-  t[info.start] = unit.spellTime(tp, t.start)
-  t[info.stop]  = unit.spellTime(tp, t.stop)
+  data[info.start] = unit.spellTime(tp, data.start)
+  data[info.stop]  = unit.spellTime(tp, data.stop)
 
   -- Заполнение линии.
-  local s = format(TplKit[tp].linefmt, unpack(t))
+  local s = format(TplKit[tp].linefmt, unpack(data))
 
   return s
 

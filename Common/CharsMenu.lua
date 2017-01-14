@@ -111,7 +111,7 @@ unit.DefDoubleKeys = { unit.DefActionKeys, unit.DefActionKeys, }
 local DefKeyOrder = { [0] = ""; "" }
 unit.DefKeyOrder = DefKeyOrder
 for _, m in ipairs(SKeyModifs) do
-  DefKeyOrder[#DefKeyOrder+1] = m..'+'
+  DefKeyOrder[#DefKeyOrder + 1] = m..'+'
 
 end
 
@@ -163,15 +163,15 @@ local function MakeItemKey (item, Keys, key, char)
   local keys = Keys[key]
   if not keys then return end
 
-  local key = item.AccelKey
-  if not key then
+  local akey = item.AccelKey
+  if not akey then
     item.AccelKey = keys(char)
 
-  elseif type(key) == 'string' then
+  elseif type(akey) == 'string' then
     item.AccelKey = { item.AccelKey, keys(char) }
 
-  elseif type(key) == 'table' then
-    key[#key + 1] = keys(char)
+  elseif type(akey) == 'table' then
+    akey[#key + 1] = keys(char)
 
   end
 end -- MakeItemKey
@@ -185,6 +185,7 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
   text, x = x and text or text[2], x and text or text[1]
 
   local t = {
+
     text = text,
     Plain = x,
     RectMenu = Props.RectItem,
@@ -200,12 +201,12 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
       t.Hint = uCharCodeName(x)
 
     end
+
   elseif Hint then
     t.Hint = Hint
 
   end
 
-  local char = char
   x = type(char) ~= 'table'
   MakeItemKey(t, Keys.Kind and Keys or Keys[1], key, x and char or char[2])
   char = x and char or char[3]
@@ -296,17 +297,19 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
   KeyOrder[0] = KeyOrder[0] or ""
 
   -- Клавиши быстрого выбора:
-  local Keys = Keys or "AccelKey"
+  Keys = Keys or "AccelKey"
   local kk = type(Keys)
   if kk == 'boolean' then
     Keys, kk = { Kind = "AccelKey" }, Keys
     if kk == true then
       for _, m in ipairs(KeyOrder) do
-        Keys[#Keys+1] = GetKeyFunc(m)
+        Keys[#Keys + 1] = GetKeyFunc(m)
 
       end
     end
+
     --logShow({ tp, Keys }, "Used Keys", "#qd1")
+
   elseif kk == 'string' then
     if Keys == "None" then
       Keys = { Kind = "None" }
@@ -315,6 +318,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
       Keys = unit.DefActionKeys
 
     end
+
   end -- if
 
   -- Функция извлечения текста из Order
@@ -332,7 +336,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
   --local i, j, k -- loop indexes: by item length, by 1, on key order
 
   if Heading == "Both" then
-    t[#t+1] = MakeHeadItem(KeyOrder[0]) -- Angle Head
+    t[#t + 1] = MakeHeadItem(KeyOrder[0]) -- Angle Head
 
   end
 
@@ -344,7 +348,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ i, j }, "Head Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t+1] = MakeHeadItem(capt(j)) -- Head
+          t[#t + 1] = MakeHeadItem(capt(j)) -- Head
 
         end
         --logShow({ Order:sub(j, j), MakeHeadItem(Order:sub(j, j)) }, "Head Loop", "#qd1")
@@ -358,7 +362,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
     while k <= Count and i <= dLen do
       --logShow(KeyOrder[k] or "", "MakeHeadItem")
       if Heading ~= "Order" then
-        t[#t+1] = MakeHeadItem(KeyOrder[k] or "") -- SubHead
+        t[#t + 1] = MakeHeadItem(KeyOrder[k] or "") -- SubHead
 
       end
 
@@ -368,7 +372,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ text(i), Order:sub(j, j) }, "Char Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t+1] = MakeCharItem(s, Keys, k, capt(j), ItemProps)
+          t[#t + 1] = MakeCharItem(s, Keys, k, capt(j), ItemProps)
 
         end
 
@@ -388,7 +392,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ i, j, k }, "Head Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t+1] = MakeHeadItem(KeyOrder[k] or "") -- Head
+          t[#t + 1] = MakeHeadItem(KeyOrder[k] or "") -- Head
 
         end
         --logShow({ capt(j) }, "Head Loop", "#qd1")
@@ -403,7 +407,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
       local d = capt(j)
       --logShow(KeyOrder[k] or "", "MakeHeadItem")
       if Heading ~= "Keys" then
-        t[#t+1] = MakeHeadItem(d) -- SubHead
+        t[#t + 1] = MakeHeadItem(d) -- SubHead
 
       end
 
@@ -413,7 +417,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         --logShow({ s, d }, "Char Loop", "#qd1")
         if s ~= "" then
-          t[#t+1] = MakeCharItem(s, Keys, k, d, ItemProps)
+          t[#t + 1] = MakeCharItem(s, Keys, k, d, ItemProps)
 
         end
 

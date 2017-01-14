@@ -92,7 +92,7 @@ function Clear.DeleteAllEmptys ()
     local t = farBlock.DelLines(block, "^[ ]-$", false)
     if not t then return end
     if block[#block] == "" and t[#t] ~= "" then
-      t[#t+1] = ""
+      t[#t + 1] = ""
       t.Count = #t
 
     end

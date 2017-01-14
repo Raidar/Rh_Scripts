@@ -59,7 +59,7 @@ local function _isEqual (t, u) --> (bool)
   if t == nil and u == nil then return true end
   if t == nil or u == nil then return false end
 
-  local typeT, typeU, equal = type(t), type(u)
+  local typeT, typeU = type(t), type(u)
   if typeT ~= 'table' or typeU ~= 'table' then
     return typeT == typeU and t == u
 
@@ -67,7 +67,8 @@ local function _isEqual (t, u) --> (bool)
 
   for k, v in pairs(t) do
     if u[k] == nil then return false end
-    equal = _isEqual(v, u[k])
+
+    local equal = _isEqual(v, u[k])
     if not equal then return false end
 
   end
@@ -114,7 +115,7 @@ function unit.t_imax (t, count) --> (number)
   if i == 0 then return end
 
   -- Check next values.
-  for k = i+1, count or #t do
+  for k = i + 1, count or #t do
     local v = t[k]
     if v and v > m then m = v end
 
@@ -403,12 +404,12 @@ function unit.CheckLineCP (s) --> (string)
 
   if #s < 2 then return "OEM" end
 
-  local s = ssub(s, 1, 3)
-  if s == '\239\187\191' then return "UTF-8" end -- EF BB BF
-  s = ssub(s, 1, 2)
+  local sBOM = ssub(s, 1, 3)
+  if sBOM == '\239\187\191' then return "UTF-8" end -- EF BB BF
+  sBOM = ssub(s, 1, 2)
 
-  return s == '\255\254' and "UTF-16 BE" or -- FF FE
-         s == '\254\255' and "UTF-16 LE" or -- FE FF
+  return sBOM == '\255\254' and "UTF-16 BE" or -- FF FE
+         sBOM == '\254\255' and "UTF-16 LE" or -- FE FF
          "OEM" -- by default
 
 end ---- CheckLineCP
@@ -861,10 +862,10 @@ function unit.ParseHotStr (Str, Hot, isPos) --> (Left, Char, Right)
   -- Разбор строки с учётом цепочки.
   if Pos and Pos < Len then
     -- Поправка на следующий символ Hot:
-    Len = b2n( Str:sub(Pos+1, Pos+1) == Hot )
-    if isPos then return 1, Pos, Pos+1+Len end
-    return Str:sub(1, Pos-2), Str:sub(Pos, Pos),
-           Str:sub(Pos+1+Len):gsub(Hot..Hot, Hot)
+    Len = b2n( Str:sub(Pos + 1, Pos + 1) == Hot )
+    if isPos then return 1, Pos, Pos + 1 + Len end
+    return Str:sub(1, Pos - 2), Str:sub(Pos, Pos),
+           Str:sub(Pos + 1 + Len):gsub(Hot..Hot, Hot)
   else
     if isPos then return 0, 0, 1 end
     return nil, nil, Str:gsub(Hot..Hot, Hot)
@@ -1001,7 +1002,7 @@ local function DialogInsertText (hDlg, s)
       -- Обработка позиции в тексте
       PosInfo = SendDlgMessage(hDlg, F.DM_GETEDITPOSITION, id)
       --logShow(PosInfo, "DialogInsertText:Pos")
-      local pos = PosInfo and PosInfo.CurPos or 0
+      pos = PosInfo and PosInfo.CurPos or 0
       if pos > 0 then
         text = text:sub(1, pos - 1)..
                s..

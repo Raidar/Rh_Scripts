@@ -19,7 +19,7 @@ local strings = require 'context.utils.useStrings'
 local locale = require 'context.utils.useLocale'
 
 ----------------------------------------
-local farUt = require "Rh_Scripts.Utils.Utils"
+--local farUt = require "Rh_Scripts.Utils.Utils"
 local farEdit = require "Rh_Scripts.Utils.Editor"
 
 --local RedrawAll = farUt.RedrawAll
@@ -131,13 +131,13 @@ TekstChangeSets.SignTyper = {
   ['_u~'] = 'ϒ', ['_v~'] = 'ϭ', ['_w~'] = 'ϣ', ['_x~'] = 'ϝ',
   ['_y~'] = ' ', ['_z~'] = 'ϛ',
 
-  ['_a~'] = ' ', ['_b~'] = ' ', ['_c~'] = ' ', ['_d~'] = 'Ϯ',
-  ['_e~'] = '϶', ['_f~'] = 'Ϥ', ['_g~'] = 'Ϫ', ['_h~'] = 'Ϩ',
-  ['_i~'] = ' ', ['_j~'] = 'ϴ', ['_k~'] = 'Ϗ', ['_l~'] = 'Ϡ',
-  ['_m~'] = 'Ϻ', ['_n~'] = 'Ϟ', ['_o~'] = 'Ϙ', ['_p~'] = 'Ϸ',
-  ['_q~'] = ' ', ['_r~'] = 'ϼ', ['_s~'] = 'Ͻ', ['_t~'] = 'Ϲ',
-  ['_u~'] = ' ', ['_v~'] = 'Ϭ', ['_w~'] = 'Ϣ', ['_x~'] = 'Ϝ',
-  ['_y~'] = ' ', ['_z~'] = 'Ϛ',
+  ['_A~'] = ' ', ['_B~'] = ' ', ['_C~'] = ' ', ['_D~'] = 'Ϯ',
+  ['_E~'] = '϶', ['_F~'] = 'Ϥ', ['_G~'] = 'Ϫ', ['_H~'] = 'Ϩ',
+  ['_I~'] = ' ', ['_J~'] = 'ϴ', ['_K~'] = 'Ϗ', ['_L~'] = 'Ϡ',
+  ['_M~'] = 'Ϻ', ['_N~'] = 'Ϟ', ['_O~'] = 'Ϙ', ['_P~'] = 'Ϸ',
+  ['_Q~'] = ' ', ['_R~'] = 'ϼ', ['_S~'] = 'Ͻ', ['_T~'] = 'Ϲ',
+  ['_U~'] = ' ', ['_V~'] = 'Ϭ', ['_W~'] = 'Ϣ', ['_X~'] = 'Ϝ',
+  ['_Y~'] = ' ', ['_Z~'] = 'Ϛ',
 
   ["_a'"] = 'ά', ["_e'"] = 'έ', ["_h'"] = 'ή',
   ["_i'"] = 'ί', ["_o'"] = 'ό', ["_u'"] = 'ύ', ["_w'"] = 'ώ',
@@ -829,12 +829,13 @@ local Actions = {
 
   default = function (Table) --> (function)
 
-    local Table = Table
-
     return function (block) --> (block)
+
              return farBlock.SubLines(block, ".",
                                       function (s)
+
                                         return Table[s] or s
+
                                       end)
            end
 
@@ -865,25 +866,26 @@ unit.Actions = Actions
 do
   local function VarLenAction (Table) --> (function)
 
-    --local Table = Table
     --logShow(Table)
 
     return function (block) --> (block)
-             local block = block
+
              --logShow(block)
+
              for k = Table[0], 1, -1 do
                local t = Table[k]
                --logShow(t)
                if t then
                  --logShow(block)
-                 for k, v in pairs(t) do
-                   block = farBlock.SubLines(block, k, v)
+                 for i, v in pairs(t) do
+                   block = farBlock.SubLines(block, i, v)
 
                  end
                end
              end
 
              --logShow(block)
+
              return block
 
            end -- function

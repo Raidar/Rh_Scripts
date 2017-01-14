@@ -78,15 +78,19 @@ function Text.Requote (Args, Cfg)
   if Area ~= "editor" then return end
 
   local function Requote (block) --> (block)
+
     if block == nil then
       if not farSelect.Dequote(unpack(Args.dequote)) then return end
+
       return farSelect.Enquote(unpack(Args.enquote))
+
     end
 
-    local block = farBlock.Dequote(block, unpack(Args.dequote))
+    block = farBlock.Dequote(block, unpack(Args.dequote))
     if not block then return end
 
     return farBlock.Enquote(block, unpack(Args.enquote))
+
   end --
 
   return farSelect.Process(true, Requote)
@@ -95,6 +99,7 @@ end ---- Requote
 
 ---------------------------------------- Separator
 local mSeparator = {
+
   separator = true,
 
 } ---

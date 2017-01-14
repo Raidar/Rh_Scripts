@@ -27,8 +27,8 @@ do
 
 --logShow(L, "Localize", nil, { pairs = tables.allpairs })
 for k, v in tables.allpairs(L) do
-  --t[#t+1] = "name = "..k
-  --t[#t+1] = "value = "..(type(v) == 'string' and v or tostring(v))
+  --t[#t + 1] = "name = "..k
+  --t[#t + 1] = "value = "..(type(v) == 'string' and v or tostring(v))
 
   --if k:find('cap_', 1, true) then logShow({ name, v, k }, "cap") end
   local name = type(k) == 'string' and k:match("^cap%_(.*)$")
@@ -46,6 +46,7 @@ end -- do
 
 ---------------------------------------- Separator
 local mSeparator = {
+
   separator = true,
 
 } ---

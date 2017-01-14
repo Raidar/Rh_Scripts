@@ -332,6 +332,7 @@ end -- do
 local far_find, far_gsub = regex.find, regex.gsub
 
 local find = {
+
   none = 0,
   lua  = function (s, pat) return s:cfind(pat) end,
   far  = function (s, pat, flags) return far_find(s, pat, 1, flags) end,
@@ -340,6 +341,7 @@ local find = {
 find.none = find.lua
 
 local gsub = {
+
   none = function (s, pat, res) return res end,
   lua  = function (s, pat, res) return s:gsub(pat, res, 1) end,
   far  = function (s, pat, res, flags) return far_gsub(s, pat, res, 1, flags) end,
@@ -554,7 +556,7 @@ function TMain:FindTemplates () --> (table)
 
             elseif (Ctrl and q and q == 1 and t[#t].qPos == 1) or
                    (not Ctrl   and p == 1 and t[#t].sPos == 1) then
-              t[#t+1] = tLast
+              t[#t + 1] = tLast
 
             else
               t[#t] = tLast

@@ -183,6 +183,7 @@ local mHelloWorld = {
 
 } --- mHelloWorld
 
+--[=[
 local mDeferredHello = {
 
   text = L.OthHelloWorld,
@@ -229,6 +230,7 @@ local mDeferredHello = {
   --]]
 
 } --- mDeferredHello
+--]=]
 
 ---------------------------------------- Items/Menu
 local mScripts = { -- Other scripts

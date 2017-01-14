@@ -112,8 +112,11 @@ function ProcessEditorInput (rec) --> (bool)
         local h = TotalLines - r + 1
 
         local p = Info.CurPos
-        local s = EditorGetLine(nil, 0, 3)
-        local l = (s or ""):len(); if l == 0 then l = 1 end
+        --local s = EditorGetLine(nil, 0, 3)
+
+        --local l = (s or ""):len()
+        --if l == 0 then l = 1 end
+
         local w = 0 --l - p + 1 -- Почему ширина д/б = 0 ?
         --[[
         logShow({ band(CState, ALT) ~= 0 and "Column" or "Stream",

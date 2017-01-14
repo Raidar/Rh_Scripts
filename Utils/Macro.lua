@@ -265,7 +265,8 @@ function Use.BackLineText (Info, Count)
 
   local id = Info.EditorID
   local Len = farEdit.GetLength(id, 0)
-  local Count = min(Count, Len, Info.CurPos - 1)
+  Count = min(Count, Len, Info.CurPos - 1)
+
   if not farEdit.SetPos(id, 0, Info.CurPos - Count) then
     return
 

@@ -164,11 +164,14 @@ unit.DlgItemFlag = {
 -- Формирование списка элементов из списка значений.
 function unit.ListItems (Config, Kind, L) --> (table)
 
+  L = L or Config.Custom.Locale
+
   local List = Config.DlgTypes[Kind]
-  local Prefix, L = List.Prefix, L or Config.Custom.Locale
+  local Prefix = List.Prefix
+
   local t = {}
   for k = 1, #List do
-    t[#t+1] = { Text = L:config(Prefix..List[k]) }
+    t[#t + 1] = { Text = L:config(Prefix..List[k]) }
 
   end
   --logShow(t, "ListItems")
@@ -382,7 +385,8 @@ end ---- UpdateItems
 function unit.Dialog (Guid, X1, Y1, X2, Y2,
                       HelpTopic, Items, Flags, DlgProc, view)
 
-  local Guid = Guid or win.Uuid()
+  Guid = Guid or win.Uuid()
+
   local hDlg = far.DialogInit(Guid, X1, Y1, X2, Y2,
                               HelpTopic, Items, Flags, DlgProc)
   if hDlg == nil then return nil end

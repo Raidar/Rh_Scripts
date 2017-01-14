@@ -11,27 +11,34 @@ local locale = require 'context.utils.useLocale'
 
 ---------------------------------------- Custom
 local Custom = {
+
   label = "fls",
   name = "lum",
   path = "Rh_Scripts.LumFLS.config.",
   locale = { kind = 'require', },
+
 } ---
 
 ---------------------------------------- Locale
 local L, e1, e2 = locale.localize(Custom)
 if L == nil then
   return locale.showError(e1, e2)
+
 end
 
 ---------------------------------------- Separators
-local Sep = {
+local mSeparator = {
+
   separator = true,
+
 } ---
 
-local SepEditor = {
+local mSepEditor = {
+
   --text = L.flsAddsSepEditor,
   separator = true,
   Area = "editor",
+
 } ---
 
 ---------------------------------------- Submenus
@@ -50,7 +57,9 @@ local mComments = {
     { text = L.flsCommAutoUn,
       Script = 'editor/comment.lua',
       ChunkArgs = { 'autouncomment()' }, },
-  },
+
+  }, -- Items
+
 } --- mComments
 
 local mNavigation = {
@@ -71,7 +80,9 @@ local mNavigation = {
     { text = L.flsNavAssociate,
       Script = 'editor/nav.lua',
       ChunkArgs = { 'source()' }, },
-  },
+
+  }, -- Items
+
 } --- mNavigation
 
 local mEditorBlock = {
@@ -101,7 +112,9 @@ local mEditorBlock = {
     { text = L.flsBlockSelColumn,
       Script = 'editor/select.lua',
       ChunkArgs = { 'exselect(true)' }, },
-  },
+
+  }, -- Items
+
 } --- mEditorBlock
 
 local mSmartEdit = {
@@ -120,14 +133,16 @@ local mSmartEdit = {
       Script = 'editor/smartkeys.lua',
       ChunkArgs = { 'smartbs()' }, },
     --]]
-    Sep,
+    mSeparator,
     { text = L.flsSmartSymUp,
       Script = 'editor/copysymbol.lua',
       ChunkArgs = { 'copysymbol()' }, },
     { text = L.flsSmartSymDown,
       Script = 'editor/copysymbol.lua',
       ChunkArgs = { 'copysymbol(true)' }, },
-  },
+
+  }, -- Items
+
 } --- mSmartEdit
 
 local mSelectJump = {
@@ -147,11 +162,15 @@ local mSelectJump = {
     { text = L.flsSelJumpLast,
       Script = 'panels/selection_jump.lua',
       ChunkArgs = { 'selection_jump("last")' }, },
-  },
+
+  }, -- Items
+
 } --- mSelectJump
 
 local mPanelFilter = {
   text = L.flsPanelFilter,
+  Area = "panels",
+
   Items = {
     { text = L.flsPanelFilterRun,
       Script = 'panels/panelfilter.lua',
@@ -161,8 +180,9 @@ local mPanelFilter = {
       Script = 'panels/panelfilter.lua',
       ChunkArgs = { 'delete_filter' }, },
       --ChunkArgs = { 'delete_filter()' }, },
-  },
-  Area = "panels",
+
+  }, -- Items
+
 } --- mPanelFilter
 
 local mCommandLine = {
@@ -174,28 +194,33 @@ local mCommandLine = {
       Script = 'panels/alias.lua', },
     { text = L.flsCmdLineWinePath,
       Script = 'panels/winepath.lua', },
-  },
+
+  }, -- Items
+
 } --- mCommandLine
 
 local mAdditions = {
   text = L.flsAdditions,
+
   Items = {
     { text = L.flsAddsCalculator,
       Script = 'common/calc.lua',
       ChunkArgs = {}, },
     { text = L.flsAddsScreens,
       Script = 'common/screens.lua', },
-    SepEditor,
+    mSepEditor,
     { text = L.flsAddsSections,
       Area = "editor",
       Script = 'editor/sections.lua', },
     { text = L.flsAddsMultiClip,
       Area = "editor",
       Script = 'editor/multiclip.lua', },
-    Sep,
+    mSeparator,
     { text = L.flsAddsReloadMacros,
       Script = 'common/reload_macro.lua', },
-  },
+
+  }, -- Items
+
 } --- mAdditions
 
 ---------------------------------------- Data

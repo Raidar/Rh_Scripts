@@ -22,16 +22,20 @@ local logShow = context.ShowInfo
 
 --------------------------------------------------------------------------------
 local unit = {
+
   Run = false,
   Lua = false,
+
 } ---
 
 ---------------------------------------- Run
 local Run = {
+
   Process   = false,
   LuaMacro  = false,
   Command   = false,
   CmdLine   = false,
+
 } ---
 unit.Run = Run
 
@@ -139,7 +143,8 @@ function Lua.GetArgs (Args) --> (table | Args)
   if type(Args) ~= 'string' then return Args end
 
   -- Загрузка строки как порции.
-  local Args, SError = loadstring(format(ArgsFmt, Args))
+  local SError
+  Args, SError = loadstring(format(ArgsFmt, Args))
   if not Args then return nil, SError end
 
   Args = Args() -- Получение таблицы

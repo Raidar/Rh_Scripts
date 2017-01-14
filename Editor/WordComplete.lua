@@ -610,6 +610,7 @@ function TMain:MakeKit ()
   local Custom  = ArgData.Custom
 
   local Data = {
+
     Enabled     = ArgData.Enabled,
     -- Свойства набранного слова:
     CharEnum    = ArgData.CharEnum,
@@ -625,11 +626,13 @@ function TMain:MakeKit ()
       name = Custom.name,
       help   = { topic = TextTemplate.ScriptName, },
       locale = { kind = 'load', file = TextTemplate.ScriptName, },
+
     }, --
 
     --[[
     Options = { -- TODO: использовать unit.DefOptions
       SuitName = unit.ScriptCodeName,
+
     }, --
     --]]
 
@@ -698,12 +701,14 @@ function TMain:MakeProps ()
   local SelectedBG = Cfg.SelectedBG
   local SelColors = Colors.Selected
   RM.Colors = {
+
     Selected = {
       normal  = setBG(SelColors.normal, SelectedBG),
       hlight  = setBG(SelColors.hlight, SelectedBG),
       marked  = setBG(SelColors.marked, SelectedBG),
       grayed  = setBG(SelColors.grayed, SelectedBG),
       disable = setBG(SelColors.disable, SelectedBG),
+
     }, --
 
     BorderAngle = Cfg.AngleColor or nil,
@@ -719,6 +724,7 @@ function TMain:MakeProps ()
     local CurPos = far.AdvControl(F.ACTL_GETCURSORPOS)
 
     self.Popup = {
+
       LenH = BoxLen + bshl(RM.MenuEdge, 1),
                     --+ (Cfg.HotChars and 2 or 0),
       LenV = BoxLen + bshl(bshr(RM.MenuEdge, 1), 1),
@@ -822,7 +828,7 @@ function TMain:SearchTextWords () --> (table)
       elseif w ~= Word then
         --logShow({ k, w, v }, "New Word")
         k = k + 1
-        t[#t+1] = w
+        t[#t + 1] = w
         -- Информация для frequency-сортировки:
         -- число повторений, номер строки + место по порядку:
         Stat[w] = { Count = 1, Line = Line, Slot = k, }
@@ -1120,7 +1126,7 @@ function TMain:MakePopupMenu () --> (table)
   local Items = {}
   for k = 1, Count do
     local Text
-    Items[#Items+1], Text = self:MakePopupItem(k)
+    Items[#Items + 1], Text = self:MakePopupItem(k)
     Width = max2(Width, Text:len())
 
   end
@@ -1392,7 +1398,9 @@ function TMain:AssignEvents () --> (bool | nil)
   local Menu, Popup = self.Menu, self.Popup
 
   --logShow(Cfg, "Cfg", 1)
-  self.Props, self.Items = self.Menu.Props -- Информация о меню
+  self.Items = nil
+  self.Props = self.Menu.Props -- Информация о меню
+  --self.Props, self.Items = self.Menu.Props -- Информация о меню
 
   -- Обработка нажатия клавиши --
   Popup.PressKey = false -- Нажатая клавиша

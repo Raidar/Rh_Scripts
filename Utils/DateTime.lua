@@ -47,6 +47,7 @@ local unit = {}
 ---------------------------------------- Config
 
 function unit.newConfig (Config) --|> Config
+
   --logShow (Config, "Config", "wA d3")
 
   local self = cfgDefault.newConfig(Config)
@@ -475,7 +476,8 @@ end ----
 
 function TDate:from_y (v) --> (self, rest)
 
-  local w, v = modf(v)
+  local w
+  w, v = modf(v)
   self.y = w + 1
   v = v * self:getYearDays()
 
@@ -488,7 +490,8 @@ end ----
 
 function TDate:from_m (v) --> (self, rest)
 
-  local w, v = modf(v)
+  local w
+  w, v = modf(v)
   self.y, self.m = self:divEraMonth(w + 1)
   v = v * self:getMonthDays()
 
@@ -500,7 +503,8 @@ end ----
 
 function TDate:from_d (v) --> (self, rest)
 
-  local w, v = modf(v)
+  local w
+  w, v = modf(v)
   self.y, self.m, self.d = self:divEraDay(w)
 
   return self, v
@@ -667,7 +671,7 @@ end ----
 -- Сдвиг на заданное число cекунд.
 function TTime:shs (count) --> (self)
 
-  local count = self:to_s() + count
+  count = self:to_s() + count
 
   return self:from_s(count)
 
@@ -715,7 +719,7 @@ end ----
 
 function TTime:from_h (v) --> (self)
 
-  local c, v = self.config, v
+  local c = self.config
 
   self.h, v = modf(v)
   self.n, v = modf(v * c.MinPerHour)

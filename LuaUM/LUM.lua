@@ -77,6 +77,7 @@ local DefScope = {
 
 ---------------------------------------- Menu class
 local TMenu = {
+
   Guid = win.Uuid("00b06fba-0bb7-4333-8025-ba48b6077435"),
 
 }
@@ -85,7 +86,7 @@ local MMenu = { __index = TMenu }
 local function CreateMenu (Config)
 
   -- Конфигурация LUM:
-  local Config = Config or {}
+  Config = Config or {}
   if not Config.__index then -- Загрузка конфигурации по умолчанию:
     Config.__index = (require "Rh_Scripts.LuaUM.LumCfg").GetDefConfig()
     setmetatable(Config, Config)
@@ -100,6 +101,7 @@ local function CreateMenu (Config)
   Scope.FileType = Scope.FileType or Scope.BindFileType(Scope)
 
   local self = {
+
     Config    = Config,
     DefConfig = Config.__index,
     Scope     = Scope,
@@ -114,6 +116,7 @@ end -- CreateMenu
 ---------------------------------------- Menu locale
 -- Локализация меню.
 function TMenu:Localize ()
+
   local Config, Scope = self.Config, self.Scope
 
   -- Сообщения: текущей конфигурации + по умолчанию:
@@ -189,6 +192,8 @@ function TMenu:Prepare ()
     DefPath = Cfg_Basic.CfgUMPath,
 
   } ---
+  Props = false --nil
+
   local BindsData, SError = LW.GetFileEnumData(Args, Props)
   if not BindsData then
     self.Error = L:et2("FileDataError", "BindsFile", SError)
@@ -209,11 +214,16 @@ function TMenu:Prepare ()
   local LUM_Binds = BindsData[Scope.BindsType] or {} -- Таблица раздела типа
   --if not LUM_Binds then
   --  self.Error = L:et1("IniSecNotFound", Scope.BindsType, Cfg_Files.MenusFile)
+  --
   --  return
+  --
   --end
+
   --if not LUM_Binds.Menu then
   --  self.Error = L:et1("IniKeyNotFound", "Menu", Scope.BindsType, Cfg_Files.MenusFile)
+  --
   --  return
+  --
   --end
   --logShow(LUM_Binds, "LUM Binds Menu")
 
@@ -232,6 +242,7 @@ function TMenu:Prepare ()
   --logShow(MenuEnum, "MenuEnum")
   -- Считывание и разбор файлов меню.
   Args = {
+
     Base    = WorkerPath,
     DefExt  = ".lum",
     Enum    = MenuEnum,
@@ -250,6 +261,7 @@ function TMenu:Prepare ()
     self.Error = L:et2("FileDataError", "UMenuFile", SError)
 
     return
+
   end
 
   if self.Menus.Menu and
@@ -305,6 +317,7 @@ end ---- Run
 ---------------------------------------- main
 
 function unit.Execute (Config, ShowMenu)
+
   local _Menu = CreateMenu(Config)
   if not _Menu then return end
 

@@ -293,10 +293,13 @@ end -- DefineEnquote
 -- Определение параметров для раскавычивания.
 local function DefineDequote (left, right) --> (string, number, string, number)
 
+  left  = left  or '"'
+  right = right or '"'
+
   local tp
 
   tp = type(left)
-  local left, l_len = left or '"'
+  local l_len
   if tp == 'string' then
     l_len = left:len()
 
@@ -306,7 +309,7 @@ local function DefineDequote (left, right) --> (string, number, string, number)
   end
 
   tp = type(right)
-  local right, r_len = right or '"'
+  local r_len
   if tp == 'string' then
     r_len = right:len()
 
@@ -488,13 +491,13 @@ function Block.Split (s, pat, sep) --> (block)
   --logShow(s, pattern)
   local t = {}
   for line in s:gmatch(pat..sep) do
-    t[#t+1] = line -- all but last
+    t[#t + 1] = line -- all but last
 
   end
 
   local line = s:match(sep..pat.."$") -- last
   if line then
-    t[#t+1] = line
+    t[#t + 1] = line
 
   end
 
@@ -769,7 +772,7 @@ function Block.DelLines (block, pattern, include) --> (block)
     local s = block[k]
     local is = s:find(pattern) and true or false
     if f == is then
-      t[#t+1] = s
+      t[#t + 1] = s
 
     end
   end
@@ -960,7 +963,7 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
   } ---
 
   for line = first + 1, last - 1 do
-    t[#t+1] = unit.GetLine(id, line, 3) or "" -- inners
+    t[#t + 1] = unit.GetLine(id, line, 3) or "" -- inners
     --logShow({ line, LineInfo, t[#t] }, "Some selected info")
 
   end
@@ -973,17 +976,17 @@ function Selection.CopyStream (Info, ToPos) --> (nil|string|table)
     local pos = LineInfo.SelEnd
 
     if pos > 0 and pos <= len then
-      t[#t+1] = s:sub(1, pos) -- last
+      t[#t + 1] = s:sub(1, pos) -- last
 
     else
       if pos > len then
-        t[#t+1] = s..spaces[pos - len] -- last
+        t[#t + 1] = s..spaces[pos - len] -- last
         t.BeyondEnd = true
         t.Count = t.Count + 1
 
       end
 
-      t[#t+1] = "" -- with last EOL
+      t[#t + 1] = "" -- with last EOL
       --logShow({ last, LineInfo, t[#t-1] }, "Last selected info")
 
     end
@@ -1050,7 +1053,7 @@ function Selection.CopyColumn (Info, ToPos) --> (nil|string|table)
 
   for line = first, last do
     local s = unit.GetLine(id, line, 3) or ""
-    t[#t+1] = s:sub(go, pos)..spaces[pos - s:len()]
+    t[#t + 1] = s:sub(go, pos)..spaces[pos - s:len()]
 
   end
 
@@ -1262,7 +1265,7 @@ end -- do
 --]]
 function Selection.Enquote (left, right, force) --> (bool)
 
-  Info = unit.GetInfo()
+  local Info = unit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
 
   if force and SelType == "none" then -- Нет блока:
@@ -1293,7 +1296,7 @@ end -- Enquote
 --]]
 function Selection.Dequote (left, right, force) --> (bool)
 
-  Info = unit.GetInfo()
+  local Info = unit.GetInfo()
   local SelType = BlockTypes[Info.BlockType]
 
   if force and SelType == "none" then -- Нет блока:
@@ -1334,7 +1337,7 @@ function Selection.next (count, line) --> (number, table)
   if not count then return nil, nil end
 
   if count >= 1 then
-    local line = (line or 0) + 1
+    line = (line or 0) + 1
     if line < count then
       local s = EditorGetLine(nil, line, 0)
       if s.SelEnd ~= 0 then return line, s end

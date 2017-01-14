@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 
 ----------------------------------------
 local bit = bit64
-bshr = bit.rshift
+local bshr = bit.rshift
 
 ----------------------------------------
 local far = far
@@ -29,11 +29,13 @@ local F = far.Flags
 --local context = context
 local logShow = context.ShowInfo
 
---local utils = require 'context.utils.useUtils'
+local utils = require 'context.utils.useUtils'
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 local locale = require 'context.utils.useLocale'
 local serial = require 'context.utils.useSerial'
+
+local isFlag = utils.isFlag
 
 --local allpairs = tables.allpairs
 local addNewData = tables.extend
@@ -165,7 +167,8 @@ function TMain:ConfigForm () --> (dialog)
   local M = bshr(W, 1) -- Medium -- Width/2
   --local Q = bshr(M, 1) -- Quarta -- Width/4
   W = W - 2 - (isSmall and 0 or 2)
-  local A, B = I + 2, M + 2
+  local A = I + 2
+  --local A, B = I + 2, M + 2
 
   local L = self.L
   local D = dialog.NewDialog() -- Форма окна:
@@ -260,11 +263,13 @@ end ---- Localize
 
 end -- do
 
+--[[
 local Msgs = {
 
   NoLocale      = "No localization",
 
 } ---
+--]]
 
 -- Подготовка.
 -- Preparing.
@@ -341,7 +346,7 @@ function TMain:FillSubDataStr (Kind) --| Abeco
     oKind.YeuPat = sformat("[%s]", oKind.Literi)
     oKind.NeuPat = sformat("[^%s]", oKind.Literi)
 
-  else
+  --else
     -- MAYBE:
     --[[
     local bKind = o.Binali[Kind]
@@ -351,6 +356,7 @@ function TMain:FillSubDataStr (Kind) --| Abeco
 
     end
     --]]
+
   end
 end ---- FillSubDataStr
 

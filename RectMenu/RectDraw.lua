@@ -87,10 +87,10 @@ unit.DrawLineText = DrawLineText
 -- Вывод текста в прямоугольнике.
 function unit.DrawRectText (Rect, Color, Text, Spacing, ...) --> (number)
 
-  local tp = type(Text)
+  Color = Rect.Color or Color
 
+  local tp = type(Text)
   local k, Count = 1, Rect.h
-  local Color = Rect.Color or Color
 
   if     tp == 'string' then
     if Text:sub(-1, 1) ~= "\n" then
@@ -142,7 +142,7 @@ function unit.DrawRectText (Rect, Color, Text, Spacing, ...) --> (number)
 
   end -- if
 
-  for i = k + 1, Count do
+  for _ = k + 1, Count do
     DrawClear(Rect, Color, Spacing)
     Rect.y = Rect.y + 1
 

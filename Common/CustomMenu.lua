@@ -26,6 +26,7 @@ local useprofiler = false
 if useprofiler then
   require "profiler" -- Lua Profiler
   profiler.start("CustomMenu.log")
+
 end
 
 ----------------------------------------
@@ -49,19 +50,23 @@ local unit = {}
 ---------------------------------------- Fields
 -- Копирование полей t.
 local function copyFields (t) --|> (t)
+
   return tables.clone(t, true, tables.allpairs, true)
 
 end --
 
 -- Обновление полей t значениями полей из u.
 local function updateFields (t, u) --|> (t)
+
   if t == u or u == nil then return t end
+
   return tables.update(t, u, pairs, true)
 
 end --
 
 -- Установка полей u как метаиндексов полей из t.
 local function dometaFields (t, u) --|> (t)
+
   if u == nil then return t end
 
   return tables.exmeta(t, u, pairs, true)
@@ -77,6 +82,7 @@ local function dometaFields (t, u) --|> (t)
 
   return t
   --]]
+
 end -- dometaFields
 
 -- Формирование таблицы по базовой и "индексной" таблицам.
@@ -86,13 +92,16 @@ end -- dometaFields
   u (table) - таблица с полями-таблицами в роли __index для полей.
 --]]
 local function makeFields (t, u) --> (table)
-  local t = copyFields(t) or {} -- Заполнение
-  return dometaFields(t, u)     -- "Индексирование"
+
+  t = copyFields(t) or {}   -- Заполнение
+
+  return dometaFields(t, u) -- "Индексирование"
 
 end -- makeFields
 
 ---------------------------------------- Menu class
 local TMenu = {
+
   Guid = win.Uuid("3700abe9-c460-42b2-9f2e-1fe705b2942a"),
 
 }
@@ -102,13 +111,14 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
 
   assert(type(Menus) == 'table')
 
-  Properties = Properties or {}
+  --Properties = Properties or {}
   Config = Config or {}
   local Scope = Config.Scope or {}
 
   -- Object
   local self = {
-    Props     = Properties,
+
+    Props     = Properties or {},
     Menus     = Menus,
     Config    = Config,
     Scope     = Scope,
@@ -136,7 +146,9 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
     ActItem   = {         -- Выбранный пункт этого меню
       Menu      = false,    -- Ссылка на запускаемое меню
       isBack    = nil,      -- Признак возврата в это меню
+
     },
+
     ItemPos   = 1,        -- Позиция выбранного пункта меню
 
   } --- self
@@ -166,6 +178,7 @@ function TMenu:SetBaseTitle (Menu) --|> (Menu)
               Caption = DefMenu.Caption, text = DefMenu.text },
           }, "Menu vs DefMenu")
   --]]
+
   local CheckMenu
   if Menu.Name == "Menu" then
     CheckMenu = tables.Null
@@ -199,6 +212,7 @@ function TMenu:Prepare () --> (bool | nil, error)
 
   -- Получение базового меню:
   --logShow(self.Scope.BaseName, self.BaseName)
+
   if (self.Scope.BaseName or "") ~= "" then
     self.BaseName = self.Scope.BaseName -- Подменю как базовое меню
 
@@ -286,9 +300,13 @@ function TMenu:FillProperties (Props, Table) --|> (Props)
 end ---- FillProperties
 
 local ChangeMenuProps = {
+
   SearchMenu = function (Props, Table) --| Props
+
     Props.Flags = menUt.HighlightOff(Props.Flags)
+
   end, --
+
 } --- ChangeMenuProps
 
 -- Изменение свойств для меню/пункта.
@@ -306,6 +324,7 @@ end ---- ChangeProperties
 
 ---------------------------------------- ---- User Item
 local ItemKinds = { -- Виды пунктов меню:
+
   Label     = "Label",    -- Метка
   Items     = "Menu",     -- Подменю
   separator = "Separator",-- Разделитель
@@ -366,6 +385,7 @@ function TMenu:DefineLuaMacro (Item) --| Item
   -- Флаги по умолчанию:
   if not Item.Flags then
     Item.Flags = F.KMFLAGS_DISABLEOUTPUT
+
   end
 
   return true
@@ -412,6 +432,7 @@ end ---- DefineMenuItem
 
 -- Проверка на Главное меню.
 function TMenu:isMainMenu (Menu) --> (bool)
+
   return self.Menus.Menu == (Menu or self.CurMenu)
 
 end ----
@@ -736,9 +757,9 @@ end ---- MakeRunItem
 
 -- Формирование пункта-таблицы запускаемого меню.
 function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
+
   local CurName = self.CurName
 
-  local Item = Item
   if type(Item) == 'function' then
     --logShow({ CurName, self.Menus }, "RunItem # "..tostring(Index), "w d2")
     Item = Item() -- TODO: Поставить pcall?!
@@ -774,6 +795,7 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
         self.Error = self.L:et1("MnuWrongItem", type(RunItem), CurName, Index)
 
         return
+
       end
 
       RunItem.Name = ItemName
@@ -788,6 +810,7 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
     self.Error = self.L:et1("MnuWrongItem", type(Item), CurName, Index)
 
     return
+
   end
 end ---- MakeRunMenuItem
 
@@ -857,7 +880,7 @@ function TMenu:MakeBreakKeys (Menu, DefKeys) --> (table)
     local v = Menu[k]
     if v.BreakKey and not isItemUnused(v) then
       -- Полная информация для быстрого поиска пункта:
-      t[#t+1] = { BreakKey = v.BreakKey, Item = v, Pos = k }
+      t[#t + 1] = { BreakKey = v.BreakKey, Item = v, Pos = k }
 
     end
   end
@@ -890,7 +913,9 @@ function TMenu:DefineScriptName (Item) --> (string)
 
   else
     local Cfg_Basic = CfgData.Basic
+
     local ScriptPath = { -- Перечень специальных путей:
+
       Plugin    = "",       -- Каталог плагина
       scripts   = ScPath,   -- Каталог скриптов плагина
 
@@ -917,7 +942,8 @@ function TMenu:RunScript (Item)
   local Config = self.Config
 
   -- Исключение изменений в реальном пункте.
-  local Item = { __index = Item }; setmetatable(Item, Item)
+  Item = { __index = Item }
+  setmetatable(Item, Item)
 
   local Args, ChunkArgs, SError
 
@@ -975,6 +1001,7 @@ function TMenu:RunScript (Item)
 end ---- RunScript
 
   local Errors = {
+
     PlainNoInsert = "Area has no text insert",
     MacroNoEditor = "Area is not editor",
     CommandELevel = "ErrorLevel is %d",
@@ -985,6 +1012,7 @@ end ---- RunScript
 
   -- Отмена возврата LF4Ed в главное меню.
   local function EscapeFromMainMenu ()
+
     local LF4Ed_Cfg = --rawget(_G, '_Plugin') and _G._Plugin.config() or
                       rawget(_G, 'lf4ed') and _G.lf4ed.config()
     --logShow(LF4Ed_Cfg, "LF4Ed_Cfg", 1)
@@ -1095,6 +1123,7 @@ end -- do
 do
   -- TODO: Для RectMenu делать замену клавиш на VK'шные!
   local DefBreakKeys = { --  BreakKeys по умолчанию:
+
     -- [[
     { BreakKey = "BS",      Action = "Back", },       -- Возврат в надменю
     { BreakKey = "ShiftF1", Action = "Item Info", },  -- Сведения о пункте меню
@@ -1151,6 +1180,7 @@ function TMenu:HandleBreakKeys ()
       self.ActItem = { Menu = Back.Menu, isBack = true }
 
       return
+
     end
 
     -- Показ информации:
@@ -1172,6 +1202,7 @@ function TMenu:HandleBreakKeys ()
     self.ActItem = { Menu = self.CurMenu, isBack = false }
 
     return
+
   end
 
   local ActItem = self.ActItem
@@ -1198,6 +1229,7 @@ function TMenu:ShowLoop ()
       self.ActItem, self.ItemPos = nil, nil
 
       return -- Выход из главного меню
+
     end
 
     self.isNova = (ActItem.isBack == nil) -- Учёт нового меню
@@ -1212,6 +1244,7 @@ function TMenu:ShowLoop ()
       self.Error = self.L:et1("MnuSecNotFound", ActItem.Name or "(none)")
 
       return
+
     end
     --logShow(self.CurMenu, self.CurName, "w d2")
 
@@ -1238,6 +1271,7 @@ function TMenu:ShowLoop ()
     end
 
     -- self:ShowMenu()
+
   until not self.ActItem or
         (self.ActItem.Kind and self.ActItem.Kind ~= "Menu")
 
@@ -1248,6 +1282,7 @@ end -- do
 ---------------------------------------- ---- Run
 do
   local NoReturnKinds = {
+
     --LuaMacro  = true,
     CmdLine   = true,
 
@@ -1258,10 +1293,12 @@ function TMenu:Run ()
 
   repeat
     self:ShowLoop()
+
     if self.Error then return nil, self.Error end
 
     if not self.ActItem then
       if not self.ItemPos then return false, "" end -- Отмена меню
+
       return nil, "ItemPos", self.ItemPos -- Ошибка при работе с меню
 
     end
@@ -1279,11 +1316,12 @@ function TMenu:Run ()
     end
 
     farUt.RedrawAll()
+
     self.ActItem = { Menu = self.CurMenu, isBack = false, }
 
   until false
 
-  return true
+  --return true
 
 end ---- Run
 
@@ -1294,6 +1332,7 @@ end -- do
 -- TODO: Объект/таблица локализации!!!
 function unit.Menu (Properties, Menus, Config, ShowMenu)
                        --| (Menu) and/or --> (Menu|Items)
+
   if not Menus then return end
 
   local _Menu = CreateMenu(Properties, Menus, Config)

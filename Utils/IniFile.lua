@@ -206,7 +206,7 @@ local function ParseString (Str, Info, Props) --> (true | nil, error)
   --]]
   if PosB then --[[ Работа с разделом ]]
     -- Формирование раздела в таблице.
-    Sec = Line:sub(PosB+1, PosE-1) -- Очистка от конца
+    Sec = Line:sub(PosB + 1, PosE - 1) -- Очистка от конца
     if not Table[Sec] then Table[Sec] = {} end -- Раздел
     Info.Sec = Sec
     
