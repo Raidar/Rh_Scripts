@@ -113,13 +113,13 @@ $ #Filtration parameters#: FilterMenu
   #Sub# (string) — ¦Substring pattern for item text.
   — ¦It defines pattern of substring compared with filter pattern.
   — ¦It allows to choose text part that is used in filtration.
-  — ¦It`s used on variable position of choosed substring.
+  — ¦It`s used on variable position of chosen substring.
   — ¦If it is no substring, parameters described below are used.
 
   #Pos# & #End# (number) — ¦Positions of substring for item text.
   — ¦They are define position of text substring compared with pattern.
   — ¦They allow to choose text part that is used in filtration.
-  — ¦They are used on fixed position of choosed substring.
+  — ¦They are used on fixed position of chosen substring.
 
   #Left# & #Right# (string) — ¦Filter pattern parts.
   — ¦They are added into start and end of pattern.
@@ -201,14 +201,17 @@ $ #Characters map# (CharsMap)
  \37Ctrl+(Home|End)\-        — ¦a first/last character of the map.
 
   Special keys:
- \37Num* | Clear\- (Num5)    — ¦the last choosen character.
+ \37Num* | Clear\- (Num5)    — ¦the last chosen character.
  \37CtrlB\-                  — ¦to show a character blocks
 and to go to a first character of the chosen block.
  \37CtrlF\-                  — ¦to show all characters, that contain
 name of current character, and to go to a first character of the chosen block.
  \37CtrlC\-                  — ¦to copy the character to clipboard.
  \37CtrlV\-                  — ¦to go to a character from clipboard.
- \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard.
+ \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard
+(with code point right alignment).
+ \37CtrlAltShiftV\-          — ¦to go to a character with code point from clipboard
+(with code point left alignment).
  \37CtrlAltX\-               — ¦to go to a character obtained by XLat.
  \37(Shift+) <символ>\-      — ¦to go to a character corresponding to key.
 
@@ -240,9 +243,12 @@ $ #Characters map#: Character name input
  \37^$()%.[]*+-?\-           — ¦to input special symbols.
  \37ShiftNum/\-              — ¦to complete the input.
  \37Enter, NumEnter\-        — ¦to go to a character with input name.
- \37CtrlV\-                  — ¦to insert a character name from clipboard.
+ \37CtrlV\-                  — ¦to insert a character name from clipboard
+(with code point right alignment).
+ \37CtrlAltV\-               — ¦to insert a character name from clipboard
+(with code point left alignment).
  \37CtrlF\-                  — ¦to show all characters with input name
-and to go to the choosen character.
+and to go to the chosen character.
 
   A search is performed by a input text as Lua regular expression
 from code point of a character following by selected character.
@@ -279,13 +285,13 @@ the calendar itself is displayed on the right.
  \37Alt+(Home|End)\-         — ¦a start/end of the year.
 
  \37Ctrl+(PgUp|PgDn)\-       — ¦a start/end of the decade
-(the current one is used if it is not choosed before,
+(the current one is used if it is not chosen before,
 then a start of the previous one / an end of the next one).
  \37Ctrl+(Home|End)\-        — ¦a start/end of the century
-(the current one is used if it is not choosed before,
+(the current one is used if it is not chosen before,
 then a start of the previous one / an end of the next one).
- \37Ctrl+Alt+(PgUp|PgDn)\-   — ¦a start/end of the millenium
-(the current one is used if it is not choosed before,
+ \37Ctrl+Alt+(PgUp|PgDn)\-   — ¦a start/end of the millennium
+(the current one is used if it is not chosen before,
 then a start of the previous one / an end of the next one).
  \37Ctrl+Alt+(Clear)\-       — ¦a start/end of the 1st year (CE) (a switch).
  \37Ctrl+Alt+(Home|End)\-    — ¦a start of −9999 y. / an end of 9999 y. (CE).
@@ -346,7 +352,7 @@ $ #Calendar for one month#: Shift input
 $ #Rh_Scripts pack configurator# (rhsConfig)
   rhsConfig is a script to customize Rh_Scripts package.
  It allows to choose only needful menu items and resident modules.
-  A \37rhsConfig.cfgrus\- file is an example of configuration with russian
+  A \37rhsConfig.cfg.russian\- file is an example of configuration with Russian
 names of menu items. To use it rename the file to \37rhsConfig.cfg\-.
 
     ~Menu items~@<..\doc\>RhS_LFE_MenuItems@

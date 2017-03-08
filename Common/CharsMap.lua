@@ -1156,15 +1156,26 @@ function TMain:EditCodeInput (SKey)
       Input = Input:sub(1, -2)
 
     end
-  elseif SKey == "CtrlV" then
+
+  elseif SKey == "CtrlV" or
+         SKey == "CtrlAltV" then
     local s = far.PasteFromClipboard()
     --logShow(s, SKey)
     if type(s) == 'string' and s ~= "" then
-      s = (s.."0000"):match("^(%x%x%x%x)")
+
+      if SKey == "CtrlV" then
+        s = ("0000"..s):match("(%x%x%x%x)$")
+
+      else
+        s = (s.."0000"):match("^(%x%x%x%x)")
+
+      end
+
       --logShow(s, SKey)
       if s then Input = s:upper() end
 
     end
+
   else
     if Input:len() < 4 then
       Input = Input..SKey
@@ -1569,11 +1580,25 @@ function TMain:AssignEvents () --> (bool | nil)
 
       end
 
-    elseif SKey == "CtrlShiftV" then
+    elseif SKey == "CtrlAltV" then
+      if self.IsCodeInput then
+        self:EditCodeInput(SKey)
+
+      end
+
+    elseif SKey == "CtrlShiftV" or
+           SKey == "CtrlAltShiftV" then
       -- Paste as Code Point
       local s = far.PasteFromClipboard()
       if type(s) == 'string' then
-        s = (s.."0000"):match("^(%x%x%x%x)")
+        if SKey == "CtrlShiftV" then
+          s = ("0000"..s):match("(%x%x%x%x)$")
+
+        else
+          s = (s.."0000"):match("^(%x%x%x%x)")
+
+        end
+
         if s then self.Char = tonumber(s, 16) end
 
       else
