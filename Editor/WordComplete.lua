@@ -60,6 +60,8 @@ local min2, max2 = numbers.min2, numbers.max2
 
 local addNewData = tables.extend
 
+--local hex = numbers.hex8
+
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 local macUt = require "Rh_Scripts.Utils.Macro"

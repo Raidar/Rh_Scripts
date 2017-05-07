@@ -49,7 +49,7 @@ local k = 0x00
 
 --far.Message(tostring(KEY_EVENT), "AutoActions")
 --local debugs = require "context.utils.useDebugs"
---local hex  = debugs.hex8
+--local hex  = numbers.hex8
 --local flog = debugs.open("AA_test.log", "a", "")
 function ProcessEditorInput (rec) --> (bool)
 
