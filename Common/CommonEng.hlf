@@ -207,6 +207,7 @@ and to go to a first character of the chosen block.
  \37CtrlF\-                  — ¦to show all characters, that contain
 name of current character, and to go to a first character of the chosen block.
  \37CtrlC\-                  — ¦to copy the character to clipboard.
+ \37CtrlShiftC\-             — ¦to copy code point of the character to clipboard.
  \37CtrlV\-                  — ¦to go to a character from clipboard.
  \37CtrlShiftV\-             — ¦to go to a character with code point from clipboard
 (with code point right alignment).

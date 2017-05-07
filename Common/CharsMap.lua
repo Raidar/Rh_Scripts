@@ -218,6 +218,15 @@ local function CreateMain (ArgData)
 
     }, --
 
+    EdgeRows = {
+      Count = 4,
+
+      ItemHint  = 1,
+      CharCode  = 2,
+      BlockName = 4,
+
+    }, --
+
   } --- self
   self.Nomens.Main = self
   self.Blocks.Main = self
@@ -338,6 +347,35 @@ end ---- MakeColors
 
   local uBlockName = CharsList.uBlockName
 
+  local sbyte = string.byte
+  --local schar, sbyte = string.char, string.byte
+  local sformat = string.format
+
+  local tconcat = table.concat
+
+local function Utf8Code (s)
+
+  local t = { sbyte(s, 1, -1) }
+  --logShow(t, s or "")
+
+  local u = {}
+  local len = #t
+
+  for k = 1, len do
+    u[#u + 1] = sformat("%2x", t[k])
+
+  end -- for
+
+  local c = 3 - len
+  c = c < 0 and 0 or c
+  u[#u + 1] = (" "):rep(c * 3)
+
+  return tconcat(u, " ")
+  --return string.gsub(tconcat(u), "([0-9a-f][0-9a-f])", "%1 ")
+
+end -- Utf8Code
+
+
 function TMain:MakeProps ()
 
   self.RowCount = 1 + self.CharRows + 1
@@ -355,6 +393,8 @@ function TMain:MakeProps ()
   local L = self.LocData
   Props.Title  = L.Caption
   --Props.Bottom = L.CharsMapKeys
+
+  local EdgeRows = self.EdgeRows
 
   -- Свойства RectMenu:
   local RM = {
@@ -395,22 +435,35 @@ function TMain:MakeProps ()
     --IsStatusBar = true,
 
     Edges = {
-      --Bottom = 1,
-      Bottom = 3,
+      Bottom = EdgeRows.Count,
 
       Texts = {
-        Bottom = function (k, Rect, Item)
 
-          if Item == nil then
-            return
+        Bottom = {
+          [EdgeRows.ItemHint] = function (k, Rect, Item)
+            if type(Item) == 'table' then
+              return Item.Hint
+            end
+          end, --
 
-          end
+          [EdgeRows.CharCode] = function (k, Rect, Item)
+            local d = type(Item) == 'table' and Item.Data
+            if type(d) == 'table' then
+              local s = d.Utf8Code
+              if not s then
+                s = Utf8Code(d.char or "")
+                d.Utf8Code = s
 
-          if     k == 1 then
-            return Item.Hint
+              end
 
-          elseif k == 3 then
-            local d = Item.Data
+              --return ("-UTF-8: %s"):format(s)
+              return ("-UTF-8: %s."):format(s)
+
+            end
+          end, --
+
+          [EdgeRows.BlockName] = function (k, Rect, Item)
+            local d = type(Item) == 'table' and Item.Data
             if type(d) == 'table' then
               local n = d.BlockName
               if not n then
@@ -422,9 +475,9 @@ function TMain:MakeProps ()
               return n
 
             end
-          end -- if-else
+          end, --
 
-        end,
+        }, -- Bottom
 
       }, -- Texts
 
@@ -1363,6 +1416,8 @@ do
   local u8byte = strings.u8byte
   --local u8byte, u8char = strings.u8byte, strings.u8char
 
+  local uCP2s = strings.ucp2s
+
   local function CharToCode (s)
     return u8byte(s:sub(1, 1)) or 0x0000
 
@@ -1551,8 +1606,16 @@ function TMain:AssignEvents () --> (bool | nil)
 
       end
 
-    elseif SKey == "CtrlC" then
-      local s = Data.char
+    elseif SKey == "CtrlC" or
+           SKey == "CtrlShiftC" then
+      local s
+      if SKey == "CtrlC" then
+        s = Data.char
+
+      else
+        s = uCP2s(Data.Char, true)
+
+      end
       if type(s) == 'string' and s ~= "" then
         far.CopyToClipboard(s)
 
@@ -1831,8 +1894,10 @@ function TMain:AssignEvents () --> (bool | nil)
     --if not Data then return end
 
     local isUpdate = true
+    local EdgeRows = self.EdgeRows
 
-    if Kind == "B" and Input.r == 3 then
+    if Kind == "B" and
+       Input.r == EdgeRows.BlockName then
       --logShow(Input, Kind)
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
