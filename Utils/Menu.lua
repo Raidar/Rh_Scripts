@@ -96,6 +96,7 @@ local DefaultItemChars = {
   separator     = "─",  -- 0x2500   -- Символ для пункта-разделителя
   checked       = "√",  -- 0x221A   -- Символ метки пункта меню
   unchecked     = " ",  -- space    -- Символ не-метки пункта меню
+  padding       = " ",  -- space    -- Символ отступа текста от края
 
 } --- DefaultItemChars
 unit.DefaultItemChars = DefaultItemChars

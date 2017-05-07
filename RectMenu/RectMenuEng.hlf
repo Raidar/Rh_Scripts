@@ -220,13 +220,16 @@ $ #Menu items properties#: RectMenu
       \37false\- — show never.
       \37nil\-   — show if only checked items exists.
 
-  #CompactText# (bool) — Compact outpout of text.
-  — ¦It allows to output item text without first and last spaces.
+  #ItemPadding# (bool) — Output of text with padding.
+  — ¦It allows to output item text with padding from edges of item.
 
   #SpacingChar#,
   #SeparatorChar#,
   #CheckedChar#,
   #UncheckedChar#,
+  #PaddingChar#,
+  #PaddingLChar#,
+  #PaddingRChar#,
   #TextMark# — see ~Item properties~@RM_Props_ItemPart@
 
  ~Contents~@Contents@       ~Menu properties~@RM_Props@
@@ -248,6 +251,12 @@ $ #Item properties#: RectMenu
 
   #UncheckedChar# (string) — Character used in unchecked item.
   — ¦It allows to specify common non‑mark character for unchecked items.
+
+  #PaddingChar# (string) — Character for text padding from edge of item.
+
+  #PaddingLChar# (string) — Character for text padding from left edge of item.
+
+  #PaddingRChar# (string) — Character for text padding from right edge of item.
 
   #TextMark# (table) — Selection of text part for menu item.
   — ¦Format:

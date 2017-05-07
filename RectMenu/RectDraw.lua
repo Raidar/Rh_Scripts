@@ -107,8 +107,9 @@ function unit.DrawRectText (Rect, Color, Text, Spacing, ...) --> (number)
     end
 
   elseif tp == 'table' then
-    for i = 1, #Text do
-      if k > Count then break end
+    for i = 1, Count do
+    --for i = 1, Count or Text.Count or #Text do
+    --  if k > Count then break end
 
       local s = Text[i]
       if type(s) == "function" then
@@ -302,7 +303,8 @@ local function RectParseText (Rect, Color, Parse, Item, Options)
 
   Item = Item or Null
   local RM, RI = Options.RectMenu, Item.RectMenu or Null
-  local Margin = RM.CompactText and "" or " "
+  -- TODO: Fix Padding as in unit.DrawItemText
+  --local Padding = RM.ItemPadding ~= false and " " or ""
   local Sign = Options.checked and
                checkedChar(Item.checked,
                            nil,
@@ -314,7 +316,7 @@ local function RectParseText (Rect, Color, Parse, Item, Options)
   local k = 1
   while k <= #Parse do
     local v = Parse[k]
-    
+
     t[n] = v
 
     n = n + 1
@@ -385,24 +387,28 @@ function unit.DrawItemText (Rect, Color, Item, Options)
 
   -- Разбор текста с учётом маркировки:
   local Parse = MakeParseText(Item, Color, TextB, TextH, TextE)
-  local Margin = RM.CompactText and "" or " "
+
+  -- Учёт отступов:
+  local PaddingL = RM.ItemPadding ~= false and RM.PaddingLChar or ""
+  local PaddingR = RM.ItemPadding ~= false and RM.PaddingRChar or ""
+  Len = Len + PaddingL:len() + PaddingR:len()
 
   -- Выравнивание + очистка конца:
-  local Clear = Rect.w - Len - Margin:len() * 2
+  local Clear = Rect.w - Len
   Clear = RepChar("spacing", RI.SpacingChar or RM.SpacingChar, max2(0, Clear))
 
   -- Учёт начальных и конечных символов:
   Parse.m, Parse.n = 1, #Parse + 1
-  local MarginB = Margin
   if Options.checked then
-    MarginB = checkedChar(Item.checked,
-                          nil,
-                          RI.CheckedChar   or RM.CheckedChar,
-                          RI.UncheckedChar or RM.UncheckedChar)..MarginB
+    PaddingL = checkedChar(Item.checked,
+                           nil,
+                           RI.CheckedChar   or RM.CheckedChar,
+                           RI.UncheckedChar or RM.UncheckedChar)..PaddingL
   end
 
-  Parse[1]       = { text = MarginB,       color = Color.normal, }
-  Parse[Parse.n] = { text = Clear..Margin, color = Color.normal, }
+  Parse[1]       = { text = PaddingL,   color = Color.normal, }
+  Parse[Parse.n] = { text = Clear..
+                            PaddingR,   color = Color.normal, }
 
   return DrawParseText(Rect, Item, Parse) -- Рисование разобранного текста
 

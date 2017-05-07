@@ -581,6 +581,9 @@ function TMenu:DefinePropInfo () --| Props
   RM.SeparatorChar  = menUt.ItemChar("separator", RM.SeparatorChar)
   RM.CheckedChar    = menUt.ItemChar("checked",   RM.CheckedChar)
   RM.UncheckedChar  = menUt.ItemChar("unchecked", RM.UncheckedChar)
+  RM.PaddingChar    = menUt.ItemChar("padding",   RM.PaddingChar)
+  RM.PaddingLChar   = menUt.ItemChar("unchecked", RM.PaddingLChar, RM.PaddingChar)
+  RM.PaddingRChar   = menUt.ItemChar("unchecked", RM.PaddingRChar, RM.PaddingChar)
 
   -- Оформление меню:
   if RM.MenuOnly then -- Только меню:
@@ -904,9 +907,10 @@ function TMenu:DefineSpotInfo () --| Zone
   self.TextMax, self.LineMax = TextMax, LineMax
   -- Максимальные размеры пункта меню.
   self.ColWidth, self.RowHeight = {}, LineMax -- {}
+  local PadLen = RM.PaddingLChar:len() + RM.PaddingRChar:len()
   for k = 0, ColCount do
     self.ColWidth[k] = TextMax[k] + b2n(Data.checked) +
-                       (RM.CompactText and 0 or 2) -- (L+R Space)
+                       (RM.ItemPadding ~= false and PadLen or 0)
     --self.RowHeight[k] = LineMax[k] + 0 -- (U+D Space)
 
   end
