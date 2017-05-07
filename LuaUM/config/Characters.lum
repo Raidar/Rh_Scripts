@@ -68,6 +68,7 @@ end
 unit.KitGroups = {
 
   Chars = true,
+  Keybd = true,
   Maths = true,
   Punct = true,
   Techs = true,
@@ -78,16 +79,23 @@ unit.KitGroups = {
 -- Данные о наборах.
 unit.KitsData = {
 
-  CharacterMap  = { Group = "All",   Hot = "*", text = 0, Title = 0, },
-  Chars_Greeks  = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
-  Chars_Cyrils  = { Group = "Chars", Hot = "V", text = 0, Title = 0, },
-  MathsSymbols  = { Group = "Maths", Hot = "M", text = 0, Title = 0, },
-  MathsScripts  = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
-  --MathsIndexes  = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
-  PunctSymbols  = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
-  Punct_Spaces  = { Group = "Punct", Hot = "~", text = 0, Title = 0, },
-  Techs_Arrows  = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
-  Draws_Boxing  = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
+  CharacterMap      = { Group = "All",   Hot = "*", text = 0, Title = 0, },
+
+  Chars_Greek       = { Group = "Chars", Hot = "G", text = 0, Title = 0, },
+  Chars_Hebrew      = { Group = "Chars", Hot = "H", text = 0, Title = 0, },
+
+  Keybd_Cyrillic    = { Group = "Keybd", Hot = "V", text = 0, Title = 0, },
+
+  Maths_Symbols     = { Group = "Maths", Hot = "M", text = 0, Title = 0, },
+  Maths_Scripts     = { Group = "Maths", Hot = "X", text = 0, Title = 0, },
+  --Maths_Indexes     = { Group = "Maths", Hot = "O", text = 0, Title = 0, },
+
+  Punct_Symbols     = { Group = "Punct", Hot = "`", text = 0, Title = 0, },
+  Punct_Spaces      = { Group = "Punct", Hot = "~", text = 0, Title = 0, },
+
+  Techs_Arrows      = { Group = "Techs", Hot = "A", text = 0, Title = 0, }, -- TODO
+
+  Draws_Boxing      = { Group = "Draws", Hot = "B", text = 0, Title = 0, }, -- TODO
 
 } -- KitsData
 
@@ -204,7 +212,7 @@ function unit.CompactMenu (Menu) --| Menu.Props.RectMenu
   --RM.BoxKind = ""
   --RM.Shadowed = false
   --RM.MenuEdgeH = 0
-  RM.CompactText = true
+  RM.ItemPadding = false
   RM.Separators = "V"
 
 end ---- CompactMenu
@@ -348,9 +356,9 @@ end ---- CharacterMap
 --unit.CharacterMap = nil
 
 ---------------------------------------- Letters etc
-function unit.Chars_Greeks ()
+function unit.Chars_Greek ()
 
-  local Name = "Chars_Greeks"
+  local Name = "Chars_Greek"
   local Menu = unit.ScriptData[Name]
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
@@ -381,17 +389,54 @@ function unit.Chars_Greeks ()
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
   --unit.CompactMenu(Menu)
-  Menu.Props.RectMenu.CompactText = true
+  Menu.Props.RectMenu.ItemPadding = false
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
   return Menu
 
-end ---- Chars_Greeks
+end ---- Chars_Greek
 
-function unit.Chars_Cyrils ()
+function unit.Chars_Hebrew ()
 
-  local Name = "Chars_Cyrils"
+  local Name = "Chars_Hebrew"
+  local Menu = unit.ScriptData[Name]
+  --if Menu then return Menu end
+  if Menu then return Menu.UpdateInsArea() end
+
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
+  local Datas = -- Char + Shift
+                [[אבצדהטגחי כלמנעפקרשת  ו  ז`[];',./\1234567890-= ]]..
+                [[  ץ       ך םן ף          ~{}:"<>?|!@#$%^&*()_+]]..Chars.BS..
+                -- Ctrl + Shift
+                [[                                  ́        []±≈]]..Chars.CR..
+                [[                                          {}∓≉ ]]
+
+  local Props = {
+
+    Order   = Order,
+    Serial  = true,
+    --Heading = "Order",
+    Heading = "Both",
+
+  } ---
+
+  Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
+  --logShow(Menu, "Chars_Hebrew", 2)
+  unit.UseSpace(Menu)
+  --unit.CompactMenu(Menu)
+  Menu.Props.RectMenu.ItemPadding = false
+  --Menu.Props.RectMenu.PaddingChar = "ӏ"
+  unit.ScriptData[Name] = Menu
+
+  return Menu
+
+end ---- Chars_Hebrew
+
+---------------------------------------- Keyboard
+function unit.Keybd_Cyrillic ()
+
+  local Name = "Keybd_Cyrillic"
   local Menu = unit.ScriptData[Name]
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
@@ -420,20 +465,20 @@ function unit.Chars_Cyrils ()
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
-  --logShow(Menu, "Chars_Cyrils", 2)
+  --logShow(Menu, "Chars_Cyrillic", 2)
   unit.UseSpace(Menu)
   --unit.CompactMenu(Menu)
-  Menu.Props.RectMenu.CompactText = true
+  Menu.Props.RectMenu.ItemPadding = false
   unit.ScriptData[Name] = Menu
 
   return Menu
 
-end ---- Chars_Cyrils
+end ---- Keybd_Cyrillic
 
 ---------------------------------------- Mathematics
-function unit.MathsSymbols ()
+function unit.Maths_Symbols ()
 
-  local Name = "MathsSymbols"
+  local Name = "Maths_Symbols"
   local Menu = unit.ScriptData[Name]
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
@@ -474,17 +519,17 @@ function unit.MathsSymbols ()
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
   unit.UseSpace(Menu)
   --unit.CompactMenu(Menu)
-  Menu.Props.RectMenu.CompactText = true
+  Menu.Props.RectMenu.ItemPadding = false
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
   return Menu
 
-end ---- MathsSymbols
+end ---- Maths_Symbols
 
-function unit.MathsScripts ()
+function unit.Maths_Scripts ()
 
-  local Name = "MathsScripts"
+  local Name = "Maths_Scripts"
   local Menu = unit.ScriptData[Name]
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
@@ -522,13 +567,13 @@ function unit.MathsScripts ()
   Menu = unit.MakeKindMenu(Name, Props, Datas, Keys)
   unit.UseSpace(Menu)
   --unit.CompactMenu(Menu)
-  Menu.Props.RectMenu.CompactText = true
+  Menu.Props.RectMenu.ItemPadding = false
   --logShow(Menu, Name, 3)
   unit.ScriptData[Name] = Menu
 
   return Menu
 
-end ---- MathsScripts
+end ---- Maths_Scripts
 
 ---------------------------------------- Technology
 function unit.Techs_Arrows ()
@@ -571,9 +616,9 @@ op  - prime + modifier apostroph
 qw  - quote
 b   - bullet
 --]]
-function unit.PunctSymbols ()
+function unit.Punct_Symbols ()
 
-  local Name = "PunctSymbols"
+  local Name = "Punct_Symbols"
   local Menu = unit.ScriptData[Name]
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
@@ -616,7 +661,7 @@ function unit.PunctSymbols ()
 
   return Menu
 
-end ---- PunctSymbols
+end ---- Punct_Symbols
 
 function unit.Punct_Spaces ()
 
@@ -687,6 +732,7 @@ end ---- Punct_Spaces
 ---------------------------------------- Menu making
 
 ---------------------------------------- ---- Menu
+
 function unit.MakeMenu ()
 
   --logShow("unit.MakeMenu", "unit.MakeMenu")
@@ -694,6 +740,7 @@ function unit.MakeMenu ()
   CharsMenu = require "Rh_Scripts.Common.CharsMenu"
 
   local gL = unit.KitGroups
+  local sSectionFmt = " %s "
 
   return {
     text  = L.ChsKitItem,
@@ -701,21 +748,29 @@ function unit.MakeMenu ()
 
     --Inherit = false,
 
-    --Items = { unit.Chars_Custom, unit.Chars_Alters, unit.Chars_Greeks, },
     Items = {
 
-      { text = gL.Chars, separator = true, },
-      unit.Chars_Greeks, unit.Chars_Cyrils,
+      { text = sSectionFmt:format(gL.Chars), separator = true, },
+      unit.Chars_Greek,
+      unit.Chars_Hebrew,
 
-      { text = gL.Maths, separator = true, },
-      unit.MathsSymbols, unit.MathsScripts,
-      --unit.MathsIndexes,
+      { text = sSectionFmt:format(gL.Keybd), separator = true, },
+      unit.Keybd_Cyrillic,
 
-      --{ text = gL.Techs, separator = true, },
+      { text = sSectionFmt:format(gL.Maths), separator = true, },
+      unit.Maths_Symbols,
+      unit.Maths_Scripts,
+      --unit.Maths_Indexes,
+
+      --{ text = sSectionFmt:format(gL.Techs), separator = true, },
       --unit.Techs_Arrows,
 
-      { text = gL.Punct, separator = true, },
-      unit.PunctSymbols, unit.Punct_Spaces,
+      { text = sSectionFmt:format(gL.Punct), separator = true, },
+      unit.Punct_Symbols,
+      unit.Punct_Spaces,
+
+      --{ text = sSectionFmt:format(gL.Draws), separator = true, },
+      --unit.Draws_Boxing,
 
       --{ separator = true, },
       --unit.CharacterMap,
