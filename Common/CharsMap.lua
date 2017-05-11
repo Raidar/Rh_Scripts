@@ -327,7 +327,6 @@ function TMain:MakeColors ()
   local basics = colors.BaseColors
 
   local Basis = {
-
     StandardFG  = basics.navy,
     --MarkedFG    = basics.red,
     MarkedFG    = basics.black,
@@ -931,6 +930,8 @@ function TNomens:MakeItems () --| (Nomens_Items)
 
   local k = 0
   local Count = self.NomensCount
+  if not (Count > 0) then return false end
+
   for i = NamesStart, NamesLimit do
     local c = CharsNames[i]
     if c then
@@ -1072,7 +1073,8 @@ function TBlocks:MakeItems () --| (Blocks_Items)
 
   } ---
 
-  self.Count = CharsData.BlocksCount
+  self.Count = CharsData.BlocksCount or 0
+  if not (self.Count > 0) then return false end
 
   for i = 1, self.Count do
     local b = CharsBlocks[i]
@@ -1123,7 +1125,7 @@ function TMain:ChooseChar (Data)
   Nomens.BasePattern = self.IsCharInput and self.Input or self.Input
 
   Nomens:MakeProps()
-  Nomens:MakeItems()
+  if not Nomens:MakeItems() then return end
   Nomens:InitFilter()
 
   --local Char = Data and Data.Char or 0
@@ -1147,7 +1149,7 @@ function TMain:ChooseBlock (Data)
   Blocks.FilterCol = 2
 
   Blocks:MakeProps()
-  Blocks:MakeItems()
+  if not Blocks:MakeItems() then return end
   Blocks:InitFilter()
 
   local Char = Data and Data.Char or 0
