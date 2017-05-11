@@ -179,6 +179,34 @@ end ---- MakeKindConfig
 
   local tcopy = tables.clone --copy
 
+function unit.MakeColors (Props) --> (Props)
+
+  local colors = require 'context.utils.useColors'
+  local basics = colors.BaseColors
+
+  local Basis = {
+    --StandardFG  = basics.navy,
+    --MarkedFG    = basics.red,
+    --MarkedFG    = basics.navy,
+    MarkedFG    = basics.white,
+    --MarkedFG    = basics.black,
+    --BorderFG    = basics.black,
+    --TitleFG     = basics.black,
+    --StatusBarFG = basics.black,
+    --ScrollBarFG = basics.black,
+
+  } --- Basis
+
+  local menUt = require "Rh_Scripts.Utils.Menu"
+
+  local RM = Props.RectMenu or {}
+  RM.Colors = menUt.MenuColors(Basis)
+
+  Props.RectMenu = RM
+  --logShow(RM.Colors, "Colors", "w d2 xv8")
+
+end ---- MakeColors
+
 -- Сформировать меню из набора символов.
 function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
 
@@ -189,6 +217,8 @@ function unit.MakeKindMenu (Cfg, Props, Datas, Keys) --> (Menu)
   local h = Cfg.DefCustom.history
   if h then h.name = Cfg.Name or h.name end
   --logShow(h, Cfg.Name)
+
+  unit.MakeColors(Props)
 
   return CharsMenu.MakeMenu(Cfg, Props, Datas, Keys)
 
@@ -290,7 +320,6 @@ function unit.CharacterMap ()
     Heading = "Both",
 
     RectMenu = {
-
       LineMax = 1,
       TextMax = { [0] = 1; 4, },
 
@@ -301,7 +330,6 @@ function unit.CharacterMap ()
     }, -- RectMenu
 
     RectItem = {
-
       TextMark = true,
 
     }, -- RectItem
@@ -316,7 +344,6 @@ function unit.CharacterMap ()
     local basics = colors.BaseColors
 
     local Basis = {
-
       StandardFG  = basics.navy,
       --MarkedFG    = basics.red,
       MarkedFG    = basics.black,
@@ -419,6 +446,11 @@ function unit.Chars_Hebrew ()
     --Heading = "Order",
     Heading = "Both",
 
+    RectItem = {
+      TextMark = true,
+    
+    },
+
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
@@ -427,6 +459,7 @@ function unit.Chars_Hebrew ()
   --unit.CompactMenu(Menu)
   Menu.Props.RectMenu.ItemPadding = false
   --Menu.Props.RectMenu.PaddingChar = "ӏ"
+  --Menu.Props.RectMenu.PaddingRChar = "ӏ"
   unit.ScriptData[Name] = Menu
 
   return Menu
