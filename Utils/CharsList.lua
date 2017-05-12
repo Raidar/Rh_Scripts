@@ -133,8 +133,8 @@ end ---- uCharBlockName
 ---------------------------------------- Search
 --do
 
-  local NamesStart = unit.Data.NamesStart
-  local NamesLimit = unit.Data.NamesLimit
+  local NamesStart = unit.Data.NamesStart or 0
+  local NamesLimit = unit.Data.NamesLimit or 0
 
 function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
 
