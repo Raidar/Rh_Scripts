@@ -28,7 +28,7 @@ local utils = require 'context.utils.useUtils'
 local unit = {}
 
 ---------------------------------------- Main data
-unit.ScriptName = "CharsList"
+unit.ScriptName = "CharsData"
 unit.ScriptPath = "scripts\\Rh_Scripts\\Utils\\"
 
 ---------------------------------------- ---- Config
@@ -116,9 +116,8 @@ function unit:ParseNames (FileName) --> (bool | nil)
     --if sn > 40 then break end -- DEBUG only
     --logShow(s, "File used line")
 
-    -- TODO: Check codepoint ranges!!
     -- Основное название:
-    local code, name = s:match("^(%x%x%x%x)\t(.+)$")
+    local code, name = s:match("^(%x%x%x%x)\t(.+)$") -- 0000–FFFF range
     if code then
       --logShow(code, name)
       local cp = tonumber(code, 16)
@@ -133,27 +132,27 @@ function unit:ParseNames (FileName) --> (bool | nil)
       limit = cp
       count = count + 1
 
+    else
+      local name = s:match("^\t= (.+)$")
+      if name then
+        data = t[limit]
+        --if not data.over then data.over = {} end
+        --data.over[#data.over + 1] = name:sub(1, 1) == '<' and name or easy(name)
+        if not data.over then
+          data.over = name:sub(1, 1) == '<' and name or easy(name)
+
+        end
+      end -- if
     end -- if
-
-    self.Data.NamesCount = count
-    self.Data.NamesStart = 0x0
-    self.Data.NamesLimit = limit
-
-    --[[
-    name = s:match("^\t%= (.+)")
-    -- Альтернативное название:
-    if name then
-      data = t[limit]
-      if not data.alias then data.alias = {} end
-      data.alias[#data.alias + 1] = name
-
-    end --
-    --]]
 
     s = f:read('*l')
     --sn = sn + 1
 
   until s == nil
+
+  self.Data.NamesCount = count
+  self.Data.NamesStart = 0x0
+  self.Data.NamesLimit = limit
 
   f:close()
 
@@ -232,8 +231,17 @@ function unit:ParseBlocks (FileName) --> (bool | nil)
   return true
 
 end ---- ParseBlocks
+
+--[[
+function unit:MakeSpecialNames ()
+
+  local Data = self.Data
+
+end ---- MakeSpecialNames
+--]]
+
 ---------------------------------------- Load / Save
-do  
+do
   local farUt = require "Rh_Scripts.Utils.Utils"
 
 -- Load Data.
@@ -325,6 +333,8 @@ function unit:Execute (Data) --> (bool | nil)
                      CfgData.FilePath, CfgData.BlocksFile)
   --logShow(unit.DefCfgData, FileName, "d1")
   self:ParseBlocks(FileName)
+
+  --self:MakeSpecialNames()
 
   FileName = sformat("%s%s%s", CfgData.PluginWorkPath,
                      CfgData.FilePath, CfgData.DataFile)

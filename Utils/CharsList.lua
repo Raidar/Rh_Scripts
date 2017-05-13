@@ -45,7 +45,8 @@ do --- Преобразование в читаемый формат
 local uCP2s = strings.ucp2s
 unit.uCP = uCP2s
 
-unit.CharCodeNameFmt = "U+%s — %s" -- utf-8 string
+unit.CharCodeNameFmt = "U+%s — %s"  -- utf-8 string
+unit.CharNameOverFmt = "%s | %s"    -- utf-8 string
 
 local function uCodeName (u) --< uCode --> Name
 
@@ -57,7 +58,15 @@ local function uCodeName (u) --< uCode --> Name
 
   local s = c.fullname
   if not s then
-    s = unit.CharCodeNameFmt:format(uCP2s(u, true), c.name or "")
+    local name = c.name
+    if name and c.over and
+       (name:sub(1, 1) == '<' or
+        name:len() < 8*3) then
+      name = unit.CharNameOverFmt: format(name, c.over)
+
+    end
+
+    s = unit.CharCodeNameFmt:format(uCP2s(u, true), name or "")
     c.fullname = s
 
   end
