@@ -363,7 +363,7 @@ local function Utf8Code (s)
   local len = #t
 
   for k = 1, len do
-    u[#u + 1] = sformat("%2x", t[k])
+    u[#u + 1] = sformat("%02x", t[k])
 
   end -- for
 
