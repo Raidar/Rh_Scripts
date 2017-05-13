@@ -26,6 +26,8 @@ local logShow = context.ShowInfo
 local tables = require 'context.utils.useTables'
 local datas = require 'context.utils.useDatas'
 
+local Null = tables.Null
+
 ----------------------------------------
 local farUt = require "Rh_Scripts.Utils.Utils"
 
@@ -179,7 +181,19 @@ unit.MakeItemKey = MakeItemKey
 
 -- Make menu item.
 -- Формирование пункта меню.
-function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
+--[[
+  -- @params:
+  text  - character itself.
+  Keys  - key set for rapid keys.
+  index - character position in Datas.
+  order - character position in Order.
+  key   - key name position in KeyOrder.
+  capt  - caption character for rapid key.
+  Props - properties for menu item.
+--]]
+function unit.MakeCharItem (text, Keys,
+                            index, order, key,
+                            capt, Props) --> (table)
 
   local x = type(text) ~= 'table'
   text, x = x and text or text[2], x and text or text[1]
@@ -207,11 +221,21 @@ function unit.MakeCharItem (text, Keys, key, char, Props) --> (table)
 
   end
 
-  x = type(char) ~= 'table'
-  MakeItemKey(t, Keys.Kind and Keys or Keys[1], key, x and char or char[2])
-  char = x and char or char[3]
-  if char and char ~= "" and not Keys.Kind then
-    MakeItemKey(t, Keys[2], key, char)
+  x = type(capt) ~= 'table'
+  MakeItemKey(t,
+              Keys.Kind and Keys or Keys[1],
+              key,
+              x and capt or capt[2])
+
+  capt = x and capt or capt[3]
+  if capt and capt ~= "" and not Keys.Kind then
+    MakeItemKey(t, Keys[2], key, capt)
+
+  end
+
+  local CI = Props.CharsItem or Null
+  if CI.OnMakeCharItem then
+    CI.OnMakeCharItem(t, index, order, key, capt, Props)
 
   end
 
@@ -239,13 +263,13 @@ local MakeHeadItem = unit.MakeHeadItem
       [1]     (string)   - название пункта-заголовка меню.
       [2]     (string)   - основной символ используемой клавиши.
       [3]     (string)   - добавочный символ используемой клавиши.
-    Size    (number)   - размер ряда в Data.
+    Size    (number)   - размер ряда в Datas.
     Count   (number)   - число рядов и число клавиш для них.
-    Length  (number)   - длина пункта меню в Data.
-    Serial    (bool)   - выборка пунктов из Data по рядам.
+    Length  (number)   - длина пункта меню в Datas.
+    Serial    (bool)   - выборка пунктов из Datas по рядам.
     KeyOrder (table)   - порядок строк клавиш для заголовков.
     Heading (string)   - вывод заголовков: "Order", "Keys", "Both".
-  Data      (string) - "шаблоны" содержимого пунктов в порядке Order.
+  Datas     (string) - "шаблоны" содержимого пунктов в порядке Order.
              (table) - массив таблиц-"шаблонов" содержимого. Поля:
     [1]       (string) - plain-текст содержимого.
     [2]       (string) - название пункта-"символа" меню.
@@ -255,12 +279,12 @@ local MakeHeadItem = unit.MakeHeadItem
               (bool) - = "AccelKey" с использованием порядка KeyOrder.
                        KeyOrder должен быть стандартного вида.
 --]]
-function unit.MakeItems (Properties, Data, Keys) --> (table)
+function unit.MakeItems (Properties, Datas, Keys) --> (table)
 
   -- Настройка параметров:
-  local tp = type(Data)
+  local tp = type(Datas)
   if tp ~= 'string' and tp ~= 'table' then
-    return nil, "Data type is not valid"
+    return nil, "Datas type is not valid"
 
   end
 
@@ -274,9 +298,9 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   end
 
-  local dLen = length(Data)
+  local dLen = length(Datas)
   if not dLen or dLen < 1 then
-    return nil, "Data length is not valid"
+    return nil, "Datas length is not valid"
 
   end
 
@@ -286,7 +310,9 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   local ItemProps = {
     Hint = Properties.Hint == nil and true or Properties.Hint,
+
     RectItem = Properties.RectItem or {},
+    CharsItem = Properties.CharsItem or {},
 
   } --- ItemProps
 
@@ -312,7 +338,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   elseif kk == 'string' then
     if Keys == "None" then
-      Keys = { Kind = "None" }
+      Keys = { Kind = "None", }
 
     else
       Keys = unit.DefActionKeys
@@ -323,12 +349,12 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   -- Функция извлечения текста из Order
   local capt = type(Order) == 'table' and
-               function (k) return Order[k] end or
-               function (k) return Order:sub(k, k) end
-  -- Функция извлечения текста из Data
+               function (j) return Order[j] end or
+               function (j) return Order:sub(j, j) end
+  -- Функция извлечения текста из Datas
   local text = tp == 'table' and
-               function (k) return Data[k] end or
-               function (k) return Data:sub(k, k + iLen - 1) end
+               function (i) return Datas[i] end or
+               function (i) return Datas:sub(i, i + iLen - 1) end
 
   -- Формирование пунктов:
   local t = {} -- result
@@ -340,6 +366,12 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
   end
 
+  local caps = {}
+  for j = 1, Size do
+    caps[j] = capt(j)
+
+  end
+
   if Properties.Serial then -- Последовательная выборка
 
     if Heading ~= "Keys" then
@@ -348,7 +380,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ i, j }, "Head Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t + 1] = MakeHeadItem(capt(j)) -- Head
+          t[#t + 1] = MakeHeadItem(caps[j]) -- Head
 
         end
         --logShow({ Order:sub(j, j), MakeHeadItem(Order:sub(j, j)) }, "Head Loop", "#qd1")
@@ -372,7 +404,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         --logShow({ text(i), Order:sub(j, j) }, "Char Loop", "#qd1")
         local s = text(i)
         if s ~= "" then
-          t[#t + 1] = MakeCharItem(s, Keys, k, capt(j), ItemProps)
+          t[#t + 1] = MakeCharItem(s, Keys, i, j, k, caps[j], ItemProps)
 
         end
 
@@ -404,10 +436,9 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
 
     local i, j = 1, 1 -- Body
     while j <= Size and i <= dLen do
-      local d = capt(j)
       --logShow(KeyOrder[k] or "", "MakeHeadItem")
       if Heading ~= "Keys" then
-        t[#t + 1] = MakeHeadItem(d) -- SubHead
+        t[#t + 1] = MakeHeadItem(caps[j]) -- SubHead
 
       end
 
@@ -417,7 +448,7 @@ function unit.MakeItems (Properties, Data, Keys) --> (table)
         local s = text(i)
         --logShow({ s, d }, "Char Loop", "#qd1")
         if s ~= "" then
-          t[#t + 1] = MakeCharItem(s, Keys, k, d, ItemProps)
+          t[#t + 1] = MakeCharItem(s, Keys, i, j, k, caps[j], ItemProps)
 
         end
 
@@ -525,7 +556,7 @@ local Guid = win.Uuid("3b84d47b-930c-47ab-a211-913c76280491")
 
 local InsText = farUt.InsertText
 
-function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
+function unit.MakeMenu (Config, Props, Datas, Keys) --> (table)
 
   Config = Config or {}
 
@@ -556,7 +587,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   -- Lazy make items.
   -- Отложенное формирование пунктов.
   local function MakeItems ()
-    mItems = unit.MakeItems(Props, Data, Keys)
+    mItems = unit.MakeItems(Props, Datas, Keys)
     --logShow(mItems, "mItems", "w d2")
 
     return mItems
@@ -564,7 +595,7 @@ function unit.MakeMenu (Config, Props, Data, Keys) --> (table)
   end --
 
   if not Config.LazyMake then
-    mItems = unit.MakeItems(Props, Data, Keys)
+    mItems = unit.MakeItems(Props, Datas, Keys)
 
   end
 

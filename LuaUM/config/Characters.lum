@@ -305,7 +305,7 @@ function unit.CharacterMap ()
   local strings = require 'context.utils.useStrings'
   local uCP2s = strings.ucp2s
 
-  local KeyOrder = { [0] = "────" }
+  local KeyOrder = { [0] = "────", }
   for k = CharMin, CharMax, CharCols do
     KeyOrder[#KeyOrder + 1] = uCP2s(k, true)
 
@@ -313,9 +313,9 @@ function unit.CharacterMap ()
 
   local Props = {
 
-    Order = Order,
+    Order   = Order,
     KeyOrder = KeyOrder,
-    Serial = true,
+    Serial  = true,
     --Heading = "Order",
     Heading = "Both",
 
@@ -390,19 +390,19 @@ function unit.Chars_Greek ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
-  local Datas = -- Char + Shift
-                [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄[];',./,1234567890-= ]]..
-                [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅{}:"<>?°!@#$%^&*()_+]]..Chars.BS..
-                -- Ctrl + Shift
-                [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ [];',./́        []±≈]]..Chars.CR..
-                [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ {}:"<>?        {}∓≉ ]]..
-                -- Alt + Shift
-                [[ά   έ  ήίϊ    ό     ύϋώ   ΄[];',./\1234567890−≡ ]]..
-                [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅{}:"<>?|!@#$%^&*()≂≢ ]]..
-                -- Ctrl+Alt + Shift
-                [[                              ʼ  …―          ≍≣ ]]..
-                [[                              ˮ  &‾| #$% &*  ≭≠ ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz`│[];',./\1234567890-= ]]
+  local Datas = -- Char + Shift              │
+                [[αβχδεφγηιϕκλμνοπθρστυϖωξψζ΄│[];',./,1234567890-= ]]..
+                [[ΑΒΧΔΕΦΓΗΙϑΚΛΜΝΟΠΘΡΣΤΥϐΩΞΨΖ΅│{}:"<>?°!@#$%^&*()_+]]..Chars.BS..
+                -- Ctrl + Shift              │
+                [[   ϯϵϥϫϩϳϰϗϡϻϟϙϸ ϱςϲϒϭϣϝ ϛ │[];',./́        []±≈]]..Chars.CR..
+                [[   Ϯ϶ϤϪϨ ϴϏϠϺϞϘϷ ϼϽϹ ϬϢϜ Ϛ │{}:"<>?        {}∓≉ ]]..
+                -- Alt + Shift               │
+                [[ά   έ  ήίϊ    ό     ύϋώ   ΄│[];',./\1234567890−≡ ]]..
+                [[Ά   Έ  ΉΊΪ    Ό     ΎΫΏ   ΅│{}:"<>?|!@#$%^&*()≂≢ ]]..
+                -- Ctrl+Alt + Shift          │
+                [[                           │   ʼ  …―          ≍≣ ]]..
+                [[                           │   ˮ  &‾| #$% &*  ≭≠ ]]
 
   local Props = {
 
@@ -431,13 +431,13 @@ function unit.Chars_Hebrew ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
-  local Datas = -- Char + Shift
-                [[אבצדהטגחי כלמנעפקרשת  ו  ז`[];',./\1234567890-= ]]..
-                [[  ץ       ך םן ף          ~{}:"<>?|!@#$%^&*()_+]]..Chars.BS..
-                -- Ctrl + Shift
-                [[                                  ́        []±≈]]..Chars.CR..
-                [[                                          {}∓≉ ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz`│[];',./\1234567890-= ]]
+  local Datas = -- Char + Shift              │
+                [[אבצדהטגחי כלמנעפקרשת  ו  ז`│[];',./\1234567890-= ]]..
+                [[  ץ       ך םן ף          ~│{}:"<>?|!@#$%^&*()_+]]..Chars.BS..
+                -- Ctrl + Shift              │
+                [[                           │       ́        []±≈]]..Chars.CR..
+                [[                           │               {}∓≉ ]]
 
   local Props = {
 
@@ -446,10 +446,29 @@ function unit.Chars_Hebrew ()
     --Heading = "Order",
     Heading = "Both",
 
-    RectItem = {
-      TextMark = true,
-    
-    },
+    --RectItem = {
+    --  TextMark = true,
+    --
+    --},
+
+    --CharsMenu = {
+    --  OnMakeItems = nil,
+    --
+    --}, --
+
+    CharsItem = {
+      OnMakeCharItem = function (item, index, order, key, capt, Props)
+
+        if not item then return end
+
+        if order < 27 then
+          item.text = item.text.."‎"
+
+
+        end
+      end, -- OnMakeCharItem
+
+    }, --
 
   } ---
 
@@ -458,8 +477,8 @@ function unit.Chars_Hebrew ()
   unit.UseSpace(Menu)
   --unit.CompactMenu(Menu)
   Menu.Props.RectMenu.ItemPadding = false
-  --Menu.Props.RectMenu.PaddingChar = "ӏ"
-  --Menu.Props.RectMenu.PaddingRChar = "ӏ"
+  --Menu.Props.RectMenu.PaddingLChar = ""
+  --Menu.Props.RectMenu.PaddingRChar = "‎" -- 0x200E
   unit.ScriptData[Name] = Menu
 
   return Menu
@@ -474,19 +493,19 @@ function unit.Keybd_Cyrillic ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\1234567890-= ]]
-  local Datas = -- Char + Shift
-                [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,1234567890-= ]]..
-                [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,°!@#$%^&*()_+]]..Chars.BS..
-                -- Ctrl + Shift
-                [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ́        []±≈]]..Chars.CR..
-                [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ        {}∓≉ ]]..
-                -- Alt + Shift
-                [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\1234567890−≡ ]]..
-                [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|!@#$%^&*()≂≢ ]]..
-                -- Ctrl+Alt + Shift
-                [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ʼѭѩ…―          ≍≣ ]]..
-                [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$ˮѬѨ&‾| #$% &*  ≭≠ ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz`[];',./\│1234567890-= ]]
+  local Datas = -- Char + Shift                      │
+                [[фисвуапршолдьтщзйкыегмцчняёхъжэбю.,│1234567890-= ]]..
+                [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЁХЪЖЭБЮ,°│!@#$%^&*()_+]]..Chars.BS..
+                -- Ctrl + Shift                      │
+                [[ѳіҁѹў ѱ ѵѡљѓјѿѻѯѝќїѣґ ѕџњꙗѥћђӂєѫѧӏ́│        []±≈]]..Chars.CR..
+                [[ѲІҀѸЎ Ѱ ѴѠЉЃЈѾѺѮЍЌЇѢҐ ЅЏЊꙖѤЋЂӁЄѪѦӀ│        {}∓≉ ]]..
+                -- Alt + Shift                       │
+                [[әӣҫ ӳӑԥһѷө ԑӯңѽҙҡқ ӗғӎꙅҷүҗ`ҳ ;',./\│1234567890−≡ ]]..
+                [[ӘӢҪ ӲӐԤҺѶӨ ԐӮҢѼҘҠҚ ӖҒӍꙄҶҮҖ~Ҳ :"<>?|│!@#$%^&*()≂≢ ]]..
+                -- Ctrl+Alt + Shift                  │
+                [[ӫӥ  ӱӓ   ӧԓӡ ӈ ӟ ӄӹӕ  ӌӵұӝѐҕҥ ʼѭѩ…―│          ≍≣ ]]..
+                [[ӪӤ  ӰӒ   ӦԒӠ Ӈ Ӟ ӃӸӔ  ӋӴҰӜЀҔҤ$ˮѬѨ&‾│| #$% &*  ≭≠ ]]
 
   local Props = {
 
@@ -516,19 +535,19 @@ function unit.Maths_Symbols ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz1234567890=-`[];',./\ ]]
-  local Datas = -- Char + Shift
-                [[abcdefghijklmnopqrstuvwxyz1234567890-=`[];',./\ ]]..
-                [[ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
-                -- Ctrl + Shift
-                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮        ≺≻⋜⋝±≈∼  ×∕<>/́]]..Chars.CR..
-                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ      ⊀⊁  ∓≉≁⟦⟧⋆ ≮≯\§ ]]..
-                -- Alt + Shift
-                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃    ≲≳≾≿≼≽−≡≃（）⋅ ≤≥/\ ]]..
-                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅    ≴≵  ⋠⋡≂≢≄［］∗ ≰≱?| ]]..
-                -- Ctrl + Alt + Shift
-                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇    ⋦⋧⋨⋩⋞⋟≍≣∽｛｝∘∣  …― ]]..
-                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉          ≭≠⋍＜＞∙∤≪≫&‾ ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz│1234567890=-`[];',./\ ]]
+  local Datas = -- Char + Shift             │
+                [[abcdefghijklmnopqrstuvwxyz│1234567890-=`[];',./\ ]]..
+                [[ABCDEFGHIJKLMNOPQRSTUVWXYZ│!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
+                -- Ctrl + Shift             │
+                [[Å ℃°ℇ℉ ℏ  K⅃   π      Ω℮  │      ≺≻⋜⋝±≈∼  ×∕<>/́]]..Chars.CR..
+                [[  ℂ    ℍ     ℕ ℙℚℝ       ℤ│      ⊀⊁  ∓≉≁⟦⟧⋆ ≮≯\§ ]]..
+                -- Alt + Shift              │
+                [[ℵ ⊂∂∑   ∞ ∁∈∋  ∏∅√∫ ∪∨⋎∃ ⊃│    ≲≳≾≿≼≽−≡≃（）⋅ ≤≥/\ ]]..
+                [[∀ ⊄∆⅀  ‖∝  ∉∌∇ ℿ ∛∬ ∩∧⋏∄ ⊅│    ≴≵  ⋠⋡≂≢≄［］∗ ≰≱?| ]]..
+                -- Ctrl + Alt + Shift       │
+                [[∠ ⊆  ⁄ ∥   ∊∍    ∜∭⟂∖⊽ ¬ ⊇│    ⋦⋧⋨⋩⋞⋟≍≣∽｛｝∘∣  …― ]]..
+                [[∟ ⊈  ‒ ∦          ∮  ⊼ ⊻ ⊉│          ≭≠⋍＜＞∙∤≪≫&‾ ]]
 
   local Props = {
 
@@ -567,16 +586,16 @@ function unit.Maths_Scripts ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[1234567890=-`[]abcdefghijklmnopqrstuvwxyz/\ ]]
-  local Datas = -- Char + Shift
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
-                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
-                -- Ctrl + Shift
-                [[1234567890+−=()abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
-                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
-                -- Alt + Shift
-                [[ ⅔¾⅘⅚ ⅞                                  /\ ]]..
-                [[ ⅖⅗ ⅝  ⅜     ʿʾᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
+  local Order = [[1234567890=-`[]│abcdefghijklmnopqrstuvwxyz/\ ]]
+  local Datas = -- Char + Shift  │
+                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎│ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾│ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
+                -- Ctrl + Shift  │
+                [[1234567890+−=()│abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  │ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
+                -- Alt + Shift   │
+                [[ ⅔¾⅘⅚ ⅞        │                          /\ ]]..
+                [[ ⅖⅗ ⅝  ⅜     ʿʾ│ᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
 
   local Props = {
 
@@ -656,18 +675,18 @@ function unit.Punct_Symbols ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[/agxcdimopqwbv`1234567890-\ ]]
-  local Datas = -- Char + Shift
-                [[…́̀̂̌̇̈̄‵′‟”•ˈ´‼⁇§¯°ˆ¸˙«»-, ]]..
-                [[․̭̬̣̤̱̋̏‶″‛’‣ˌ˝¡¿† ‰ˇ˛¨‹›– ]]..Chars.BS..
-                -- Ctrl + Shift
-                [[‥̲̍̎̆̑̓̊‷‴„“◦  ⁉⁈‡_‱˘ ˚ʿʾ— ]]..Chars.CR..
-                [[⁝̩͈̮̯̦̥̅ ⁗‚‘⁃ ˟ ⸮¦‾ ⁏⁊ ˓˒‑  ]]..
-                -- Alt + Shift
-                [[   ͑͗̔̉̃ʹʼˋˊ⁌ ʻ‽⸘ˌˍ|˂˃˜⁀‿‒  ]]..
-                [[     ̨̰̒ʺˮˎˏ⁍ ʽ⁅⁆ˈˉ―˄˅˷⁐⁔   ]]..
+  local Order = [[agxcdimopqwbv│`1234567890-/\ ]]
+  local Datas = -- Char + Shift│
+                [[́̀̂̌̇̈̄‵′‟”•ˈ│´‼⁇§¯°ˆ¸˙«»-…, ]]..
+                [[̭̬̣̤̱̋̏‶″‛’‣ˌ│˝¡¿† ‰ˇ˛¨‹›–․ ]]..Chars.BS..
+                -- Ctrl + Shift│
+                [[̲̍̎̆̑̓̊‷‴„“◦ │ ⁉⁈‡_‱˘ ˚ʿʾ—‥ ]]..Chars.CR..
+                [[̩͈̮̯̦̥̅ ⁗‚‘⁃ │˟ ⸮¦‾ ⁏⁊ ˓˒‑⁝  ]]..
+                -- Alt + Shift │
+                [[  ͑͗̔̉̃ʹʼˋˊ⁌ │ʻ‽⸘ˌˍ|˂˃˜⁀‿‒   ]]..
+                [[    ̨̰̒ʺˮˎˏ⁍ │ʽ⁅⁆ˈˉ―˄˅˷⁐⁔    ]]..
                 -- Ctrl + Alt + Shift
-                [[   ̧͔͕͘̕              ⁓     ]]
+                [[  ̧͔͕͘̕      │        ⁓      ]]
 --[=[
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:
@@ -682,14 +701,17 @@ function unit.Punct_Symbols ()
 
   local Props = {
 
-    Order = Order,
-    Serial = true,
+    Order   = Order,
+    Serial  = true,
     Heading = "Both",
 
   } ---
 
   Menu = unit.MakeKindMenu(Name, Props, Datas, "AccelKey")
   unit.UseSpace(Menu)
+  --Menu.Props.RectMenu.ItemPadding = false
+  Menu.Props.RectMenu.PaddingLChar = " "
+  Menu.Props.RectMenu.PaddingRChar = ""
   unit.ScriptData[Name] = Menu
 
   return Menu
