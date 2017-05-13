@@ -48,6 +48,8 @@ local locale = require 'context.utils.useLocale'
 local divf = numbers.divf
 --local divf, divm = numbers.divf, numbers.divm
 
+local makeplain = strings.makeplain
+
 --local Null = tables.Null
 local addNewData = tables.extend
 
@@ -582,6 +584,8 @@ function TMain:FillMenu () --> (table)
     local SelChar = self.Char -- Код текущего символа
     local SelIndex            -- Индекс пункта с текущим символом
 
+    local glen = unicode.grapheme.len
+
     for i = 1, CharRows do
       p = p + ColCount
 
@@ -589,7 +593,12 @@ function TMain:FillMenu () --> (table)
         local c = CodeToChar(b)
         local f = t[p + j]
 
-        f.text = c
+        local s = c
+        --local s = "_"..c
+        --s = glen(s) > 1 and c or c.."_"
+        --if glen(s) > 1 then s = c end
+
+        f.text = s
         f.Hint = uCodeName(b)
         f.RectMenu = self.RectItem
 
@@ -786,6 +795,7 @@ function TColFilter:ApplyFilter ()
   self:MakeFilter()
 
   Props.Title  = Props.FmtTitle:format(self.Pattern)
+  --logShow({ Props.FmtBottom, self.Filtered, self.Count }, "ApplyFilter")
   Props.Bottom = Props.FmtBottom:format(self.Filtered, self.Count)
 
 end ---- ApplyFilter
@@ -925,7 +935,7 @@ function TNomens:MakeItems () --| (Nomens_Items)
     },
   } ---
 
-  local pattern = self.BasePattern
+  local pattern = makeplain(self.BasePattern)
   local U = unicode.utf8.char
 
   local k = 0
@@ -1121,7 +1131,6 @@ function TMain:ChooseChar (Data)
   local Nomens = self.Nomens
   Nomens.FilterCol = 1
   Nomens.NomensCount = self.InputCount
-  --Nomens.BasePattern = self.IsCharInput and self.Input
   Nomens.BasePattern = self.IsCharInput and self.Input or self.Input
 
   Nomens:MakeProps()
@@ -1274,7 +1283,7 @@ function TMain:FindCharInput ()
 
   --logShow(self, Input)
   --return u8byte(Input:sub(1, 1)) -- TEMP
-  return uFindCode(Input, self.Char + 1)
+  return uFindCode(makeplain(Input), self.Char + 1)
 
 end ---- FindCharInput
 
