@@ -21,6 +21,9 @@ local setmetatable = setmetatable
 local bit = bit64
 local bshr = bit.rshift
 
+--local slen = unicode.utf8.len
+--local slen = unicode.grapheme.len
+
 ----------------------------------------
 --local context = context
 local logShow = context.ShowInfo
@@ -54,6 +57,7 @@ local unit = {}
 local function DrawText (Rect, Color, Text) --> (number)
 
   local Len = min2(Text:len(), Rect.w) -- Длина выведенного текста
+  --local Len = min2(slen(Text), Rect.w) -- Длина выведенного текста
   far_Text(Rect.x, Rect.y, Color, Text:sub(1, Len) or "")
 
   return Len
@@ -228,12 +232,12 @@ local function MakeParseText (Item, Color, TextB, TextH, TextE) --> (table)
       { text = TextB, color = Color.normal, },
       { text = TextH, color = Color.hlight, },
       { text = TextE, color = Color.normal, },
+
     } ----
 
   end
 
   local t = {
-
     0, -- for MarginB
     { text = "",    color = Color.normal, },
     { text = "",    color = Color.marked, },
@@ -383,6 +387,7 @@ function unit.DrawItemText (Rect, Color, Item, Options)
 
   TextB, TextH = TextB or "", TextH or ""
   local Len = TextB:len() + TextH:len() + TextE:len() -- Реальная длина
+  --local Len = slen(TextB) + slen(TextH) + slen(TextE) -- Реальная длина
   --logShow({ TextB, TextH, TextE }, Len)
 
   -- Разбор текста с учётом маркировки:

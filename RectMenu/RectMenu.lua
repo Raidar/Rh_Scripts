@@ -2744,6 +2744,7 @@ function TMenu:DrawMenuItem (Rect, Row, Col)
       isHot     = self.Props.isHot,     -- Признак использования горячих букв
       checked   = self.Data.checked,    -- Признак отмеченных пунктов
       RectMenu  = self.RectMenu,        -- Свойства RectMenu
+
     } --- Options
 
     return DrawItemText(Rect, Color, Item, Options)
@@ -2931,7 +2932,9 @@ function TMenu:DrawMenu ()
 
     -- Последняя видимая из прокручиваемых ячеек:
     self.Last = RC_cell( self:DrawMenuPart(A_Cell, A_Rect) )
+
     --logShow(self.Last, "Last viewed cell")
+
   end
 
   -- Right lines part:
