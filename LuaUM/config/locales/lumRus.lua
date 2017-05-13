@@ -42,8 +42,8 @@ local Data = {
   ChsCharacterMap   = "Все символы",
 
   ChsChars          = "Буквы",
-    ChsChars_Greek      = "Греческие буквы",
-    ChsChars_Hebrew     = "Буквы иврита",
+    ChsChars_Greek      = "Греческие",
+    ChsChars_Hebrew     = "Иврит",
   ChsKeybd          = "Клавиатуры",
     ChsKeybd_Cyrillic   = "Кириллица",
   ChsMaths          = "Математика",

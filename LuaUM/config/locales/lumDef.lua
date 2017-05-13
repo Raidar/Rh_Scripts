@@ -41,8 +41,8 @@ local Data = {
   ChsCharacterMap   = "All characters",
 
   ChsChars          = "Characters",
-    ChsChars_Greek      = "Greek chars",
-    ChsChars_Hebrew     = "Hebrew chars",
+    ChsChars_Greek      = "Greek",
+    ChsChars_Hebrew     = "Hebrew",
   ChsKeybd          = "Клавиатуры",
     ChsKeybd_Cyrillic   = "Cyrillics",
   ChsMaths          = "Mathematics",
