@@ -16,7 +16,7 @@ local locale = require 'context.utils.useLocale'
 
 ---------------------------------------- Custom
 local Custom = {
-  label = "FarMacros",
+  label = "LuaFarMacros",
   name = "lum",
   path = "Rh_Scripts.LuaUM.config.",
   locale = { kind = 'require', },
@@ -48,13 +48,13 @@ local mLuaFarMacros = {
 
     -- Load --
     { text = L.LuaFarMacros_Load,
-      Script = "FarMacros.lua",
+      Script = "LuaFarMacros.lua",
       Function = "LoadLuaFarMacros",
       Relative = "default", },
 
     -- Save --
     { text = L.LuaFarMacros_Save,
-      Script = "FarMacros.lua",
+      Script = "LuaFarMacros.lua",
       Function = "SaveLuaFarMacros",
       Relative = "default", },
 

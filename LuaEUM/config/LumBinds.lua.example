@@ -46,7 +46,7 @@ local Data = {
 
   Default = { Caption = L.MainMenu,
               After = "Quoting;EScripts;UAddons;UScripts;UCommands;"..
-                      "U_DefSep;FARMacro;UMConfig", },
+                      "U_DefSep;LuaFarMacros;UMConfig", },
 
   back   = { Menu = "UAddons;UScripts;U_DefSep;UMConfig", noDefault = true, },
 

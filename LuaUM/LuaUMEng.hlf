@@ -34,19 +34,19 @@ $ #Lua User Menu# (~LUM~)
 @LUM_Files
 $ #Files of utility#: LUM
   Base files:
-    \37LUM.lua\-        — ¦LUM menu: Implementation.
-    \37LumCfg.lua\-     — ¦LUM menu: Settings.
-    \37LumWork.lua\-    — ¦LUM menu: Working with whole menu.
+    \37LUM.lua\-            — ¦LUM menu: Implementation.
+    \37LumCfg.lua\-         — ¦LUM menu: Settings.
+    \37LumWork.lua\-        — ¦LUM menu: Working with whole menu.
 
   Locale files:
-    \37LuaUMDef.lua\-   — ¦LUM locale (English).
-    \37LuaUMRus.lua\-   — ¦LUM locale (Russian).
+    \37LuaUMDef.lua\-       — ¦LUM locale (English).
+    \37LuaUMRus.lua\-       — ¦LUM locale (Russian).
 
   Scripts files:
-    \37FarMacros.lua\-  — ¦FAR macros operation.
-    \37LumContext.lua\- — ¦Context & LUM: Functions calls.
-    \37LumDialog.lua\-  — ¦LUM settings: Calling dialogs.
-    \37LumScripts.lua\- — ¦Examples of simple finctions.
+    \37LuaFarMacros.lua\-   — ¦LuaFAR macros operation.
+    \37LumContext.lua\-     — ¦Context & LUM: Functions calls.
+    \37LumDialog.lua\-      — ¦LUM settings: Calling dialogs.
+    \37LumScripts.lua\-     — ¦Examples of simple finctions.
 
  ~Contents~@Contents@
 
