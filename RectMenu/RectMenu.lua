@@ -582,8 +582,8 @@ function TMenu:DefinePropInfo () --| Props
   RM.CheckedChar    = menUt.ItemChar("checked",   RM.CheckedChar)
   RM.UncheckedChar  = menUt.ItemChar("unchecked", RM.UncheckedChar)
   RM.PaddingChar    = menUt.ItemChar("padding",   RM.PaddingChar)
-  RM.PaddingLChar   = menUt.ItemChar("unchecked", RM.PaddingLChar, RM.PaddingChar)
-  RM.PaddingRChar   = menUt.ItemChar("unchecked", RM.PaddingRChar, RM.PaddingChar)
+  RM.PaddingLChar   = menUt.ItemChar("padding",   RM.PaddingLChar, RM.PaddingChar)
+  RM.PaddingRChar   = menUt.ItemChar("padding",   RM.PaddingRChar, RM.PaddingChar)
 
   -- Оформление меню:
   if RM.MenuOnly then -- Только меню:
@@ -1888,7 +1888,7 @@ function TMenu:HandleEvent (Event, hDlg, ...) --> (nil|boolean)
        Flags.isUpdateAll == true then
 
       self:UpdateAll(hDlg, Flags, nil)
-   
+
     end
 
   end -- if
@@ -2316,7 +2316,7 @@ local function MousePosToLin (Len, Sep, Total,
 
   if Fixing then
     local Count, Length --= 0, 0
-    
+
     -- Heads:
     Count  = Fixes.Head or 0
     Length = Fixes.HeadLen or 0
@@ -2810,24 +2810,62 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
     c, x = A_Cell.cMin, A_Rect.xMin
 
     while x < xLim and c <= A_Cell.cMax do
+      local g = h
       local w = self.ColWidth[c]
 
-      Rect.x, Rect.y = x, y -- Координаты / Размеры области:
-      Rect.w = Data.Cols > 1 and min2(w, xLim - x) or xLim - x -- - 1
-      Rect.h = Data.Rows > 1 and min2(h, yLim - y) or yLim - y -- - 1
+      local wRest = xLim - x
+      if     Data.Cols == 1 then
+        if w < wRest then w = wRest end
 
-      --logShow({ Rect, r, c }, "Draw", 1)
+      else
+        if w > wRest then w = wRest end
+
+      end
+
+      local hRest = yLim - y
+      if     Data.Cols == 1 then
+        if g < hRest then g = hRest end
+
+      else
+        if g > hRest then g = hRest end
+
+      end
+
+      Rect.x, Rect.y = x, y -- Координаты
+      Rect.w, Rect.h = w, g -- Размеры области
+
+      --[[
+      local Index = self:CellIndex(r, c)
+      local Item = self.List[Index] or Null
+      if Item.separator then
+      logShow({ Rect, r = r, c = c, w = w, h = h, g = g,
+                xLim = xLim, yLim = yLim, }, "Draw", 1)
+      end
+      --]]
+
       self:DrawMenuItem(Rect, r, c)
+
       c, x = c + 1, x + w + Data.ColSep
 
     end
     --logShow({ Rect, r, c, A_Rect, A_Cell }, "Draw end by x", 1)
+
+      --[[
+      local Index = self:CellIndex(r, c)
+      local Item = self.List[Index] or Null
+      if Item.separator then
+      logShow({ Rect, r = r, c = c,
+                x = x, y = y,
+                xLim = xLim, yLim = yLim, }, "Draw", 1)
+      end
+      --]]
 
     if x < xLim then
       Rect.x, Rect.w = x, xLim - x -- Заполнение пустоты:
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
       DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
+      DrawClearItemText(Rect, ClearColor, "*")
 
     end
 

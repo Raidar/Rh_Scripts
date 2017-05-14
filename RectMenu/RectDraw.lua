@@ -179,22 +179,28 @@ function unit.DrawSeparItemText (Rect, Color, Text, Separator)
 
   -- TODO: MultiLine with text & line alignment.
   if Text and Text ~= "" then
-    local Len = Text:len() -- Разделитель с текстом:
+    -- Разделитель с текстом:
+    local Len = Text:len()
     if Width > Len then
       local SepLen = bshr(Width - Len, 1)
       --local SepLen = divf(Width - Len, 2)
-      --logShow(Rect, Len, 2)
-      DrawText(Rect, Color, Separ:sub(1, SepLen)..Text..
-                            Separ:sub(1, Width - SepLen - Len))
+      Text = Separ:sub(1, SepLen)..Text..
+             Separ:sub(1, Width - SepLen - Len)
+      --logShow({ Rect, Text, Text:len(), }, Len, 2)
+
     else
-      DrawText(Rect, Color, Text) -- Без разделителя?!
+      -- Без разделителя?!
 
     end
 
   else
-    DrawText(Rect, Color, Separ) -- Разделитель обычный
+    -- Разделитель обычный
+    Text = Separ
 
   end
+
+  return DrawText(Rect, Color, Text)
+
 end ---- DrawSeparItemText
 
 ---------------------------------------- Parse text
@@ -405,8 +411,16 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   -- Учёт начальных и конечных символов:
   Parse.m, Parse.n = 1, #Parse + 1
   if Options.checked then
+
+    --[[
+    if Item.checked then
+    logShow({ checked   = RI.CheckedChar   or RM.CheckedChar,
+              unchecked = RI.UncheckedChar or RM.UncheckedChar}, "Checking")
+    end
+    --]]
+
     PaddingL = checkedChar(Item.checked,
-                           nil,
+                           Item.checked,
                            RI.CheckedChar   or RM.CheckedChar,
                            RI.UncheckedChar or RM.UncheckedChar)..PaddingL
   end
