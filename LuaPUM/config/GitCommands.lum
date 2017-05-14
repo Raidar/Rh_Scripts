@@ -162,6 +162,8 @@ local mItems = {
         UncheckedChar = " ",
         MinWidth = 29, -- Hint:len()
 
+        IsStatusBar = true,
+
       }, -- RectMenu
 
     }, -- Props
@@ -218,6 +220,8 @@ local mItems = {
         MenuAlign = "CM",
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
 
       }, -- RectMenu
 
@@ -315,6 +319,8 @@ local mItems = {
         MenuAlign = "CM",
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
 
       }, -- RectMenu
 
