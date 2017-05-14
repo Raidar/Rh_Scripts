@@ -1127,7 +1127,8 @@ function TMenu:DefineFormZone () --| (Dlg...)
   --local Data, Zone, Titles = self.Data, self.Zone, self.Titles
 
   -- Выравнивание меню с учётом надписей.
-  local MenuAlign = self.RectMenu.MenuAlign or "TL"
+  local RM = self.RectMenu
+  local MenuAlign = RM.MenuAlign or "TL"
   --MenuAlign = MenuAlign or "R"
   --MenuAlign = MenuAlign or "C"
   Zone.IndentH, Zone.IndentV = 0, 0 -- Нет выравнивания
@@ -1142,7 +1143,8 @@ function TMenu:DefineFormZone () --| (Dlg...)
     --          Length, Zone.Width, Delta, bshr(Delta, 1) }, "self.Zone")
     if Delta > 0 then -- Выравнивание:
       Zone.Width  = Length
-      if     sfind(MenuAlign, "L", 1, true) then
+      if     RM.WidthAligned and
+             sfind(MenuAlign, "L", 1, true) then
         Zone.IndentH = 0
 
       elseif sfind(MenuAlign, "R", 1, true) then
@@ -1163,7 +1165,8 @@ function TMenu:DefineFormZone () --| (Dlg...)
     local Delta = Length - Zone.Height -- Избыток пустоты
     if Delta > 0 then -- Выравнивание:
       Zone.Height = Length
-      if     sfind(MenuAlign, "T", 1, true) then
+      if     RM.HeightAligned and
+             sfind(MenuAlign, "T", 1, true) then
         Zone.IndentV = 0
 
       elseif sfind(MenuAlign, "B", 1, true) then
@@ -2815,7 +2818,10 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
 
       local wRest = xLim - x
       if     Data.Cols == 1 then
-        if w < wRest then w = wRest end
+        --if RM.WidthAligned then
+        --  if w < wRest then w = wRest end
+        --
+        --end
 
       else
         if w > wRest then w = wRest end
@@ -2824,7 +2830,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
 
       local hRest = yLim - y
       if     Data.Cols == 1 then
-        if g < hRest then g = hRest end
+        --if g < hRest then g = hRest end
 
       else
         if g > hRest then g = hRest end
@@ -2837,10 +2843,10 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       --[[
       local Index = self:CellIndex(r, c)
       local Item = self.List[Index] or Null
-      if Item.separator then
+      --if Item.separator then
       logShow({ Rect, r = r, c = c, w = w, h = h, g = g,
                 xLim = xLim, yLim = yLim, }, "Draw", 1)
-      end
+      --end
       --]]
 
       self:DrawMenuItem(Rect, r, c)
@@ -2865,7 +2871,7 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       --Rect.y, Rect.h = Rect.y, Rect.h
       --logShow(Rect, "Draw Spaces by x", 1)
       DrawClearItemText(Rect, ClearColor, RM.SpacingChar)
-      DrawClearItemText(Rect, ClearColor, "*")
+      DrawClearItemText(Rect, ClearColor, " ")
 
     end
 

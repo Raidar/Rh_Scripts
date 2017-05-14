@@ -117,7 +117,6 @@ local function CreateMenu (Properties, Menus, Config) --> (object)
 
   -- Object
   local self = {
-
     Props     = Properties or {},
     Menus     = Menus,
     Config    = Config,
@@ -646,6 +645,7 @@ function TMenu:MakeMenuConfig () --> (table)
     CurData.UMenu.MenuTitleBind = false
     CurData.UMenu.CompoundTitle = false
     CurData.UMenu.BottomHotKeys = false
+    --CurData.UMenu.CaptAlignText = false
     CurData.UMenu.ReturnToUMenu = false -- ?!
 
   end --
@@ -800,6 +800,7 @@ function TMenu:MakeRunMenuItem (Item, Index) --> (true | nil, error)
 
       RunItem.Name = ItemName
       self.RunItem = RunItem
+
       self:MakeRunItem()
       --return self:MakeRunItem()
 
@@ -1215,6 +1216,8 @@ function TMenu:HandleBreakKeys ()
 end ---- HandleBreakKeys
 
 do
+  local sfind = string.find
+
   local MenuTexter = require "Rh_Scripts.Common.MenuTexter"
 
 -- Цикл вывода меню до выбора.
@@ -1260,6 +1263,9 @@ function TMenu:ShowLoop ()
       Props.Texter = copyFields(self.CurData.UMenu)
       MenuTexter(Props, self.RunMenu, nil, false)
       --logShow(self.RunMenu, "self.RunMenu", 2)
+
+      -- Исключение лишнего выравнивания в RectMenu
+      Props.RectMenu.WidthAligned = Props.Texter.TextAligned
 
     end
 

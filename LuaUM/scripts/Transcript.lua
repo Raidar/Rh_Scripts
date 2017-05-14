@@ -303,17 +303,17 @@ TekstChangeSets.SignMaths = {
 ----------------------------------------
 local LiterChangeSets = {
 
-  CharRusLatin  = true,
-  CharLatinRus  = true,
+  CharRusLatin      = true,
+  CharLatinRus      = true,
 
-  CharLatGreek  = true,
-  CharGreekLat  = true,
+  CharLatinGreek    = true,
+  CharGreekLatin    = true,
 
-  CharRusExplo  = true,
-  CharExploRus  = true,
+  CharRusExploro     = true,
+  CharExploroRus     = true,
 
-  GrafRusLatin  = true,
-  GrafLatinRus  = true,
+  GrafRusLatin      = true,
+  GrafLatinRus      = true,
 
 } -- LiterChangeSets
 unit.LiterChangeSets = LiterChangeSets
@@ -402,7 +402,7 @@ LiterChangeSets.CharRusLatin = {
 } -- CharRusLatin
 
 ---------------------------------------- Greek
-LiterChangeSets.CharLatGreek = {
+LiterChangeSets.CharLatinGreek = {
   -- [[DO]]
 
   ["A"] = 'Α',
@@ -436,9 +436,9 @@ LiterChangeSets.CharLatGreek = {
 
   -- [[END]]
 
-} -- CharLatGreek
+} -- CharLatinGreek
 
-LiterChangeSets.CharGreekLat = {
+LiterChangeSets.CharGreekLatin = {
   -- [[DO]]
 
   ["Α"] = 'A',
@@ -472,10 +472,10 @@ LiterChangeSets.CharGreekLat = {
 
   -- [[END]]
 
-} -- CharGreekLat
+} -- CharGreekLatin
 
 ---------------------------------------- Explo
-LiterChangeSets.CharExploRus = {
+LiterChangeSets.CharExploroRus = {
   -- [[DO]]
 
   ["A"] = 'А',
@@ -521,9 +521,9 @@ LiterChangeSets.CharExploRus = {
 
   -- [[END]]
 
-} -- CharExploRus
+} -- CharExploroRus
 
-LiterChangeSets.CharRusExplo = {
+LiterChangeSets.CharRusExploro = {
   -- [[DO]]
 
   ["А"] = 'A',
@@ -564,7 +564,7 @@ LiterChangeSets.CharRusExplo = {
 
   -- [[END]]
 
-} -- CharRusExplo
+} -- CharRusExploro
 
 ---------------------------------------- Graf
 LiterChangeSets.GrafLatinRus = {
@@ -666,18 +666,18 @@ local CharChangeSets = {
   SignRefer = true,
 
   -- Liter\Char:
-  CharLatinRus  = true,
-  CharRusLatin  = true,
+  CharLatinRus      = true,
+  CharRusLatin      = true,
 
-  CharLatGreek  = true,
-  CharGreekLat  = true,
+  CharLatinGreek    = true,
+  CharGreekLatin    = true,
 
-  CharExploRus  = true,
-  CharRusExplo  = true,
+  CharExploroRus     = true,
+  CharRusExploro     = true,
 
   -- Liter\Graf:
-  GrafLatinRus  = true,
-  GrafRusLatin  = true,
+  GrafLatinRus      = true,
+  GrafRusLatin      = true,
 
   -- -- --
   Tekst = TekstChangeSets,
@@ -810,13 +810,13 @@ GroupChangeSets("Liter", "CharLatinRus")
 WidenChangeSets("Liter", "CharRusLatin")
 GroupChangeSets("Liter", "CharRusLatin")
 
-WidenChangeSets("Liter", "CharLatGreek")
-GroupChangeSets("Liter", "CharLatGreek")
+WidenChangeSets("Liter", "CharLatinGreek")
+GroupChangeSets("Liter", "CharLatinGreek")
 
-WidenChangeSets("Liter", "CharExploRus")
-GroupChangeSets("Liter", "CharExploRus")
-WidenChangeSets("Liter", "CharRusExplo")
-GroupChangeSets("Liter", "CharRusExplo")
+WidenChangeSets("Liter", "CharExploroRus")
+GroupChangeSets("Liter", "CharExploroRus")
+WidenChangeSets("Liter", "CharRusExploro")
+GroupChangeSets("Liter", "CharRusExploro")
 
 -- Liter\Graf:
 GroupChangeSets("Liter", "GrafLatinRus")
@@ -847,18 +847,18 @@ local Actions = {
   SignMaths     = false,
 
   -- Liter\Char:
-  CharLatinRus  = false,
-  CharRusLatin  = false,
+  CharLatinRus      = false,
+  CharRusLatin      = false,
 
-  CharLatGreek  = false,
-  CharGreekLat  = false,
+  CharLatinGreek    = false,
+  CharGreekLatin    = false,
 
-  CharExploRus  = false,
-  CharRusExplo  = false,
+  CharExploroRus    = false,
+  CharRusExploro    = false,
 
   -- Liter\Graf:
-  GrafLatinRus  = false,
-  GrafRusLatin  = false,
+  GrafLatinRus      = false,
+  GrafRusLatin      = false,
 
 } --- Actions
 unit.Actions = Actions
@@ -927,9 +927,20 @@ local Menus = {
 } --- Menus
 unit.Menus = Menus
 
+local sSectionFmt = " %s "
+
 Menus.ChangeSign = {
 
   text = L.ChangeSign,
+  --Title = "Change Sign",
+
+  Props = {
+    RectMenu = {
+      MenuAlign = "CM",
+
+    }, -- RectMenu
+
+  }, -- Props
 
   Items = {
     { text = L.SignFixer,
@@ -938,6 +949,7 @@ Menus.ChangeSign = {
       Function = Execute"SignTyper", },
     { text = L.SignMaths,
       Function = Execute"SignMaths", },
+
     { text = "",
       separator = true, },
     { text = L.SignSuper,
@@ -953,25 +965,38 @@ Menus.ChangeSign = {
 
 --Menus.ChangeChar = nil
 
+--logShow({ L.CharChar, L.CharLatinRus, L.CharRusLatin }, "Transcript.lua")
+
 Menus.ChangeChar = {
   text = L.ChangeChar,
+  --Title = "Change Char",
+  --Title = "Change Char afasfagsdthdfyjhndjh",
+
+  Props = {
+    RectMenu = {
+      MenuAlign = "CM",
+
+    }, -- RectMenu
+
+  }, -- Props
 
   Items = {
-    { text = L.CharChar,
+    { text = sSectionFmt:format(L.CharChar),
       separator = true, },
     { text = L.CharLatinRus,
       Function = Execute"CharLatinRus", },
     { text = L.CharRusLatin,
       Function = Execute"CharRusLatin", },
-    { text = L.CharLatGreek,
-      Function = Execute"CharLatGreek", },
-    { text = L.CharGreekLat,
-      Function = Execute"CharGreekLat", },
-    { text = L.CharExploRus,
-      Function = Execute"CharExploRus", },
-    { text = L.CharRusExplo,
-      Function = Execute"CharRusExplo", },
-    { text = L.CharGraf,
+    { text = L.CharLatinGreek,
+      Function = Execute"CharLatinGreek", },
+    { text = L.CharGreekLatin,
+      Function = Execute"CharGreekLatin", },
+    { text = L.CharExploroRus,
+      Function = Execute"CharExploroRus", },
+    { text = L.CharRusExploro,
+      Function = Execute"CharRusExploro", },
+
+    { text = sSectionFmt:format(L.CharGraf),
       separator = true, },
     { text = L.GrafLatinRus,
       Function = Execute"GrafLatinRus", },

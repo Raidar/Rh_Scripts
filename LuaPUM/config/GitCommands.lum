@@ -96,6 +96,14 @@ local mSeparator = {
 
 } ---
 
+--[[
+local mEmpty = {
+  text = "",
+  disabled = true,
+
+} ---
+--]]
+
 ---------------------------------------- Items
 local dLogGraphFormat =
   '%C(blue bold)%h%Creset %C(green bold)%ad%Creset | '..
@@ -153,6 +161,7 @@ local mItems = {
         MenuAlign = "CM",
         UncheckedChar = " ",
         MinWidth = 29, -- Hint:len()
+
       }, -- RectMenu
 
     }, -- Props
@@ -161,6 +170,7 @@ local mItems = {
       UMenu = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
+
       },
 
     }, -- CfgData
@@ -208,6 +218,7 @@ local mItems = {
         MenuAlign = "CM",
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
+
       }, -- RectMenu
 
     }, -- Props
@@ -216,6 +227,7 @@ local mItems = {
       UMenu = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
+
       },
 
     }, -- CfgData
@@ -303,6 +315,7 @@ local mItems = {
         MenuAlign = "CM",
         UncheckedChar = " ",
         MinWidth = 25, -- Hint:len()
+
       }, -- RectMenu
 
     }, -- Props
@@ -311,6 +324,7 @@ local mItems = {
       UMenu = {
         BottomHotKeys = false,
         ReturnToUMenu = false,
+
       },
 
     }, -- CfgData
@@ -408,6 +422,9 @@ local mItems = {
   { text = "Status view  &2",
     CmdLine = "edit:<git status", },
 
+  --mEmpty,
+  mSeparator,
+
 } --- mItems
 
 ---------------------------------------- Menu
@@ -443,6 +460,7 @@ local mGitCommands = { -- Git commands
     UMenu = {
       BottomHotKeys = false,
       ReturnToUMenu = false,
+
     },
 
   }, -- CfgData

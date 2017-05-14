@@ -405,8 +405,17 @@ function unit.DrawItemText (Rect, Color, Item, Options)
   Len = Len + PaddingL:len() + PaddingR:len()
 
   -- Выравнивание + очистка конца:
-  local Clear = Rect.w - Len
-  Clear = RepChar("spacing", RI.SpacingChar or RM.SpacingChar, max2(0, Clear))
+  local ClearLen = Rect.w - Len
+  local Clear = RepChar("spacing",
+                        RI.SpacingChar or RM.SpacingChar,
+                        max2(0, ClearLen))
+
+  --[[
+  logShow({ TextB = TextB, TextH = TextH, TextE = TextE,
+            PaddingL = PaddingL, PaddingR = PaddingR,
+            Len = Len, Clear = Clear, ClearLen = ClearLen,
+          }, "DrawItemText")
+  --]]
 
   -- Учёт начальных и конечных символов:
   Parse.m, Parse.n = 1, #Parse + 1

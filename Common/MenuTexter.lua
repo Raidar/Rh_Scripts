@@ -214,6 +214,8 @@ function TMenu:DefineText () --| (self.Items) -- TODO: Шаблон для вы�
       LAlign = spaces[captSep] -- Центрирование
       textMax = textMax + captDif - captSep -- Поправка на надписи
 
+      Options.TextAligned = true
+
     end
 
   else
