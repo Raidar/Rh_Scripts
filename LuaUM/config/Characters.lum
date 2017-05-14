@@ -805,14 +805,17 @@ function unit.MakeMenu ()
 
     Items = {
 
-      { text = sSectionFmt:format(gL.Chars), separator = true, },
+      { text = sSectionFmt:format(gL.Chars),
+        separator = true, },
       unit.Chars_Greek,
       unit.Chars_Hebrew,
 
-      { text = sSectionFmt:format(gL.Keybd), separator = true, },
+      { text = sSectionFmt:format(gL.Keybd),
+        separator = true, },
       unit.Keybd_Cyrillic,
 
-      { text = sSectionFmt:format(gL.Maths), separator = true, },
+      { text = sSectionFmt:format(gL.Maths),
+        separator = true, },
       unit.Maths_Symbols,
       unit.Maths_Scripts,
       --unit.Maths_Indexes,
@@ -820,7 +823,8 @@ function unit.MakeMenu ()
       --{ text = sSectionFmt:format(gL.Techs), separator = true, },
       --unit.Techs_Arrows,
 
-      { text = sSectionFmt:format(gL.Punct), separator = true, },
+      { text = sSectionFmt:format(gL.Punct),
+        separator = true, },
       unit.Punct_Symbols,
       unit.Punct_Spaces,
 
