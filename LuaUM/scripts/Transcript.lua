@@ -970,7 +970,7 @@ Menus.ChangeSign = {
 Menus.ChangeChar = {
   text = L.ChangeChar,
   --Title = "Change Char",
-  --Title = "Change Char afasfagsdthdfyjhndjh",
+  --Title = "Change Char (long caption tested)",
 
   Props = {
     RectMenu = {

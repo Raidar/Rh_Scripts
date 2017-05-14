@@ -1143,7 +1143,7 @@ function TMenu:DefineFormZone () --| (Dlg...)
     --          Length, Zone.Width, Delta, bshr(Delta, 1) }, "self.Zone")
     if Delta > 0 then -- Выравнивание:
       Zone.Width  = Length
-      if     RM.WidthAligned and
+      if     RM.WidthAligned or
              sfind(MenuAlign, "L", 1, true) then
         Zone.IndentH = 0
 
@@ -1165,7 +1165,7 @@ function TMenu:DefineFormZone () --| (Dlg...)
     local Delta = Length - Zone.Height -- Избыток пустоты
     if Delta > 0 then -- Выравнивание:
       Zone.Height = Length
-      if     RM.HeightAligned and
+      if     RM.HeightAligned or
              sfind(MenuAlign, "T", 1, true) then
         Zone.IndentV = 0
 
@@ -2817,22 +2817,13 @@ function TMenu:DrawMenuPart (A_Cell, A_Rect)
       local w = self.ColWidth[c]
 
       local wRest = xLim - x
-      if     Data.Cols == 1 then
-        --if RM.WidthAligned then
-        --  if w < wRest then w = wRest end
-        --
-        --end
+      local hRest = yLim - y
+      if Data.Cols == 1 then
+        if RM.WidthAligned and w < wRest then w = wRest end
+        if RM.HeightAligned and g < hRest then g = hRest end
 
       else
         if w > wRest then w = wRest end
-
-      end
-
-      local hRest = yLim - y
-      if     Data.Cols == 1 then
-        --if g < hRest then g = hRest end
-
-      else
         if g > hRest then g = hRest end
 
       end
