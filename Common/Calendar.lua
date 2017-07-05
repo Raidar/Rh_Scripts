@@ -211,6 +211,7 @@ function TMain:InitData ()
 
   local CfgData = self.CfgData
   --logShow(CfgData, "CfgData")
+  --logShow(CfgData.Config, "CfgData.Config")
 
   local Cfg_DT = datim.newConfig(CfgData.Config)
   self.Cfg_DT = Cfg_DT

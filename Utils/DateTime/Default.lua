@@ -67,7 +67,7 @@ local TConfig = {
   YearMax       =  9999,
 
   YearPerAge    =  100,     -- Век:             1 Age       =  100 Years
-  MonthPerYear  =   13,     -- Год:             1 Year      =   12 Months
+  MonthPerYear  =   13,     -- Год:             1 Year      =   13 Months
   DayPerWeek    =    7,     -- Неделя:          1 Week      =    7 Days
   OutPerWeek    =    0,     --                              +    0 Outweek days
   HourPerDay    =   24,     -- День:            1 Day       =   24 Hours
