@@ -58,6 +58,8 @@ function Text.Enquote (Args, Cfg)
     return farSelect.Enquote(unpack(Args))
 
   elseif Args and Args[1] and Args[2] then
+    -- TODO: Save position after 1 and then restore after 2
+    -- TODO: Add Position handling functions to Utils\Dialog.lua
     return farUt.InsertText(Area, Args[1]..Args[2])
 
   end
