@@ -152,6 +152,7 @@ function TMain:MakePanelItemInfo ()
   if (Name == ".svn" or Name == "_svn") and
      Attrs:find("d", 1, true) and Attrs:find("h", 1, true) then
     return -- SVN Special directory
+
   end
 
   self.isDir = not not Attrs:find("d", 1, true)
@@ -198,7 +199,7 @@ function TMain:Prepare ()
 
   self:Localize() -- Локализация
 
-  self:MakePanelItemInfo()
+  if not self:MakePanelItemInfo() then return end
 
   return self:MakeProps()
 
@@ -230,6 +231,7 @@ function TMain:isWorkingCopy () --> (bool)
          (Status:find(isStatus.IsModifs, 1, true) or
          not (Status:find(isStatus.NotExist, 1, true) or
               Status:find(isStatus.IsNotaWC, 1, true)))
+
 end ---- isWorkingCopy
 
 -- Check for subversion present.
@@ -241,6 +243,7 @@ function TMain:isSubversioned () --> (bool)
 
   return not (Status:find(isStatus.NoCommit, 1, true) and
               Status:find(isStatus.NoUpdate, 1, true))
+
 end ---- isSubversioned
 
 -- Parse SVN status.
@@ -559,6 +562,7 @@ function TMain:MakeItems (Operations, Kinds) --> (Items)
       local IsWorkingCopy = self.IsWorkingCopyItem
 
       --logShow({ q, Kinds, }, "Check", 1)
+      --logShow({ IsWorkingCopy, self.isDir, self.IsSubversionedItem, }, name, 1)
       if Kinds[name] or
          (not IsWorkingCopy and
           Kinds[IsWorkingCopy][self.isDir][name]) or
@@ -636,7 +640,7 @@ function TMain:MakeMenu () --> (Menu)
 
   local L = self.LocData
 
-  self:Prepare()
+  if not self:Prepare() then return end
 
   local mItems --= unit.MakeItems(AllOperations, Kinds)
 
@@ -706,7 +710,7 @@ function unit.Execute ()
     return
   end
 
-  _Main:Prepare()
+  if not _Main:Prepare() then return end
   --_Main:Localize()
   if _Main.Error then return nil, _Main.Error end
 
