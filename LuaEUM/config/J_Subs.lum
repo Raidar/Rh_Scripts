@@ -1,0 +1,177 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Template Insert: subs.
+  -- Вставка шаблона: subs.
+--]]
+--------------------------------------------------------------------------------
+
+local format = string.format
+
+----------------------------------------
+--local context = context
+local logShow = context.ShowInfo
+
+local locale = require 'context.utils.useLocale'
+
+----------------------------------------
+local farUt = require "Rh_Scripts.Utils.Utils"
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaEUM.config.",
+  locale = { kind = 'require' },
+
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+
+end
+
+---------------------------------------- Internal
+
+-- Quote text considering selected block.
+-- Закавычивание текста с учётом выделенного блока.
+--[[
+  -- @params:
+  left  (string) - left "quote".
+  right (string) - right "quote".
+--]]
+local function QuoteText (left, right) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри "кавычек":
+    return format("%s@Here%s@Back", left, right)
+
+  end
+
+  -- Выделенный блок есть: блок внутри кавычек, курсор вне кавычек:
+  return format("@Cut%s@Paste%s", left, right)
+
+end -- QuoteText
+
+-- Insert paired tag considering selected block.
+-- Вставка парного тега с учётом выделенного блока.
+--[[
+  -- @params:
+  tag   (string) - tag name.
+  block   (bool) - flag for block-level tag. -- TODO!
+--]]
+local function PairTag (tag, block) --> (macro)
+  --logShow(farUt.EditorSelType(), tag)
+  if farUt.EditorSelType() == "none" then
+    -- Выделенного блока нет: курсор внутри тега:
+    local block = block and "@Enter@Enter@Up" or "" -- блочный элемент
+    return format("{\\%s1}@Here{\\%s0}@Back%s", tag, tag, block)
+
+  end
+
+  -- Выделенный блок есть: блок внутри тега, курсор вне тега:
+  --local count = tag:len() + 3
+  local block = block and "@Enter" or "" -- блочный элемент
+  return format("@Cut{\\%s1}%s@Paste%s{\\%s0}", tag, block, block, tag)
+
+end -- PairTag
+
+---------------------------------------- Lines
+--local substr = string.sub
+
+--[[
+local line_lim = 80
+--local line_len = line_lim - 2
+--local link_len = line_lim - 4
+local note_len = line_lim - 7
+local spec_len = line_lim - 7
+--local line_fmt = "--%s"
+--local link_fmt = "--%s--"
+local note_fmt = "<!--%s-->"
+local spec_fmt = "<!--%s-->"
+local l_hymin = ('-'):rep(line_lim)
+local l_equal = ('='):rep(line_lim)
+local l_stars = ('*'):rep(line_lim)
+]]--
+---------------------------------------- ----
+local mInsert = {
+
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      Cols = 3,
+      Fixed = { HeadRows = 1, HeadCols = 1, },
+
+      IsStatusBar = true,
+    },
+
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+
+  }, -- CfgData
+
+  Items = {
+    -- Header --
+    { text = " ", Label = true },
+    { text = "   <a>   ", Label = true },
+    { text = "Shift+<a>", Label = true },
+
+    --[[
+    { text = " Ctrl+<a>", Label = true },
+    { text = " Alt+<a> ", Label = true },
+    ]]--
+    --[[
+    -- - -- comment
+    { text = "-", Label = true },
+    { text = "<!------->",
+      Plain = format(note_fmt, l_hymin:sub(1, note_len)),
+      AccelStr = "-" },
+    { text = "<!--===-->",
+      Plain = format(note_fmt, l_equal:sub(1, note_len)),
+      AccelStr = "S+-" },
+    { text = "<!-- r -->",
+      Macro = "<!--  -->@Left@4",
+      AccelStr = "C+-" },
+    { text = "<!--***-->",
+      Plain = format(spec_fmt, l_stars:sub(1, spec_len)),
+      AccelStr = "A+-" },
+    ]]--
+    -- B -- physical format
+    { text = "B", Label = true },
+    { text = "Bold",
+      Macro = PairTag("b"),
+      AccelStr = "B" },
+    { text = "Italic",
+      Macro = PairTag("i"),
+      AccelStr = "S+B" },
+
+  }, -- Items
+
+} --- mInsert
+
+---------------------------------------- Data
+local Data = {
+
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+
+  },
+
+  ["Insert"] = mInsert,
+
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------
