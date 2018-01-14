@@ -1268,13 +1268,15 @@ do
 
 function TMain:FindCharInput ()
 
-  local Input = self.Input or ""
+  local Input = makeplain(self.Input or "")
   if Input == "" then return end
 
   if Input:sub(1, 1) ~= "^" then
     Input = ".*"..Input
 
   end
+
+  --logShow(Input, self.Char)
 
   --if Input:sub(-1, -1) ~= "$" then
   --  Input = Input..".*"
@@ -1283,7 +1285,7 @@ function TMain:FindCharInput ()
 
   --logShow(self, Input)
   --return u8byte(Input:sub(1, 1)) -- TEMP
-  return uFindCode(makeplain(Input), self.Char + 1)
+  return uFindCode(Input, self.Char + 1)
 
 end ---- FindCharInput
 
@@ -1321,6 +1323,8 @@ function TMain:StopCharInput (Data)
 end ---- StopCharInput
 
 function TMain:GotoCharInput (Data)
+
+  --logShow(Data, 'GotoCharInput')
 
   self.Char = self:FindCharInput() or Data.Char
 
