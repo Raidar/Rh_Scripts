@@ -1,8 +1,8 @@
 Rh_Scripts pack
 
 [Info]
-Ver. : 3.3.6.0
-Date : 2017-05-14
+Ver. : 3.3.6.3
+Date : 2018-01-14
 Ware : Freeware
 Lic. : MIT
 Reqs : FAR + LuaFAR v.3.0.4575,
@@ -15,7 +15,7 @@ Auth : A.I. Rakhmatullin
        / А.И. Рахматуллин
 Addr : RF, RT, Kazan
        / РФ, РТ, Казань
-Copy : 2009/2017+
+Copy : 2009/2018+
 
 Home : http://raidar.github.com/index.htm
 Link : http://raidar.github.com/Programs/FarScripts.htm#Rh_Scripts
