@@ -147,6 +147,10 @@ end ---- uCharBlockName
 
 function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
 
+  --logShow({ pattern, base, NamesStart, NamesLimit }, "uFindCode")
+
+  --logShow(CharsNames, "CharsNames")
+
   for k = base or NamesStart, NamesLimit do
   --for k = base or 0x0000, (base or 0x0000) + 3 do
     local c = CharsNames[k]
@@ -154,11 +158,15 @@ function unit.uFindCode (pattern, base) --< (Name, uCode) --> (uCode)
       local s = c.name
       --logShow({ pattern, base, c }, s and s:lower():match(pattern))
       if s and s:lower():match(pattern) then
+        --logShow({ pattern, base, c, s }, k)
+
         return k
 
       end
     end
   end -- for
+
+  --logShow({ pattern, base }, 'Not found')
 
 end ---- uFindCode
 
