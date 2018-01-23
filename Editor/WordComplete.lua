@@ -856,7 +856,9 @@ function TMain:SearchTextWords () --> (table)
   Link.Line = CurCfg.CurLine
   wCtr = wCtr + MatchLineWords(GetLine(), 0)
   if Limited and wCtr >= wMax then return t end
+
   --logShow(t, "SearchWords")
+  --logShow(Cfg, "SearchWords")
 
   if Cfg.FindKind == "alternate" then
     -- Поиск поочерёдно сверху / снизу.
@@ -872,7 +874,7 @@ function TMain:SearchTextWords () --> (table)
       end
 
       LineD = LineD + 1
-      if LineD < MaxLine and k <= LinesDown then
+      if LineD <= MaxLine and k <= LinesDown then
         wCtr = wCtr + MatchLineWords(GetLine(LineD),  k)
         if wCtr >= wMax then return t end
 
@@ -900,7 +902,7 @@ function TMain:SearchTextWords () --> (table)
     Link.Down = #t + 1
     for k = 1, Cfg.LinesDown do
       Line = Line + 1
-      if Line >= MaxLine then break end
+      if Line > MaxLine then break end
 
       wCtr = wCtr + MatchLineWords(GetLine(Line),  k)
       if Limited and wCtr >= wMax then return t end
