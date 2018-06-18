@@ -428,7 +428,8 @@ function TMain:MakeProps ()
     MaxHeight = 1 + 1 +
                 self.RowCount +
                 1 +
-                (CharsBlocks and (1 + 2) or 0) +
+                --(CharsBlocks and (1 + 2) or 0) +
+                EdgeRows.Count +
                 0,
 
     Colors = self.Colors,
