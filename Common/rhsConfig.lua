@@ -690,6 +690,7 @@ function unit.ConfigDlg (Data)
 
   } --
   local DBox = Config.DBox
+
   DBox.FixWidth  = 2 +                  -- Edge
                    2 +                  -- + 2 margins
                    --5 +                -- + 1 column: txt
@@ -698,18 +699,26 @@ function unit.ConfigDlg (Data)
                    (DBox.chkItem +
                     DBox.edtName) * 2   -- + 2 columns: chk + edt
 
+  DBox.FixHeight = 2 +                  -- Edge
+                   (1 + 1) +            -- + (button separator + buttons)
+                   1 +                  -- + group separators
+                   2 * 2 +              -- + group empty lines
+                   #CfgDataOrder - 1    -- + group item lines
+
   local FarBox = farUt.GetFarRect()
   local dWidth = FarBox.Width - DBox.FixWidth - 4
   if dWidth > 0 then
-    local dName = numbers.divf(dWidth, 4)
+    local dExtra = numbers.divf(dWidth, 5)
+
+    local dName = dExtra
     if dName > 0 then
-      if dName > 4 then dName = 4 end
+      if dName > 2 then dName = 2 end
       DBox.edtHKey = DBox.edtHKey + dName
       DBox.edtName = DBox.edtName + dName
 
     end
-    local dDesc = (dWidth - dName * 3)
-    if dDesc > 5 then dDesc = 5 end
+    local dDesc = (dWidth - dExtra * 4)
+    if dDesc > 2 then dDesc = 2 end
     DBox.lblDesc = DBox.lblDesc + dDesc
 
     --logShow({ dWidth, dName, dDesc, DBox })
@@ -724,11 +733,6 @@ function unit.ConfigDlg (Data)
                 DBox.lblDesc +
                 (DBox.chkItem + DBox.edtName) * 2
 
-  DBox.FixHeight = 2 +                  -- Edge
-                   (1 + 1) +            -- + (button separator + buttons)
-                   1 +                  -- + group separators
-                   2*2 +                -- + group empty lines
-                   #CfgDataOrder - 1    -- + group item lines
   DBox.Height = DBox.FixHeight
   --DBox.Height = 2 +
   --              (1 + 1) +
