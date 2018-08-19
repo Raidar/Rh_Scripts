@@ -708,11 +708,11 @@ function unit.ConfigDlg (Data)
   local FarBox = farUt.GetFarRect()
   local dWidth = FarBox.Width - DBox.FixWidth - 4
   if dWidth > 0 then
-    local dExtra = numbers.divf(dWidth, 5)
+    local dExtra = numbers.divf(dWidth, 4)
 
     local dName = dExtra
     if dName > 0 then
-      if dName > 2 then dName = 2 end
+      if dName > 4 then dName = 4 end
       DBox.edtHKey = DBox.edtHKey + dName
       DBox.edtName = DBox.edtName + dName
 
