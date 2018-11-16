@@ -989,38 +989,35 @@ local function DialogInsertText (hDlg, s)
   local text = SendDlgMessage(hDlg, F.DM_GETTEXT, id)
   -- Обработка имеющегося текста
   if text and text:len() > 0 then
+    -- Обработка позиции в тексте
+    PosInfo = SendDlgMessage(hDlg, F.DM_GETEDITPOSITION, id)
     -- Обработка выделения текста
     local SelInfo = SendDlgMessage(hDlg, F.DM_GETSELECTION, id)
-    --logShow(SelInfo, "DialogInsertText:Sel")
-    local pos = SelInfo and SelInfo.BlockStartPos or 0
+    local pos = SelInfo and SelInfo.BlockStartPos or
+                PosInfo and PosInfo.CurPos or 0
     local sel = SelInfo and SelInfo.BlockWidth or 0
-    if pos > 0 and sel > 0 then
+    --logShow({ pos, sel, PosInfo, SelInfo }, "DialogInsertText:Pos")
+
+    if pos > 0 then
       text = text:sub(1, pos - 1)..
              s..
              text:sub(pos + sel, -1)
+
+      PosInfo.CurPos = pos + s:len()
+      PosInfo.CurTabPos = -1
+
     else
-      -- Обработка позиции в тексте
-      PosInfo = SendDlgMessage(hDlg, F.DM_GETEDITPOSITION, id)
-      --logShow(PosInfo, "DialogInsertText:Pos")
-      pos = PosInfo and PosInfo.CurPos or 0
-      if pos > 0 then
-        text = text:sub(1, pos - 1)..
-               s..
-               text:sub(pos, -1)
+      text = text..s
+      PosInfo = nil
 
-        PosInfo.CurPos = pos + s:len()
-        PosInfo.CurTabPos = -1
+    end
 
-      else
-        text = text..s
-        PosInfo = nil
-
-      end
-    end -- if-else
+  else
+    text = s
 
   end -- if
 
-  --logShow(text, "text")
+  --logShow({ text, PosInfo, }, s)
   local isOk = SendDlgMessage(hDlg, F.DM_SETTEXT, id, text) and true or false
   if not isOk then return end
 
