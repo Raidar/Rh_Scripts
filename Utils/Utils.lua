@@ -993,10 +993,10 @@ local function DialogInsertText (hDlg, s)
     PosInfo = SendDlgMessage(hDlg, F.DM_GETEDITPOSITION, id)
     -- Обработка выделения текста
     local SelInfo = SendDlgMessage(hDlg, F.DM_GETSELECTION, id)
-    local pos = SelInfo and SelInfo.BlockStartPos or
-                PosInfo and PosInfo.CurPos or 0
+    local pos = SelInfo and SelInfo.BlockStartPos or 0
+    if pos == 0 then pos = PosInfo and PosInfo.CurPos or 0 end
     local sel = SelInfo and SelInfo.BlockWidth or 0
-    --logShow({ pos, sel, PosInfo, SelInfo }, "DialogInsertText:Pos")
+    --logShow({ text:len(), pos, sel, PosInfo, SelInfo }, "DialogInsertText:Pos")
 
     if pos > 0 then
       text = text:sub(1, pos - 1)..
