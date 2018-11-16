@@ -79,7 +79,7 @@ function Text.Requote (Args, Cfg)
   local Area = farUt.GetAreaType()
   if Area ~= "editor" then return end
 
-  local function Requote (block) --> (block)
+  local function mRequote (block) --> (block)
 
     if block == nil then
       if not farSelect.Dequote(unpack(Args.dequote)) then return end
@@ -95,7 +95,7 @@ function Text.Requote (Args, Cfg)
 
   end --
 
-  return farSelect.Process(true, Requote)
+  return farSelect.Process(true, mRequote)
 
 end ---- Requote
 
@@ -142,9 +142,9 @@ function unit.EnquoteItems ()
     { hot = "pas ", pad = "   ", left = "(*", right = "*)", },
     { hot = "c/c⧺", pad = "  ", left = "/* ", right = " */", },
     mSeparator,
-    { hot = "xml ", pad = " ", left = "<!--", right = "-->", },
-    { hot = "lua ", pad = "", left = "--[[ ", right = " ]]--", },
-    --{ hot = "lua ", pad = "", left = "--[[",  right = "--]]", },
+    { hot = "xml ", pad = " ",  left = "<!--",  right = "-->", },
+    { hot = "lua ", pad = "",   left = "--[[ ", right = " ]]--", },
+    --{ hot = "lua ", pad = "",   left = "--[[",  right = "--]]", },
     mSeparator,
     mSeparator,
 
@@ -204,7 +204,7 @@ function unit.EnquoteItems ()
     mSeparator,
     mSeparator,
     mSeparator,
-    mSeparator,
+    { hot = "v", left = "[work_t=]", right = "[/work]", },
     --]]
 
   } --- mQuoteMarks
