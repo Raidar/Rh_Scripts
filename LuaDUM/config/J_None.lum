@@ -269,6 +269,19 @@ local mInsert = {
       AccelStr = "C+X" },
     { text = "Xap",
       AccelStr = "A+X" },
+    -- Z --
+    { text = "Z", Label = true },
+    { text = "Zempl",
+      AccelStr = "Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Z" },
 
   }, -- Items
 
