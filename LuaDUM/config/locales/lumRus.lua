@@ -13,6 +13,8 @@ local Data = {
   -- Template Insert:
   TemplateInsert    = "Вставка шаблона",
   TplInsItem        = "&J - Вставка шаблона",
+  ExtensionInsert   = "Вставка расширения",
+  ExtInsItem        = "&I - Вставка расширения",
 
   ----------------------------------------
 
