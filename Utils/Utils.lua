@@ -456,7 +456,7 @@ end -- do
 -- Версия of FAR.
 local function Version (kind) --> (string | vary)
 
-  return far.AdvControl(F.ACTL_GETFARVERSION, kind)
+  return far.AdvControl(F.ACTL_GETFARMANAGERVERSION or F.ACTL_GETFARVERSION, kind)
 
 end --
 
