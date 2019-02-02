@@ -459,6 +459,7 @@ function TMain:MakeProps ()
   if not Cfg.CharEnum then Cfg.CharEnum = "%S" end
                  --| Тип текущего файла, открытого в редакторе:
   self.Current = { FileType = Cfg.FileType or curFileType() }
+  --logShow(Cfg, "MakeProps", "d2")
 
   return true
 
@@ -491,7 +492,7 @@ function TMain:FindTemplates () --> (table)
   --logShow(Kits, self.Options.SuitName, 1)
 
   local Cfg, CurCfg = self.CfgData, self.Current
-  --logShow(Cfg, "FindTemplates", "d2 t")
+  --logShow({ Cfg, CurCfg }, "FindTemplates", "d4")
   local CurSlab = CurCfg.Slab -- CurCfg.Frag
 
   local t, tLast = {} -- Результаты поиска
@@ -503,7 +504,7 @@ function TMain:FindTemplates () --> (table)
     local Kit = self:TypeKit(Kits, tp)
     if not Kit then break end
     --logShow(Kit, tp, 1)
-    --logShow({ Kit, Cfg, Cfg.CharEnum }, tp, 1)
+    --logShow({ Kit, Cfg, Cfg.CharEnum }, tp, 2)
 
     local Word, Slab
     local Ctrl = Cfg.CharEnum ~= Kit.CharEnum and Kit.CharControl
