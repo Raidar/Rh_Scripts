@@ -114,12 +114,12 @@ local mItems = {
   { text = "Git GUI",
     CmdLine = "git gui citool",
     Hint = "Show GUI", },
-  { text = "Fetch origin…",
-    Function = FillCmdLine,
-    Arguments = "git fetch origin", },
   { text = "&Commit… w/add",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit -a -m ""', },
+  { text = "&8 - Fetch origin…",
+    Function = FillCmdLine,
+    Arguments = "git fetch origin", },
   { text = "P&ush to origin…",
     Function = FillCmdLine,
     Arguments = "git push origin master", },
@@ -178,7 +178,6 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-
       { text = "Log last &2 commits",
         Hint = "View last 2 commits in editor",
         CmdLine = "edit:<git log -2", },
@@ -237,7 +236,6 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-
       { text = "&Fix / amend…",
         Hint = "Amend: fix last commit",
         Function = FillCmdLineWithBack,
@@ -265,7 +263,7 @@ local mItems = {
         Function = FillCmdLine,
         Arguments = "git reset --hard HEAD~1 ", },
       mSeparator,
-      { text = "Revert…",
+      { text = "Re&vert…",
         Function = FillCmdLine,
         Arguments = "git revert ", },
       --{ text = "D&iscard changes…",
@@ -297,10 +295,10 @@ local mItems = {
   { text = "Delete file…",
     Function = FillCmdLine,
     Arguments = "echo n | git rm ", },
-  { text = "Del for ignore…",
+  { text = "Del to ignore…",
     Function = FillCmdLine,
     Arguments = "git rm --cached ", },
-  { text = "Move/re&name…",
+  { text = "Mo&ve/rename…",
     Function = FillCmdLine,
     Arguments = "git mv ", },
 
@@ -318,7 +316,7 @@ local mItems = {
         --BoxKind = "R",
         MenuAlign = "CM",
         UncheckedChar = " ",
-        MinWidth = 25, -- Hint:len()
+        --MinWidth = 25, -- Hint:len()
 
         IsStatusBar = true,
 
@@ -336,7 +334,6 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-
       { text = "&Tag…",
         Function = FillCmdLine,
         Arguments = "git tag ", },
@@ -367,17 +364,167 @@ local mItems = {
 
   }, -- Tag
 
-  { text = "Branches     &6",
-    CmdLine = "git branch -a", },
-  { text = "New branch   &^",
-    Function = FillCmdLine,
-    Arguments = "git branch ", },
-  { text = "&Merge…",
-    Function = FillCmdLine,
-    Arguments = "git merge ", },
-  { text = "Merge fetched…",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git merge origin/master -m ""', },
+  { text = "Bra&nch",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "Bra&nch list",
+        CmdLine = "git branch -a", },
+
+      mSeparator,
+
+      { text = "Branch mer&ged",
+        Function = FillCmdLine,
+        Arguments = "git branch --merged", },
+      { text = "Branch &unmerged",
+        Function = FillCmdLine,
+        Arguments = "git branch --no-merged", },
+
+      mSeparator,
+
+      { text = "Creat&e branch",
+        Function = FillCmdLine,
+        Arguments = "git branch ", },
+
+      mSeparator,
+
+      { text = "Delete branch…",
+        CmdLine = "git branch -d ", },
+
+    }, -- Items
+
+  }, -- Branch
+
+  { text = "S&witch",
+    Hint = "Checkout to",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "S&witch…",
+        Hint = "Checkout to …",
+        Function = FillCmdLine,
+        Arguments = "git checkout ", },
+
+      mSeparator,
+
+      { text = "To bra&nch…",
+        Function = FillCmdLine,
+        Arguments = "git checkout -b ", },
+      { text = "To &track…",
+        Function = FillCmdLine,
+        Arguments = "git checkout --track ", },
+      { text = "To &master…",
+        Function = FillCmdLine,
+        Arguments = "git checkout master ", },
+
+    }, -- Items
+
+  }, -- Switch
+
+  { text = "&Merge",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "Mer&ge…",
+        Function = FillCmdLine,
+        Arguments = "git merge ", },
+
+      mSeparator,
+
+      { text = "Merge &master…",
+        Function = FillCmdLine,
+        Arguments = "git merge master ", },
+
+      mSeparator,
+
+      { text = "&Fetch origin…",
+        Function = FillCmdLine,
+        Arguments = "git fetch origin", },
+      { text = "Merge fetched…",
+        Function = FillCmdLineWithBack,
+        Arguments = 'git merge origin/master -m ""', },
+
+    }, -- Items
+
+  }, -- Merge
 
   mSeparator,
 
@@ -396,17 +543,205 @@ local mItems = {
 
   mSeparator,
 
-  { text = "Init git here",
-    CmdLine = "git init", },
-  { text = "&Blame…",
-    Function = FillCmdLine,
-    Arguments = "git blame -w ", },
-  { text = "Clone git…",
-    Function = FillCmdLine,
-    Arguments = "git clone ", },
-  { text = "Remote add…",
-    Function = FillCmdLine,
-    Arguments = "git remote add ", },
+  { text = "Creat&e",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Init git here",
+        CmdLine = "git init", },
+
+      mSeparator,
+
+      { text = "&Clone git…",
+        Function = FillCmdLine,
+        Arguments = "git clone ", },
+      { text = "Clone bra&nch…",
+        Function = FillCmdLine,
+        Arguments = "git clone --single-branch --branch ", },
+
+    }, -- Items
+
+  }, -- Create
+
+  { text = "Rem&ote",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "Rem&ote…",
+        Function = FillCmdLine,
+        Arguments = "git remote ", },
+
+      mSeparator,
+
+      { text = "&Add…",
+        Function = FillCmdLine,
+        Arguments = "git remote add ", },
+      { text = "Re&name…",
+        Function = FillCmdLine,
+        Arguments = "git remote rename ", },
+      { text = "Remove…",
+        Function = FillCmdLine,
+        Arguments = "git remote rm ", },
+
+    }, -- Items
+
+  }, -- Remote
+
+  { text = "&Blame",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Blame…",
+        Function = FillCmdLine,
+        Arguments = "git blame -w ", },
+
+      { text = "C&heck copy/move…",
+        Function = FillCmdLine,
+        Arguments = "git blame -C ", },
+
+    }, -- Items
+
+  }, -- Blame
+
+  { text = "&2sect",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&2sect…",
+        Function = FillCmdLine,
+        Arguments = "git bisect ", },
+
+      mSeparator,
+
+      { text = "&Start…",
+        Function = FillCmdLine,
+        Arguments = "git bisect start ", },
+
+      { text = "&Bad…",
+        Function = FillCmdLine,
+        Arguments = "git bisect bad ", },
+
+      { text = "&Good…",
+        Function = FillCmdLine,
+        Arguments = "git bisect good ", },
+
+      { text = "&Reset…",
+        Function = FillCmdLine,
+        Arguments = "git bisect reset ", },
+
+      mSeparator,
+
+      { text = "&Head back…",
+        Function = FillCmdLine,
+        Arguments = "git bisect good HEAD~", },
+
+    }, -- Items
+
+  }, -- Bisect
 
   mSeparator,
 
@@ -417,15 +752,15 @@ local mItems = {
     CmdLine = "git config --global -l", },
   { text = "Local config",
     CmdLine = "git config -l", },
-  { text = "About        &?",
+  { text = "&? - About",
     CmdLine = "git --version", },
     --CmdLine = "git gui version", },
 
   mSeparator,
 
-  { text = "Status       &1",
+  { text = "&1 - Status",
     CmdLine = "git status", },
-  { text = "Status view  &2",
+  { text = "&! - Status view",
     CmdLine = "edit:<git status", },
 
   --mEmpty,

@@ -5,37 +5,37 @@ A — Add         / =
 B — Blame       / =
 C — Commit      / =
 D — Diff        / =
-E — clEan up    / —
+E — clEan up    / creatE
 F — Find [changes]      / difF
 G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
 J —
-K — checKout    / fetch
+K — checKout    / —
 L — Log         / =
 M — Merge       / =
-N — reName      / move
-O — resOlve     / —
+N — reName      / braNch
+O — resOlve     / remOte
 P — Patch       / Pull
 Q —             / =
 R — Repo        / Reset / revert
 S — Settings    / —
 T — branch+Tag  / Tag
 U — Update      / pUsh
-V — (revert)    / =
-W — sWitch      / =
-X — —           / extended logs
-Y —
+V — (revert)    / move
+W — sWitch      / sWitch (checkout)
+X — —           / eXtended logs
+Y — —           ∕ commit onlY
 Z —
 
 1 — status      / =
-2 — —           / log 2
+2 — —           / Bisect
 3 — unlock      / —
 4 —
 5 —
 6 —
 7 —
-8 — update to   / —
+8 — update to   / fetch origin
 9 —
 0 —
 
@@ -44,7 +44,7 @@ Z —
 # — lock        / —
 $ —
 % —
-^ — —           / new branch
+^ —
 & —
 * —
 ( —
