@@ -26,9 +26,9 @@ local Data = {
   hSVN_prevdiff     = "Diffs the working copy file with the one before the last commit",
   tSVN_log          = "Show &log",              -- l
   hSVN_log          = "Shows the log for the selected file/folder",
-  tSVN_browse       = "&Repo-browser",          -- r
+  tSVN_browse       = "Repo-browser   &Q",      -- q
   hSVN_browse       = "Opens the repository browser to tweak the repository online",
-  tSVN_browseto     = "&Repo-browser…",         --(r)
+  tSVN_browseto     = "Repo-browser…  &Q",      -- (q)
   tSVN_change       = "&Find changes",          -- f -- Check for modi&fications
   hSVN_change       = "Shows all files which were changed since the last update, locally and in the repository",
   tSVN_revgraph     = "Revision &graph",        -- g
@@ -38,9 +38,9 @@ local Data = {
   hSVN_conflict     = "Launches the external diff/merge program to solve the conflicts",
   tSVN_resolve      = "Res&olved…",             -- o
   hSVN_resolve      = "Resolves conflicted files",
-  tSVN_uptorev      = "Update to rev… &8",      -- 8 -- &Update to revision…
+  tSVN_uptorev      = "Update to rev… &8",      -- 8 -- Update to revision…
   hSVN_uptorev      = "Updates the working copy to a specific revision",
-  tSVN_rename       = "Re&name…",               -- n
+  tSVN_rename       = "Rename…        &*",      -- *
   hSVN_rename       = "Renames files/folders inside version control",
   tSVN_remove       = "Delete",                 --   --
   hSVN_remove       = "Deletes files/folders from version control",
@@ -48,12 +48,12 @@ local Data = {
   hSVN_revert       = "Reverts all changes you made since the last update",
   tSVN_cleanup      = "Cl&ean up",              -- e
   hSVN_cleanup      = "Cleanup interrupted operations, locked files…",
-  tSVN_lock         = "Get lock…    &#",        -- # --
+  tSVN_lock         = "Get lock…      &#",      -- # --
   hSVN_lock         = "Locks a file for other users and makes it editable by you",
-  tSVN_unlock       = "Release lock &3",        -- 3 --
+  tSVN_unlock       = "Release lock   &3",      -- 3 --
   hSVN_unlock       = "Releases locks on files so other users can edit them again",
 
-  tSVN_copy         = "Branch / &tag…",         -- t
+  tSVN_copy         = "Bra&nch / tag…",         -- n
   hSVN_copy         = "Creates a 'cheap' copy inside the repository used for branches or tagging",
   tSVN_switch       = "S&witch…",               -- w
   hSVN_switch       = "Switch working copy to another branch/tag",
@@ -79,17 +79,17 @@ local Data = {
   hSVN_patch        = "Creates a unified diff file with all changes you made",
   tSVN_patching     = "Apply patch…",           --   --
   hSVN_patching     = "Applies a unified diff file to the working copy",
-  tSVN_props        = "Properties   &!",         -- ! --
+  tSVN_props        = "Properties     &!",      -- ! --
   hSVN_props        = "Manage Subversion properties",
 
-  tSVN_settings     = "&Settings",              -- s
+  tSVN_settings     = "Settings       &$",      -- $
   hSVN_settings     = "Tweak TortoiseSVN",
   tSVN_help         = "&Help",                  -- h
   hSVN_help         = "Read the 'Daily Use Guide' before you are stuck…",
-  tSVN_about        = "About        &?",        -- ? -- A&bout
+  tSVN_about        = "About          &?",      -- ? -- A&bout
   hSVN_about        = "Shows information about TortoiseSVN",
 
-  tSVN_status       = "Status       &1",        -- = --
+  tSVN_status       = "Status         &1",      -- = --
   hSVN_status       = "Shows status returned by SubWCRev.exe",
   wSVN_status       = "SVN Status",
 
