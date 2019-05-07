@@ -58,7 +58,7 @@ local Data = {
 
   ----------------------------------------
   -- Quotes and brackets:
-  LuaQuoteText      = "&Quotes/brackets",
+  LuaQuoteText      = "&Q - Quotes/brackets",
     LuaEnquote          = "&Quote text",
       LuaEnquoteQuotes      = "Quotes",
       LuaEnquoteBrackets    = "Brackets",
