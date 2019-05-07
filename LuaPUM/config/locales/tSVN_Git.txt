@@ -6,23 +6,23 @@ B — Blame       / =
 C — Commit      / =
 D — Diff        / =
 E — clEan up    / creatE
-F — Find [changes]      / difF
+F — Find [changes]      / Fetch
 G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
-J —
-K — checKout    / —
+J —             / Just show
+K — checKout    / — <- Create \ Clone git
 L — Log         / =
 M — Merge       / =
-N — reName      / braNch
+N — braNch+tag  / braNch
 O — resOlve     / remOte
 P — Patch       / Pull
-Q —             / =
-R — Repo        / Reset / revert
-S — Settings    / —
-T — branch+Tag  / Tag
+Q — Repo        / —
+R —             / Reset / revert
+S — —           / Stash
+T — —           / Tag
 U — Update      / pUsh
-V — (revert)    / move
+V — (revert)    / moVe / rename
 W — sWitch      / sWitch (checkout)
 X — —           / eXtended logs
 Y — —           ∕ commit onlY
@@ -42,11 +42,11 @@ Z —
 ! — properties  / —
 @ —
 # — lock        / —
-$ —
+$ — settings    ∕ —
 % —
 ^ —
 & —
-* —
+* — rename      / —
 ( —
 ) —
 

@@ -114,15 +114,20 @@ local mItems = {
   { text = "Git GUI",
     CmdLine = "git gui citool",
     Hint = "Show GUI", },
-  { text = "&Commit… w/add",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git commit -a -m ""', },
-  { text = "&8 - Fetch origin…",
+  { text = "Log &graph",
+    CmdLine = "gitk", },
+
+  mSeparator,
+
+  { text = "&Fetch origin…",
     Function = FillCmdLine,
     Arguments = "git fetch origin", },
   { text = "P&ush to origin…",
     Function = FillCmdLine,
     Arguments = "git push origin master", },
+  { text = "&Pull from origin…",
+    Function = FillCmdLine,
+    Arguments = "git pull origin master", },
 
   mSeparator,
 
@@ -132,79 +137,18 @@ local mItems = {
   { text = "Remove from index…",
     Function = FillCmdLine,
     Arguments = "git rm ", },
+  { text = "&Commit… w/add",
+    Function = FillCmdLineWithBack,
+    Arguments = 'git commit -a -m ""', },
   { text = "Commit… onl&y",
     Function = FillCmdLineWithBack,
     Arguments = 'git commit -m ""', },
 
-  mSeparator,
+  --mSeparator,
 
-  { text = "&Diff w/previous",
-    CmdLine = "edit:<git diff HEAD", },
-  { text = "Diff w&/commited",
-    CmdLine = "edit:<git diff --cached", },
-  { text = "Diff w&\\current",
-    CmdLine = "edit:<git diff", },
-  { text = "Show &log",
-    CmdLine = "edit:<git log", },
-
-  { text = "E&xtended log",
-    Hint = "Press q to quit from console view",
-
-    MenuView = DefCfgData.MenuView,
-
-    Props = {
-      --Bottom = CfgData.ShowPath and Svn.Item.View,
-      RectMenu = {
-        Cols = 1,
-        Order = "V",
-        --BoxKind = "R",
-        MenuAlign = "CM",
-        UncheckedChar = " ",
-        MinWidth = 29, -- Hint:len()
-
-        IsStatusBar = true,
-
-      }, -- RectMenu
-
-    }, -- Props
-
-    CfgData = {
-      UMenu = {
-        BottomHotKeys = false,
-        ReturnToUMenu = false,
-
-      },
-
-    }, -- CfgData
-
-    Items = {
-      { text = "Log last &2 commits",
-        Hint = "View last 2 commits in editor",
-        CmdLine = "edit:<git log -2", },
-      { text = "View log &all as tree",
-        Hint = "Press q to quit from log view",
-        -- %h   -- abbreviated commit hash
-        -- %ad  -- author date
-        -- %s   -- subject
-        -- %an  -- author name
-        -- %d   -- ref names
-        CmdLine = 'git log --graph --all --abbrev-commit --pretty=format:"'..
-                  dLogGraphFormat..'" -- ', },
-      { text = "View &current history",
-        Hint = "Press q to quit from log view",
-        CmdLine = 'git log --graph --abbrev-commit --pretty=format:"'..
-                  dLogGraphFormat..'" -- ', },
-
-    }, -- Items
-
-  }, -- Extended log
-
-  { text = "&Find changes",
-    CmdLine = "edit:<git show", },
-  { text = "Log &graph",
-    CmdLine = "gitk", },
-
-  mSeparator,
+  { text = "Mo&ve / rename…",
+    Function = FillCmdLine,
+    Arguments = "git mv ", },
 
   { text = "&Reset / revert",
 
@@ -244,7 +188,9 @@ local mItems = {
         Hint = "Unstage: reset to head",
         Function = FillCmdLine,
         Arguments = "git reset HEAD ", },
+
       mSeparator,
+
       { text = "&Undo head…",
         Hint = "Reset to pre-head",
         Function = FillCmdLine,
@@ -253,7 +199,9 @@ local mItems = {
         Hint = "Redo to old head",
         Function = FillCmdLine,
         Arguments = "git commit -a -c ORIG_HEAD ", },
+
       mSeparator,
+
       { text = "Reset &soft…",
         Hint = "Soft reset last commit",
         Function = FillCmdLine,
@@ -262,7 +210,9 @@ local mItems = {
         Hint = "Hard reset last commit",
         Function = FillCmdLine,
         Arguments = "git reset --hard HEAD~1 ", },
+
       mSeparator,
+
       { text = "Re&vert…",
         Function = FillCmdLine,
         Arguments = "git revert ", },
@@ -283,9 +233,76 @@ local mItems = {
 
   }, -- Reset / revert
 
-  { text = "&Pull from origin…",
-    Function = FillCmdLine,
-    Arguments = "git pull origin master", },
+  mSeparator,
+
+  { text = "&Diff w/previous",
+    CmdLine = "edit:<git diff HEAD", },
+  { text = "Diff w&/commited",
+    CmdLine = "edit:<git diff --cached", },
+  { text = "Diff w&\\current",
+    CmdLine = "edit:<git diff", },
+
+  mSeparator,
+
+  { text = "Show &log",
+    CmdLine = "edit:<git log", },
+
+  { text = "E&xtended log",
+    Hint = "Press q to quit from console view",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        MinWidth = 29, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Just show",
+        CmdLine = "edit:<git show", },
+
+      mSeparator,
+
+      { text = "Log last &2 commits",
+        Hint = "View last 2 commits in editor",
+        CmdLine = "edit:<git log -2", },
+      { text = "View log &all as tree",
+        Hint = "Press q to quit from log view",
+        -- %h   -- abbreviated commit hash
+        -- %ad  -- author date
+        -- %s   -- subject
+        -- %an  -- author name
+        -- %d   -- ref names
+        CmdLine = 'git log --graph --all --abbrev-commit --pretty=format:"'..
+                  dLogGraphFormat..'" -- ', },
+      { text = "View &current history",
+        Hint = "Press q to quit from log view",
+        CmdLine = 'git log --graph --abbrev-commit --pretty=format:"'..
+                  dLogGraphFormat..'" -- ', },
+
+    }, -- Items
+
+  }, -- Extended log
 
   mSeparator,
 
@@ -298,9 +315,6 @@ local mItems = {
   { text = "Del to ignore…",
     Function = FillCmdLine,
     Arguments = "git rm --cached ", },
-  { text = "Mo&ve/rename…",
-    Function = FillCmdLine,
-    Arguments = "git mv ", },
 
   mSeparator,
 
@@ -342,7 +356,9 @@ local mItems = {
         Arguments = 'git tag -a -m ""', },
       { text = "Tag &list",
         CmdLine = "git tag -l", },
+
       mSeparator,
+
       { text = "P&ush tag…",
         Function = FillCmdLine,
         Arguments = "git push origin ", },
@@ -352,7 +368,9 @@ local mItems = {
       { text = "&Fetch tags…",
         Function = FillCmdLine,
         Arguments = "git fetch --tags", },
+
       mSeparator,
+
       { text = "&Delete tag…",
         Function = FillCmdLine,
         Arguments = "git tag -d ", },
@@ -473,6 +491,69 @@ local mItems = {
 
   }, -- Switch
 
+  --mSeparator,
+
+  { text = "&Stash",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Stash…",
+        Function = FillCmdLine,
+        Arguments = "git stash ", },
+      { text = "&Unstash…",
+        Function = FillCmdLine,
+        Arguments = "git stash pop ", },
+
+      mSeparator,
+
+      { text = "Stash &list",
+        CmdLine = "git stash list", },
+      { text = "&Apply stash…",
+        Function = FillCmdLine,
+        Arguments = "git stash apply ", },
+      { text = "Apply w/inde&x…",
+        Function = FillCmdLine,
+        Arguments = "git stash apply --index ", },
+
+      mSeparator,
+
+      { text = "Drop stash…",
+        Function = FillCmdLine,
+        Arguments = "git stash drop ", },
+      { text = "Unapply stash…",
+        Function = FillCmdLine,
+        Arguments = "git stash show -p  | git apply -R", },
+
+    }, -- Items
+
+  }, -- Stash
+
   { text = "&Merge",
 
     MenuView = DefCfgData.MenuView,
@@ -522,24 +603,21 @@ local mItems = {
         Function = FillCmdLineWithBack,
         Arguments = 'git merge origin/master -m ""', },
 
+      mSeparator,
+
+      { text = "Rebase…",
+        Function = FillCmdLine,
+        Arguments = "git rebase -i ", },
+      { text = "Merge as commit to…",
+        Function = FillCmdLine,
+        Arguments = "git cherry-pick ", },
+      { text = "Re&vert before merge…",
+        Function = FillCmdLine,
+        Arguments = "git revert ", },
+
     }, -- Items
 
   }, -- Merge
-
-  mSeparator,
-
-  { text = "Rebase…",
-    Function = FillCmdLine,
-    Arguments = "git rebase -i ", },
-  { text = "Stash…",
-    Function = FillCmdLine,
-    Arguments = "git stash ", },
-  { text = "Stash apply…",
-    Function = FillCmdLine,
-    Arguments = "git stash apply", },
-  { text = "Merge commit to…",
-    Function = FillCmdLine,
-    Arguments = "git cherry-pick ", },
 
   mSeparator,
 
@@ -746,17 +824,54 @@ local mItems = {
   mSeparator,
 
   { text = "&Help",
-    Function = FillCmdLine,
-    Arguments = "git help ", },
-  { text = "Global config",
-    CmdLine = "git config --global -l", },
-  { text = "Local config",
-    CmdLine = "git config -l", },
-  { text = "&? - About",
-    CmdLine = "git --version", },
-    --CmdLine = "git gui version", },
 
-  mSeparator,
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Help…",
+        Function = FillCmdLine,
+        Arguments = "git help ", },
+      { text = "&About",
+        CmdLine = "git --version", },
+        --CmdLine = "git gui version", },
+
+      mSeparator,
+
+      { text = "&Global config",
+        CmdLine = "git config --global -l", },
+      { text = "&Local config",
+        CmdLine = "git config -l", },
+
+    }, -- Items
+
+  }, -- Help
+
+  --mSeparator,
 
   { text = "&1 - Status",
     CmdLine = "git status", },
@@ -764,7 +879,7 @@ local mItems = {
     CmdLine = "edit:<git status", },
 
   --mEmpty,
-  mSeparator,
+  --mSeparator,
 
 } --- mItems
 
