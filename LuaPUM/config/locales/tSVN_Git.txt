@@ -11,7 +11,7 @@ G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
 J —             / Just show
-K — checKout    / — <- Create \ Clone git
+K — checKout    / WorK w/master
 L — Log         / =
 M — Merge       / =
 N — braNch+tag  / braNch
@@ -26,7 +26,7 @@ V — (revert)    / moVe / rename
 W — sWitch      / sWitch (checkout)
 X — —           / eXtended logs
 Y — —           ∕ commit onlY
-Z —
+Z —             / delete / Zap
 
 1 — status      / =
 2 — —           / Bisect

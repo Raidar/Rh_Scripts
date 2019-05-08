@@ -74,6 +74,7 @@ local DefCfgData = {
 } --- DefCfgData
 
 ---------------------------------------- Internal
+
 local function FillCmdLine (Command)
 
   return panel.SetCmdLine(-1, Command)
@@ -82,13 +83,47 @@ end --
 
 local runLuaMacro = runUt.Run.LuaMacro
 
-local function FillCmdLineWithBack (Command)
+local type, unpack = type, unpack
 
-  if panel.SetCmdLine(-1, Command) then
-    return runLuaMacro("Keys'Left'")
+local function FillCmdLineAndPos (Command)
+
+  local BackCount, sBacks
+
+  local sBack = "Left"
+  local sBackFmt = '%d*%s'
+
+  local tp = type(Command)
+  if tp == 'string' then
+
+  elseif tp == 'table' then
+    Command, BackCount = unpack(Command)
+    BackCount = type(BackCount) == 'number' and BackCount or 0
+
+    if BackCount > 1 then
+      sBacks = sBackFmt:format(BackCount, sBack)
+
+    elseif BackCount == 1 then
+      sBacks = sBack
+
+    end
+
+  else
+    return
 
   end
-end --
+
+  if not sBacks then
+    return FillCmdLine(Command)
+
+  end
+
+  if FillCmdLine(Command) then
+    local sKeysFmt = "Keys'%s'"
+
+    return runLuaMacro(sKeysFmt:format(sBacks))
+
+  end
+end -- FillCmdLineAndPos
 
 ---------------------------------------- Separator
 local mSeparator = {
@@ -112,8 +147,8 @@ local dLogGraphFormat =
 local mItems = {
 
   { text = "Git GUI",
-    CmdLine = "git gui citool",
-    Hint = "Show GUI", },
+    Hint = "Show GUI",
+    CmdLine = "git gui citool", },
   { text = "Log &graph",
     CmdLine = "gitk", },
 
@@ -124,10 +159,64 @@ local mItems = {
     Arguments = "git fetch origin", },
   { text = "P&ush to origin…",
     Function = FillCmdLine,
-    Arguments = "git push origin master", },
+    Arguments = "git push origin ", },
   { text = "&Pull from origin…",
     Function = FillCmdLine,
-    Arguments = "git pull origin master", },
+    Arguments = "git pull origin ", },
+
+  { text = "Wor&k w/master",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "&Fetch origin…",
+        Function = FillCmdLine,
+        Arguments = "git fetch origin", },
+      { text = "P&ush to origin…",
+        Function = FillCmdLine,
+        Arguments = "git push origin master", },
+      { text = "&Pull from origin…",
+        Function = FillCmdLine,
+        Arguments = "git pull origin master", },
+
+      mSeparator,
+
+      { text = "S&witch to master…",
+        Hint = "Checkout to master",
+        Function = FillCmdLine,
+        Arguments = "git checkout master", },
+      { text = "Push &master tags…",
+        Function = FillCmdLine,
+        Arguments = "git push origin master --tags", },
+
+    }, -- Items
+
+  }, -- Work w/master
 
   mSeparator,
 
@@ -137,14 +226,17 @@ local mItems = {
   { text = "Remove from index…",
     Function = FillCmdLine,
     Arguments = "git rm ", },
-  { text = "&Commit… w/add",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git commit -a -m ""', },
-  { text = "Commit… onl&y",
-    Function = FillCmdLineWithBack,
-    Arguments = 'git commit -m ""', },
 
   --mSeparator,
+
+  { text = "&Commit… w/add",
+    Function = FillCmdLineAndPos,
+    Arguments = { 'git commit -a -m ""', 1 }, },
+  { text = "Commit… onl&y",
+    Function = FillCmdLineAndPos,
+    Arguments = { 'git commit -m ""', 1 }, },
+
+  mSeparator,
 
   { text = "Mo&ve / rename…",
     Function = FillCmdLine,
@@ -180,10 +272,14 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-      { text = "&Fix / amend…",
-        Hint = "Amend: fix last commit",
-        Function = FillCmdLineWithBack,
-        Arguments = 'git commit --amend -a -m ""', },
+      { text = "&Amend w/add…",
+        Hint = "Fix last commit with add",
+        Function = FillCmdLineAndPos,
+        Arguments = { 'git commit --amend -a -m ""', 1 }, },
+      { text = "Amend onl&y…",
+        Hint = "Fix last commit only",
+        Function = FillCmdLineAndPos,
+        Arguments = { 'git commit --amend -m ""', 1 }, },
       { text = "&Clear index…",
         Hint = "Unstage: reset to head",
         Function = FillCmdLine,
@@ -232,6 +328,50 @@ local mItems = {
     }, -- Items
 
   }, -- Reset / revert
+
+  { text = "Delete / &zap",
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        --MinWidth = 25, -- Hint:len()
+
+        IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "Delete…",
+        Function = FillCmdLine,
+        Arguments = "git rm ", },
+      { text = "Delete file…",
+        Function = FillCmdLine,
+        Arguments = "echo n | git rm ", },
+      { text = "Del to ignore…",
+        Function = FillCmdLine,
+        Arguments = "git rm --cached ", },
+
+    }, -- Items
+
+  }, -- Delete / Zap
 
   mSeparator,
 
@@ -306,18 +446,6 @@ local mItems = {
 
   mSeparator,
 
-  { text = "Delete…",
-    Function = FillCmdLine,
-    Arguments = "git rm ", },
-  { text = "Delete file…",
-    Function = FillCmdLine,
-    Arguments = "echo n | git rm ", },
-  { text = "Del to ignore…",
-    Function = FillCmdLine,
-    Arguments = "git rm --cached ", },
-
-  mSeparator,
-
   { text = "&Tag",
 
     MenuView = DefCfgData.MenuView,
@@ -351,9 +479,9 @@ local mItems = {
       { text = "&Tag…",
         Function = FillCmdLine,
         Arguments = "git tag ", },
-      { text = "&Annotated tag…",
-        Function = FillCmdLineWithBack,
-        Arguments = 'git tag -a -m ""', },
+      { text = "An&notated tag…",
+        Function = FillCmdLineAndPos,
+        Arguments = { 'git tag -a -m ""', 1 }, },
       { text = "Tag &list",
         CmdLine = "git tag -l", },
 
@@ -362,7 +490,11 @@ local mItems = {
       { text = "P&ush tag…",
         Function = FillCmdLine,
         Arguments = "git push origin ", },
-      { text = "Push all tags…",
+      { text = "Push &all tags…",
+        Function = FillCmdLineAndPos,
+        Arguments = { "git push origin  --tags",
+                      (" --tags"):len() }, },
+      { text = "Push &master tags…",
         Function = FillCmdLine,
         Arguments = "git push origin master --tags", },
       { text = "&Fetch tags…",
@@ -413,22 +545,38 @@ local mItems = {
 
     Items = {
       { text = "Bra&nch list",
-        CmdLine = "git branch -a", },
+        CmdLine = "git branch --all", },
 
       mSeparator,
 
-      { text = "Branch mer&ged",
-        Function = FillCmdLine,
-        Arguments = "git branch --merged", },
-      { text = "Branch &unmerged",
-        Function = FillCmdLine,
-        Arguments = "git branch --no-merged", },
+      { text = "Mer&ged list",
+        CmdLine = "git branch --merged", },
+      { text = "&Unmerged list",
+        CmdLine = "git branch --no-merged", },
 
       mSeparator,
 
-      { text = "Creat&e branch",
+      { text = "Creat&e branch…",
         Function = FillCmdLine,
         Arguments = "git branch ", },
+      { text = "S&witch to…",
+        Function = FillCmdLine,
+        Arguments = "git checkout -b ", },
+
+      mSeparator,
+
+      { text = "Rename &local…",
+        Hint = "Rename: … [old] new",
+        Function = FillCmdLine,
+        Arguments = "git branch -m ", },
+      { text = "Rename rem&ote…",
+        Hint = "Rename: … :old new",
+        Function = FillCmdLine,
+        Arguments = "git push origin :", },
+      { text = "Upstream branch…",
+        Hint = "Upstream: … new",
+        Function = FillCmdLine,
+        Arguments = "git push --set-upstream origin ", },
 
       mSeparator,
 
@@ -547,8 +695,9 @@ local mItems = {
         Function = FillCmdLine,
         Arguments = "git stash drop ", },
       { text = "Unapply stash…",
-        Function = FillCmdLine,
-        Arguments = "git stash show -p  | git apply -R", },
+        Function = FillCmdLineAndPos,
+        Arguments = { "git stash show -p  | git apply -R",
+                      (" | git apply -R"):len() }, },
 
     }, -- Items
 
@@ -600,8 +749,8 @@ local mItems = {
         Function = FillCmdLine,
         Arguments = "git fetch origin", },
       { text = "Merge fetched…",
-        Function = FillCmdLineWithBack,
-        Arguments = 'git merge origin/master -m ""', },
+        Function = FillCmdLineAndPos,
+        Arguments = { 'git merge origin/master -m ""', 1 }, },
 
       mSeparator,
 
@@ -703,6 +852,15 @@ local mItems = {
 
       mSeparator,
 
+      { text = "Show",
+        Function = FillCmdLine,
+        Arguments = "git remote show ", },
+
+      { text = "Show origin",
+        CmdLine = "git remote show origin", },
+
+      mSeparator,
+
       { text = "&Add…",
         Function = FillCmdLine,
         Arguments = "git remote add ", },
@@ -712,6 +870,13 @@ local mItems = {
       { text = "Remove…",
         Function = FillCmdLine,
         Arguments = "git remote rm ", },
+
+      mSeparator,
+
+      { text = "Rename branch…",
+        Hint = "Rename: … :old new",
+        Function = FillCmdLine,
+        Arguments = "git push origin :", },
 
     }, -- Items
 
