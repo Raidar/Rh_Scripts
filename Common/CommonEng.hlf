@@ -204,8 +204,8 @@ $ #Characters map# (CharsMap)
  \37Num* | Clear\- (Num5)    — ¦the last chosen character.
  \37CtrlB\-                  — ¦to show a character blocks
 and to go to a first character of the chosen block.
- \37CtrlF\-                  — ¦to show all characters, that contain
-name of current character, and to go to a first character of the chosen block.
+ \37CtrlF\-                  — ¦to show all characters,
+that contain name of current character, and to go to the chosen character.
  \37CtrlC\-                  — ¦to copy the character to clipboard.
  \37CtrlShiftC\-             — ¦to copy code point of the character to clipboard.
  \37CtrlV\-                  — ¦to go to a character from clipboard.
