@@ -2273,8 +2273,8 @@ local Data = {
 
   --[[Omniko]]-- Общее:
   -- Разделы описания --> [Verko]
-  { find = "`%["..les.lalaq,    apply = DescSekto },                                -- `[∂∀
-  { find =  "ёх"..les.laruq,    apply = DescSekto, param = true             },      -- ёх∂∀
+  { find = "^`%["..les.lalaq,   apply = DescSekto },                                -- `[∂∀
+  { find =  "^ёх"..les.laruq,   apply = DescSekto, param = true             },      -- ёх∂∀
   -- Языки разделов --> :Rus
   { find = "Ж"..les.t3rus,      apply = MakeTPL, params = Find.LocSektoLang     },  -- Ж∆∂∂
   -- Файл для списка --> [djv]
