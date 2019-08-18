@@ -140,6 +140,13 @@ local mEmpty = {
 --]]
 
 ---------------------------------------- Items
+--[[
+  %h    -- abbreviated commit hash
+  %ad   -- author date
+  %s    -- subject
+  %an   -- author name
+  %d    -- ref names
+--]]
 local dLogGraphFormat =
   '%C(blue bold)%h%Creset %C(green bold)%ad%Creset | '..
   '%C(white)%s%Creset%C(yellow bold)%d%Creset [%C(white bold)%an%Creset]'
@@ -280,10 +287,18 @@ local mItems = {
         Hint = "Fix last commit only",
         Function = FillCmdLineAndPos,
         Arguments = { 'git commit --amend -m ""', 1 }, },
+
+      mSeparator,
+
       { text = "&Clear index…",
         Hint = "Unstage: reset to head",
         Function = FillCmdLine,
         Arguments = "git reset HEAD ", },
+
+      { text = "Untrack file…",
+        Hint = "Undo file tracking",
+        Function = FillCmdLine,
+        Arguments = "git rm --cached ", },
 
       mSeparator,
 
@@ -296,26 +311,26 @@ local mItems = {
         Function = FillCmdLine,
         Arguments = "git commit -a -c ORIG_HEAD ", },
 
-      mSeparator,
+      mSeparator, -- Undo local commit
 
-      { text = "Reset &soft…",
+      { text = "Reset &soft…",  -- Keep changes
         Hint = "Soft reset last commit",
         Function = FillCmdLine,
         Arguments = "git reset --soft HEAD~1 ", },
-      { text = "Reset &hard…",
+      { text = "Reset &hard…",  -- Don`t keep changes
         Hint = "Hard reset last commit",
         Function = FillCmdLine,
         Arguments = "git reset --hard HEAD~1 ", },
 
       mSeparator,
 
-      { text = "Re&vert…",
+      { text = "Re&vert…",      -- Undo remote commit
         Function = FillCmdLine,
         Arguments = "git revert ", },
-      --{ text = "D&iscard changes…",
-      --  Hint = "Checkout: discard changes",
-      --  Function = FillCmdLine,
-      --  Arguments = "git checkout -- ", },
+      { text = "D&iscard changes…",
+        Hint = "Checkout: discard file changes",
+        Function = FillCmdLine,
+        Arguments = "git checkout -- ", },
       { text = "Sw&itch…",
         Hint = "Checkout to …",
         Function = FillCmdLine,
@@ -428,17 +443,15 @@ local mItems = {
         CmdLine = "edit:<git log -2", },
       { text = "View log &all as tree",
         Hint = "Press q to quit from log view",
-        -- %h   -- abbreviated commit hash
-        -- %ad  -- author date
-        -- %s   -- subject
-        -- %an  -- author name
-        -- %d   -- ref names
         CmdLine = 'git log --graph --all --abbrev-commit --pretty=format:"'..
                   dLogGraphFormat..'" -- ', },
       { text = "View &current history",
         Hint = "Press q to quit from log view",
         CmdLine = 'git log --graph --abbrev-commit --pretty=format:"'..
                   dLogGraphFormat..'" -- ', },
+      { text = "View all &reference log",
+        Hint = "Press q to quit from log view",
+        CmdLine = 'git reflog --all', },
 
     }, -- Items
 
