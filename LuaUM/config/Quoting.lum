@@ -169,6 +169,7 @@ function unit.EnquoteItems ()
     { hot = "+", left = "‾", right = "‾", },
     mSeparator,
     mSeparator,
+
     -- [[
     { text = L.LuaEnquoteSpecials,
       Label = true, },
@@ -194,6 +195,7 @@ function unit.EnquoteItems ()
     mSeparator,
     mSeparator,
     --]]
+
     -- [[
     { text = L.LuaEnquoteReadMe,
       Label = true, },
@@ -201,10 +203,11 @@ function unit.EnquoteItems ()
     { hot = " ", left = "{/ ", right = "}", },
     mSeparator,
     mSeparator,
-    mSeparator,
-    mSeparator,
-    mSeparator,
-    { hot = "v", left = "[work_t=]", right = "[/work]", },
+    { text = L.LuaEnquoteTagging,
+      Label = true, },
+    { hot = " ", pad = " ", left = "<>", right = "</>",  AccelStr = "RC+,", },
+    { hot = " ",            left = "[=]", right = "[/]", AccelStr = "RCRA+.", },
+    { hot = " ",            left = "{=}", right = "{/}", AccelStr = "RCRAS+.", },
     --]]
 
   } --- mQuoteMarks
@@ -224,6 +227,7 @@ function unit.EnquoteItems ()
                         v.pad or "", v.left,
                         v.right, v.note or ""),
           Hint = v.hint,
+          AccelStr = v.AccelStr,
           Function = Text.Enquote,
           Arguments = { v.left, v.right, true, },
         } ---
@@ -234,6 +238,7 @@ function unit.EnquoteItems ()
           text = format(QuoteTextFmt, v.hot,
                         v.pad or "", w[1],
                         w[2], v.note or ""),
+          AccelStr = v.AccelStr,
           Function = v.Function,
           Arguments = v,
         } ---

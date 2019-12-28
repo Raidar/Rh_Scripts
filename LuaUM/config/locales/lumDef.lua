@@ -68,6 +68,7 @@ local Data = {
       LuaEnquoteSpecials    = "Specials",
       LuaEnquoteReplace     = " Replacing ",
       LuaEnquoteReadMe      = "ReadMe",
+      LuaEnquoteTagging     = "Tagging",
     LuaDequote          = "&Dequote text",
       LuaDequoteSingle      = "Any &single",
       LuaDequoteDouble      = "Any &double",
