@@ -41,7 +41,7 @@ $ #Milleniums` calendar#
  One "hour"    =    1 month.
  One "minute"  =    1 day (approximately!).
  One "second"  =    1 hour.
- One "msec"    =    ⅟₁₀₀₀ of an hour (thousandth part).
+ One "msec"    =    ⅟₁₀₀₀ (one thousandth) of an hour.
 
  ~Configurations~@Contents@
 
@@ -50,7 +50,7 @@ $ #Hexadecimal calendar#
   A Hexadecimal calendar is a calendar in a radix‑16.
 
  ――――――――
-  Links:
+  Source links:
  — ¦~Вам календарик 2013~@http://habrahabr.ru/post/164419/@
 {A calendar 2013 for You}.
  — ¦~Делаем календари в разных системах счисления~@http://habrahabr.ru/post/133036/@
@@ -64,7 +64,7 @@ $ #Minimum project of calendar#
   A Minimum project of permanent worldwide calendar (N.V. Volodomonov).
   
  ――――――――
-  Links:
+  Bibliography:
  — ¦Володомонов Н.В.
 Календарь: прошлое, настоящее, будущее.-
 2 изд., перераб. и доп.-
@@ -77,9 +77,21 @@ M.: Nauka, Fizmatlit, 1987.- 80 p.- P. 45 + flyleaf.}
 
  ~Configurations~@Contents@
 
+@Terra_Seasons
+$ #Earth seasons in calendar#
+  In temperate and sub-polar regions, four seasons
+based on the Gregorian calendar are generally recognized.
+In 1780 the Societas Meteorologica Palatina defined seasons
+as groupings of three whole months as identified by the Gregorian calendar.
+
+ ――――――――
+  Source link:
+ — ¦~Seasons~@https://en.wikipedia.org/wiki/Season@.
+ ――――――――
+
 @Pern_Pernese
 $ #Pernese calendar#
-  A Pernese calendar is a time notation on planet Pern (P.E.R.N.).
+  A Pernese calendar is a time notation on Pern planet (P.E.R.N.).
 
  ――――――――
   Bibliography:
@@ -108,7 +120,7 @@ to four approximately equal periods is used on Pern.
  ⋅ ¦Autumn — from 10-01 until 12-31/32.
 
  ――――――――
-  Source (it may be replaced by printed source!):
+  Source link (it may be replaced by printed source!):
  — ¦~Cheryl.
 Pernese Calendar~@http://forums.srellim.org/showpost.php?p=84422&postcount=2@.
  ――――――――
