@@ -801,14 +801,14 @@ function TMain:SearchTextWords () --> (table)
 
   --logShow({ CurCfg.Slab, Slab }, "Slab")
   local SlabPat = self.Ctrl:asPattern(Slab) -- Подготовка Slab для поиска
-  local BasePat = ("(%s%s+)"):format(SlabPat, self.Ctrl.CharsSet)
-  local StartPat = '^'..BasePat
-  local MatchPat = self.Ctrl.SeparSet..BasePat
+  local MatchPat = ("(%s%s+)"):format(SlabPat, self.Ctrl.CharsSet)
+  local StartPat = '^'..MatchPat
+  local AfterPat = self.Ctrl.SeparSet..MatchPat
   self.Pattern = {
     Slab = SlabPat,
-    Base = BasePat,
-    Start = StartPat,
     Match = MatchPat,
+    Start = StartPat,
+    After = AfterPat,
 
   } --
   --logShow(self.Pattern, "SearchWords Patterns")
@@ -839,12 +839,12 @@ function TMain:SearchTextWords () --> (table)
     end -- MakeWord
 
     if Cfg.PartFind then
-      for w in s:gmatch(BasePat) do MakeWord(w) end
+      for w in s:gmatch(MatchPat) do MakeWord(w) end
 
     else
       local v = s:match(StartPat)
       if v then MakeWord(v) end
-      for w in s:gmatch(MatchPat) do MakeWord(w) end
+      for w in s:gmatch(AfterPat) do MakeWord(w) end
 
     end
 
@@ -1060,6 +1060,7 @@ function TMain:SharedPart () --> (string)
   local t = self.Words
   local s = t[1]
   if NoCase then s = s:lower() end
+  --logShow(self)
 
   for k = 2, t.n do
     local w = t[k]
@@ -1278,8 +1279,8 @@ function TMain:MakeWordsList () --> (table)
 
 -- 4. Подготовка списка-меню слов.
 
-  CurCfg.Shared = self:SharedPart() -- Общая часть слов
-  --if Word then logShow(CurCfg) end
+  CurCfg.Shared = self:SharedPart() -- Общая часть слов (для ввода по частям)
+  --if CurCfg.Word then logShow(CurCfg) end
 
   return self:MakePopupMenu()
 
