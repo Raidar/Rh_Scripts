@@ -207,7 +207,6 @@ do
 function unit.newDate (y, m, d, config) --> (object)
 
   local self = {
-
     y = y or 0, -- Количество лет
     m = m or 0, -- Количество месяцев
     d = d or 0, -- Количество дней
@@ -584,7 +583,6 @@ do
 function unit.newTime (h, n, s, z, config) --> (object)
 
   local self = {
-
     h = h or 0, -- Количество часов
     n = n or 0, -- Количество минут
     s = s or 0, -- Количество секунд
@@ -803,13 +801,13 @@ end ----
 
 function TTime:add (time) --> (self)
 
-  return self:from_z(self:summ(time))
+  return self:from_z(self:sum(time))
 
 end ----
 
 function TTime:sub (time) --> (self)
 
-  return self:from_z(self:diff(time))
+  return self:from_z(self:dif(time))
 
 end ----
 
