@@ -1,4 +1,4 @@
---[[ LuaEUM ]]--
+--[[ LuaUM ]]--
 
 ----------------------------------------
 --[[ description:
@@ -51,7 +51,6 @@ if L == nil then
 end
 
 ---------------------------------------- Configure
---local addNewData = tables.extend
 
 ---------------------------------------- Data
 local TekstChangeSets = {
@@ -749,7 +748,7 @@ CharChangeSets.SignRefer = {
 ---------------------------------------- Fill
 do
 
--- Extending set for specifed kind by character forms.
+-- Widening set for specifed kind by character forms.
 -- Расширение набора указанного вида с учётом формы символов.
 local function WidenChangeSets (Base, Kind)
 
