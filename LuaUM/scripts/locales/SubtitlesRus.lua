@@ -25,6 +25,7 @@ local Data = {
     cap_CurClauseGap    = "Пауза перед фразой",
       TimeLenMsecFmt        = " %s миллисекунд",
       TimeLenTextFmt        = "%d ч %d мин %d,%03d сек",
+    cap_CurClauseStart  = "Начало фразы",
 
   ----------------------------------------
 } --- Data

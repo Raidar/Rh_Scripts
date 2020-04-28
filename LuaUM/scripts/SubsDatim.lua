@@ -57,7 +57,7 @@ local TplKit = { -- Информация о шаблонах:
 
     -- функции преобразования:
     parse = false,  -- разбор строки со временем в класс-время
-    spell = false,  -- сбор строки со временем из класса-времени
+    build = false,  -- сбор строки со временем из класса-времени
 
   }, -- sub_default
 
@@ -72,7 +72,7 @@ local TplKit = { -- Информация о шаблонах:
     linecap = false,
 
     parse = false,
-    spell = false,
+    build = false,
 
   }, -- sub_assa
 
@@ -87,7 +87,7 @@ local TplKit = { -- Информация о шаблонах:
     linecap = false,
 
     parse = false,
-    spell = false,
+    build = false,
 
   }, -- sub_srt
 
@@ -125,8 +125,7 @@ do
 
   end
 
-  sub.spell = function (time) --> (string)
-
+  sub.build = function (time) --> (string)
     return format(sub.timefmt, time.h, time.n, time.s, time:cz())
 
   end
@@ -141,15 +140,13 @@ do
   --sub.linecap = "^(.-)( %-%-%> )(.-)(%s.*)$", -- (вр1)( --> )(вр2)( кц)
 
   sub.parse = function (v) --> (time)
-
     local h, n, s, z = v:match(sub.timecap)
 
     return newTime(s2n(h), s2n(n), s2n(s), s2n(z))
 
   end
 
-  sub.spell = function (time) --> (string)
-
+  sub.build = function (time) --> (string)
     return format(sub.timefmt, time.h, time.n, time.s, time.z)
 
   end
@@ -174,9 +171,9 @@ function unit.parseTime (tp, s) --> (time | nil)
 end ----
 
 -- Заполнение времени.
-function unit.spellTime (tp, time) --> (string)
+function unit.buildTime (tp, time) --> (string)
 
-  return TplKit[tp].spell(time)
+  return TplKit[tp].build(time)
 
 end ----
 
@@ -202,20 +199,20 @@ function unit.parseLine (tp, s) --> (data | nil)
 end ---- parseLine
 
 -- Заполнение линии.
-function unit.spellLine (data) --> (string)
+function unit.buildLine (data) --> (string)
 
   -- Заполнение времён.
   local tp = data.type
   local info = TplKit[tp]
-  data[info.start] = unit.spellTime(tp, data.start)
-  data[info.stop]  = unit.spellTime(tp, data.stop)
+  data[info.start] = unit.buildTime(tp, data.start)
+  data[info.stop]  = unit.buildTime(tp, data.stop)
 
   -- Заполнение линии.
   local s = format(TplKit[tp].linefmt, unpack(data))
 
   return s
 
-end ---- spellLine
+end ---- buildLine
 
 ---------------------------------------- make
 local context, ctxdata = context, ctxdata
@@ -263,13 +260,11 @@ end -- DefGetLineData
 local GetLineData = {
 
   sub_assa  = function (line, shift) --> (data)
-
     return DefGetLineData("sub_assa", line, shift)
 
   end,
 
   sub_srt   = function (line, shift) --> (data)
-
     return DefGetLineData("sub_srt", line, shift)
 
   end,
@@ -292,13 +287,19 @@ end ----
 
 end -- do
 
+-- Получение начала отрезка времени на линии файла.
+function unit.getClauseStart (tp) --> (number | nil)
+
+  local data = unit.getLineData(tp)
+  return data and data.start or nil
+
+end ----
+
 -- Получение длины отрезка времени на линии файла.
 function unit.getClauseLen (tp) --> (number | nil)
 
   local data = unit.getLineData(tp)
-  if not data then return end
-
-  return data.stop:dif(data.start)
+  return data and data.stop:dif(data.start) or nil
 
 end ----
 

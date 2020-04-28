@@ -22,24 +22,27 @@ local subs = require "Rh_Scripts.LuaUM.scripts.Subtitles"
 local L = subs.Locale
 
 do
-  --local t = {}
-  local format = string.format
+  local caps = {}
 
 --logShow(L, "Localize", nil, { pairs = tables.allpairs })
 for k, v in tables.allpairs(L) do
-  --t[#t + 1] = "name = "..k
-  --t[#t + 1] = "value = "..(type(v) == 'string' and v or tostring(v))
 
   --if k:find('cap_', 1, true) then logShow({ name, v, k }, "cap") end
   local name = type(k) == 'string' and k:match("^cap%_(.*)$")
   if name then
-    local h = L["hot_"..name]
-    --logShow({ name, v, h }, "cap+hot")
-    L["itm_"..name] = h and type(v) == 'string' and
-                      format("&%s - %s", h, v) or v
+    caps[name] = v
   end
 end
---logShow(t, "allpairs")
+
+  local format = string.format
+
+for k, v in pairs(caps) do
+
+    local hot = L["hot_"..k]
+    --logShow({ k, v, h }, "cap+hot")
+    L["itm_"..k] = hot and type(v) == 'string' and
+                   format("&%s - %s", hot, v) or v
+end
 --logShow(L, "Extended Localize")
 
 end -- do
@@ -59,6 +62,8 @@ local mCurrentClause = {
   Items = {
     { text = L.itm_CurClauseAll,
       Function = subs.CurClauseAll, },
+    { text = L.itm_CurClauseStart,
+      Function = subs.CurClauseStart, },
     { text = L.itm_CurClauseLen,
       Function = subs.CurClauseLen, },
     { text = L.itm_CurClauseGap,
@@ -76,6 +81,7 @@ local mSubtitles = {
 
   Items = {
     mCurrentClause,
+
     mSeparator,
     { text = L.itm_SubtitleType,
       Function = subs.SubtitleType, },

@@ -1,4 +1,4 @@
---[[ LuaEUM ]]--
+--[[ LuaUM ]]--
 
 ----------------------------------------
 --[[ description:
@@ -78,7 +78,6 @@ end
 unit.Locale = L
 
 ---------------------------------------- Configure
---local addNewData = tables.extend
 
 ---------------------------------------- Show
 -- Показ типа файла субтитров.
@@ -106,18 +105,18 @@ function unit.CurClauseData () --| (window)
 end ----
 
 -- Показ данных по разнице как времени.
-function unit.getClauseShowData (dif, lines) --> (table, table)
+function unit.getClauseShowData (dif, mode) --> (table, table)
 
   dif = dif or 0
   local time = newTime():from_z(dif)
 
-  lines = lines == nil and 4 or lines
+  mode = mode == nil and 4 or mode
 
   local show = {
     L.TimeLenAssaFmt:format(time.h, time.n, time.s, time:cz()),
-    lines >= 1 and L.TimeLenDataFmt:format(time:data()) or nil,
-    lines >= 2 and L.TimeLenMsecFmt:format(n2s(dif)) or nil,
-    lines >= 2 and L.TimeLenTextFmt:format(time:data()) or nil,
+    mode >= 1 and L.TimeLenDataFmt:format(time:data()) or nil,
+    mode >= 2 and L.TimeLenMsecFmt:format(n2s(dif)) or nil,
+    mode >= 2 and L.TimeLenTextFmt:format(time:data()) or nil,
 
   } ---
 
@@ -127,33 +126,51 @@ function unit.getClauseShowData (dif, lines) --> (table, table)
 
   } ---
 
-  return show, kind 
+  return show, kind
 
 end ---- getClauseShowData
 
+-- Показ начала отрезка времени на линии файла.
+function unit.CurClauseStart (mode) --| (window)
+
+  local tp = SubsDatim.getFileType()
+  if not tp then return end
+
+  local difStart = SubsDatim.getClauseStart(tp)
+
+  local show = L.TimeLenDataFmt:format(difStart:data())
+
+  local kind = {
+    ShowLineNumber = false,
+    --ChosenToClip   = true,
+
+  } ---
+
+  return datShow(show, L.cap_CurClauseStart, kind)
+
+end ---- CurClauseStart
+
 -- Показ длины отрезка времени на линии файла.
-function unit.CurClauseLen (lines) --| (window)
+function unit.CurClauseLen (mode) --| (window)
 
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
   local dif = SubsDatim.getClauseLen(tp)
-
-  local show, kind = unit.getClauseShowData(dif, lines)
+  local show, kind = unit.getClauseShowData(dif, mode)
 
   return datShow(show, L.cap_CurClauseLen, kind)
 
 end ---- CurClauseLen
 
 -- Показ длины паузы перед отрезком времени на линии файла.
-function unit.CurClauseGap (lines) --| (window)
+function unit.CurClauseGap (mode) --| (window)
 
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
   local dif = SubsDatim.getClauseGap(tp)
-
-  local show, kind = unit.getClauseShowData(dif, lines)
+  local show, kind = unit.getClauseShowData(dif, mode)
 
   return datShow(show, L.cap_CurClauseLen, kind)
 
@@ -162,6 +179,8 @@ end ---- CurClauseGap
 --local unpack = unpack
 
 function unit.ShowClauseAll (title, ...)
+
+  --doShow({...}, title)
 
   local args = {...}
   local items = {}
@@ -198,25 +217,18 @@ function unit.CurClauseAll () --| (window)
   local tp = SubsDatim.getFileType()
   if not tp then return end
 
-  local difLen = SubsDatim.getClauseLen(tp)
-  local difGap = SubsDatim.getClauseGap(tp)
+  local difStart    = SubsDatim.getClauseStart(tp)
+  local difLen      = SubsDatim.getClauseLen(tp)
+  local difGap      = SubsDatim.getClauseGap(tp)
 
-  local showLen       = unit.getClauseShowData(difLen, 0)
-  local showGap       = unit.getClauseShowData(difGap, 0)
-  --local showGap, kind = unit.getClauseShowData(difGap, 0)
+  local showStart   = L.TimeLenDataFmt:format(difStart:data())
+  local showLen     = unit.getClauseShowData(difLen, 1)
+  local showGap     = unit.getClauseShowData(difGap, 1)
 
   return unit.ShowClauseAll(L.cap_CurClauseAll,
-                            L.cap_CurClauseLen, showLen,
-                            L.cap_CurClauseGap, showGap)
-  --[[
-  local show = {}
-  show[#show + 1] = L.cap_CurClauseLen
-  for k = 1, #showLen do show[#show + 1] = showLen[k] end
-  show[#show + 1] = L.cap_CurClauseGap
-  for k = 1, #showLen do show[#show + 1] = showGap[k] end
-
-  return datShow(show, L.cap_CurClauseAll, kind)
-  --]]
+                            L.cap_CurClauseStart, showStart,
+                            L.cap_CurClauseLen,   showLen,
+                            L.cap_CurClauseGap,   showGap)
 
 end ---- CurClauseAll
 
