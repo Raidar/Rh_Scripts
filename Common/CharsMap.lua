@@ -1066,7 +1066,7 @@ end ---- MakeProps
 
 function TBlocks:MakeItems () --| (Blocks_Items)
 
-  if self.Items then return end
+  if self.Items then return true end
 
   local Main = self.Main
 
@@ -1158,6 +1158,7 @@ function TMain:ChooseBlock (Data)
   local Blocks = self.Blocks
   Blocks.FilterCol = 2
 
+  --logShow(Blocks, "ChooseBlock", 1)
   Blocks:MakeProps()
   if not Blocks:MakeItems() then return end
   Blocks:InitFilter()
@@ -1554,7 +1555,8 @@ function TMain:AssignEvents () --> (bool | nil)
       return { Kind = "CtrlEnter", }, CloseFlag
 
     elseif SKey == "CtrlB" then
-      if not CharsBlocks then return end
+      --logShow(Input, SKey)
+      --if not CharsBlocks then return end
 
       local Char = self:ChooseBlock(Data)
       if type(Char) == 'number' then
