@@ -1,0 +1,442 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- English: none.
+  -- Русский: none.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaDUM.config.",
+  locale = { kind = 'require' },
+
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+
+end
+
+---------------------------------------- ----
+local mInsert = {
+
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1, },
+
+      IsStatusBar = true,
+    }, -- RectMenu
+
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+
+  }, -- CfgData
+
+  Items = {
+    -- Header --
+    { text = " ",       Label = true },
+    { text = " <a> ",   Label = true },
+    { text = "Shift+",  Label = true },
+    { text = "Ctrl+",   Label = true },
+    { text = "Alt+",   Label = true },
+    -- - --
+    -- A --
+    { text = "A", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "A" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+A" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+A" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+A" },
+    -- B --
+    { text = "B", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "B" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+B" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+B" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+B" },
+    -- C --
+    { text = "C", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "C" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+C" },
+    -- D --
+    { text = "D", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "D" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+D" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+D" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+D" },
+    -- E --
+    { text = "E", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "E" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+E" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+E" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+E" },
+    -- F --
+    { text = "F", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "F" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+F" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+F" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+F" },
+    -- G --
+    { text = "G", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "G" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+G" },
+    -- H --
+    { text = "H", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "H" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+H" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+H" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+H" },
+    -- I --
+    { text = "I", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "I" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+I" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+I" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+I" },
+    -- J --
+    { text = "J", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "J" },
+    { text = "",
+      AccelStr = "S+J" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+J" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+J" },
+    -- K --
+    { text = "K", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "K" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+K" },
+    -- L --
+    { text = "L", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "L" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+L" },
+    -- N --
+    { text = "N", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "N" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+N" },
+    -- O --
+    { text = "O", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "O" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+O" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+O" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+O" },
+    -- P --
+    { text = "P", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "P" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+P" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+P" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+P" },
+    -- Q --
+    { text = "Q", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "Q" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+Q" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Q" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Q" },
+    -- R --
+    { text = "R", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "R" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+R" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+R" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+R" },
+    -- S --
+    { text = "S", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "S" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+S" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+S" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+S" },
+    -- T --
+    { text = "T", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "T" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+T" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+T" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+T" },
+    -- U --
+    { text = "U", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "U" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+U" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+U" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+U" },
+    -- V --
+    { text = "V", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "V" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+V" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+V" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+V" },
+    -- W --
+    { text = "W", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "W" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+W" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+W" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+W" },
+    -- X --
+    { text = "X", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "X" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+X" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+X" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+X" },
+    -- Y --
+    { text = "Y", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "Y" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+Y" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Y" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Y" },
+    -- Z --
+    { text = "Z", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Z" },
+
+  }, -- Items
+
+} --- mInsert
+
+for k,v in pairs(mInsert.Items) do
+  if not v.Label and
+     not v.separator and
+     not v.Plain and
+     (v.text or "") ~= "" then
+    v.Plain = v.text
+
+  end
+end -- for
+
+---------------------------------------- Data
+local Data = {
+
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+
+  },
+
+  ["Template"] = mInsert,
+
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------

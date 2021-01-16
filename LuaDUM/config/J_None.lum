@@ -213,7 +213,7 @@ local mInsert = {
     { text = "L", Label = true },
     { text = "Libro",
       AccelStr = "L" },
-    { text = "",
+    { text = "Listo",
       separator = true,
       AccelStr = "S+L" },
     { text = "",

@@ -14,6 +14,8 @@ local Data = {
   TplInsItem        = "&J - Template insert",
   ExtensionInsert   = "Extension insert",
   ExtInsItem        = "&I - Extension insert",
+  LanguageInsert    = "Language code insert",
+  LngInsItem        = "&L - Language code insert",
 
   ----------------------------------------
 

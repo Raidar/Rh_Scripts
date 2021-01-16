@@ -2,8 +2,8 @@
 
 ----------------------------------------
 --[[ description:
-  -- Template Insert: none.
-  -- Вставка шаблона: none.
+  -- Extension Insert (with dot): none.
+  -- Вставка расширения (c точкой): none.
 --]]
 --------------------------------------------------------------------------------
 
@@ -28,22 +28,12 @@ if L == nil then
 
 end
 
----------------------------------------- Lines
-local def_line = ('-'):rep(8)
---local noteline = ('―'):rep(8)
-
-local line_len = 40
-local line_hymin = ('-'):rep(line_len)
---local line_equal = ('='):rep(line_len)
-
 ---------------------------------------- ----
 local mInsert = {
 
   text  = L.ExtInsItem,
   Title = L.ExtensionInsert,
   MenuView = "RectMenu",
-
-  --BreakKey = "CtrlJ",
 
   Props = {
     RectMenu = {

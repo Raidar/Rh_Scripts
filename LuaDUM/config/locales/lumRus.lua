@@ -15,6 +15,8 @@ local Data = {
   TplInsItem        = "&J - Вставка шаблона",
   ExtensionInsert   = "Вставка расширения",
   ExtInsItem        = "&I - Вставка расширения",
+  LanguageInsert    = "Вставка кода языка",
+  LngInsItem        = "&L - Вставка кода языка",
 
   ----------------------------------------
 
