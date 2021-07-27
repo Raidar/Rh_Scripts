@@ -156,8 +156,46 @@ local mItems = {
   { text = "Git GUI",
     Hint = "Show GUI",
     CmdLine = "git gui citool", },
+
   { text = "Log &graph",
-    CmdLine = "gitk", },
+
+    MenuView = DefCfgData.MenuView,
+
+    Props = {
+      --Bottom = CfgData.ShowPath and Svn.Item.View,
+      RectMenu = {
+        Cols = 1,
+        Order = "V",
+        --BoxKind = "R",
+        MenuAlign = "CM",
+        UncheckedChar = " ",
+        MinWidth = 25, -- Hint:len()
+
+        --IsStatusBar = true,
+
+      }, -- RectMenu
+
+    }, -- Props
+
+    CfgData = {
+      UMenu = {
+        BottomHotKeys = false,
+        ReturnToUMenu = false,
+
+      },
+
+    }, -- CfgData
+
+    Items = {
+      { text = "Log &graph",
+        CmdLine = "gitk", },
+
+      { text = "&Log graph…",
+        Function = FillCmdLine,
+        Arguments = "gitk ", },
+    }, -- Items
+
+  }, -- Log graph
 
   mSeparator,
 
@@ -203,7 +241,7 @@ local mItems = {
     Items = {
       { text = "&Fetch origin…",
         Function = FillCmdLine,
-        Arguments = "git fetch origin", },
+        Arguments = "git fetch origin master", },
       { text = "P&ush to origin…",
         Function = FillCmdLine,
         Arguments = "git push origin master", },
@@ -220,6 +258,52 @@ local mItems = {
       { text = "Push &master tags…",
         Function = FillCmdLine,
         Arguments = "git push origin master --tags", },
+
+      mSeparator,
+
+      { text = "Without chec&kout",
+
+        MenuView = DefCfgData.MenuView,
+
+        Props = {
+          --Bottom = CfgData.ShowPath and Svn.Item.View,
+          RectMenu = {
+            Cols = 1,
+            Order = "V",
+            --BoxKind = "R",
+            MenuAlign = "CM",
+            UncheckedChar = " ",
+            MinWidth = 25, -- Hint:len()
+
+            IsStatusBar = true,
+
+          }, -- RectMenu
+
+        }, -- Props
+
+        CfgData = {
+          UMenu = {
+            BottomHotKeys = false,
+            ReturnToUMenu = false,
+
+          },
+
+        }, -- CfgData
+
+        Items = {
+          { text = "&Fetch origin…",
+            Function = FillCmdLine,
+            Arguments = "git fetch origin master:master", },
+          { text = "P&ush to origin…",
+            Function = FillCmdLine,
+            Arguments = "git push origin master", },
+          { text = "&Pull from origin…",
+            Function = FillCmdLine,
+            Arguments = "git pull origin master:master", },
+
+        }, -- Items
+
+      }, -- Without checkout
 
     }, -- Items
 
