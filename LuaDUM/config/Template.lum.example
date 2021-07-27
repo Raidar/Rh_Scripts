@@ -193,6 +193,7 @@ local mInsert = {
       separator = true,
       AccelStr = "J" },
     { text = "",
+      separator = true,
       AccelStr = "S+J" },
     { text = "",
       separator = true,
