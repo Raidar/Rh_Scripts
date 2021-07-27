@@ -119,8 +119,8 @@ function unit.EnquoteItems ()
     --mSeparator,
     { hot = "1", left = "‘", right = "’", },
     { hot = "2", left = "“", right = "”", },
-    { hot = "3", left = "‚", right = "‘", },
-    { hot = "4", left = "„", right = "“", },
+    { hot = "3", left = "‚", right = "‛", },
+    { hot = "4", left = "„", right = "‟", },
 
     { text = L.LuaEnquoteBrackets,
       Label = true, },
