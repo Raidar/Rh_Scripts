@@ -535,7 +535,7 @@ function unit.Maths_Symbols ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[abcdefghijklmnopqrstuvwxyz│1234567890=-`[];',./\ ]]
+  local Order = [[abcdefghijklmnopqrstuvwxyz│1234567890-=`[];',./\ ]]
   local Datas = -- Char + Shift             │
                 [[abcdefghijklmnopqrstuvwxyz│1234567890-=`[];',./\ ]]..
                 [[ABCDEFGHIJKLMNOPQRSTUVWXYZ│!@#$%^&*()_+~{}:"<>?|]]..Chars.BS..
@@ -586,13 +586,13 @@ function unit.Maths_Scripts ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[1234567890=-`[]│abcdefghijklmnopqrstuvwxyz/\ ]]
+  local Order = [[1234567890-=`[]│abcdefghijklmnopqrstuvwxyz/\ ]]
   local Datas = -- Char + Shift  │
-                [[₁₂₃₄₅₆₇₈₉₀₊₋₌₍₎│ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
-                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁺⁻⁼⁽⁾│ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
+                [[₁₂₃₄₅₆₇₈₉₀₋₊₌₍₎│ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  .  ]]..
+                [[¹²³⁴⁵⁶⁷⁸⁹⁰⁻⁺⁼⁽⁾│ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ, ]]..Chars.BS..
                 -- Ctrl + Shift  │
-                [[1234567890+−=()│abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
-                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˖˗⁄  │ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
+                [[1234567890−+=()│abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
+                [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˗˖⁄  │ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
                 -- Alt + Shift   │
                 [[ ⅔¾⅘⅚ ⅞        │                          /\ ]]..
                 [[ ⅖⅗ ⅝  ⅜     ʿʾ│ᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
