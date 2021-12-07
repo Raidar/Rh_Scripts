@@ -2,40 +2,40 @@
 TortoiseSVN     / Git
 
 A — Add         / =
-B — Blame       / =
+B — Branch+tag  / Branch
 C — Commit      / =
 D — Diff        / =
-E — clEan up    / creatE
-F — Find [changes]      / Fetch
+E — clEan up    / —
+F — Find [changes]      / Fetch origin
 G — Graph [of changes]  / =
 H — Help        / =
 I — Ignore      / —
-J —             / Just show
+J — update to   / Just show
 K — checKout    / WorK w/master
 L — Log         / =
 M — Merge       / =
-N — braNch+tag  / braNch
-O — resOlve     / remOte
+N — reName      / move / reName
+O — resOlve     / —
 P — Patch       / Pull
 Q — Repo        / —
-R —             / Reset / revert
+R — —           / —
 S — —           / Stash
 T — —           / Tag
 U — Update      / pUsh
-V — (revert)    / moVe / rename
+V — reVert      / Reset / reVert
 W — sWitch      / sWitch (checkout)
-X — —           / eXtended logs
+X — —           / eXtended log
 Y — —           ∕ commit onlY
 Z —             / delete / Zap
 
 1 — status      / =
-2 — —           / Bisect
+2 — —           / bisect
 3 — unlock      / —
 4 —
-5 —
-6 —
+5 —             / remote
+6 —             / create
 7 —
-8 — update to   / fetch origin
+8 — blame       / blame
 9 —
 0 —
 
@@ -46,7 +46,7 @@ $ — settings    ∕ —
 % —
 ^ —
 & —
-* — rename      / —
+* —             / —
 ( —
 ) —
 

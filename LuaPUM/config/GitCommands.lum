@@ -329,11 +329,11 @@ local mItems = {
 
   mSeparator,
 
-  { text = "Mo&ve / rename…",
+  { text = "Move / re&name…",
     Function = FillCmdLine,
     Arguments = "git mv ", },
 
-  { text = "&Reset / revert",
+  { text = "Reset / re&vert",
 
     MenuView = DefCfgData.MenuView,
 
@@ -611,7 +611,7 @@ local mItems = {
 
   }, -- Tag
 
-  { text = "Bra&nch",
+  { text = "&Branch",
 
     MenuView = DefCfgData.MenuView,
 
@@ -641,7 +641,7 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-      { text = "Bra&nch list",
+      { text = "&Branch list",
         CmdLine = "git branch --all", },
 
       mSeparator,
@@ -867,7 +867,7 @@ local mItems = {
 
   mSeparator,
 
-  { text = "Creat&e",
+  { text = "&6·Create",
 
     MenuView = DefCfgData.MenuView,
 
@@ -913,7 +913,7 @@ local mItems = {
 
   }, -- Create
 
-  { text = "Rem&ote",
+  { text = "&5·Remote",
 
     MenuView = DefCfgData.MenuView,
 
@@ -943,7 +943,7 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-      { text = "Rem&ote…",
+      { text = "&5·Remote…",
         Function = FillCmdLine,
         Arguments = "git remote ", },
 
@@ -979,7 +979,7 @@ local mItems = {
 
   }, -- Remote
 
-  { text = "&Blame",
+  { text = "&8·Blame",
 
     MenuView = DefCfgData.MenuView,
 
@@ -1009,7 +1009,7 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-      { text = "&Blame…",
+      { text = "&8·Blame…",
         Function = FillCmdLine,
         Arguments = "git blame -w ", },
 
@@ -1021,7 +1021,7 @@ local mItems = {
 
   }, -- Blame
 
-  { text = "&2sect",
+  { text = "&2·Bisect",
 
     MenuView = DefCfgData.MenuView,
 
@@ -1051,7 +1051,7 @@ local mItems = {
     }, -- CfgData
 
     Items = {
-      { text = "&2sect…",
+      { text = "&2·Bisect…",
         Function = FillCmdLine,
         Arguments = "git bisect ", },
 
