@@ -975,6 +975,19 @@ local mItems = {
         Function = FillCmdLine,
         Arguments = "git push origin :", },
 
+      mSeparator,
+
+      { text = "Show url",
+        CmdLine = "git remote -v", },
+
+      { text = "Add url…",
+        Function = FillCmdLine,
+        Arguments = "git remote add origin ", },
+
+      { text = "Change url…",
+        Function = FillCmdLine,
+        Arguments = "git remote set-url origin ", },
+
     }, -- Items
 
   }, -- Remote
