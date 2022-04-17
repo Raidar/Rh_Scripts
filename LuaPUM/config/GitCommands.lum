@@ -209,7 +209,7 @@ local mItems = {
     Function = FillCmdLine,
     Arguments = "git pull origin ", },
 
-  { text = "Wor&k w/master",
+  { text = "Wor&k with",
 
     MenuView = DefCfgData.MenuView,
 
@@ -229,39 +229,8 @@ local mItems = {
 
     }, -- Props
 
-    CfgData = {
-      UMenu = {
-        BottomHotKeys = false,
-        ReturnToUMenu = false,
-
-      },
-
-    }, -- CfgData
-
     Items = {
-      { text = "&Fetch origin…",
-        Function = FillCmdLine,
-        Arguments = "git fetch origin master", },
-      { text = "P&ush to origin…",
-        Function = FillCmdLine,
-        Arguments = "git push origin master", },
-      { text = "&Pull from origin…",
-        Function = FillCmdLine,
-        Arguments = "git pull origin master", },
-
-      mSeparator,
-
-      { text = "S&witch to master…",
-        Hint = "Checkout to master",
-        Function = FillCmdLine,
-        Arguments = "git checkout master", },
-      { text = "Push &master tags…",
-        Function = FillCmdLine,
-        Arguments = "git push origin master --tags", },
-
-      mSeparator,
-
-      { text = "Without chec&kout",
+      { text = "With &master",
 
         MenuView = DefCfgData.MenuView,
 
@@ -293,21 +262,77 @@ local mItems = {
         Items = {
           { text = "&Fetch origin…",
             Function = FillCmdLine,
-            Arguments = "git fetch origin master:master", },
+            Arguments = "git fetch origin master", },
           { text = "P&ush to origin…",
             Function = FillCmdLine,
             Arguments = "git push origin master", },
           { text = "&Pull from origin…",
             Function = FillCmdLine,
-            Arguments = "git pull origin master:master", },
+            Arguments = "git pull origin master", },
+
+          mSeparator,
+
+          { text = "S&witch to master…",
+            Hint = "Checkout to master",
+            Function = FillCmdLine,
+            Arguments = "git checkout master", },
+          { text = "Push master &tags…",
+            Function = FillCmdLine,
+            Arguments = "git push origin master --tags", },
+
+          mSeparator,
+
+          { text = "Without chec&kout",
+
+            MenuView = DefCfgData.MenuView,
+
+            Props = {
+              --Bottom = CfgData.ShowPath and Svn.Item.View,
+              RectMenu = {
+                Cols = 1,
+                Order = "V",
+                --BoxKind = "R",
+                MenuAlign = "CM",
+                UncheckedChar = " ",
+                MinWidth = 25, -- Hint:len()
+
+                IsStatusBar = true,
+
+              }, -- RectMenu
+
+            }, -- Props
+
+            CfgData = {
+              UMenu = {
+                BottomHotKeys = false,
+                ReturnToUMenu = false,
+
+              },
+
+            }, -- CfgData
+
+            Items = {
+              { text = "&Fetch origin…",
+                Function = FillCmdLine,
+                Arguments = "git fetch origin master:master", },
+              { text = "P&ush to origin…",
+                Function = FillCmdLine,
+                Arguments = "git push origin master", },
+              { text = "&Pull from origin…",
+                Function = FillCmdLine,
+                Arguments = "git pull origin master:master", },
+
+            }, -- Items
+
+          }, -- Without checkout
 
         }, -- Items
 
-      }, -- Without checkout
+      }, -- With master
 
     }, -- Items
 
-  }, -- Work w/master
+  }, -- Work with
 
   mSeparator,
 
