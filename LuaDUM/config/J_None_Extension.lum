@@ -1,0 +1,299 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Extension Insert (with dot): none.
+  -- Вставка расширения (c точкой): none.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaDUM.config.",
+  locale = { kind = 'require' },
+
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+
+end
+
+---------------------------------------- ----
+local mInsert = {
+
+  text  = L.ExtInsItem,
+  Title = L.ExtensionInsert,
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      Cols = 4,
+      Fixed = { HeadRows = 1, HeadCols = 1, },
+
+      IsStatusBar = true,
+    }, -- RectMenu
+
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+
+  }, -- CfgData
+
+  Items = {
+    -- Header --
+    { text = " ",       Label = true },
+    { text = " <a> ",   Label = true },
+    { text = "Shift+",  Label = true },
+    { text = "Ctrl+",   Label = true },
+    -- - --
+    -- A --
+    { text = "A", Label = true },
+    { text = ".alt",
+      AccelStr = "A" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+A" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+A" },
+    -- B --
+    { text = "B", Label = true },
+    { text = ".bin",
+      AccelStr = "B" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+B" },
+    { text = ".bon",
+      AccelStr = "C+B" },
+    -- C --
+    { text = "C", Label = true },
+    { text = ".chm",
+      AccelStr = "C" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+C" },
+    -- D --
+    { text = "D", Label = true },
+    { text = ".dok",
+      AccelStr = "D" },
+    { text = ".doc",
+      AccelStr = "S+D" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+D" },
+    -- E --
+    { text = "E", Label = true },
+    { text = ".tex",
+      AccelStr = "E" },
+    { text = ".err",
+      AccelStr = "S+E" },
+    { text = ".rme",
+      AccelStr = "C+E" },
+    -- F --
+    { text = "F", Label = true },
+    { text = ".fb2",
+      AccelStr = "F" },
+    { text = ".tif",
+      AccelStr = "S+F" },
+    { text = ".fmt",
+      AccelStr = "C+F" },
+    -- G --
+    { text = "G", Label = true },
+    { text = ".gif",
+      AccelStr = "G" },
+    { text = ".png",
+      AccelStr = "S+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+G" },
+    -- H --
+    { text = "H", Label = true },
+    { text = ".htm",
+      AccelStr = "H" },
+    { text = ".mht",
+      AccelStr = "S+H" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+H" },
+    -- I --
+    { text = "I", Label = true },
+    { text = ".inf",
+      AccelStr = "I" },
+    { text = ".img",
+      AccelStr = "S+I" },
+    { text = ".rmi",
+      AccelStr = "C+I" },
+    -- J --
+    { text = "J", Label = true },
+    { text = ".jpg",
+      AccelStr = "J" },
+    { text = ".jp2",
+      AccelStr = "S+J" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+J" },
+    -- K --
+    { text = "K", Label = true },
+    { text = ".pik",
+      AccelStr = "K" },
+    { text = ".pic",
+      AccelStr = "S+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+K" },
+    -- L --
+    { text = "L", Label = true },
+    { text = ".lib",
+      AccelStr = "L" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+L" },
+    -- M --
+    { text = "M", Label = true },
+    { text = ".min",
+      AccelStr = "M" },
+    { text = ".maq",
+      AccelStr = "S+M" },
+    { text = ".mal",
+      AccelStr = "C+M" },
+    -- N --
+    { text = "N", Label = true },
+    { text = ".nov",
+      AccelStr = "N" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+N" },
+    -- O --
+    { text = "O", Label = true },
+    { text = ".old",
+      AccelStr = "O" },
+    { text = ".ocr",
+      AccelStr = "S+O" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+O" },
+    -- P --
+    { text = "P", Label = true },
+    { text = ".pdf",
+      AccelStr = "P" },
+    { text = ".odp",
+      AccelStr = "S+P" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+P" },
+    -- Q --
+    { text = "Q", Label = true },
+    { text = ".psa",
+      AccelStr = "Q" },
+    { text = ".odg",
+      AccelStr = "S+Q" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Q" },
+    -- R --
+    { text = "R", Label = true },
+    { text = ".rtf",
+      AccelStr = "R" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+R" },
+    { text = ".rmt",
+      AccelStr = "C+R" },
+    -- S --
+    { text = "S", Label = true },
+    { text = ".srg",
+      AccelStr = "S" },
+    { text = ".ods",
+      AccelStr = "S+S" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+S" },
+    -- T --
+    { text = "T", Label = true },
+    { text = ".txt",
+      AccelStr = "T" },
+    { text = ".odt",
+      AccelStr = "S+T" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+T" },
+    -- V --
+    { text = "V", Label = true },
+    { text = ".djv",
+      AccelStr = "V" },
+    { text = ".vsd",
+      AccelStr = "S+V" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+V" },
+    -- X --
+    { text = "X", Label = true },
+    { text = ".xml",
+      AccelStr = "X" },
+    { text = ".xls",
+      AccelStr = "S+X" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+X" },
+    -- Z --
+    { text = "Z", Label = true },
+    { text = ".exe",
+      AccelStr = "Z" },
+    { text = ".ppt",
+      AccelStr = "S+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Z" },
+
+  }, -- Items
+
+} --- mInsert
+
+for k,v in pairs(mInsert.Items) do
+  if not v.Label and
+     not v.separator and
+     not v.Plain and
+     (v.text or "") ~= "" then
+    v.Plain = v.text
+
+  end
+end -- for
+
+---------------------------------------- Data
+local Data = {
+
+  Menu = {
+    text = L.ExtensionInsert,
+    Items = { mInsert },
+
+  },
+
+  ["ExtensionInsert"] = mInsert,
+
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------

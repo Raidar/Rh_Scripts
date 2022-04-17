@@ -1,0 +1,402 @@
+--[[ LuaEUM ]]--
+
+----------------------------------------
+--[[ description:
+  -- Template Insert: none.
+  -- Вставка шаблона: none.
+--]]
+--------------------------------------------------------------------------------
+
+----------------------------------------
+--local context = context
+
+local locale = require 'context.utils.useLocale'
+
+--------------------------------------------------------------------------------
+
+---------------------------------------- Locale
+local Custom = {
+  label = "TplIns",
+  name = "lum",
+  path = "Rh_Scripts.LuaDUM.config.",
+  locale = { kind = 'require' },
+
+} ---
+local L, e1, e2 = locale.localize(Custom)
+if L == nil then
+  return locale.showError(e1, e2)
+
+end
+
+---------------------------------------- Lines
+local def_line = ('-'):rep(8)
+--local noteline = ('―'):rep(8)
+
+local line_len = 40
+local line_hymin = ('-'):rep(line_len)
+--local line_equal = ('='):rep(line_len)
+
+---------------------------------------- ----
+local mInsert = {
+
+  text  = L.TplInsItem,
+  Title = L.TemplateInsert,
+  MenuView = "RectMenu",
+
+  Props = {
+    RectMenu = {
+      Cols = 5,
+      Fixed = { HeadRows = 1, HeadCols = 1, },
+
+      IsStatusBar = true,
+    }, -- RectMenu
+
+  }, -- Props
+
+  CfgData = {
+    UMenu = {
+      TextNamedKeys = false,
+      UseMenuTexter = false,
+    },
+
+  }, -- CfgData
+
+  Items = {
+    -- Header --
+    { text = " ",       Label = true },
+    { text = " <a> ",   Label = true },
+    { text = "Shift+",  Label = true },
+    { text = " Ctrl+",  Label = true },
+    { text = "Alt+",    Label = true },
+    -- - --
+    { text = "-", Label = true },
+    { --text = "― (end)",
+      --Plain = noteline,
+      text = "- (line)",
+      Plain = def_line,
+      AccelStr = "-" },
+    { text = "- (40)",
+      Plain = line_hymin,
+      AccelStr = "S+-" },
+    { text = "- (80)",
+      Plain = line_hymin..line_hymin,
+      AccelStr = "C+-" },
+    { text = "- (8)",
+      Plain = def_line,
+      AccelStr = "A+-" },
+    -- A --
+    { text = "A", Label = true },
+    { text = "Anons",
+      AccelStr = "A" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+A" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+A" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+A" },
+    -- C --
+    { text = "C", Label = true },
+    { text = "Cenzo",
+      AccelStr = "C" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+C" },
+    -- D --
+    { text = "D", Label = true },
+    { text = "Dokum",
+      AccelStr = "D" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+D" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+D" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+D" },
+    -- E --
+    { text = "E", Label = true },
+    { text = "Edito",
+      AccelStr = "E" },
+    { text = "El_Ed",
+      AccelStr = "S+E" },
+    { text = "Error",
+      AccelStr = "C+E" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+E" },
+    -- F --
+    { text = "F", Label = true },
+    { text = "Fasko",
+      AccelStr = "F" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+F" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+F" },
+    { text = "Frg",
+      AccelStr = "A+F" },
+    -- G --
+    { text = "G", Label = true },
+    { text = "Gvido",
+      AccelStr = "G" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+G" },
+    -- H --
+    { text = "H", Label = true },
+    { text = "Helpo",
+      AccelStr = "H" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+H" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+H" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+H" },
+    -- I --
+    { text = "I", Label = true },
+    { text = "Infor",
+      AccelStr = "I" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+I" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+I" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+I" },
+    -- J --
+    { text = "J", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "J" },
+    { text = "Antuo",
+      AccelStr = "S+J" },
+    { text = "Ponuo",
+      AccelStr = "C+J" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+J" },
+    -- K --
+    { text = "K", Label = true },
+    { text = "Konto",
+      AccelStr = "K" },
+    { text = "Pikto",
+      AccelStr = "S+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+K" },
+    -- L --
+    { text = "L", Label = true },
+    { text = "Libro",
+      AccelStr = "L" },
+    { text = "Listo",
+      separator = true,
+      AccelStr = "S+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+L" },
+    -- M --
+    { text = "M", Label = true },
+    { text = "Minor",
+      AccelStr = "M" },
+    { text = "Maqor",
+      AccelStr = "S+M" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+M" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+M" },
+    -- N --
+    { text = "N", Label = true },
+    { text = "Noto",
+      AccelStr = "N" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+N" },
+    -- O --
+    { text = "O", Label = true },
+    { text = "Origo",
+      AccelStr = "O" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+O" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+O" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+O" },
+    -- P --
+    { text = "P", Label = true },
+    { text = "Papro",
+      AccelStr = "P" },
+    { text = "Parto",
+      AccelStr = "S+P" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+P" },
+    { text = "Pag",
+      AccelStr = "A+P" },
+    -- Q --
+    { text = "Q", Label = true },
+    { text = "Kovro",
+      AccelStr = "Q" },
+    { text = "Kovro_1",
+      AccelStr = "S+Q" },
+    { text = "Kovro_2",
+      AccelStr = "C+Q" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Q" },
+    -- R --
+    { text = "R", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "R" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+R" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+R" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+R" },
+    -- S --
+    { text = "S", Label = true },
+    { text = "Surgo",
+      AccelStr = "S" },
+    { text = "Situm",
+      AccelStr = "S+S" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+S" },
+    { text = "Seg",
+      AccelStr = "A+S" },
+    -- T --
+    { text = "T", Label = true },
+    { text = "Tomum",
+      AccelStr = "T" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+T" },
+    { text = "Titul",
+      AccelStr = "C+T" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+T" },
+    -- V --
+    { text = "V", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "V" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+V" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+V" },
+    { text = "Ver",
+      AccelStr = "A+V" },
+    -- W --
+    { text = "W", Label = true },
+    { text = "Verko",
+      AccelStr = "W" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+W" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+W" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+W" },
+    -- X --
+    { text = "X", Label = true },
+    { text = "",
+      separator = true,
+      AccelStr = "X" },
+    { text = "",
+      separator = true,
+      AccelStr = "S+X" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+X" },
+    { text = "Xap",
+      AccelStr = "A+X" },
+    -- Z --
+    { text = "Z", Label = true },
+    { text = "Zempl",
+      AccelStr = "Z" },
+    { text = "Prezo",
+      AccelStr = "S+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "C+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "A+Z" },
+
+  }, -- Items
+
+} --- mInsert
+
+for k,v in pairs(mInsert.Items) do
+  if not v.Label and
+     not v.separator and
+     not v.Plain and
+     (v.text or "") ~= "" then
+    v.Plain = v.text
+
+  end
+end -- for
+
+---------------------------------------- Data
+local Data = {
+
+  Menu = {
+    text = L.TemplateInsert,
+    Items = { mInsert },
+
+  },
+
+  ["Insert"] = mInsert,
+
+} --- Data
+
+return Data
+--------------------------------------------------------------------------------
