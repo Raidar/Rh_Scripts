@@ -232,9 +232,9 @@ TekstChangeSets.SignMaths = {
 
   -- Индексы:
     -- верхние:
-  ['^a'] = 'ᵃ',
-  ['^d'] = 'ᵈ',
-  ['^h'] = 'ʰ',
+  ['^a'] = 'ᵃ', ['^b'] = 'ᵇ', ['^c'] = 'ᶜ',
+  ['^d'] = 'ᵈ', ['^e'] = 'ᵉ', ['^f'] = 'ᶠ',
+  ['^g'] = 'ᵍ', ['^h'] = 'ʰ',
   ['^i'] = 'ⁱ', ['^j'] = 'ʲ', ['^k'] = 'ᵏ',
   ['^l'] = 'ˡ', ['^m'] = 'ᵐ', ['^n'] = 'ⁿ',
   ['^o'] = 'ᵒ', ['^p'] = 'ᵖ', --['^q'] = 'q',
@@ -247,6 +247,8 @@ TekstChangeSets.SignMaths = {
   --['^−'] = '⁻',
     -- нижние:
   ['`a'] = 'ₐ',
+  --['`d'] = '',
+  ['`e'] = 'ₑ',
   ['`h'] = 'ₕ',
   ['`i'] = 'ᵢ', ['`j'] = 'ⱼ', ['`k'] = 'ₖ',
   ['`l'] = 'ₗ', ['`m'] = 'ₘ', ['`n'] = 'ₙ',
@@ -811,6 +813,8 @@ GroupChangeSets("Liter", "CharRusLatin")
 
 WidenChangeSets("Liter", "CharLatinGreek")
 GroupChangeSets("Liter", "CharLatinGreek")
+WidenChangeSets("Liter", "CharGreekLatin")
+GroupChangeSets("Liter", "CharGreekLatin")
 
 WidenChangeSets("Liter", "CharExploroRus")
 GroupChangeSets("Liter", "CharExploroRus")
