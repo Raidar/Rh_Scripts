@@ -594,7 +594,7 @@ function unit.Maths_Scripts ()
                 [[1234567890−+=()│abcdefghijklmnopqrstuvwxyz °]]..Chars.CR..
                 [[⅟½⅓¼⅕⅙⅐⅛⅑⅒˗˖⁄  │ABCDEFGHIJKLMNOPQRSTUVWXYZ‒ ]]..
                 -- Alt + Shift   │
-                [[ ⅔¾⅘⅚ ⅞        │                          /\ ]]..
+                [[½⅔¾⅘⅚ ⅞        │                          /\ ]]..
                 [[ ⅖⅗ ⅝  ⅜     ʿʾ│ᴬᴮ ᴰᴱ ᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾ ᴿ ᵀᵁⱽᵂ   ?| ]]
 
   local Props = {
