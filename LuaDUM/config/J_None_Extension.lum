@@ -201,8 +201,7 @@ local mInsert = {
       AccelStr = "P" },
     { text = ".odp",
       AccelStr = "S+P" },
-    { text = "",
-      separator = true,
+    { text = ".pag",
       AccelStr = "C+P" },
     -- Q --
     { text = "Q", Label = true },
