@@ -9,8 +9,14 @@ local Data = {
   Abc_Order = [[
 Order   -- Порядок
   Liter     -- a -- Буквы для звуков
-  Vokal     -- v -- Гласные = Гласные
-  Konal     -- k -- Согласные = Звонкие + Глухие + Сонорные + Глоттальные
+  Vokal     -- v -- Гласные:
+                    -- u -- Гласные
+                    -- i -- Мягкие
+  Konal     -- k -- Согласные:
+                    -- z -- Звонкие
+                    -- s -- Глухие
+                    -- n -- Сонорные
+                    -- h -- Глоттальные
   Binal     -- b -- Диграфные
   Trinal    -- t -- Триграфные
 
@@ -18,6 +24,8 @@ Order   -- Порядок
   Konali    -- q -- Все согласные звуки (в виде букв)
 
 Liter   -- Строки букв
+YeuPat  -- ???
+NeuPat  -- ???
 ]], -- Abc_Order
 
   Order = {
@@ -32,7 +40,7 @@ Liter   -- Строки букв
     }, --
 
     Vokal = {
-      'Vokal_A',
+      'Vokal_U',
       Literi = true, YeuPat = true, NeuPat = true,
     },
     Konal = {
@@ -57,12 +65,13 @@ Liter   -- Строки букв
       Literi = true, YeuPat = true, NeuPat = true,
     },
 
-    Binali = {
-      Konal_Cj = { liter = 'j', kombo = 'Konal', flang = 'R', },
-      Vokal_Oj = { liter = 'j', kombo = 'Vokal', flang = 'R', },
+    Binali = { -- символ комбинирования ¦ основная буква ¦
+               -- расположение символа относительно основной буквы
+      Konal_Cj = { liter = 'j', kombo = 'Konal', flang = 'R', }, -- справа
+      Vokal_Oj = { liter = 'j', kombo = 'Vokal', flang = 'R', }, -- справа
 
-      Vokal_Yo = { liter = 'y', kombo = 'Vokal', flang = 'L', },
-      Vokal_Oy = { liter = 'y', kombo = 'Vokal', flang = 'R', },
+      Vokal_Yo = { liter = 'y', kombo = 'Vokal', flang = 'L', }, -- слева
+      Vokal_Oy = { liter = 'y', kombo = 'Vokal', flang = 'R', }, -- справа
     }, -- Binali
 
     Trinali = {
@@ -107,7 +116,7 @@ Liter   -- Строки букв
 
 ]], -- Abc_Vokal
 
-  Vokal_A = { 'a', 'e', 'i', 'o', 'u', }, -- Обычные
+  Vokal_U = { 'a', 'e', 'i', 'o', 'u', }, -- Обычные
 
 ---------------------------------------- Согласные
   Abc_Konal = [[
@@ -169,11 +178,16 @@ Liter   -- Строки букв
   -- y -- Йотированные гласные
   -- g -- Гласные с краткой
 
+-- Метод комбинирования (kombo):
+  -- m -- приписывание к букве
+  -- k -- наложение на букву
 ]],
 
   Binal_A = { 'j', 'y', }, -- Диграфные
 
   Binal_B = {
+
+    -- Сокращённые обозначения для комбинирования
 
     j = {
       Konal_m = '¸', Konal_k = '̧', -- cedilla
@@ -185,6 +199,8 @@ Liter   -- Строки букв
       Vokal_m = '˘', Vokal_k = '̆', -- breve
 
     }, -- y
+
+    -- Односимвольные обозначения
 
     Binal_A = {
       --j = ' ', y = ' ', -- cedilla
@@ -287,7 +303,7 @@ Liter   -- Строки букв
       --a = 'a', e = 'e', i = 'i', o = 'o', u = 'u',
     },
 
-    Vokal_Oy = {},
+    Vokal_Oy = {}, -- не нужно
 
   }, -- Binal_B
 
