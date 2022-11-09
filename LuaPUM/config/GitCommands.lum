@@ -330,6 +330,106 @@ local mItems = {
 
       }, -- With master
 
+      { text = "With &develop",
+
+        MenuView = DefCfgData.MenuView,
+
+        Props = {
+          --Bottom = CfgData.ShowPath and Svn.Item.View,
+          RectMenu = {
+            Cols = 1,
+            Order = "V",
+            --BoxKind = "R",
+            MenuAlign = "CM",
+            UncheckedChar = " ",
+            MinWidth = 25, -- Hint:len()
+
+            IsStatusBar = true,
+
+          }, -- RectMenu
+
+        }, -- Props
+
+        CfgData = {
+          UMenu = {
+            BottomHotKeys = false,
+            ReturnToUMenu = false,
+
+          },
+
+        }, -- CfgData
+
+        Items = {
+          { text = "&Fetch origin…",
+            Function = FillCmdLine,
+            Arguments = "git fetch origin develop", },
+          { text = "P&ush to origin…",
+            Function = FillCmdLine,
+            Arguments = "git push origin develop", },
+          { text = "&Pull from origin…",
+            Function = FillCmdLine,
+            Arguments = "git pull origin develop", },
+
+          mSeparator,
+
+          { text = "S&witch to develop…",
+            Hint = "Checkout to develop",
+            Function = FillCmdLine,
+            Arguments = "git checkout develop", },
+          { text = "Push develop &tags…",
+            Function = FillCmdLine,
+            Arguments = "git push origin develop --tags", },
+
+          mSeparator,
+
+          { text = "Without chec&kout",
+
+            MenuView = DefCfgData.MenuView,
+
+            Props = {
+              --Bottom = CfgData.ShowPath and Svn.Item.View,
+              RectMenu = {
+                Cols = 1,
+                Order = "V",
+                --BoxKind = "R",
+                MenuAlign = "CM",
+                UncheckedChar = " ",
+                MinWidth = 25, -- Hint:len()
+
+                IsStatusBar = true,
+
+              }, -- RectMenu
+
+            }, -- Props
+
+            CfgData = {
+              UMenu = {
+                BottomHotKeys = false,
+                ReturnToUMenu = false,
+
+              },
+
+            }, -- CfgData
+
+            Items = {
+              { text = "&Fetch origin…",
+                Function = FillCmdLine,
+                Arguments = "git fetch origin develop:develop", },
+              { text = "P&ush to origin…",
+                Function = FillCmdLine,
+                Arguments = "git push origin develop", },
+              { text = "&Pull from origin…",
+                Function = FillCmdLine,
+                Arguments = "git pull origin develop:develop", },
+
+            }, -- Items
+
+          }, -- Without checkout
+
+        }, -- Items
+
+      }, -- With develop
+
     }, -- Items
 
   }, -- Work with
