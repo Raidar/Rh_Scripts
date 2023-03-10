@@ -270,10 +270,12 @@ $ #Calendar for one month# (Calendar)
   Area with date information is displayed on the left,
 the calendar itself is displayed on the right.
   In the area with date information the following is displayed:
-  — ¦a number of the year day is on the left of the fullname of the week day,
-  — ¦a number of the year week is on the right,
+  — ¦a year and a month with arrow-buttons to select value,
   — ¦the date in \3AYYYY‑MM‑DD\- format is from above,
-  — ¦the time for current date в формате in \3AHH‑NN‑SS\-  format is from below.
+  — ¦the fullname of the week day with special values:
+    ¦a number of the year day is on the left,
+    ¦a number of the year week is on the right,
+  — ¦the time for current date в формате in \3AHH‑NN‑SS\-  format.
   In the calendar area the following is displayed:
   — ¦a number of the month week is on the first row,
   — ¦a number of the year week  is on the last row,
