@@ -236,7 +236,7 @@ local VisibleLinCount = {
 } ---
 
 -- Count visible lines from start.
--- Количество видимых рядов с начала.
+-- Подсчёт количества видимых рядов с начала.
 --[[
   -- @params:
   Len    (table) - таблица длин рядов.
@@ -282,7 +282,7 @@ function VisibleLinCount.Base (Len, Sep, Total, Base, Fixes) --> (number, number
 end ---- VisibleLinCount.Base
 
 -- Count visible lines from end.
--- Количество видимых рядов с конца.
+-- Подсчёт количества видимых рядов с конца.
 --[[
   -- @params:
   Len    (table) - таблица длин рядов.
@@ -1381,7 +1381,7 @@ function TMenu:isScrolled (Index) --> (bool)
 
 end ----
 
--- Item index for specified cell.
+-- Get item index for specified cell.
 -- Индекс пункта для заданной ячейки.
 function TMenu:CellIndex (Row, Col) --> (Index)
 
@@ -1407,7 +1407,7 @@ end ----
 
 ---------------------------------------- ---- Visible area
 -- Count visible rows of menu items.
--- Количество видимых строк пунктов меню.
+-- Подсчёт количества видимых строк пунктов меню.
 function TMenu:VisibleRowCount (Row, Kind) --> (number, number)
 
   return VisibleLinCount[Kind or "Base"](self.RowHeight, self.Data.RowSep,
@@ -1415,7 +1415,7 @@ function TMenu:VisibleRowCount (Row, Kind) --> (number, number)
 end ----
 
 -- Count visible columns of menu items.
--- Количество видимых столбцов пунктов меню.
+-- Подсчёт количества видимых столбцов пунктов меню.
 function TMenu:VisibleColCount (Col, Kind) --> (number, number)
 
   return VisibleLinCount[Kind or "Base"](self.ColWidth,  self.Data.ColSep,
@@ -1423,7 +1423,7 @@ function TMenu:VisibleColCount (Col, Kind) --> (number, number)
 end ----
 
 -- Count menu items visible in area.
--- Число видимых в области пунктов меню.
+-- Подсчёт количества пунктов меню, видимых в области.
 function TMenu:VisibleZoneCount () --> (number, number, number)
 
   local Base = self.Zone.Base
