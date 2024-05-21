@@ -3,12 +3,12 @@
 --------------------------------------------------------------------------------
 local Data = {
   ----------------------------------------
-  -- Common fests:
+  -- Common events:
   NewYear                   = "New Year",                   -- N.Y.   -- 01-01
-  SaintValentineDay         = "Saint Valentine's Day",      -- SVD    -- 02-14
+  SaintValentineDay         = "Saint Valentine`s Day",      -- SVD    -- 02-14
   FatherlandDayDefender     = "Defender of the Fatherland Day",       -- 02-23
-  InternationalWomensDay    = "International Women's Day",  -- IWD    -- 03-08
-  AllFoolsDay               = "All Fools' Day",             -- AFD    -- 04-01
+  InternationalWomensDay    = "International Women`s Day",  -- IWD    -- 03-08
+  AllFoolsDay               = "All Fools` Day",             -- AFD    -- 04-01
   InterAnimationDay         = "International Animation Day",-- IAD    -- 10-28
   InternationalMensDay      = "International Men's Day",    -- IMD    -- 11-19
   NewYearsEve               = "New Year's Eve",             -- NYE    -- 12-31
@@ -25,9 +25,9 @@ local Data = {
     -- International Day of Human Space Flight
   WorldCosmonauticsDay      = "World Cosmonautics Day",               -- 04-12
   SystemAdminsDay           = "System Administrator Appreciation Day",-- 07
-  ProgrammersDay            = "Programmers' Day",                     -- 09-12/13
-  UpbringersDay             = "Upbringers' Day",            -- ???    -- 09-27
-  WorldTeachersDay          = "World Teachers' Day",                  -- 10-05
+  ProgrammersDay            = "Programmers` Day",                     -- 09-12/13
+  UpbringersDay             = "Upbringers` Day",            -- ???    -- 09-27
+  WorldTeachersDay          = "World Teachers` Day",                  -- 10-05
   InterAccountantsDay       = "International Accountants' Day",       -- 11-10
   ----------------------------------------
 } --- Data
