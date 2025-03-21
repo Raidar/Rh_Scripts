@@ -585,8 +585,6 @@ function TMain:FillMenu () --> (table)
     local SelChar = self.Char -- Код текущего символа
     local SelIndex            -- Индекс пункта с текущим символом
 
-    local glen = unicode.grapheme.len
-
     for i = 1, CharRows do
       p = p + ColCount
 
