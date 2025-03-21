@@ -89,6 +89,10 @@ local CharChangeSets = {
   GrafLatinRus      = true,
   GrafRusLatin      = true,
 
+  -- Liter\Glif:
+  GlifPinyinPallad  = true,
+  GlifPalladPinyin  = true,
+
   -- -- --
   Formo = FormoChangeSets,
   Tekst = TekstChangeSets,
@@ -108,8 +112,8 @@ local function makePlain (Base, Kind)
 
 end
 
--- Widening set for specifed kind by character forms.
--- Расширение набора указанного вида с учётом формы символов.
+-- Widening set for specifed kind by character cases.
+-- Расширение набора указанного вида с учётом регистра символов.
 local function makeWiden (Base, Kind)
 
   local t = {}
@@ -189,6 +193,14 @@ makeGroup("Liter", "CharRusExploro")
 makeGroup("Liter", "GrafLatinRus")
 makeGroup("Liter", "GrafRusLatin")
 
+-- Liter: Glif:
+makeWiden("Liter", "GlifPinyinPallad")
+makeGroup("Liter", "GlifPinyinPallad")
+makeWiden("Liter", "GlifPalladPinyin")
+makeGroup("Liter", "GlifPalladPinyin")
+
+--logShow(CharChangeSets.GlifPinyinPallad)
+
 end -- do
 
 ---------------------------------------- Action
@@ -213,7 +225,7 @@ local Actions = {
   SignTyper     = false,
   SignMaths     = false,
 
-  -- Liter\Char:
+  -- Liter: Char:
   CharLatinRus      = false,
   CharRusLatin      = false,
 
@@ -223,9 +235,13 @@ local Actions = {
   CharExploroRus    = false,
   CharRusExploro    = false,
 
-  -- Liter\Graf:
+  -- Liter: Graf:
   GrafLatinRus      = false,
   GrafRusLatin      = false,
+
+  -- Liter: Glif:
+  GlifPinyinPallad  = false,
+  GlifPalladPinyin  = false,
 
 } --- Actions
 unit.Actions = Actions
@@ -370,6 +386,13 @@ Menus.ChangeChar = {
       Function = Execute"GrafLatinRus", },
     { text = L.GrafRusLatin,
       Function = Execute"GrafRusLatin", },
+
+    { text = sSectionFmt:format(L.CharGlif),
+      separator = true, },
+    { text = L.GlifPinyinPallad,
+      Function = Execute"GlifPinyinPallad", },
+    { text = L.GlifPalladPinyin,
+      Function = Execute"GlifPalladPinyin", },
 
   }, -- Items
 

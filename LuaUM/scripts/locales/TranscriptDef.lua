@@ -17,15 +17,18 @@ local Data = {
 
   ChangeChar      = "&X - Transcript text",
     CharChar      = "Transliteration",
-      CharLatinRus      = "Latin   -> Russian",
-      CharRusLatin      = "Russian -> Latin",
-      CharLatinGreek    = "Latin   -> Greek",
-      CharGreekLatin    = "Greek   -> Latin",
-      CharExploroRus    = "Exploro -> Russian",
-      CharRusExploro    = "Russian -> Exploro",
+      CharLatinRus      = "Latin    -> Russian",
+      CharRusLatin      = "Russian  -> Latin",
+      CharLatinGreek    = "Latin    -> Greek",
+      CharGreekLatin    = "Greek    -> Latin",
+      CharExploroRus    = "Exploro  -> Russian",
+      CharRusExploro    = "Russian  -> Exploro",
     CharGraf      = "Transgraphics",
-      GrafLatinRus      = "Latin   -> Russian",
-      GrafRusLatin      = "Russian -> Latin",
+      GrafLatinRus      = "Latin    -> Russian",
+      GrafRusLatin      = "Russian  -> Latin",
+    CharGlif      = "Transcription",
+      GlifPinyinPallad  = "Pinyin   -> Palladiy",
+      GlifPalladPinyin  = "Palladiy -> Pinyin",
 
   ----------------------------------------
 } --- Data
