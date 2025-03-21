@@ -37,7 +37,7 @@ local mInsert = {
 
   Props = {
     RectMenu = {
-      Cols = 6,
+      Cols = 7,
       Fixed = { HeadRows = 1, HeadCols = 1, },
 
       IsStatusBar = true,
@@ -61,20 +61,23 @@ local mInsert = {
     { text = "Ctrl+",   Label = true },
     { text = "CS+",     Label = true },
     { text = "Alt+",    Label = true },
+    { text = "AS+",     Label = true },
     -- - --
     -- A --
     { text = "A", Label = true },
     { text = "._",                  -- Любой формат
       AccelStr = "A" },
-    { text = ".aut",                -- Авторская версия публикации
+    { text = ".aut",                -- Авторская версия публикации (autor|a)
       AccelStr = "S+A" },
     { text = ".alt",                -- Альтернативный вариант публикации в формате,
       AccelStr = "C+A" },           -- указанном в названии после этого расширения
     { text = "",
       separator = true,
       AccelStr = "CS+A" },
-    { text = ".rus._.inf",          -- Информация о публикации в любом формате на русском языке
+    { text = ".adoc",
       AccelStr = "A+A" },
+    { text = ".rus._.inf",          -- Информация о публикации в любом формате на русском языке
+      AccelStr = "AS+A" },
     -- B --
     { text = "B", Label = true },
     { text = ".bin",
@@ -82,7 +85,7 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "S+B" },
-    { text = ".bon",                -- Хорошее качество
+    { text = ".bon",                -- Хорошее качество (bon|a)
       AccelStr = "C+B" },
     { text = "",
       separator = true,
@@ -90,6 +93,9 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+B" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+B" },
     -- C --
     { text = "C", Label = true },
     { text = ".chm",
@@ -106,9 +112,12 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+C" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+C" },
     -- D --
     { text = "D", Label = true },
-    { text = ".dok",                -- Любой документ
+    { text = ".dok",                -- Любой документ (dokum#ent)
       AccelStr = "D" },
     { text = ".doc",
       AccelStr = "S+D" },
@@ -118,13 +127,16 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+D" },
-    { text = ".rus.doc.inf",        -- Информация о публикации в doc-формате на русском языке
+    { text = "",
+      separator = true,
       AccelStr = "A+D" },
+    { text = ".rus.doc.inf",        -- Информация о публикации в doc-формате на русском языке
+      AccelStr = "AS+D" },
     -- E --
     { text = "E", Label = true },
     { text = ".tex",
       AccelStr = "E" },
-    { text = ".err",                -- Информация об ошибках в публикации
+    { text = ".err",                -- Информация об ошибках в публикации (erar|o)
       AccelStr = "S+E" },
     { text = ".rme",                -- Информация о публикации в структурированном формате
       AccelStr = "C+E" },
@@ -134,6 +146,9 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+E" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+E" },
     -- F --
     { text = "F", Label = true },
     { text = ".fb2",
@@ -143,25 +158,29 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "C+F" },
+    { text = ".fragm",              -- Фрагмент файла (fragm#ent)
+      AccelStr = "CS+F" },
     { text = "",
       separator = true,
-      AccelStr = "CS+F" },
-    { text = ".rus.fb2.inf",        -- Информация о публикации в fb2-формате на русском языке
       AccelStr = "A+F" },
+    { text = ".rus.fb2.inf",        -- Информация о публикации в fb2-формате на русском языке
+      AccelStr = "AS+F" },
     -- G --
     { text = "G", Label = true },
     { text = ".gif",
       AccelStr = "G" },
     { text = ".png",
       AccelStr = "S+G" },
-    { text = "",
-      separator = true,
+    { text = ".griz",               -- "Серо-фоновый" вариант (griz|a)
       AccelStr = "C+G" },
-    { text = ".grand",              -- Большой размер файла (?)
+    { text = ".grand",              -- Большой размер файла (grand|a)
       AccelStr = "CS+G" },
     { text = "",
       separator = true,
       AccelStr = "A+G" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+G" },
     -- H --
     { text = "H", Label = true },
     { text = ".htm",
@@ -174,8 +193,11 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+H" },
-    { text = ".rus.htm.inf",        -- Информация о публикации в htm-формате на русском языке
+    { text = "",
+      separator = true,
       AccelStr = "A+H" },
+    { text = ".rus.htm.inf",        -- Информация о публикации в htm-формате на русском языке
+      AccelStr = "AS+H" },
     -- I --
     { text = "I", Label = true },
     { text = ".inf",                -- Информация о публикации
@@ -190,6 +212,9 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+I" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+I" },
     -- J --
     { text = "J", Label = true },
     { text = ".jpg",
@@ -205,19 +230,25 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+J" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+J" },
     -- K --
     { text = "K", Label = true },
     { text = ".pik",                -- Любое изображение
       AccelStr = "K" },
     { text = ".pic",
       AccelStr = "S+K" },
-    { text = ".kolor",              -- Цветной вариант
+    { text = ".kolr",               -- Цветной вариант (kol(o)r|a)
       AccelStr = "C+K" },
     { text = ".kurt",
       AccelStr = "CS+K" },
     { text = "",
       separator = true,
       AccelStr = "A+K" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+K" },
     -- L --
     { text = "L", Label = true },
     { text = ".lib",
@@ -233,68 +264,81 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+L" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+L" },
     -- M --
     { text = "M", Label = true },
     { text = "",
       separator = true,
       AccelStr = "M" },
-    { text = ".maq",                -- Большой размер файла
+    { text = "",
+      separator = true,
       AccelStr = "S+M" },
-    { text = ".mal",                -- Плохое качество
+    { text = ".mal",                -- Плохое качество (mal|a)
       AccelStr = "C+M" },
-    { text = "",
-      separator = true,
+    { text = ".maq",                -- Большой размер файла (maqor|а)
       AccelStr = "CS+M" },
+    { text = ".md",
+      AccelStr = "A+M" },
     { text = "",
       separator = true,
-      AccelStr = "A+M" },
+      AccelStr = "AS+M" },
     -- N --
     { text = "N", Label = true },
     { text = "",
       separator = true,
       AccelStr = "N" },
-    { text = ".min",                -- Малый размер файла
+    { text = ".nov",                -- Новая версия публикации (nov|а)
       AccelStr = "S+N" },
-    { text = ".nov",                -- Новая версия публикации
+    { text = ".nial",               -- Чёрно-белый вариант (nigr|a + alb|a)
       AccelStr = "C+N" },
-    { text = "",
-      separator = true,
+    { text = ".min",                -- Малый размер файла (minor|а)
       AccelStr = "CS+N" },
     { text = "",
       separator = true,
       AccelStr = "A+N" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+N" },
     -- O --
     { text = "O", Label = true },
     { text = ".ocr",                -- Файл с публикацией после распознавания текста
       AccelStr = "O" },
+    { text = ".old",                -- Старая версия публикации (old|а)
+      AccelStr = "S+O" },
     { text = "",
       separator = true,
-      AccelStr = "S+O" },
-    { text = ".old",                -- Старая версия публикации
       AccelStr = "C+O" },
     { text = "",
       separator = true,
       AccelStr = "CS+O" },
-    { text = ".ocr_tif",
+    { text = "",
+      separator = true,
       AccelStr = "A+O" },
+    { text = ".ocr_tif",
+      AccelStr = "AS+O" },
     -- P --
     { text = "P", Label = true },
     { text = ".pdf",
       AccelStr = "P" },
-    { text = ".odp",
+    { text = ".ppt",
       AccelStr = "S+P" },
-    { text = ".pag",                -- Страница публикации
+    { text = ".pag",                -- Страница публикации (pag|o)
       AccelStr = "C+P" },
     { text = "",
       separator = true,
       AccelStr = "CS+P" },
-    { text = ".rus.pdf.inf",        -- Информация о публикации в pdf-формате на русском языке
+    { text = ".odp",
       AccelStr = "A+P" },
+    { text = ".rus.pdf.inf",        -- Информация о публикации в pdf-формате на русском языке
+      AccelStr = "AS+P" },
     -- Q --
     { text = "Q", Label = true },
     { text = ".psa",
       AccelStr = "Q" },
-    { text = ".odg",
+    { text = "",
+      separator = true,
       AccelStr = "S+Q" },
     { text = "",
       separator = true,
@@ -302,9 +346,11 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+Q" },
+    { text = ".odg",
+      AccelStr = "A+Q" },
     { text = "",
       separator = true,
-      AccelStr = "A+Q" },
+      AccelStr = "AS+Q" },
     -- R --
     { text = "R", Label = true },
     { text = ".rtf",
@@ -320,11 +366,15 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+R" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+R" },
     -- S --
     { text = "S", Label = true },
     { text = ".srg",
       AccelStr = "S" },
-    { text = ".ods",
+    { text = "",
+      separator = true,
       AccelStr = "S+S" },
     { text = "",
       separator = true,
@@ -332,13 +382,16 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+S" },
-    { text = ".rus.ods.inf",        -- Информация о публикации в ods-формате на русском языке
+    { text = ".ods",
       AccelStr = "A+S" },
+    { text = ".rus.ods.inf",        -- Информация о публикации в ods-формате на русском языке
+      AccelStr = "AS+S" },
     -- T --
     { text = "T", Label = true },
     { text = ".txt",
       AccelStr = "T" },
-    { text = ".odt",
+    { text = "",
+      separator = true,
       AccelStr = "S+T" },
     { text = "",
       separator = true,
@@ -346,8 +399,10 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+T" },
-    { text = ".rus.odt.inf",        -- Информация о публикации в odt-формате на русском языке
+    { text = ".odt",
       AccelStr = "A+T" },
+    { text = ".rus.odt.inf",        -- Информация о публикации в odt-формате на русском языке
+      AccelStr = "AS+T" },
     -- U --
     { text = "U", Label = true },
     { text = ".epub",
@@ -355,14 +410,16 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "S+U" },
-    { text = "",
-      separator = true,
+    { text = ".unkr",               -- Монохромный вариант (un+kolor|a, mono+krom|a(?))
       AccelStr = "C+U" },
     { text = "",
       separator = true,
       AccelStr = "CS+U" },
-    { text = ".rus.epub.inf",       -- Информация о публикации в epub-формате на русском языке
+    { text = "",
+      separator = true,
       AccelStr = "A+U" },
+    { text = ".rus.epub.inf",       -- Информация о публикации в epub-формате на русском языке
+      AccelStr = "AS+U" },
     -- V --
     { text = "V", Label = true },
     { text = ".djv",
@@ -375,8 +432,11 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+V" },
-    { text = ".rus.djv.inf",
+    { text = "",
+      separator = true,
       AccelStr = "A+V" },
+    { text = ".rus.djv.inf",
+      AccelStr = "AS+V" },
     -- X --
     { text = "X", Label = true },
     { text = ".xml",
@@ -389,8 +449,11 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "CS+X" },
-    { text = ".rus.xls.inf",        -- Информация о публикации в xls-формате на русском языке
+    { text = "",
+      separator = true,
       AccelStr = "A+X" },
+    { text = ".rus.xls.inf",        -- Информация о публикации в xls-формате на русском языке
+      AccelStr = "AS+X" },
     -- Y --
     { text = "Y", Label = true },
     { text = ".tif",                -- Файл с публикацией в виде tif-изображений
@@ -400,16 +463,20 @@ local mInsert = {
       AccelStr = "S+Y" },
     { text = ".fmt",                -- Форматированная информация (?)
       AccelStr = "C+Y" },
-    { text = ".leyst",              -- Малый размер файла (?)
+    { text = ".leyst",              -- Малый размер файла (leyst|a)
       AccelStr = "CS+Y" },
     { text = "",
       separator = true,
       AccelStr = "A+Y" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+Y" },
     -- Z --
     { text = "Z", Label = true },
     { text = ".exe",
       AccelStr = "Z" },
-    { text = ".ppt",
+    { text = "",
+      separator = true,
       AccelStr = "S+Z" },
     { text = "",
       separator = true,
@@ -420,6 +487,9 @@ local mInsert = {
     { text = "",
       separator = true,
       AccelStr = "A+Z" },
+    { text = "",
+      separator = true,
+      AccelStr = "AS+Z" },
 
   }, -- Items
 
