@@ -675,18 +675,18 @@ function unit.Punct_Symbols ()
   --if Menu then return Menu end
   if Menu then return Menu.UpdateInsArea() end
 
-  local Order = [[agxcdimopqwbv│`1234567890-/\ ]]
-  local Datas = -- Char + Shift│
-                [[́̀̂̌̇̈̄‵′“”•ˈ│´‼⁇§¯°ˆ¸˙«»-…, ]]..
-                [[̭̬̣̤̱̋̏‶″‘’‣ˌ│˝¡¿† ‰ˇ˛¨‹›–․ ]]..Chars.BS..
-                -- Ctrl + Shift│
-                [[̲̍̎̆̑̓̊‷‴„‟◦ │ ⁉⁈‡_‱˘ ˚ʿʾ—‥ ]]..Chars.CR..
-                [[̩͈̮̯̦̥̅ ⁗‚‛⁃ │˟ ⸮¦‾ ⁏⁊ ˓˒‑⁝  ]]..
-                -- Alt + Shift │
-                [[  ͑͗̔̉̃ʹʼˋˊ⁌ │ʻ‽⸘ˌˍ|˂˃˜⁀‿‒   ]]..
-                [[    ̨̰̒ʺˮˎˏ⁍ │ʽ⁅⁆ˈˉ―˄˅˷⁐⁔    ]]..
+  local Order = [[agxcdimopqwebv│`1234567890-/\ ]]
+  local Datas = -- Char + Shift │
+                [[́̀̂̌̇̈̄‵′“” •ˈ│´‼⁇§¯°ˆ¸˙«»-…, ]]..
+                [[̭̬̣̤̱̋̏‶″‘’ ‣ˌ│˝¡¿† ‰ˇ˛¨‹›–․ ]]..Chars.BS..
+                -- Ctrl + Shift │
+                [[̲̍̎̆̑̓̊‷‴„“‟◦ │ ⁉⁈‡_‱˘ ˚ʿʾ—‥ ]]..Chars.CR..
+                [[̩͈̮̯̦̥̅ ⁗‚‘‛⁃ │˟ ⸮¦‾ ⁏⁊ ˓˒‑⁝  ]]..
+                -- Alt + Shift  │
+                [[  ͑͗̔̉̃ʹʼˋˊ ⁌ │ʻ‽⸘ˌˍ|˂˃˜⁀‿‒   ]]..
+                [[    ̨̰̒ʺˮˎˏ ⁍ │ʽ⁅⁆ˈˉ―˄˅˷⁐⁔    ]]..
                 -- Ctrl + Alt + Shift
-                [[  ̧͔͕͘̕      │   ※    ⁓      ]]
+                [[  ̧͔͕͘̕       │   ※    ⁓      ]]
 --[=[
   \x0300—\x036F - Combining Diacritical Marks.
   Greeks:
