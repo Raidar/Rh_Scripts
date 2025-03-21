@@ -3831,7 +3831,8 @@ local function Menu (Properties, Items, BreakKeys, ShowMenu) --> (Item, Pos)
   local function DlgInit (hDlg, ProcItem, NoUse) --> (bool)
 
     if _Menu.RectMenu.DoMouseEvent then -- TODO: --> doc!
-      SendDlgMessage(hDlg, F.DM_SETMOUSEEVENTNOTIFY, 1, 0)
+      local DM_InputNotify = F.DM_SETINPUTNOTIFY or F.DM_SETMOUSEEVENTNOTIFY
+      SendDlgMessage(hDlg, DM_InputNotify, 1, 0)
 
     end
 
