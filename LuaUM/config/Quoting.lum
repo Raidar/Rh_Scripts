@@ -151,7 +151,7 @@ function unit.EnquoteItems ()
     { text = L.LuaEnquoteMarkers,
       Label = true, },
     { hot = "|", left = "|", right = "|", },
-    mSeparator,
+    { hot = "@", left = "@", right = "@", },
     { hot = "#", left = "#", right = "#", },
     { hot = "$", left = "$", right = "$", },
     { hot = "%", left = "%", right = "%", },
