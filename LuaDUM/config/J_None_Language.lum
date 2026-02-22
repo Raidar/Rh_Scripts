@@ -78,9 +78,8 @@ local mInsert = {
       AccelStr = "A+A" },
     -- B --
     { text = "B", Label = true },
-    { text = ".bel",
+    { text = ".blr",
       Hint = "Belarusian",
-      separator = true,
       AccelStr = "B" },
     { text = ".bul",
       Hint = "Bulgarian",
