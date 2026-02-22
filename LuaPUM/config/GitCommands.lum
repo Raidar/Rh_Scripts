@@ -430,6 +430,45 @@ local mItems = {
 
       }, -- With develop
 
+      { text = "With &current",
+
+        MenuView = DefCfgData.MenuView,
+
+        Props = {
+          --Bottom = CfgData.ShowPath and Svn.Item.View,
+          RectMenu = {
+            Cols = 1,
+            Order = "V",
+            --BoxKind = "R",
+            MenuAlign = "CM",
+            UncheckedChar = " ",
+            MinWidth = 30, -- Hint:len()
+
+            IsStatusBar = true,
+
+          }, -- RectMenu
+
+        }, -- Props
+
+        CfgData = {
+          UMenu = {
+            BottomHotKeys = false,
+            ReturnToUMenu = false,
+
+          },
+
+        }, -- CfgData
+
+        Items = {
+          { text = "Add &renormalize…",
+            Hint = "…after change .gitattributes",
+            Function = FillCmdLine,
+            Arguments = "git add --renormalize .", },
+
+        }, -- Items
+
+      }, -- With current
+
     }, -- Items
 
   }, -- Work with
@@ -604,7 +643,9 @@ local mItems = {
   { text = "Diff w&/commited",
     CmdLine = "edit:<git diff --cached", },
   { text = "Diff w&\\current",
-    CmdLine = "edit:<git diff", },
+    --CmdLine = "edit:<git diff", },
+    Function = FillCmdLine,
+    Arguments = "edit:<git diff ", },
 
   mSeparator,
 
